@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zomes 3D configurator</title>
+  <meta name="description" content="Marevo 3D Product Configurator." />
+  <meta name="author" content="Pavlo Voronin" />
+  <link rel="shortcut icon" href="./src/index/favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="shortcut icon" href="" />
+  <link rel="stylesheet" href="./css/3d_ar.css" />
+  <link rel="stylesheet" href="./css/zomes_styles.css" />
+</head>
+
+<body>
+  <div id="marevo_app">
+    <div id="main-header">
+      <div id="identity"></div>
+    
+      <div id="external-link" class="top-frame-panel">
+        <div class="ie-vertical-align">
+          <div class="vertical-align-wrapper">
+            <a class="a-forward a-black ng-binding" target="_blank" href="http://fdomes.com/">
+              HOMEPAGE
+            </a>
+          </div>
+        </div>
+      </div>
+    
+      <div id="tools" class="top-frame-panel">
+        <div class="ie-vertical-align">
+          <div class="vertical-align-wrapper">
+            <div>
+              <div class="select-wrapper currency-picker">
+                <select class="">
+                  <option value="0">$</option>
+                  <option value="1">€</option>
+                </select>
+              </div>
+    
+              <div class="select-wrapper language-picker">
+                <select class="">
+                  <option value="0">EN</option>
+                  <option value="1">FR</option>
+                  <option value="2">ES</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+      <div id="social-media" class="top-frame-panel">
+        <div class="ie-vertical-align">
+          <div class="vertical-align-wrapper">
+            <div>
+              <a class="social-media-button social-media-button--mail" href="mailto:info@fdomes.com"></a>
+              <a class="social-media-button social-media-button--twitter" href="https://twitter.com/freedomes"></a>
+              <a class="social-media-button social-media-button--facebook" href="https://www.facebook.com/fdomes"><i
+                  class="fa fa-facebook"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  
+    <div class="product-type-3dmodel">
+      <div class="ar_conf_container">
+        <div class="ar_model_viewer" id="ar_model_viewer">
+          <canvas class="ar_model_view" id="ar_model_view" data-engine="three.js r146" width="819" height="819"
+            style="touch-action: none;">
+          </canvas>
+  
+          <div class="loading" id="js-loader">
+            <div class="marevo_loader">
+              <div class="marevo_loader__logo"></div>
+              <div class="marevo_loader__title"></div>
+              <div class="marevo_loader__spinner">
+                <div class="marevo_loader__circle circle1"></div>
+                <div class="marevo_loader__circle circle2"></div>
+                <div class="marevo_loader__circle circle3"></div>
+                <div class="marevo_loader__circle circle4"></div>
+                <div class="marevo_loader__circle circle5"></div>
+              </div>
+              <div class="marevo_loader__text">Loading...</div>
+            </div>
+          </div>
+  
+          <div id="button_ar_qr" class="tbl-window-btn tbl-window-btn-ar hidden">
+              <div class="tbl-window-btn-icon tbl-window-btn-icon-ar">
+                <img id="tbl-window-btn-icon-ar-img" src="" alt="AR">
+              </div>
+  
+              <span class="tbl-window-btn-text">AR</span>
+          </div>
+  
+          <div id="button_share_url" class="tbl-window-btn tbl-window-btn-share">
+            <img id="tbl-window-btn-icon-share-img" src="" alt="Share">
+          </div>
+  
+          <div class="tbl-window-btn tbl-window-btn-hider">
+            <img src="" alt="FullScreen">
+          </div>
+        </div>
+  
+        <div class="summary_container">
+          <div class="summary_wrapper">
+              <div class="summary_wrapper_inner">
+                <div class="summary entry-summary hidden">
+                  <h1 class="product_title entry-title">3D configurator</h1>
+                  <div class="product_description">Hello Table</div>
+      
+                  <div class="ar_filter" id="ar_filter">
+                    <div id="ar_filter_toggle" class="ar_filter_toggle"></div>
+                  </div>
+      
+                  <div class="ar_summary" style="display: none;">
+                    <div class="ar_summary_caption">Summary</div>
+      
+                    <div class="ar_summary_list"></div>
+      
+                    <div class="ar_summary total_amount">
+                      <div class="ar_summary total_amount-title" id="total_amount_title"></div>
+                      <div class="ar_summary total_amount-price" id="total_amount_price"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+  
+          <div class="ar_buy_container">
+            <div class="ar_total_amount-price" id="ar_total_price">€0,00</div>
+  
+            <div id="ar_button_order" class="ar_buy-btn">
+              <div id="ar_button_order__caption" class="ar_button_order__caption">
+                in winkelwagen
+              </div>
+  
+              <div class="ar_button_order__image">
+                <img id="ar_button_order__img" src="" alt="Order">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <model-viewer id="marevo_model" ar ar-modes="webxr scene-viewer quick-look" ar-scale="fixed"
+        src="./src/models/empty_scene.glb" poster="" loading="eager" alt="Marevo_AR" shadow-intensity="1"
+        shadow-softness="1" environment-image="neutral" stage-light-intensity="1" camera-orbit="-30deg auto auto"
+        max-camera-orbit="auto 100deg auto" camera-controls exposure="1.0" auto-rotate>
+        <div id="ar-prompt">
+          <img src="https://modelviewer.dev/shared-assets/icons/hand.png">
+        </div>
+      </model-viewer>
+  
+      <!-- POP-UP -->
+      <!-- add class 'active' to show it -->
+      <div class="tbl-info">
+        <div class="tbl-info-box">
+          <!-- add class 'active' to show it -->
+          <div id="tbl-info-item-share" class="tbl-info-item tbl-info-item-share" data-info-window="sharing">
+            <div class="tbl-info-sharing">
+              <div class="tbl-info-sharing-title">Share configuration</div>
+  
+              <div class="tbl-info-sharing-window">
+                <input id="info-sharing-input" type="text" value="">
+                
+                <div class="tbl-info-sharing-ico">
+                  <img src="" alt="s">
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          <!-- add class 'active' to show it -->
+          <div id="tbl-info-item-qr" class="tbl-info-item tbl-info-item-qr" data-info-window="qr">
+            <div class="tbl-qr">
+              <div id="tbl-qr-title-ui" class="tbl-qr-title"></div>
+              <div id="tbl-qr-text-ui" class="tbl-qr-text"></div>
+              <div class="tbl-qr-img">
+                <div id="qrcode"></div>
+              </div>
+            </div>
+          </div>
+  
+          <!-- add class 'active' to show it -->
+          <div id="tbl-info-item-loupe" class="tbl-info-item tbl-info-item-loupe" data-info-window="loupe">
+            <div class="tbl-loupe">
+              <div id="tbl-loupe-title-ui" class="tbl-loupe-title"></div>
+              <div id="tbl-loupe-text-ui" class="tbl-loupe-text"></div>
+              <div class="tbl-loupe-img">
+                <img src="" alt="loupe">
+              </div>
+            </div>
+          </div>
+  
+          <div class="tbl-info-close">
+            <img src="" alt="x">
+          </div>
+        </div>
+  
+        <div class="tbl-info-overlay"></div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.2.min.js"
+  integrity="sha256-2krYZKh//PcchRtd+H+VyyQoZ/e3EcrkxhM8ycwASPA=" crossorigin="anonymous"></script>
+<!-- Three.js -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.146/build/three.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.146/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.146/examples/js/loaders/RGBELoader.js"></script>
+
+<script type="module" src="./js/3d-configurator.js"></script>
+<script type="module" src="./js/3d-scene.js"></script>
+<script type="module" src="./js/ui-controller.js"></script>
+<script type="module" src="./js/settings.js"></script>
+<!-- MAREVO MODEL VIEWER -->
+<script type="module" src="./js/model-viewer_2_2_0/dist/model-viewer.marevo.min.js"></script>
+<!-- DAT GUI -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.9/dat.gui.min.js"></script>
+
+</html>
