@@ -12,7 +12,6 @@
 
 //#region PUBLIC VALUES
 import {
-  DEFAULT_LANGUAGE,
   DATAFILE_CSV_LINK_UI,
   DATAFILE_CSV_LINK_RECHTHOEK,
   DATAFILE_CSV_LINK_SEMI_RECHTHOEK,
@@ -50,6 +49,7 @@ import {
   setLoadParseCSV,
   getData,
   gui_mode,
+  currentLanguage,
 } from './ui-controller.js';
 
 const DEBUG_MODE_FUNC_STARTS = false;
@@ -794,8 +794,8 @@ function SetActionForGroups() {
             event.stopPropagation();
 
             let loupeImage;
-            const loupeTitle = getData(mainData, $(this).attr('data-option'), DEFAULT_LANGUAGE);
-            let loupeDescription = getData(mainData, $(this).attr('data-option'), `DESC_${DEFAULT_LANGUAGE}`);
+            const loupeTitle = getData(mainData, $(this).attr('data-option'), currentLanguage);
+            let loupeDescription = getData(mainData, $(this).attr('data-option'), `DESC_${currentLanguage}`);
             
             if (loupeDescription[0] === '"') {
               loupeDescription = loupeDescription.slice(1, -1);
@@ -814,8 +814,8 @@ function SetActionForGroups() {
             event.stopPropagation();
 
             let loupeImage;
-            const loupeTitle = getData(mainData, $(this).attr('data-option'), DEFAULT_LANGUAGE);
-            let loupeDescription = getData(mainData, $(this).attr('data-option'), `DESC_${DEFAULT_LANGUAGE}`);
+            const loupeTitle = getData(mainData, $(this).attr('data-option'), currentLanguage);
+            let loupeDescription = getData(mainData, $(this).attr('data-option'), `DESC_${currentLanguage}`);
             
             if (loupeDescription[0] === '"') {
               loupeDescription = loupeDescription.slice(1, -1);
@@ -1530,7 +1530,7 @@ function changeDiameter(value) {
 
 let totalAmount;
 function calculatePrice() {
-  const currency = getData(mainData, 'currency_sign', DEFAULT_LANGUAGE);
+  const currency = getData(mainData, 'currency_sign', currentLanguage);
   const totalAmountElement = document.getElementById('ar_total_price');
   totalAmount = 0;
   let basePrice = 0;
@@ -2633,8 +2633,8 @@ function summaryItemVisibility(groupId, value) {
 }
 
 function loupePopup(loupeTitle, loupeDescription, loupeImage) {
-  $('#tbl-loupe-title-ui').text(loupeTitle);
-  $('#tbl-loupe-text-ui').text(loupeDescription);
+  $('#tbl-loupe-title-ui').html(loupeTitle);
+  $('#tbl-loupe-text-ui').html(loupeDescription);
 
   if (!loupeImage) {
     $('.tbl-loupe-img').css('display', 'none');

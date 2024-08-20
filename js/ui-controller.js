@@ -4,21 +4,41 @@
 import { DEFAULT_LANGUAGE, GUI_MODE_UI, IS_PRICE_SIMPLE } from './settings.js';
 
 export let gui_mode = GUI_MODE_UI;
-let lang = DEFAULT_LANGUAGE;
-
+export let currentLanguage = DEFAULT_LANGUAGE;
+export let uiMultiLanguages = [];
 
 export async function createMenu(mainData) {
   return new Promise((resolve) => {
     jQuery(document).ready(function ($) {
-      $('.product_title.entry-title').text(`${getData(mainData, 'ui_product_title', lang)}`);
-      $('.summary .product_description').html(`${getData(mainData, 'ui_product_descr', lang).slice(1, -1)}`);
-      $('#button_ar_qr .tbl-window-btn-text').text(`${getData(mainData, 'ui_btn_ar', lang)}`);
-      $('#nav-title-inside').text(`${getData(mainData, 'ui-nav-btn-inside', lang)}`);
-      $('#nav-title-outside').text(`${getData(mainData, 'ui-nav-btn-outside', lang)}`);
-      $('#ar_button_order__caption').text(`${getData(mainData, 'ui_btn_buy', lang)}`);
-      $('.tbl-info-sharing-title').text(`${getData(mainData, 'ui_popup-title-share', lang)}`);
-      $('#tbl-qr-title-ui').text(`${getData(mainData, 'ui_popup-title-qr', lang)}`);
-      $('#tbl-qr-text-ui').text(`${getData(mainData, 'ui_popup-text-qr', lang).slice(1, -1)}`);
+      // Set language
+      currentLanguage = $('.language-picker select').val() || DEFAULT_LANGUAGE;
+
+      $('.language-picker select').on('change', function () {
+        currentLanguage = $(this).val();
+        updateUIlanguages(mainData);
+      });
+
+      $('.product_title.entry-title').html(`${getData(mainData, 'ui_product_title', currentLanguage)}`);
+      $('.summary .product_description').html(`${getData(mainData, 'ui_product_descr', currentLanguage)}`);
+      $('#button_ar_qr .tbl-window-btn-text').html(`${getData(mainData, 'ui_btn_ar', currentLanguage)}`);
+      $('#nav-title-inside').html(`${getData(mainData, 'ui-nav-btn-inside', currentLanguage)}`);
+      $('#nav-title-outside').html(`${getData(mainData, 'ui-nav-btn-outside', currentLanguage)}`);
+      $('#ar_button_order__caption').html(`${getData(mainData, 'ui_btn_buy', currentLanguage)}`);
+      $('.tbl-info-sharing-title').html(`${getData(mainData, 'ui_popup-title-share', currentLanguage)}`);
+      $('#tbl-qr-title-ui').html(`${getData(mainData, 'ui_popup-title-qr', currentLanguage)}`);
+      $('#tbl-qr-text-ui').html(`${getData(mainData, 'ui_popup-text-qr', currentLanguage)}`);
+
+      uiMultiLanguages.push(
+        { '.product_title.entry-title': 'ui_product_title' },
+        { '.summary .product_description': 'ui_product_descr' },
+        { '#button_ar_qr .tbl-window-btn-text': 'ui_btn_ar' },
+        { '#nav-title-inside': 'ui-nav-btn-inside' },
+        { '#nav-title-outside': 'ui-nav-btn-outside' },
+        { '#ar_button_order__caption': 'ui_btn_buy' },
+        { '.tbl-info-sharing-title': 'ui_popup-title-share' },
+        { '#tbl-qr-title-ui': 'ui_popup-title-qr' },
+        { '#tbl-qr-text-ui': 'ui_popup-text-qr' },
+      );
 
       const speedUiAnim = 300;
       const groupsContainer = $('#ar_filter');
@@ -76,15 +96,20 @@ export async function createMenu(mainData) {
           const filterHeaderHTML = `
             <div class="ar_filter_header">
               <div class="ar_filter_number">${uiNumber}</div>
-              <div class="ar_filter_caption">${getData(mainData, mainData[i][0], lang)}</div>
+              <div class="ar_filter_caption">${getData(mainData, mainData[i][0], currentLanguage)}</div>
               <div class="ar_filter_selected_item" id="summary-item2-${groupId}"></div>
             </div>
             <div class="ar_filter_inputs ${optionTypeClass}"></div>
             <div class="ar_filter_options ${optionTypeClass}" data-default="${dataDefault}">
           `;
 
+          
           groupsContainer.append(filterGroup);
           filterGroup.append($(filterHeaderHTML));
+
+          uiMultiLanguages.push(
+            { [`#group-${groupId} .ar_filter_caption`]: mainData[i][0] },
+          );
 
           $(`#group-${groupId} .ar_filter_header`).on('click', function () {
             $(`#group-${groupId} div.ar_filter_description`)?.slideToggle(speedUiAnim);
@@ -95,12 +120,17 @@ export async function createMenu(mainData) {
 
           const summaryItemHTML = `
             <div class="ar_summary_list_item" id="summary-item-${groupId}">
-              <div class="ar_summary_list_group" id="summary_item_title_${groupId}">${getData(mainData, mainData[i][0], lang)}</div>
+              <div class="ar_summary_list_group" id="summary_item_title_${groupId}">${getData(mainData, mainData[i][0], currentLanguage)}</div>
               <div class="ar_summary_list_components" id="summary_item_list_${groupId}">
               </div>
             </div>
           `;
+
           summaryList.append($(summaryItemHTML));
+
+          uiMultiLanguages.push(
+            { [`#summary_item_title_${groupId}`]: mainData[i][0] },
+          );
         }
 
         if (mainData[i][0].includes("option")) {
@@ -159,18 +189,22 @@ export async function createMenu(mainData) {
               <div class="component_options" id="options_${groupId}_${optionId}">
                 ${componentOptionsContentHTML}
               </div>
-              <div class="component_title">${getData(mainData, mainData[i][0], lang)}</div>
+              <div class="component_title">${getData(mainData, mainData[i][0], currentLanguage)}</div>
             </div>
           `;
 
           const optContainer = `#group-${groupId} .ar_filter_options`;
           $(optContainer).append($(optionHTML));
 
+          uiMultiLanguages.push(
+            { [`.option_${groupId}-${optionId} .component_title`]: mainData[i][0] },
+          );
+
           if (mainData[i + 1] && !mainData[i + 1][0].includes("option") ||
             !mainData[i + 1] && mainData[i][0].includes("option")) {
             const optionsResultHTML = `
               <div class="ar_filter_options_result">
-                <div class="ar_filter_options_result_caption" id="result_caption_${groupId}">${getData(mainData, 'ui_ar_selected_caption', lang)}</div>
+                <div class="ar_filter_options_result_caption" id="result_caption_${groupId}">${getData(mainData, 'ui_ar_selected_caption', currentLanguage)}</div>
                 <div class="ar_filter_options_result_list">
                   <div class="ar_filter_options_result_item_list" id="result_item_list_${groupId}">
                   </div>
@@ -179,6 +213,10 @@ export async function createMenu(mainData) {
             `;
 
             $(`#group-${groupId}`).append($(optionsResultHTML));
+
+            uiMultiLanguages.push(
+              { [`#group-${groupId} #result_caption_${groupId}`]: 'ui_ar_selected_caption' },
+            );
           }
         }
       }
@@ -189,11 +227,20 @@ export async function createMenu(mainData) {
 
       // console.log("🚀 Menu was created");
 
-      correctScrollForMobile();
+      // correctScrollForMobile(); // TODO: check and remove
 
+      console.log("🚀 ~ uiMultiLanguages:", uiMultiLanguages);
       resolve();
     });
   });
+}
+
+function updateUIlanguages(mainData) {
+  for (let i = 0; i < uiMultiLanguages.length; i++) {
+    for (let key in uiMultiLanguages[i]) {
+      $(key).html(getData(mainData, uiMultiLanguages[i][key], currentLanguage));
+    }
+  }
 }
 
 function menuHider() {
