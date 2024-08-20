@@ -17,21 +17,21 @@ export const MODEL_PATHS = [
 
 export const MODEL_CENTER_POSITION = -0.3;
 
-export const DEFAULT_LANGUAGE = 'EN';
 export const IS_PRICE_SIMPLE = false;
+export const DEFAULT_LANGUAGE = 'EN';
+export const DEFAULT_CURRENCY = '$';
+
+export const CURRENCY_SIGN = {
+  'USD': '$',
+  'EUR': '€',
+  'UAH': '₴',
+};
 
 // Zomes_3D_data_v_001
 const MAIN_LINK_PART = 'https://docs.google.com/spreadsheets/d/1wlPf19JZoBj4w6Aqb5-CEuwxaI0ZeFvuLd73mk3gvcg/export?format=csv&gid=';
 
 export const DATAFILE_CSV_LINK_UI = MAIN_LINK_PART + '0';
-export const DATAFILE_CSV_LINK_RECHTHOEK = MAIN_LINK_PART + '1512053788';
-export const DATAFILE_CSV_LINK_SEMI_RECHTHOEK = MAIN_LINK_PART + '1286660620';
-export const DATAFILE_CSV_LINK_RECHTHOEK_GROTE_RADIUS = MAIN_LINK_PART + '1856125066';
-export const DATAFILE_CSV_LINK_OVAAL = MAIN_LINK_PART + '922476165';
-export const DATAFILE_CSV_LINK_SEMI_OVAAL = MAIN_LINK_PART + '249554250';
-export const DATAFILE_CSV_LINK_PLAT_OVAAL = MAIN_LINK_PART + '2099491051';
-export const DATAFILE_CSV_LINK_ROND = MAIN_LINK_PART + '1992240457';
-export const DATAFILE_CSV_LINK_ORGANISCH = MAIN_LINK_PART + '841012629';
+export const DATAFILE_CSV_LINK_PRICE = MAIN_LINK_PART + '1512053788';
 
 export const MORPH_DATA = {
   length: {

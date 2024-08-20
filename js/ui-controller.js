@@ -5,12 +5,12 @@ import { DEFAULT_LANGUAGE, GUI_MODE_UI, IS_PRICE_SIMPLE } from './settings.js';
 
 export let gui_mode = GUI_MODE_UI;
 export let currentLanguage = DEFAULT_LANGUAGE;
+
 export let uiMultiLanguages = [];
 
 export async function createMenu(mainData) {
   return new Promise((resolve) => {
     jQuery(document).ready(function ($) {
-      // Set language
       currentLanguage = $('.language-picker select').val() || DEFAULT_LANGUAGE;
 
       $('.language-picker select').on('change', function () {
@@ -272,15 +272,15 @@ export function setLoadParseCSV(link, fileType, output, callback = () => {}) {
 
 export function parseCSV(text, output, callback) {
   const lines = text.split('\n');
-
+  
   lines.forEach((line) => {
     line = line.trim();
-
+    
     if (line.length === 0) return;
-
+    
     const skipIndexes = {};
     const columns = line.split(',');
-
+    
     output.push(
       columns.reduce((result, item, index) => {
         if (skipIndexes[index]) return result;
@@ -291,18 +291,19 @@ export function parseCSV(text, output, callback) {
             item += `,${columns[index]}`;
             skipIndexes[index] = true;
           }
-
+          
           index++;
           skipIndexes[index] = true;
           item += `,${columns[index]}`;
         }
-
+        
         result.push(item);
         return result;
       }, []),
     );
   });
-
+  
+  console.log("🚀 ~ parseCSV ~ output:", output);
   callback();
 }
 

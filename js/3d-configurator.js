@@ -13,15 +13,10 @@
 //#region PUBLIC VALUES
 import {
   DATAFILE_CSV_LINK_UI,
-  DATAFILE_CSV_LINK_RECHTHOEK,
-  DATAFILE_CSV_LINK_SEMI_RECHTHOEK,
-  DATAFILE_CSV_LINK_RECHTHOEK_GROTE_RADIUS,
-  DATAFILE_CSV_LINK_OVAAL,
-  DATAFILE_CSV_LINK_SEMI_OVAAL,
-  DATAFILE_CSV_LINK_PLAT_OVAAL,
-  DATAFILE_CSV_LINK_ROND,
-  DATAFILE_CSV_LINK_ORGANISCH,
+  DATAFILE_CSV_LINK_PRICE,
   DATA_CHECKING_PRICE,
+  DEFAULT_CURRENCY,
+  CURRENCY_SIGN,
   MORPH_DATA,
   MORPH_DATA_LEGS_LENGTH,
   CONDITIONS,
@@ -55,18 +50,10 @@ import {
 const DEBUG_MODE_FUNC_STARTS = false;
 const DEBUG_MODE_VALUES = false;
 
+let currentCurrency = DEFAULT_CURRENCY;
+let currentCurrencySign = CURRENCY_SIGN[currentCurrency] || CURRENCY_SIGN['USD'];
 
-const mainDataPrice = {
-  'rechthoek': [],
-  'semiRechthoek': [],
-  'rechthoekGroteRadius': [],
-  'ovaal': [],
-  'semiOvaal': [],
-  'platOvaal': [],
-  'rond': [],
-  'organisch': [],
-};
-
+let dataPrice = [];
 let mainData = [];
 let mainGroups = [];
 
@@ -476,15 +463,7 @@ class ComponentOption {
 prepareDataFiles();
 
 function prepareDataFiles() {
-  setLoadParseCSV(DATAFILE_CSV_LINK_RECHTHOEK, 'text', mainDataPrice.rechthoek);
-  setLoadParseCSV(DATAFILE_CSV_LINK_SEMI_RECHTHOEK, 'text', mainDataPrice.semiRechthoek);
-  setLoadParseCSV(DATAFILE_CSV_LINK_RECHTHOEK_GROTE_RADIUS, 'text', mainDataPrice.rechthoekGroteRadius);
-  setLoadParseCSV(DATAFILE_CSV_LINK_OVAAL, 'text', mainDataPrice.ovaal);
-  setLoadParseCSV(DATAFILE_CSV_LINK_SEMI_OVAAL, 'text', mainDataPrice.semiOvaal);
-  setLoadParseCSV(DATAFILE_CSV_LINK_PLAT_OVAAL, 'text', mainDataPrice.platOvaal);
-  setLoadParseCSV(DATAFILE_CSV_LINK_ROND, 'text', mainDataPrice.rond);
-  setLoadParseCSV(DATAFILE_CSV_LINK_ORGANISCH, 'text', mainDataPrice.organisch);
-
+  setLoadParseCSV(DATAFILE_CSV_LINK_PRICE, 'text', dataPrice);
   setLoadParseCSV(DATAFILE_CSV_LINK_UI, 'text', mainData, Start);
 }
 
@@ -1530,7 +1509,6 @@ function changeDiameter(value) {
 
 let totalAmount;
 function calculatePrice() {
-  const currency = getData(mainData, 'currency_sign', currentLanguage);
   const totalAmountElement = document.getElementById('ar_total_price');
   totalAmount = 0;
   let basePrice = 0;
@@ -1566,8 +1544,6 @@ function calculatePrice() {
       break;
   }
 
-  const currentDataPrice = mainDataPrice[selectedShape];
-
   if (selectedShape) {
     let searchParameter = '';
 
@@ -1579,7 +1555,7 @@ function calculatePrice() {
       searchParameter = DATA_CHECKING_PRICE['4'].value[SharedParameterList[4].value];
     }
 
-    basePrice = convertPriceToNumber(getData(currentDataPrice, 'base price', searchParameter, selectedShape));
+    basePrice = convertPriceToNumber(getData(dataPrice, 'base price', searchParameter, selectedShape));
     if (!basePrice) { basePrice = 0 }
     
     for (let i = 0; i < SharedParameterList.length - 1; i++) {
@@ -1612,8 +1588,8 @@ function calculatePrice() {
       }
 
       if (dataName) {
-        for (let k = 0; k < currentDataPrice.length; k++) {
-          searchName = currentDataPrice[k][0] + ' ' + currentDataPrice[k][1];
+        for (let k = 0; k < dataPrice.length; k++) {
+          searchName = dataPrice[k][0] + ' ' + dataPrice[k][1];
 
           if (dataName === searchName) {
             targetIndex = k;
@@ -1623,15 +1599,15 @@ function calculatePrice() {
       }
 
       if (targetIndex) {
-        for (let n = 2; n < currentDataPrice[0].length; n++) {
-          if (currentDataPrice[0][n] === searchParameter) {
+        for (let n = 2; n < dataPrice[0].length; n++) {
+          if (dataPrice[0][n] === searchParameter) {
             targetHeadIndex = n;
             break;
           }
         }
 
         if (targetHeadIndex) {
-          const stringPrice = (currentDataPrice[targetIndex][targetHeadIndex]);
+          const stringPrice = (dataPrice[targetIndex][targetHeadIndex]);
 
           if (stringPrice.includes('%')) {
             percentage += extractPercentage(stringPrice);
@@ -1649,7 +1625,7 @@ function calculatePrice() {
   totalAmount += totalAmount * percentage / 100;
   totalAmount = totalAmount.toFixed(2);
 
-  totalAmountElement.innerText = formatPrice(totalAmount, currency);
+  totalAmountElement.innerText = formatPrice(totalAmount, currentCurrencySign);
 }
 
 function convertPriceToNumber(priceString) {
@@ -2609,6 +2585,14 @@ async function PrepareUI() {
 
     btnBuy.on('click', function () {
       SendProductInfo();
+    });
+
+    currentCurrency = $('.currency-picker select').val() || DEFAULT_CURRENCY;
+
+    $('.currency-picker select').on('change', function () {
+      currentCurrency = $(this).val();
+      currentCurrencySign = CURRENCY_SIGN[currentCurrency] || CURRENCY_SIGN['USD'];
+      calculatePrice();
     });
   });
 }
