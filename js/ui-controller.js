@@ -11,6 +11,12 @@ export let uiMultiLanguages = [];
 export async function createMenu(mainData) {
   return new Promise((resolve) => {
     jQuery(document).ready(function ($) {
+
+      let firstObj = { name: 'Hello' };
+      let secondObj = firstObj;
+      firstObj = { name: 'Bye' };
+      console.log(secondObj.name);
+
       currentLanguage = $('.language-picker select').val() || DEFAULT_LANGUAGE;
 
       $('.language-picker select').on('change', function () {
@@ -18,8 +24,8 @@ export async function createMenu(mainData) {
         updateUIlanguages(mainData);
       });
 
-      $('.product_title.entry-title').html(`${getData(mainData, 'ui_product_title', currentLanguage)}`);
-      $('.summary .product_description').html(`${getData(mainData, 'ui_product_descr', currentLanguage)}`);
+      // $('.product_title.entry-title').html(`${getData(mainData, 'ui_product_title', currentLanguage)}`);
+      // $('.summary .product_description').html(`${getData(mainData, 'ui_product_descr', currentLanguage)}`);
       $('#button_ar_qr .tbl-window-btn-text').html(`${getData(mainData, 'ui_btn_ar', currentLanguage)}`);
       $('#nav-title-inside').html(`${getData(mainData, 'ui-nav-btn-inside', currentLanguage)}`);
       $('#nav-title-outside').html(`${getData(mainData, 'ui-nav-btn-outside', currentLanguage)}`);
@@ -28,9 +34,13 @@ export async function createMenu(mainData) {
       $('#tbl-qr-title-ui').html(`${getData(mainData, 'ui_popup-title-qr', currentLanguage)}`);
       $('#tbl-qr-text-ui').html(`${getData(mainData, 'ui_popup-text-qr', currentLanguage)}`);
 
+      $('#delivery_info_title').html(`${getData(mainData, 'ui_delivery_info_title', currentLanguage)}`);
+      $('#delivery_info_caption').html(`${getData(mainData, 'ui_delivery_info_caption', currentLanguage)}`);
+      $('#payment_info_title').html(`${getData(mainData, 'ui_payment_info_title', currentLanguage)}`);
+
       uiMultiLanguages.push(
-        { '.product_title.entry-title': 'ui_product_title' },
-        { '.summary .product_description': 'ui_product_descr' },
+        // { '.product_title.entry-title': 'ui_product_title' },
+        // { '.summary .product_description': 'ui_product_descr' },
         { '#button_ar_qr .tbl-window-btn-text': 'ui_btn_ar' },
         { '#nav-title-inside': 'ui-nav-btn-inside' },
         { '#nav-title-outside': 'ui-nav-btn-outside' },
@@ -38,6 +48,9 @@ export async function createMenu(mainData) {
         { '.tbl-info-sharing-title': 'ui_popup-title-share' },
         { '#tbl-qr-title-ui': 'ui_popup-title-qr' },
         { '#tbl-qr-text-ui': 'ui_popup-text-qr' },
+        { '#delivery_info_title': 'ui_delivery_info_title' },
+        { '#delivery_info_caption': 'ui_delivery_info_caption' },
+        { '#payment_info_title': 'ui_payment_info_title' },
       );
 
       const speedUiAnim = 300;
@@ -102,10 +115,22 @@ export async function createMenu(mainData) {
             <div class="ar_filter_inputs ${optionTypeClass}"></div>
             <div class="ar_filter_options ${optionTypeClass}" data-default="${dataDefault}">
           `;
-
           
+          const titleMenuItemHTML = `
+            <li class="title_list__item vertical-align-wrapper" id="title_list__item_${groupId}">
+              <div class="title_list__item-text">${getData(mainData, mainData[i][0], currentLanguage)}</div>
+              <div class="title_list__item-arrow"></div>
+            </li>
+          `;
+          
+          $('#title_menu_list').append($(titleMenuItemHTML));
+
           groupsContainer.append(filterGroup);
           filterGroup.append($(filterHeaderHTML));
+
+          uiMultiLanguages.push(
+            { [`#title_list__item_${groupId} .title_list__item-text`]: mainData[i][0] },
+          );
 
           uiMultiLanguages.push(
             { [`#group-${groupId} .ar_filter_caption`]: mainData[i][0] },
@@ -221,13 +246,8 @@ export async function createMenu(mainData) {
         }
       }
       
-      menuHider();
-
+      // menuHider();
       if (gui_mode) { $('#ar_model_viewer').append($('<div id="gui-container"></div>')); }
-
-      // console.log("🚀 Menu was created");
-
-      // correctScrollForMobile(); // TODO: check and remove
 
       console.log("🚀 ~ uiMultiLanguages:", uiMultiLanguages);
       resolve();
