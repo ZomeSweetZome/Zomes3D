@@ -41,6 +41,8 @@ import {
   scene,
   getMobileOperatingSystem,
   animateScale,
+  disposeModel,
+  loadModel,
 } from './3d-scene.js';
 
 import {
@@ -96,6 +98,13 @@ let qrScaned = 0;
 let theModel;
 
 let justClicked = false;
+
+// CUSTOM SELECT
+jQuery(document).ready(function() {
+  $('.custom-select').select2({
+    minimumResultsForSearch: Infinity, // Removes the search line if not needed
+  });
+});
 
 // MORPHS & SHADER
 let isWorldposVertexShaderEnabled = true;
@@ -675,9 +684,16 @@ async function Start() {
 
 async function StartSettings() {
   (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ StartSettings ~ ');
-
-  theModel = IMPORTED_MODELS[0];
   
+  // theModel = IMPORTED_MODELS[0];
+
+  //! TODO -----
+  const targetHouse = 0;
+  await loadModel(MODEL_PATHS[targetHouse], targetHouse);
+  theModel = IMPORTED_MODELS[0];
+  theModel && scene.add(theModel);
+  //!------
+    
   InitMorphModel(theModel);
   $('#js-loader').addClass('invisible');
   $('.summary.entry-summary').removeClass('hidden');
@@ -687,10 +703,9 @@ async function StartSettings() {
   PrepareAR();
   SetActionForGroups();
   ApplyURLParameters();
-  
+
   CheckChanges();
 
-  
   theModel?.scale.set(0, 0, 0);
   setVisibility(theModel, true);
   animateScale(theModel);

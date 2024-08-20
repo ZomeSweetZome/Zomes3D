@@ -1,10 +1,11 @@
+/* eslint-disable no-unused-vars */
 'use strict';
 /* global THREE, $, dat */
 
 const TEST_MODE = false;
 const DEV_GUI_MODE = false;
 
-// const LOADER = document.getElementById('js-loader');
+const LOADER = document.getElementById('js-loader');
 
 const correctionFloor = 0;
 let floor;
@@ -19,8 +20,10 @@ export let controls;
 export let envMap;
 
 export const IMPORTED_MODELS = [];
-export const IMPORTED_MODELS_GLTF = [];
+const IMPORTED_MODELS_GLTF = [];
 export let isModelsLoaded = false;
+
+let externalProperties;
 
 const scenePropertiesDefault = {
   BACKGROUND_COLOR: 0xffffff,
@@ -52,6 +55,8 @@ export function create3DScene(properties = scenePropertiesDefault, loadFunction)
     ENVIRONMENT_MAP_INTENSITY,
     MODEL_CENTER_POSITION,
   } = properties;
+
+  externalProperties = properties;
 
   // ********************************************
   //      Init SCENE, canvas, RENDERER
@@ -130,6 +135,7 @@ export function create3DScene(properties = scenePropertiesDefault, loadFunction)
     IMPORTED_MODELS.push(model);
   }
 
+  // eslint-disable-next-line no-unused-vars
   function onImportModelSuccessful() {
     for (let i = 0; i < IMPORTED_MODELS.length; i++) {
       IMPORTED_MODELS[i].visible = false;
@@ -148,8 +154,8 @@ export function create3DScene(properties = scenePropertiesDefault, loadFunction)
     loadFunction();
   }
 
-  importAllModels(MODEL_PATHS, onImportModelSuccessful);
-
+  // importAllModels(MODEL_PATHS, onImportModelSuccessful); //! loading all models at once
+  loadFunction(); //! the models will be loaded on demand (in 3d-conficurator.js by loadModel function in the StartSettings())
 
   // ********************************************
   //                   LIGHTS
@@ -245,12 +251,12 @@ export function create3DScene(properties = scenePropertiesDefault, loadFunction)
   controls.enablePan = false;
   controls.dampingFactor = 0.1;
   controls.autoRotateSpeed = -0.5;
-  controls.maxDistance = 5;
+  controls.maxDistance = 50;
   controls.minDistance = 1.78;
   controls.autoRotate = false;
   controls.enableZoom = true;
 
-  camera.position.set(1.846, 0.88, -1.429);
+  camera.position.set(1.846, 0.88, -10.429);
   controls.target.set(0, 0, 0);
 
   if (TEST_MODE) {
@@ -305,6 +311,114 @@ export function create3DScene(properties = scenePropertiesDefault, loadFunction)
   }
 
   animate();
+}
+
+export async function disposeModel(model, indexForNull) {
+  console.log("🚀 ~ disposeModel ~ model:", model);
+  if (model) {
+    model.visible = false;
+
+    model.traverse((object) => {
+      if (object.isMesh) {
+        if (object.geometry) {
+          object.geometry.dispose();
+        }
+
+        if (object.material) {
+          if (Array.isArray(object.material)) {
+            object.material.forEach((material) => {
+              if (material.map) {
+                material.map.dispose();
+              }
+              if (material.aoMap) {
+                material.aoMap.dispose();
+              }
+              if (material.normalMap) {
+                material.normalMap.dispose();
+              }
+              if (material.specularMap) {
+                material.specularMap.dispose();
+              }
+              if (material.envMap) {
+                material.envMap.dispose();
+              }
+              material.dispose();
+            });
+          } else {
+            if (object.material.map) {
+              object.material.map.dispose();
+            }
+            if (object.material.aoMap) {
+              object.material.aoMap.dispose();
+            }
+            if (object.material.normalMap) {
+              object.material.normalMap.dispose();
+            }
+            if (object.material.specularMap) {
+              object.material.specularMap.dispose();
+            }
+            if (object.material.envMap) {
+              object.material.envMap.dispose();
+            }
+            object.material.dispose();
+          }
+        }
+      }
+    });
+
+    scene.remove(model);
+
+    if (indexForNull !== undefined || indexForNull !== null) {
+      IMPORTED_MODELS[indexForNull] = null;
+    }
+  }
+}
+
+export async function loadModel(modelPath, i = -1) {
+  console.log("🚀 ~ loadModel ~ model:", modelPath);
+  if (!modelPath) { return; }
+
+  const {
+    ENVIRONMENT_MAP,
+    ENVIRONMENT_MAP_INTENSITY,
+    MODEL_CENTER_POSITION,
+  } = externalProperties;
+
+  LOADER.classList.remove('invisible');
+  const loader = new THREE.GLTFLoader();
+
+  const gltf = await loader.loadAsync(modelPath);
+  const model = gltf.scene;
+
+  model.traverse((o) => {
+    if (o.isMesh) {
+      o.castShadow = true;
+      o.receiveShadow = true;
+      if (o.material.map) {
+        o.material.map.anisotropy = 16;
+        o.material.map.needsUpdate = true;
+        o.material.needsUpdate = true;
+      }
+
+      if (ENVIRONMENT_MAP != '') {
+        if (!o.material.envMap) {
+          o.material.envMap = scene.environment;
+          o.material.envMapIntensity = ENVIRONMENT_MAP_INTENSITY;
+        }
+      }
+    }
+  });
+
+  model.scale.set(1, 1, 1);
+  model.position.y = MODEL_CENTER_POSITION;
+
+  if (i < 0) {
+    IMPORTED_MODELS.push(model);
+  } else {
+    IMPORTED_MODELS.splice(i, 1, model);
+  }
+
+  LOADER?.classList.add('invisible');
 }
 
 // ********************************************

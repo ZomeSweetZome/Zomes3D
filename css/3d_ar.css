@@ -18,9 +18,10 @@
 
   --marevo-color-text-black: #101011;
   --marevo-color-text-white: #FFFFFF;
+  --marevo-color-text-lightgray: #D4D4D4;
   --marevo-color-text-gray: #7D7D7D;
   --marevo-color-disabled: #B9B9B9;
-  --marevo-color-popup-border: #111111;
+  --marevo-color-popup-border: #ECECEF;
 
   --marevo-ui-icon_furniture : url(../src/ar-ui-icons/icon_furniture.svg);
   --marevo-ui-icon_go_inside : url(../src/ar-ui-icons/icon_go_inside.svg);
@@ -85,7 +86,30 @@ body, html {
   transform: rotate(180deg);
 }
 
-/*------------------------------------*/
+/*!------------------------------------*/
+
+.vertical-align-wrapper {
+  display: flex;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  flex-direction: column;
+  -webkit-flex-direction: column;
+  justify-content: center;
+  -webkit-box-pack: center;
+  -moz-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  height: 100%;
+}
+
+#marevo_app * {
+  font-family: "Satoshi", sans-serif;
+  color: var(--marevo-color-text-black, #000);
+  box-sizing: border-box;
+
+}
 
 #marevo_app #main-header {
   position: absolute;
@@ -96,6 +120,10 @@ body, html {
   padding: 20px 30px;
   color: #000;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--marevo-color-popup-border, #ECECEF);
 }
 
 #marevo_app #main-header #identity {
@@ -104,6 +132,141 @@ body, html {
   display: inline-block;
 }
 
+#main-header .header_blocks {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.top-frame-panel {
+  height: 100%;
+  margin-left: 80px;
+}
+
+.select-wrapper {
+  display: inline-block;
+  width: 50px;
+}
+
+.select-wrapper.language-picker {
+  width: 60px;
+}
+
+#external-link a {
+  display: inline-block;
+  vertical-align: middle;
+  text-align: center;
+  align-self: center;
+  color: var(--marevo-color-text-black, #000);
+  text-decoration: none;
+  font-family: "Inter", sans-serif;
+  font-weight: normal;
+  font-size: 16px;
+}
+
+#external-link .external-link__wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  height: 100%;
+}
+
+#external-link .external-link__logo {
+  display: inline-block;
+  text-align: center;
+  content: var(--marevo-ui-icon_arrow_up45);
+  width: 20px;
+  height: 20px;
+  margin-left: 10px;
+}
+
+.social-media__wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  height: 28px;
+  gap: 20px;
+}
+
+.social-media-button {
+  background-image: var(--);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+}
+
+.social-media-button--mail {
+  background-image: var(--marevo-ui-icon_email);
+  width: 28px;
+  height: 28px;
+}
+
+.social-media-button--instagram {
+  background-image: var(--marevo-ui-icon_instagram);
+  width: 26px;
+  height: 26px;
+}
+
+.social-media-button--facebook {
+  background-image: var(--marevo-ui-icon_facebook);
+  width: 24px;
+  height: 24px;
+}
+
+/* CUSTOM-SELECT */
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+}
+
+.select2-container--default .select2-selection--single {
+  border: none !important;
+}
+
+.select2-container {
+  width: 100% !important;
+  font-family: "Inter", sans-serif !important;
+  font-size: 16px !important;
+}
+
+.select2-dropdown {
+  width: 60px !important;
+  border: 1px solid var(--marevo-color-popup-border, #ECECEF) !important;
+  border-radius: 10px !important;
+  margin-top: 10px;
+}
+
+.select2-container--default .select2-results>.select2-results__options {
+  border-radius: 10px !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  background-image: var(--marevo-ui-select_arrow_down);
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: contain;
+  width: 24px;
+  height: 24px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow b {
+  display: none; /* Hides a standard arrow */
+}
+
+.select2-dropdown .select2-results .select2-results__options li:hover {
+  /* background-color: var(--marevo-color-text-black, #000) !important; */
+  background-color: var(--marevo-color-text-lightgray, #d4d4d4) !important;
+  color: black !important;
+}
+
+.select2-results__option.select2-results__option--selectable.select2-results__option--selected {
+  /* background-color: var(--marevo-color-text-lightgray, #d4d4d4) !important; */
+  background-color: white !important;
+  color: black !important;
+}
+
+/*!------------------------------------*/
 
 .product-type-3dmodel * {
   box-sizing: border-box;

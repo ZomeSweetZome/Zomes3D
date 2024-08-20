@@ -9,7 +9,10 @@ export const SHADOW_TRANSPARENCY = 0.075;
 export const TONE_MAPPING_EXPOSURE = 1.1;
 
 export const MODEL_PATHS = [
-  // './src/models/zome_1.glb',
+  './src/models/zome_1.glb',
+  // './TEMP/SCANDI-CAMP.glb',
+  // './TEMP/SCANDI DOUBLE.glb',
+  // './TEMP/SCANDI DOUBLE-2.glb',
 ];
 
 export const MODEL_CENTER_POSITION = -0.3;
