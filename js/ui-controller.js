@@ -361,38 +361,3 @@ function getStringBetweenSquareBrackets(inputString) {
     return '';
   }
 }
-
-function correctScrollForMobile() {
-  const headerHeight = 142;
-  const arModelViewer = document.querySelector('.ar_model_viewer');
-  const summaryContainer = document.querySelector('.summary_container');
-
-  const canvas = document.getElementById('ar_model_view');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight * 0.4;
-
-  if (window.innerWidth < 840) {
-    window.addEventListener('scroll', function() {
-      const scrollPosition = window.scrollY;
-  
-      const rect = summaryContainer.getBoundingClientRect();
-      const bottomVisible = rect.bottom <= window.innerHeight;
-      const topValue = `calc(${rect.height}px - 100dvh + var(--marevo-canvas-height-mobile, 40dvh))`;
-  
-      if (scrollPosition >= headerHeight) {
-        arModelViewer.classList.add('fixed_mobile');
-        summaryContainer.classList.add('fixed_mobile');
-        arModelViewer.style.top = 0;
-      } else {
-        arModelViewer.classList.remove('fixed_mobile');
-        summaryContainer.classList.remove('fixed_mobile');
-      }
-  
-      // if (bottomVisible) {
-      //   arModelViewer.classList.remove('fixed_mobile');
-      //   summaryContainer.classList.remove('fixed_mobile');
-      //   arModelViewer.style.top = topValue;
-      // }
-    });
-  }
-}

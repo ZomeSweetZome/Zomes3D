@@ -103,7 +103,7 @@ const ar_filter = document.querySelector('.ar_filter');
 
 let SharedParameterList = [
   {
-    id: 'color', // [0]
+    id: 'zomeModel', // [0]
     groupIds: ['group-0'],
     splitValue: 'M',
     type: 'string',
@@ -113,27 +113,27 @@ let SharedParameterList = [
     applyURLActionReturn: false
   },
   {
-    id: 'afwerking', // [1]
+    id: 'windows', // [1]
     groupIds: ['group-1'],
     splitValue: 'a',
-    type: 'string',
-    value: '0',
+    type: 'array-string',
+    value: [0, 0, 0],
     groupOptionAction: null,
     applyURLAction: null,
     applyURLActionReturn: false
   },
   {
-    id: 'dikte', // [2]
+    id: 'interior', // [2]
     groupIds: ['group-2'],
     splitValue: 'r',
-    type: 'string',
-    value: '0',
+    type: 'array-string',
+    value: [0, 0, 0],
     groupOptionAction: null,
     applyURLAction: null,
     applyURLActionReturn: false
   },
   {
-    id: 'shape', // [3]
+    id: 'exterior', // [3]
     groupIds: ['group-3'],
     splitValue: 'e',
     type: 'string',
@@ -143,19 +143,18 @@ let SharedParameterList = [
     applyURLActionReturn: false
   },
   {
-    id: 'length', // [4]
-    groupIds: ['group-5', 'group-6', 'group-7', 'group-8',
-      'group-9', 'group-10', 'group-11', 'group-12'],
+    id: 'addons', // [4]
+    groupIds: ['group-4'],
     splitValue: 'v',
-    type: 'string',
-    value: '0',
+    type: 'array-string',
+    value: [0, 0, 0, 0],
     groupOptionAction: null,
     applyURLAction: null,
     applyURLActionReturn: false
   },
   {
-    id: 'width', // [5]
-    groupIds: ['group-13'],
+    id: 'customWindows', // [5] //! TODO: ADD CUSTOM WINDOWS TO URL
+    groupIds: null,
     splitValue: 'o',
     type: 'string',
     value: '0',
@@ -164,9 +163,9 @@ let SharedParameterList = [
     applyURLActionReturn: false
   },
   {
-    id: 'diameter', // [6]
-    groupIds: ['group-14'],
-    splitValue: 'V',
+    id: 'lang', // [6] //! TODO: ADD LANGUAGE TO URL
+    groupIds: null,
+    splitValue: 'U',
     type: 'string',
     value: '0',
     groupOptionAction: null,
@@ -174,10 +173,9 @@ let SharedParameterList = [
     applyURLActionReturn: false
   },
   {
-    id: 'edge', // [7]
-    groupIds: ['group-15', 'group-16', 'group-17', 'group-18',
-      'group-19', 'group-20', 'group-21', 'group-22'],
-    splitValue: 'i',
+    id: 'curr', // [7] //! TODO: ADD CURRENCY TO URL
+    groupIds: null,
+    splitValue: 'A',
     type: 'string',
     value: '0',
     groupOptionAction: null,
@@ -185,37 +183,7 @@ let SharedParameterList = [
     applyURLActionReturn: false
   },
   {
-    id: 'legs', // [8]
-    groupIds: ['group-23', 'group-24', 'group-27', 'group-28'],
-    splitValue: 's',
-    type: 'string',
-    value: '0',
-    groupOptionAction: null,
-    applyURLAction: null,
-    applyURLActionReturn: false
-  },
-  {
-    id: 'color_wood', // [9]
-    groupIds: ['group-25'],
-    splitValue: 'I',
-    type: 'string',
-    value: '0',
-    groupOptionAction: null,
-    applyURLAction: null,
-    applyURLActionReturn: false
-  },
-  {
-    id: 'color_metal', // [10]
-    groupIds: ['group-26'],
-    splitValue: 'O',
-    type: 'string',
-    value: '0',
-    groupOptionAction: null,
-    applyURLAction: null,
-    applyURLActionReturn: false
-  },
-  {
-    id: 'qr', // [11]
+    id: 'qr', // [8]
     groupIds: null,
     splitValue: 'n',
     type: 'int',
@@ -226,118 +194,93 @@ let SharedParameterList = [
   }
 ];
 
-// color
+// zomeModel
 SharedParameterList[0].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
 
   if (isFirstStart) {
-    changeTexture(this.value, 'top');
+    // changeTexture(this.value, 'top');
   }
 
   if (justClicked) {
-    changeTexture(this.value, 'top');
-    SharedParameterList[9].value = this.value;
-    changeTexture(this.value, 'legs');
+    // changeTexture(this.value, 'top');
+    // SharedParameterList[9].value = this.value;
+    // changeTexture(this.value, 'legs');
   }
 }
 
-// afwerking
+// windows
 SharedParameterList[1].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
   if (isFirstStart || justClicked) {
-    const woodType = (SharedParameterList[0].value == '8') ? 'noten' : 'oak';
-    const afwerkingType = (this.value == '1') ? 'gloss' : 'mat';
-    setObjectTexture(TEXTURES.top.materialNames, TEXTURES[woodType][afwerkingType]);
-    setObjectTexture(TEXTURES.end.materialNames, TEXTURES[woodType][afwerkingType]);
-    setObjectTexture(TEXTURES.top.materialNamesLeg, TEXTURES[woodType][afwerkingType]);
+    // const woodType = (SharedParameterList[0].value == '8') ? 'noten' : 'oak';
+    // const afwerkingType = (this.value == '1') ? 'gloss' : 'mat';
+    // setObjectTexture(TEXTURES.top.materialNames, TEXTURES[woodType][afwerkingType]);
+    // setObjectTexture(TEXTURES.end.materialNames, TEXTURES[woodType][afwerkingType]);
+    // setObjectTexture(TEXTURES.top.materialNamesLeg, TEXTURES[woodType][afwerkingType]);
   }
 }
 
-// dikte
+// interior
 SharedParameterList[2].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
   if (isFirstStart || justClicked) {
-    changeThickness(this.value);
+    // changeThickness(this.value);
   }
 }
 
-// shape
+// exterior
 SharedParameterList[3].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
   if (isFirstStart || justClicked) {
-    if(this.value !== '6') {// shape != rond
-      changeLength(SharedParameterList[4].value);
-    }
+    // if(this.value !== '6') {// shape != rond
+    //   changeLength(SharedParameterList[4].value);
+    // }
 
-    if (this.value == '6') { // shape = rond
-      changeDiameter(SharedParameterList[6].value);
-    }
+    // if (this.value == '6') { // shape = rond
+    //   changeDiameter(SharedParameterList[6].value);
+    // }
   }
 }
 
-// length
+// addons
 SharedParameterList[4].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
   if (isFirstStart || justClicked) {
-    if(SharedParameterList[3].value !== '6') { // shape = rond
-      changeLength(this.value);
-    }
+    // if(SharedParameterList[3].value !== '6') { // shape = rond
+    //   changeLength(this.value);
+    // }
   }
 }
 
-// width
+// customWindows
 SharedParameterList[5].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
   if (isFirstStart || justClicked) {
-    if(SharedParameterList[3].value !== '6') { // shape != rond
-      changeWidth(this.value);
-    }
+    // if(SharedParameterList[3].value !== '6') { // shape != rond
+    //   changeWidth(this.value);
+    // }
   }
 }
 
-// diameter
+// language
 SharedParameterList[6].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
   if (isFirstStart || justClicked) {
-    if(SharedParameterList[3].value == '6') { // shape = rond
-      changeDiameter(this.value);
-    }
+    // if(SharedParameterList[3].value == '6') { // shape = rond
+    //   changeDiameter(this.value);
+    // }
   }
 }
 
-// edge
+// currency
 SharedParameterList[7].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
   // if (isFirstStart || justClicked) {}
 }
 
-// legs
-SharedParameterList[8].groupOptionAction = function () {
-  (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
-  if (isFirstStart || justClicked) {
-    setColorOfActiveOption(['group-26'], ['paint']);
-    changeLength(SharedParameterList[4].value, false);
-  }
-}
-
-// color_wood
-SharedParameterList[9].groupOptionAction = function () {
-  (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
-  if (isFirstStart || justClicked) {
-    changeTexture(this.value, 'legs');
-  }
-}
-
-// color_metal
-SharedParameterList[10].groupOptionAction = function () {
-  (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
-  if (isFirstStart || justClicked) {
-    setColorOfActiveOption(['group-26'], ['paint']);
-  }
-}
-
 // qr
-SharedParameterList[11].groupOptionAction = function () {
+SharedParameterList[8].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
 }
 
@@ -1376,9 +1319,7 @@ function CheckChanges(callback = () => {}) {
 
   applyAllConditions();
   additionalConditions();
-  assignOptionsInRelatedGroups(SharedParameterList[4].groupIds);
-  assignOptionsInRelatedGroups(SharedParameterList[7].groupIds);
-  assignOptionsInRelatedGroups(SharedParameterList[8].groupIds);
+  // assignOptionsInRelatedGroups(SharedParameterList[4].groupIds);
   applyActiveGroupOptionAction();
   applyAllConditions();
   applyActiveGroupOptionAction();
@@ -1557,68 +1498,69 @@ function calculatePrice() {
 
     basePrice = convertPriceToNumber(getData(dataPrice, 'base price', searchParameter, selectedShape));
     if (!basePrice) { basePrice = 0 }
-    
-    for (let i = 0; i < SharedParameterList.length - 1; i++) {
-      let dataName = '';
-      let searchName = '';
-      let dataNameMainPart = '';
-      let targetIndex = 0;
-      let targetHeadIndex = 0;
-      let price = 0;
+
+    //! TODO CALCULATING PRICE
+    // for (let i = 0; i < SharedParameterList.length - 1; i++) {
+    //   let dataName = '';
+    //   let searchName = '';
+    //   let dataNameMainPart = '';
+    //   let targetIndex = 0;
+    //   let targetHeadIndex = 0;
+    //   let price = 0;
       
-      if (DATA_CHECKING_PRICE[i]) {
-        for (let j = 0; j < SharedParameterList[i].groupIds.length; j++) {
-          if (isGroupActive(SharedParameterList[i].groupIds[j])) {
-            dataNameMainPart = DATA_CHECKING_PRICE[i]?.name;
-            dataName = dataNameMainPart + ' ' + DATA_CHECKING_PRICE[i]?.value[SharedParameterList[i].value];
+    //   if (DATA_CHECKING_PRICE[i]) {
+    //     for (let j = 0; j < SharedParameterList[i].groupIds.length; j++) {
+    //       if (isGroupActive(SharedParameterList[i].groupIds[j])) {
+    //         dataNameMainPart = DATA_CHECKING_PRICE[i]?.name;
+    //         dataName = dataNameMainPart + ' ' + DATA_CHECKING_PRICE[i]?.value[SharedParameterList[i].value];
             
-            if (dataNameMainPart === 'Afwerking') {
-              dataNameMainPart = dataNameMainPart + ` [${DATA_CHECKING_PRICE[i]?.value[SharedParameterList[i].value]}]`;
-              dataName = dataNameMainPart + ' ' + DATA_CHECKING_PRICE[0]?.value[SharedParameterList[0].value]; // color
-            }
+    //         if (dataNameMainPart === 'Afwerking') {
+    //           dataNameMainPart = dataNameMainPart + ` [${DATA_CHECKING_PRICE[i]?.value[SharedParameterList[i].value]}]`;
+    //           dataName = dataNameMainPart + ' ' + DATA_CHECKING_PRICE[0]?.value[SharedParameterList[0].value]; // color
+    //         }
             
-            if (dataNameMainPart === 'Breedte') {
-              dataNameMainPart = dataNameMainPart + ` [${DATA_CHECKING_PRICE[8]?.value[SharedParameterList[8].value]}]`; // legs
-              dataName = dataNameMainPart + ' ' + DATA_CHECKING_PRICE[i]?.value[SharedParameterList[i].value];
-            }
+    //         if (dataNameMainPart === 'Breedte') {
+    //           dataNameMainPart = dataNameMainPart + ` [${DATA_CHECKING_PRICE[8]?.value[SharedParameterList[8].value]}]`; // legs
+    //           dataName = dataNameMainPart + ' ' + DATA_CHECKING_PRICE[i]?.value[SharedParameterList[i].value];
+    //         }
 
-            break;
-          }
-        }
-      }
+    //         break;
+    //       }
+    //     }
+    //   }
 
-      if (dataName) {
-        for (let k = 0; k < dataPrice.length; k++) {
-          searchName = dataPrice[k][0] + ' ' + dataPrice[k][1];
+    //   if (dataName) {
+    //     for (let k = 0; k < dataPrice.length; k++) {
+    //       searchName = dataPrice[k][0] + ' ' + dataPrice[k][1];
 
-          if (dataName === searchName) {
-            targetIndex = k;
-            break;
-          }
-        }
-      }
+    //       if (dataName === searchName) {
+    //         targetIndex = k;
+    //         break;
+    //       }
+    //     }
+    //   }
 
-      if (targetIndex) {
-        for (let n = 2; n < dataPrice[0].length; n++) {
-          if (dataPrice[0][n] === searchParameter) {
-            targetHeadIndex = n;
-            break;
-          }
-        }
+    //   if (targetIndex) {
+    //     for (let n = 2; n < dataPrice[0].length; n++) {
+    //       if (dataPrice[0][n] === searchParameter) {
+    //         targetHeadIndex = n;
+    //         break;
+    //       }
+    //     }
 
-        if (targetHeadIndex) {
-          const stringPrice = (dataPrice[targetIndex][targetHeadIndex]);
+    //     if (targetHeadIndex) {
+    //       const stringPrice = (dataPrice[targetIndex][targetHeadIndex]);
 
-          if (stringPrice.includes('%')) {
-            percentage += extractPercentage(stringPrice);
-          } else {
-              price = convertPriceToNumber(stringPrice);
-          }
+    //       if (stringPrice.includes('%')) {
+    //         percentage += extractPercentage(stringPrice);
+    //       } else {
+    //           price = convertPriceToNumber(stringPrice);
+    //       }
 
-          totalAmount += price;
-        }
-      }
-    }
+    //       totalAmount += price;
+    //     }
+    //   }
+    // }
   }
 
   totalAmount += basePrice;
@@ -1658,13 +1600,14 @@ function getOrderList() {
       const dataName = DATA_CHECKING_PRICE[i]?.name + ': ' +
                        DATA_CHECKING_PRICE[i]?.value[SharedParameterList[i].value];
 
-      for (let k = 0; k < SharedParameterList[i].groupIds.length; k++) {
-        if (isGroupActive(SharedParameterList[i].groupIds[k])) {
-          orderList += dataName + '\n';
-          break;
+      if (SharedParameterList[i].groupIds) {
+        for (let k = 0; k < SharedParameterList[i].groupIds.length; k++) {
+          if (isGroupActive(SharedParameterList[i].groupIds[k])) {
+            orderList += dataName + '\n';
+            break;
+          }
         }
       }
-
     }
   }
   orderList = orderList + 'Amount: ' + totalAmount;
