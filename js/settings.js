@@ -10,6 +10,7 @@ export const TONE_MAPPING_EXPOSURE = 1.1;
 
 export const MODEL_PATHS = [
   './src/models/zome_1.glb',
+  // './src/models/zomes.glb',
   // './TEMP/SCANDI-CAMP.glb',
   // './TEMP/SCANDI DOUBLE.glb',
   // './TEMP/SCANDI DOUBLE-2.glb',

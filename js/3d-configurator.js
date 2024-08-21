@@ -712,27 +712,8 @@ function SetActionForGroups() {
             }
           });
 
-          $(opt.element).find('.image-loupe').on('click', function (event) {
-            event.stopPropagation();
-
-            let loupeImage;
-            const loupeTitle = getData(mainData, $(this).attr('data-option'), currentLanguage);
-            let loupeDescription = getData(mainData, $(this).attr('data-option'), `DESC_${currentLanguage}`);
-            
-            if (loupeDescription[0] === '"') {
-              loupeDescription = loupeDescription.slice(1, -1);
-            }
-            
-            if (getData(mainData, $(this).attr('data-option'), 'UI_IMG')?.substring(0, 1) !== '#') {
-              loupeImage = `./src/images/${getData(mainData, $(this).attr('data-option'), 'UI_IMG')}`;
-            } else {
-              loupeImage = `${getData(mainData, $(this).attr('data-option'), 'UI_IMG')}`;
-            }
-
-            loupePopup(loupeTitle, loupeDescription, loupeImage);
-          });
-
           $(opt.element).find('.image-info').on('click', function (event) {
+            console.log("🚀 ~ loupeTitle");
             event.stopPropagation();
 
             let loupeImage;
@@ -786,6 +767,22 @@ function SetActionForGroups() {
             }, false, opt.component_id);
 
             //You can do something here...
+          });
+
+          $(opt.element).find('.image-info').on('click', function (event) {
+            console.log("🚀 ~ loupeTitle");
+            event.stopPropagation();
+
+            let loupeImage;
+            const loupeTitle = getData(mainData, $(this).attr('data-option'), currentLanguage);
+            let loupeDescription = getData(mainData, $(this).attr('data-option'), `DESC_${currentLanguage}`);
+            
+            if (loupeDescription[0] === '"') {
+              loupeDescription = loupeDescription.slice(1, -1);
+            }
+
+            loupeImage = '';
+            loupePopup(loupeTitle, loupeDescription, loupeImage);
           });
         }
         break;

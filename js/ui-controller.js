@@ -51,12 +51,13 @@ export async function createMenu(mainData) {
         { '#delivery_info_title': 'ui_delivery_info_title' },
         { '#delivery_info_caption': 'ui_delivery_info_caption' },
         { '#payment_info_title': 'ui_payment_info_title' },
+        { '.ar_button_back__caption': 'ui_btn_back' },
       );
 
       const speedUiAnim = 300;
       const groupsContainer = $('#ar_filter');
       const summaryList = $('.ar_summary .ar_summary_list');
-      
+
       let dataGroup = '';
 
       for (let i = 1; i < mainData.length; i++) {
@@ -66,16 +67,16 @@ export async function createMenu(mainData) {
         let uiNumber = '';
 
         if (mainData[i][0].toUpperCase().includes("TEST")) { gui_mode = true; }
-    
+
         if (mainData[i][0].includes("group")) {
           dataGroup = mainData[i][0];
-          const groupId = mainData[i][0].split(/[_-]/)[1];
+          const groupId = dataGroup.split(/[_-]/)[1];
           const customClass = getStringBetweenSquareBrackets(mainData[i][0]);
-          
+
           if (mainData[i][0].split('_').length - 1 > 1) {
             uiNumber = mainData[i][0].split(/[_-]/)[2];
             const secondUnderscoreIndex = mainData[i][0].indexOf("_", mainData[i][0].indexOf("_") + 1);
-            
+
             if (secondUnderscoreIndex !== -1) {
               optionStyle = mainData[i][0].substring(secondUnderscoreIndex + 1, secondUnderscoreIndex + 3);
             } else {
@@ -98,15 +99,18 @@ export async function createMenu(mainData) {
               default:
                 optionTypeClass = 'type_select';
                 break;
-              }
-            } else {
-              uiNumber = mainData[i][0].split("-")[1];
             }
+          } else {
+            uiNumber = mainData[i][0].split("-")[1];
+          }
 
-            
-          const filterGroup = $(`<div class="ar_filter_group ${customClass}" id="group-${groupId}"></div>`);
+          const filterGroup = $(`<div class="ar_filter_group ${customClass} disabled" id="group-${groupId}"></div>`);
 
           const filterHeaderHTML = `
+            <div class="ar_button_back">
+              <div class="ar_button_back__image"></div>
+              <div class="ar_button_back__caption">${getData(mainData, 'ui_btn_back', currentLanguage)}</div>
+            </div>
             <div class="ar_filter_header">
               <div class="ar_filter_number">${uiNumber}</div>
               <div class="ar_filter_caption">${getData(mainData, mainData[i][0], currentLanguage)}</div>
@@ -115,14 +119,14 @@ export async function createMenu(mainData) {
             <div class="ar_filter_inputs ${optionTypeClass}"></div>
             <div class="ar_filter_options ${optionTypeClass}" data-default="${dataDefault}">
           `;
-          
+
           const titleMenuItemHTML = `
             <li class="title_list__item vertical-align-wrapper" id="title_list__item_${groupId}">
               <div class="title_list__item-text">${getData(mainData, mainData[i][0], currentLanguage)}</div>
               <div class="title_list__item-arrow"></div>
             </li>
           `;
-          
+
           $('#title_menu_list').append($(titleMenuItemHTML));
 
           groupsContainer.append(filterGroup);
@@ -136,12 +140,12 @@ export async function createMenu(mainData) {
             { [`#group-${groupId} .ar_filter_caption`]: mainData[i][0] },
           );
 
-          $(`#group-${groupId} .ar_filter_header`).on('click', function () {
-            $(`#group-${groupId} div.ar_filter_description`)?.slideToggle(speedUiAnim);
-            $(`#group-${groupId} div.ar_filter_inputs`)?.slideToggle(speedUiAnim);
-            $(`#group-${groupId} div.ar_filter_options`)?.slideToggle(speedUiAnim);
-            $(`#group-${groupId} div.ar_filter_options_result`)?.slideToggle(speedUiAnim);
-          });
+          // $(`#group-${groupId} .ar_filter_header`).on('click', function () {
+          //   $(`#group-${groupId} div.ar_filter_description`)?.slideToggle(speedUiAnim);
+          //   $(`#group-${groupId} div.ar_filter_inputs`)?.slideToggle(speedUiAnim);
+          //   $(`#group-${groupId} div.ar_filter_options`)?.slideToggle(speedUiAnim);
+          //   $(`#group-${groupId} div.ar_filter_options_result`)?.slideToggle(speedUiAnim);
+          // });
 
           const summaryItemHTML = `
             <div class="ar_summary_list_item" id="summary-item-${groupId}">
@@ -163,6 +167,7 @@ export async function createMenu(mainData) {
           let optionId = mainData[i][0].split("-")[1];
           let descrHTML = '';
           let optImageHTML = '';
+          let optInfoHTML = '';
           let componentOptionsContentHTML = '';
 
           if (optionTypeClass === 'type_checkbox') {
@@ -173,48 +178,44 @@ export async function createMenu(mainData) {
             componentOptionsContentHTML = `<div class="option_settings" data-color="${getData(mainData, mainData[i][0], `DATA-COLOR`)}"></div>`;
           }
 
-          
+
           if (getData(mainData, mainData[i][0], `UI_IMG`) !== 'null' &&
-          getData(mainData, mainData[i][0], `UI_IMG`) !== 'info' &&
-          getData(mainData, mainData[i][0], `UI_IMG`)?.substring(0, 1) !== '#') {
+            getData(mainData, mainData[i][0], `UI_IMG`)?.substring(0, 1) !== '#') {
             const imgLink = `./src/images/${getData(mainData, mainData[i][0], `UI_IMG`)}`;
             optImageHTML = `
-            <div class="image">
-              <img src="${imgLink}">
-              <div id="loupe-${groupId}_${optionId}" class="image-loupe" data-option="option_${groupId}-${optionId}">
-                <img src="./src/ar-ui-icons/default/loupe.png" alt="loupe">
+              <div class="image">
+                <img src="${imgLink}">
               </div>
-            </div>
             `;
           } else if (getData(mainData, mainData[i][0], `UI_IMG`).substring(0, 1) === '#') {
             optImageHTML = `
             <div class="image">
               <div class="image-color" style="background-color: ${getData(mainData, mainData[i][0], `UI_IMG`)};"></div>
-              <div id="loupe-${groupId}_${optionId}" class="image-loupe" data-option="option_${groupId}-${optionId}">
-                <img src="./src/ar-ui-icons/default/loupe.png" alt="loupe">
-              </div>
-            </div>`;
-          } else if (getData(mainData, mainData[i][0], `UI_IMG`) === 'info') {
-            optImageHTML = `
-            <div id="loupe-${groupId}_${optionId}" class="image-info" data-group="${dataGroup}" data-option="option_${groupId}-${optionId}">
-            <img src="./src/ar-ui-icons/default/info.png" alt="info">
             </div>`;
           }
 
-          const isExist = (getData(mainData, mainData[i][0], `EXIST`)?.toUpperCase() == 'NO') 
-          ? 'disabled_always' : '';
-          
+          optInfoHTML = `<div id="menu_item_info-${groupId}_${optionId}" class="image-info" data-group="group-${groupId}" data-option="option_${groupId}-${optionId}"></div>`;
+
+          const isExist = (getData(mainData, mainData[i][0], `EXIST`)?.toUpperCase() == 'NO')
+            ? 'disabled_always' : '';
+
           const priceValue = (IS_PRICE_SIMPLE) ? parseNumber(getData(mainData, mainData[i][0], 'PRICE')) : 0;
 
           const optionHTML = `
-            <div class="option option_${groupId}-${optionId} ${isExist}" data-group_id="${groupId}" data-component_id="${optionId}"
-              data-price="${priceValue}">
-              ${descrHTML}
-              ${optImageHTML}
-              <div class="component_options" id="options_${groupId}_${optionId}">
-                ${componentOptionsContentHTML}
+            <div class="option option_${groupId}-${optionId} ${isExist}" data-group_id="${groupId}" data-component_id="${optionId}" data-price="${priceValue}">
+              <div class="option__content">
+                <div class="option__status_icon"></div>
+                ${descrHTML}
+                ${optImageHTML}
+              
+                <div class="component_options" id="options_${groupId}_${optionId}">
+                  ${componentOptionsContentHTML}
+                </div>
+
+                <div class="component_title">${getData(mainData, mainData[i][0], currentLanguage)}</div>
               </div>
-              <div class="component_title">${getData(mainData, mainData[i][0], currentLanguage)}</div>
+
+              ${optInfoHTML}
             </div>
           `;
 
@@ -245,11 +246,16 @@ export async function createMenu(mainData) {
           }
         }
       }
-      
+
       // menuHider();
       if (gui_mode) { $('#ar_model_viewer').append($('<div id="gui-container"></div>')); }
 
-      console.log("🚀 ~ uiMultiLanguages:", uiMultiLanguages);
+      setEventListenersForMenuItems();
+
+      $('.ar_button_back').on('click', function () {
+        $('.ar_filter').removeClass('active');
+      });
+      
       resolve();
     });
   });
@@ -263,20 +269,21 @@ function updateUIlanguages(mainData) {
   }
 }
 
-function menuHider() {
-  const tblHiderContainer = $('.ar_conf_container .tbl-window-btn-hider');
-  const modelViewerElement = $('.ar_conf_container .ar_model_viewer');
-  const summaryElement = $('.ar_conf_container .summary_container');
+function setEventListenersForMenuItems() {
+  $('.title_list__item').on('click', function () {
+    const itemId = $(this).attr('id');
+    const identifier = itemId.split('title_list__item_')[1];
 
-  tblHiderContainer.on('click', function () {
-    modelViewerElement.toggleClass('wide');
-    summaryElement.animate({ width: 'toggle' }, 150);
+    $('.ar_filter .ar_filter_group').addClass('disabled');
+    $(`#group-${identifier}`).removeClass('disabled');
+    $('.ar_filter').addClass('active');
   });
 }
 
+
 //#region CSV READING FUNCTIONS
 
-export function setLoadParseCSV(link, fileType, output, callback = () => {}) {
+export function setLoadParseCSV(link, fileType, output, callback = () => { }) {
   const request = new XMLHttpRequest();
   request.open('GET', link, true);
   request.send(null);
@@ -292,15 +299,15 @@ export function setLoadParseCSV(link, fileType, output, callback = () => {}) {
 
 export function parseCSV(text, output, callback) {
   const lines = text.split('\n');
-  
+
   lines.forEach((line) => {
     line = line.trim();
-    
+
     if (line.length === 0) return;
-    
+
     const skipIndexes = {};
     const columns = line.split(',');
-    
+
     output.push(
       columns.reduce((result, item, index) => {
         if (skipIndexes[index]) return result;
@@ -311,18 +318,18 @@ export function parseCSV(text, output, callback) {
             item += `,${columns[index]}`;
             skipIndexes[index] = true;
           }
-          
+
           index++;
           skipIndexes[index] = true;
           item += `,${columns[index]}`;
         }
-        
+
         result.push(item);
         return result;
       }, []),
     );
   });
-  
+
   console.log("🚀 ~ parseCSV ~ output:", output);
   callback();
 }
@@ -332,7 +339,7 @@ export function getData(data, text, desiredId, titleId = 'id') {
     (title) => title?.toUpperCase() === titleId?.toUpperCase(),
   );
 
-  if (titleIdInd === -1) { 
+  if (titleIdInd === -1) {
     titleIdInd = 0;
   }
 
