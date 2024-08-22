@@ -473,12 +473,14 @@ body, html {
   width: var(--marevo-menu-max-width, 500px);
   margin: 0;
   padding: 0;
+  position: relative;
 }
 
 .summary_wrapper {
   flex-grow: 1;
   overflow: auto;
   background-color: var(--marevo-color-bgrd-menu, #fff);
+  z-index: 3;
 }
 
 .summary.entry-summary {
@@ -488,30 +490,6 @@ body, html {
   transition: all .3s;
   user-select: none;
 }
-
-/* .summary.entry-summary .product_title.entry-title {
-  display: block;
-  font-size: 28px;
-  line-height: 36px;
-  margin: 0;
-  padding: 0;
-  margin-block-start: 0;
-  margin-block-end: 0;
-  margin-inline-start: 0;
-  margin-inline-end: 0;
-  font-weight: bold;
-
-  margin-bottom: 12px;
-} */
-
-/* .summary.entry-summary .product_description {
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 22px;
-
-  margin-bottom: 40px;
-  text-align: justify;
-} */
 
 /*!------------------------------------*/
 
@@ -596,6 +574,10 @@ body, html {
 
 .ar_filter.active {
   transform: translateX(0);
+}
+
+.ar_filter_group {
+  width: 100%;
 }
 
 .ar_filter .ar_filter_group .ar_filter_header {
@@ -808,6 +790,134 @@ body, html {
 
 /*!------------------------------------*/
 
+.ar_menu_info_container {
+  position: absolute;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 30px;
+  background-color: var(--marevo-color-bgrd-menu, #fff);
+  overflow-y: auto;
+  border-left: 1px solid var(--marevo-color-popup-border);
+  border-right: 1px solid var(--marevo-color-popup-border);
+  z-index: 2;
+  transform: translateX(0);
+  transition: transform .3s ease;
+}
+
+.ar_menu_info_container.active {
+  transform: translateX(100%);
+}
+
+.ar_menu_info__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  width: 100%;
+}
+
+.ar_menu_info__header_title {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.ar_menu_info__header_close {
+  content: var(--marevo-ui-icon_popup_close);
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.ar_menu_info__tabs {
+  display: flex;
+  margin-bottom: 40px;
+}
+
+.ar_menu_info_tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-width: 150px;
+  height: 56px;
+  padding: 0 28px;
+  margin-right: 10px;
+  background-color: var(--marevo-color-bgrd-btn, #fff);
+  border: 1px solid var(--marevo-color-text-black, #000000);
+  border-radius: 50px;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.ar_menu_info_tab.active {
+  color: var(--marevo-color-text-white, #fff);
+  background-color: var(--marevo-color-bgrd-btn-order, #333);
+  cursor: auto;
+  pointer-events: none;
+}
+
+.ar_menu_info_tab.disabled {
+  background-color: rgb(247, 247, 247);
+  color: rgb(168, 168, 168);
+  border: 1px solid rgb(180, 180, 180);
+  cursor: auto;
+  pointer-events: none;
+}
+
+.ar_menu_info_tab:hover {
+  box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
+}
+
+.ar_menu_info_content__container {
+  display: flex;
+  position: relative;
+}
+
+.ar_menu_info_content__wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.ar_menu_info__content {
+  display: none;
+  width: 100%;
+}
+
+.ar_menu_info__content.active {
+  display: block;
+}
+
+.ar_menu_info_content__image {
+  width: 100%;
+  height: 180px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 10px;
+  margin-bottom: 40px;
+}
+
+.ar_menu_info_content__image img {
+  width: 100%;
+  object-fit: fill;
+  border-radius: 10px;
+  display: block;
+}
+
+.ar_menu_info_content__text {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--marevo-color-text-gray, #7d7d7d);
+}
+
+
+
+/*!------------------------------------*/
+
 .ar_menu_footer_container {
   display: flex;
   flex-direction: column;
@@ -815,6 +925,7 @@ body, html {
   position: relative;
   padding: 30px;
   background-color: var(--marevo-color-bgrd-menu, #fff);
+  z-index: 3;
 }
 
 .ar_menu_footer_container .ar_total_amount-price {
@@ -896,9 +1007,6 @@ body, html {
   margin-bottom: 20px;
 }
 
-
-
-
 .ar_price {
   content: 'Subtootal';
   color: var(--colors-black, #333);
@@ -942,6 +1050,8 @@ body, html {
 .ar_filter .ar_filter_group .ar_filter_group_toggle.invisible {
   transform: rotateX(0);
 }
+
+
 
 
 

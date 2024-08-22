@@ -712,21 +712,7 @@ function SetActionForGroups() {
             }
           });
 
-          $(opt.element).find('.image-info').on('click', function (event) {
-            console.log("🚀 ~ loupeTitle");
-            event.stopPropagation();
-
-            let loupeImage;
-            const loupeTitle = getData(mainData, $(this).attr('data-option'), currentLanguage);
-            let loupeDescription = getData(mainData, $(this).attr('data-option'), `DESC_${currentLanguage}`);
-            
-            if (loupeDescription[0] === '"') {
-              loupeDescription = loupeDescription.slice(1, -1);
-            }
-
-            loupeImage = '';
-            loupePopup(loupeTitle, loupeDescription, loupeImage);
-          });
+          menuInfoBtnHandler(opt);
         }
         break;
 
@@ -769,21 +755,7 @@ function SetActionForGroups() {
             //You can do something here...
           });
 
-          $(opt.element).find('.image-info').on('click', function (event) {
-            console.log("🚀 ~ loupeTitle");
-            event.stopPropagation();
-
-            let loupeImage;
-            const loupeTitle = getData(mainData, $(this).attr('data-option'), currentLanguage);
-            let loupeDescription = getData(mainData, $(this).attr('data-option'), `DESC_${currentLanguage}`);
-            
-            if (loupeDescription[0] === '"') {
-              loupeDescription = loupeDescription.slice(1, -1);
-            }
-
-            loupeImage = '';
-            loupePopup(loupeTitle, loupeDescription, loupeImage);
-          });
+          menuInfoBtnHandler(opt);
         }
         break;
 
@@ -2534,6 +2506,105 @@ async function PrepareUI() {
       currentCurrencySign = CURRENCY_SIGN[currentCurrency] || CURRENCY_SIGN['USD'];
       calculatePrice();
     });
+  });
+}
+
+// *****   MENU-INFO   *****
+function menuInfoBtnHandler(opt) {
+  $(opt.element).find('.image-info').on('click', function (event) {
+    event.stopPropagation();
+
+    // title
+    const infoTitle = getData(mainData, $(this).attr('data-option'), currentLanguage);
+    $('#menu_info_title').html(infoTitle);
+
+    // description image
+    if (getData(mainData, $(this).attr('data-option'), `DESC_IMG`).toLowerCase() !== 'null' &&
+      getData(mainData, $(this).attr('data-option'), `DESC_IMG`) !== '') {
+      const imgLink = `./src/images/info/${getData(mainData, $(this).attr('data-option'), `DESC_IMG`)}`;
+      const descrImageHTML = `
+        <div class="ar_menu_info_content__image">
+          <img src="${imgLink}">
+        </div>
+      `;
+
+      if ($('#menu_info_content_descr .ar_menu_info_content__image').length) {
+        $('#menu_info_content_descr .ar_menu_info_content__image').remove();
+      }
+
+      $('#menu_info_content_descr .ar_menu_info_content__text').before(descrImageHTML);
+    } else {
+      $('#menu_info_content_descr .ar_menu_info_content__image').remove();
+    }
+
+    // description text
+    let descrText = getData(mainData, $(this).attr('data-option'), `DESC_${currentLanguage}`);
+
+    if (descrText !== '' && descrText.toLowerCase() !== 'null') {
+      if (descrText[0] === '"' && descrText[descrText.length - 1] === '"') {
+        descrText = descrText.slice(1, -1);
+      }
+    } else {
+      descrText = '';
+    }
+
+    $('#menu_info_content_descr .ar_menu_info_content__text').html(descrText);
+
+    // specs image
+    if (getData(mainData, $(this).attr('data-option'), `SPECS_IMG`).toLowerCase() !== 'null' &&
+      getData(mainData, $(this).attr('data-option'), `SPECS_IMG`) !== '') {
+      const imgLink = `./src/images/info/${getData(mainData, $(this).attr('data-option'), `SPECS_IMG`)}`;
+      const specsImageHTML = `
+        <div class="ar_menu_info_content__image">
+          <img src="${imgLink}">
+        </div>
+      `;
+    
+      if ($('#menu_info_content_specs .ar_menu_info_content__image').length) {
+        $('#menu_info_content_specs .ar_menu_info_content__image').remove();
+      }
+
+      $('#menu_info_content_specs .ar_menu_info_content__text').before(specsImageHTML);
+    } else {
+      $('#menu_info_content_specs .ar_menu_info_content__image').remove();
+    }
+
+    // specs text
+    let specsText = getData(mainData, $(this).attr('data-option'), `SPECS_${currentLanguage}`);
+
+    if (specsText !== '' && specsText.toLowerCase() !== 'null') {
+      if (specsText[0] === '"' && specsText[specsText.length - 1] === '"') {
+        specsText = specsText.slice(1, -1);
+      }
+    } else {
+      specsText = '';
+    }
+
+    $('#menu_info_content_specs .ar_menu_info_content__text').html(specsText);
+
+    $('#menu_info_tab_descr').click();
+
+    // check the descr content available
+    if ($('#menu_info_content_descr .ar_menu_info_content__text').html() === '' &&
+    $('#menu_info_content_descr .ar_menu_info_content__image').length === 0) {
+      $('#menu_info_tab_specs').click();
+      $('#menu_info_tab_descr').addClass('disabled');
+      $('#menu_info_tab_descr').removeClass('active');
+    } else {
+      $('#menu_info_tab_descr').removeClass('disabled');
+    }
+
+    // check the specs content available
+    if ($('#menu_info_content_specs .ar_menu_info_content__text').html() === '' &&
+    $('#menu_info_content_specs .ar_menu_info_content__image').length === 0) {
+      $('#menu_info_tab_specs').addClass('disabled');
+      $('#menu_info_tab_specs').removeClass('disactiveabled');
+    } else {
+      $('#menu_info_tab_specs').removeClass('disabled');
+    }
+
+    // show menu info
+    $('.ar_menu_info_container').addClass('active');
   });
 }
 

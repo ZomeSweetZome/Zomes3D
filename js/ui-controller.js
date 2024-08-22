@@ -38,6 +38,9 @@ export async function createMenu(mainData) {
       $('#delivery_info_caption').html(`${getData(mainData, 'ui_delivery_info_caption', currentLanguage)}`);
       $('#payment_info_title').html(`${getData(mainData, 'ui_payment_info_title', currentLanguage)}`);
 
+      $('#menu_info_tab_descr').html(`${getData(mainData, 'ui_menu_info_tab_descr', currentLanguage)}`);
+      $('#menu_info_tab_specs').html(`${getData(mainData, 'ui_menu_info_tab_specs', currentLanguage)}`);
+
       uiMultiLanguages.push(
         // { '.product_title.entry-title': 'ui_product_title' },
         // { '.summary .product_description': 'ui_product_descr' },
@@ -52,6 +55,8 @@ export async function createMenu(mainData) {
         { '#delivery_info_caption': 'ui_delivery_info_caption' },
         { '#payment_info_title': 'ui_payment_info_title' },
         { '.ar_button_back__caption': 'ui_btn_back' },
+        { '#menu_info_tab_descr': 'ui_menu_info_tab_descr' },
+        { '#menu_info_tab_specs': 'ui_menu_info_tab_specs' },
       );
 
       const speedUiAnim = 300;
@@ -254,6 +259,30 @@ export async function createMenu(mainData) {
 
       $('.ar_button_back').on('click', function () {
         $('.ar_filter').removeClass('active');
+        $('.ar_menu_info_container').removeClass('active');
+      });
+
+      $('.ar_menu_info__header_close').on('click', function () {
+        $('.ar_menu_info_container').removeClass('active');
+      });
+
+      $('.ar_menu_info_tab').on('click', function () {
+        $('.ar_menu_info_tab').removeClass('active');
+        $(this).addClass('active');
+      });
+      
+      $('#menu_info_tab_descr').on('click', function () {
+        $(this).addClass('active');
+        $('#menu_info_tab_specs').removeClass('active');
+        $('#menu_info_content_specs').removeClass('active');
+        $('#menu_info_content_descr').addClass('active');
+      });
+
+      $('#menu_info_tab_specs').on('click', function () {
+        $(this).addClass('active');
+        $('#menu_info_tab_descr').removeClass('active');
+        $('#menu_info_content_descr').removeClass('active');
+        $('#menu_info_content_specs').addClass('active');
       });
       
       resolve();
