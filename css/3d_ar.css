@@ -409,10 +409,6 @@ body, html {
   margin-right: 0;
 }
 
-.popup-sharing-ico img {
-  content: var(--marevo-ui-icon_popup_btn_share_w);
-}
-
 /*!------------------------------------*/
 
 .ar_conf_container {
@@ -1272,6 +1268,7 @@ body, html {
   align-items: center;
   text-align: center;
   flex-direction: column;
+  width: 100%;
 }
 
 .popup-item.active {
@@ -1314,6 +1311,7 @@ body, html {
 .popup-info-title {
   display: flex;
   justify-content: center;
+  width: 100%;
   font-size: 18px;
   font-weight: 500;
   padding-bottom: 10px;
@@ -1327,23 +1325,22 @@ body, html {
 
 .popup-sharing-window {
   display: flex;
-
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 
 .popup-sharing-window input {
   outline: none;
   width: 100%;
-  height: 52px;
+  height: 48px;
   padding-left: 14px;
   padding-right: 19px;
-  border-radius: 10px 0 0 10px;
-  border: 1px solid #C3C3C3;
-  border-right: 0;
+  border-radius: 50px;
   background: #FFF;
   font-size: 14px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 126.4%;
+  font-weight: 500;
+  border: 1px solid var(--marevo-color-text-black, #000);
 }
 
 .popup-sharing-ico {
@@ -1351,16 +1348,24 @@ body, html {
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  width: 52px;
-  height: 52px;
-  padding: 15px;
-  justify-content: center;
-  align-items: center;
-  border-radius: 10px;
-  background: var(--marevo-color-bgrd-site, #90b189);
-  margin-left: -10px;
-
+  position: relative;
+  height: 48px;
+  padding: 0 28px;
+  border-radius: 50px;
+  margin-left: 10px;
+  background: var(--marevo-color-text-black, #000);
+  
   transition: .3s ease;
+}
+
+.popup-sharing-ico div {
+  content: var(--marevo-ui-icon_popup_btn_share_w);
+  width: 24px;
+  height: 24px;
+}
+
+.popup-sharing-ico:hover {
+  box-shadow: 0 0 8px 2px rgba(0, 0, 0, 0.4);
 }
 
 
