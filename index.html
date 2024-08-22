@@ -13,7 +13,7 @@
   <link rel="shortcut icon" href="" />
   <link rel="stylesheet" href="./css/3d_ar.css" />
   <!-- <link rel="stylesheet" href="./css/zomes_styles.css" /> -->
-  
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
 
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -74,22 +74,22 @@
 
         <div class="summary_container">
           <div class="summary_wrapper">
-              <div class="summary entry-summary hidden">
-                <div class="title_list__container">
-                  <ul id= "title_menu_list" class="title_list">
-                    <!-- 
+            <div class="summary entry-summary hidden">
+              <div class="title_list__container">
+                <ul id="title_menu_list" class="title_list">
+                  <!-- 
                     <li class="title_list__item" id="title_list__item_0">
                       <div class="title_list__item-text">Zome Model</div>
                       <div class="title_list__item-arrow"></div>
                     </li>
                     -->
-                  </ul>
-                </div>
-
-                <div class="ar_filter" id="ar_filter">
-                  <div id="ar_filter_toggle" class="ar_filter_toggle"></div>
-                </div>
+                </ul>
               </div>
+
+              <div class="ar_filter" id="ar_filter">
+                <div id="ar_filter_toggle" class="ar_filter_toggle"></div>
+              </div>
+            </div>
           </div>
 
           <div class="ar_menu_footer_container">
@@ -101,7 +101,7 @@
             <div class="delivery_info_caption" id="delivery_info_caption"></div>
 
             <div class="ar_total_amount-price" id="ar_total_price">$0,00</div>
-            
+
             <div class="menu__footer_payment_info">
               <span id="payment_info_title">+ VAT (if applicable) & shipping</span>
               <div class="menu__footer__info_icon"></div>
@@ -111,7 +111,7 @@
               <div id="ar_button_order__caption" class="ar_button_order__caption">
                 Download a free PDF
               </div>
-              
+
               <div class="ar_button_order__image"></div>
             </div>
           </div>
@@ -195,7 +195,7 @@
               </div>
               <div class="canvas_btn_text canvas_btn_furniture__text">FURNITURE</div>
             </div>
-            
+
             <!-- hidden -->
             <div class="canvas_buttons__radio ">
               <!-- active disabled -->
@@ -222,7 +222,7 @@
               <div class="canvas_btn__image"></div>
               <div class="canvas_btn_text canvas_btn_camera__text">INSIDE</div>
             </div>
-  
+
             <div id="button_camera_outside" class="canvas_btn canvas_btn_camera hidden">
               <div class="canvas_btn__image"></div>
               <div class="canvas_btn_text canvas_btn_camera__text">OUTSIDE</div>
@@ -232,7 +232,7 @@
               <div class="canvas_btn__image"></div>
               <div class="canvas_btn_text canvas_btn_share__text">SHARE</div>
             </div>
-  
+
             <div id="button_ar_qr" class="canvas_btn canvas_btn_ar hidden">
               <div class="canvas_btn__image"></div>
               <div class="canvas_btn_text canvas_btn_ar__text">AR</div>
@@ -253,51 +253,45 @@
 
       <!-- POP-UP -->
       <!-- add class 'active' to show it -->
-      <div class="tbl-info">
-        <div class="tbl-info-box">
+      <div class="popup">
+        <div class="popup-box">
           <!-- add class 'active' to show it -->
-          <div id="tbl-info-item-share" class="tbl-info-item tbl-info-item-share" data-info-window="sharing">
-            <div class="tbl-info-sharing">
-              <div class="tbl-info-sharing-title">Share configuration</div>
+          <div id="popup-item-share" class="popup-item popup-item-share" data-info-window="sharing">
+            <div class="popup-sharing-title">SHARE CONFIGURATION</div>
 
-              <div class="tbl-info-sharing-window">
-                <input id="info-sharing-input" type="text" value="">
+            <div class="popup-sharing-window">
+              <input id="info-sharing-input" type="text" value="">
 
-                <div class="tbl-info-sharing-ico">
-                  <img src="" alt="s">
-                </div>
+              <div class="popup-sharing-ico">
+                <img src="" alt="s">
               </div>
             </div>
           </div>
 
           <!-- add class 'active' to show it -->
-          <div id="tbl-info-item-qr" class="tbl-info-item tbl-info-item-qr" data-info-window="qr">
-            <div class="tbl-qr">
-              <div id="tbl-qr-title-ui" class="tbl-qr-title"></div>
-              <div id="tbl-qr-text-ui" class="tbl-qr-text"></div>
-              <div class="tbl-qr-img">
-                <div id="qrcode"></div>
-              </div>
+          <div id="popup-item-qr" class="popup-item popup-item-qr" data-info-window="qr">
+            <div id="popup-qr-title-ui" class="popup-qr-title">SCAN QR CODE</div>
+            <div id="popup-qr-text-ui" class="popup-qr-text"></div>
+            <div class="popup-qr-img">
+              <div id="qrcode"></div>
             </div>
           </div>
 
           <!-- add class 'active' to show it -->
-          <div id="tbl-info-item-loupe" class="tbl-info-item tbl-info-item-loupe" data-info-window="loupe">
-            <div class="tbl-loupe">
-              <div id="tbl-loupe-title-ui" class="tbl-loupe-title"></div>
-              <div id="tbl-loupe-text-ui" class="tbl-loupe-text"></div>
-              <div class="tbl-loupe-img">
-                <img src="" alt="loupe">
+          <div id="popup-item-info" class="popup-item popup-item-info" data-info-window="loupe">
+            <div class="popup-info">
+              <div id="popup-info-title-ui" class="popup-info-title">INFO</div>
+              <div id="popup-info-text-ui" class="popup-info-text"></div>
+              <div class="popup-info-img">
+                <img src="" alt="info">
               </div>
             </div>
           </div>
 
-          <div class="tbl-info-close">
-            <img src="" alt="x">
-          </div>
+          <div class="popup-close"></div>
         </div>
 
-        <div class="tbl-info-overlay"></div>
+        <div class="popup-overlay"></div>
       </div>
     </div>
   </div>

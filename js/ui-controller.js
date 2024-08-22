@@ -36,9 +36,9 @@ export async function createMenu(mainData) {
         { '#button_work .canvas_btn_text': 'ui_btn_radio_work' },
         { '#button_live .canvas_btn_text': 'ui_btn_radio_live' },
         { '#ar_button_order__caption': 'ui_btn_buy' },
-        { '.tbl-info-sharing-title': 'ui_popup-title-share' },
-        { '#tbl-qr-title-ui': 'ui_popup-title-qr' },
-        { '#tbl-qr-text-ui': 'ui_popup-text-qr' },
+        { '.popup-sharing-title': 'ui_popup-title-share' },
+        { '#popup-qr-title-ui': 'ui_popup-title-qr' },
+        { '#popup-qr-text-ui': 'ui_popup-text-qr' },
         { '#delivery_info_title': 'ui_delivery_info_title' },
         { '#delivery_info_caption': 'ui_delivery_info_caption' },
         { '#payment_info_title': 'ui_payment_info_title' },
@@ -282,7 +282,19 @@ export async function createMenu(mainData) {
 function updateUIlanguages(mainData, lang = currentLanguage) {
   for (let i = 0; i < uiMultiLanguages.length; i++) {
     for (let key in uiMultiLanguages[i]) {
-      $(key).html(getData(mainData, uiMultiLanguages[i][key], lang));
+      let contentText = getData(mainData, uiMultiLanguages[i][key], lang);
+      
+      if (!contentText) continue;
+
+      if (contentText !== '' && contentText?.toLowerCase() !== 'null') {
+        if (contentText[0] === '"' && contentText[contentText.length - 1] === '"') {
+          contentText = contentText.slice(1, -1);
+        }
+      } else {
+        contentText = '';
+      }
+      
+      $(key).html(contentText);
     }
   }
 }

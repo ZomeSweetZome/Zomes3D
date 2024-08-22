@@ -73,10 +73,10 @@ let loaded = false;
 let paramsLoaded = false;
 let isFirstStart = true;
 
-let tblInfo;
-let tblInfoItemQr;
-let tblInfoItemSharing;
-let tblInfoItemLoupe;
+let popup;
+let popupItemQr;
+let popupItemSharing;
+let popupItemLoupe;
 
 let modelViewer;
 let qrcode;
@@ -2120,10 +2120,13 @@ function OpenARorQR() {
 
   CreateQR();
 
-  tblInfo.toggleClass('active');
-  tblInfoItemQr.toggleClass('active');
-  tblInfoItemSharing.removeClass('active');
-  tblInfoItemLoupe.removeClass('active');
+  popup.toggleClass('active');
+  popup.addClass('arqr');
+  popup.removeClass('share');
+  popup.removeClass('info');
+  popupItemQr.toggleClass('active');
+  popupItemSharing.removeClass('active');
+  popupItemLoupe.removeClass('active');
 }
 
 //IMPORT
@@ -2436,57 +2439,66 @@ async function PrepareUI() {
 
   // *****   POP-UPs   *****
   jQuery(document).ready(function ($) {
-    const tblWindowArBtnCanvas = $('#button_ar_qr'); // button AR on the canvas
-    const tblWindowShareBtnCanvas = $('#button_share_url'); // button SHARE on the canvas
+    const canvasBtnAR = $('#button_ar_qr');
+    const canvasBtnShare = $('#button_share_url');
     
-    tblWindowArBtnCanvas.removeClass('hidden');
+    canvasBtnAR.removeClass('hidden');
 
-    tblInfo = $('.tbl-info');
-    tblInfoItemSharing = $('#tbl-info-item-share');
-    tblInfoItemQr = $('#tbl-info-item-qr');
-    tblInfoItemLoupe = $('#tbl-info-item-loupe');
+    popup = $('.popup');
+    popupItemSharing = $('#popup-item-share');
+    popupItemQr = $('#popup-item-qr');
+    popupItemLoupe = $('#popup-item-info');
     qrcode = $('#qrcode');
 
-    const tblInfoSharingIco = $('.tbl-info-sharing-ico');
+    const popupSharingIco = $('.popup-sharing-ico');
     const infoSharingInput = $('#info-sharing-input');
-    const tblInfoClose = $('.tbl-info-close');
-    const tblInfoOverlay = $('.tbl-info-overlay');
+    const popupClose = $('.popup-close');
+    const popupOverlay = $('.popup-overlay');
 
-    tblInfoSharingIco.on('click', function () {
+    popupSharingIco.on('click', function () {
       copyToClipboard(infoSharingInput[0]);
     });
 
-    tblInfoClose.on('click', function () {
-      tblInfo?.removeClass('active');
-      tblInfoItemQr?.removeClass('active');
-      tblInfoItemSharing?.removeClass('active');
-      tblInfoItemLoupe?.removeClass('active');
+    popupClose.on('click', function () {
+      popup?.removeClass('active');
+      popup?.removeClass('share');
+      popup?.removeClass('arqr');
+      popup?.removeClass('info');
+      popupItemQr?.removeClass('active');
+      popupItemSharing?.removeClass('active');
+      popupItemLoupe?.removeClass('active');
 
       document.documentElement.classList.remove('popup-open');
     });
 
-    tblInfoOverlay.on('click', function () {
-      tblInfo?.removeClass('active');
-      tblInfoItemQr?.removeClass('active');
-      tblInfoItemSharing?.removeClass('active');
-      tblInfoItemLoupe?.removeClass('active');
+    popupOverlay.on('click', function () {
+      popup?.removeClass('active');
+      popup?.removeClass('share');
+      popup?.removeClass('arqr');
+      popup?.removeClass('info');
+      popupItemQr?.removeClass('active');
+      popupItemSharing?.removeClass('active');
+      popupItemLoupe?.removeClass('active');
 
       document.documentElement.classList.remove('popup-open');
     });
 
-    tblWindowShareBtnCanvas?.on('click', function () {
+    canvasBtnShare?.on('click', function () {
       sharingHandler();
     });
 
-    tblWindowArBtnCanvas.on('click', function () {
+    canvasBtnAR.on('click', function () {
       OpenARorQR();
     });
 
     const sharingHandler = () => {
-      tblInfo.toggleClass('active');
-      tblInfoItemSharing.toggleClass('active');
-      tblInfoItemQr.removeClass('active');
-      tblInfoItemLoupe.removeClass('active');
+      popup.toggleClass('active');
+      popup.removeClass('arqr');
+      popup.addClass('share');
+      popup.removeClass('info');
+      popupItemSharing.toggleClass('active');
+      popupItemQr.removeClass('active');
+      popupItemLoupe.removeClass('active');
 
       document.documentElement.classList.add('popup-open');
       
@@ -2627,27 +2639,30 @@ function summaryItemVisibility(groupId, value) {
   }
 }
 
-function loupePopup(loupeTitle, loupeDescription, loupeImage) {
-  $('#tbl-loupe-title-ui').html(loupeTitle);
-  $('#tbl-loupe-text-ui').html(loupeDescription);
+function infoPopup(infoPopupTitle, infoPopupDescription, infoPopupImage) {
+  $('#popup-info-title-ui').html(infoPopupTitle);
+  $('#popup-info-text-ui').html(infoPopupDescription);
 
-  if (!loupeImage) {
-    $('.tbl-loupe-img').css('display', 'none');
+  if (!infoPopupImage) {
+    $('.popup-info-img').css('display', 'none');
   } else {
-    $('.tbl-loupe-img').css('display', 'block');
+    $('.popup-info-img').css('display', 'block');
 
-    if (loupeImage.substring(0, 1) === '#') {
-      $('.tbl-loupe-img img').remove();
-      $('.tbl-loupe-img').css('background-color', loupeImage);
+    if (infoPopupImage.substring(0, 1) === '#') {
+      $('.popup-info-img img').remove();
+      $('.popup-info-img').css('background-color', infoPopupImage);
     } else {
-      $('.tbl-loupe-img img').attr('src', loupeImage);
+      $('.popup-info-img img').attr('src', infoPopupImage);
     }
   }
 
-  tblInfo.toggleClass('active');
-  tblInfoItemSharing.removeClass('active');
-  tblInfoItemQr.removeClass('active');
-  tblInfoItemLoupe.toggleClass('active');
+  popup.toggleClass('active');
+  popup.removeClass('arqr');
+  popup.removeClass('share');
+  popup.addClass('info');
+  popupItemSharing.removeClass('active');
+  popupItemQr.removeClass('active');
+  popupItemLoupe.toggleClass('active');
 
   document.documentElement.classList.add('popup-open');
 }
