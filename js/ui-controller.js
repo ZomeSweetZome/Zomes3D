@@ -45,6 +45,7 @@ export async function createMenu(mainData) {
         { '.ar_button_back__caption': 'ui_btn_back' },
         { '#menu_info_tab_descr': 'ui_menu_info_tab_descr' },
         { '#menu_info_tab_specs': 'ui_menu_info_tab_specs' },
+        { '.canvas_notification': 'ui_canvas_notification' },
       );
 
       const speedUiAnim = 300;
