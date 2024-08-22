@@ -32,7 +32,6 @@
   --marevo-color-bgrd-canvas: #f3f3f3;
   /* --marevo-color-bgrd-canvas: #fff; */
   
-  --marevo-ui-icon_furniture : url(../src/ar-ui-icons/icon_furniture.svg);
   --marevo-ui-icon_go_inside : url(../src/ar-ui-icons/icon_go_inside.svg);
   --marevo-ui-icon_go_outside : url(../src/ar-ui-icons/icon_go_outside.svg);
   --marevo-ui-icon_instagram : url(../src/ar-ui-icons/icon_instagram.svg);
@@ -52,12 +51,19 @@
   --marevo-ui-icon_checkbox_on : url(../src/ar-ui-icons/icon_checkbox_on.svg);
   --marevo-ui-icon_popup_close : url(../src/ar-ui-icons/icon_popup_close.svg);
   --marevo-ui-icon_popup_btn_share_w : url(../src/ar-ui-icons/icon_popup_btn_share_w.svg);
-  --marevo-ui-icon_annotations : url(../src/ar-ui-icons/icon_annotations.svg);
+  --marevo-ui-icon_annotations_b : url(../src/ar-ui-icons/icon_annotations_b.svg);
+  --marevo-ui-icon_annotations_w : url(../src/ar-ui-icons/icon_annotations_w.svg);
+  --marevo-ui-icon_annotations_g : url(../src/ar-ui-icons/icon_annotations_g.svg);
+  --marevo-ui-icon_dimensions_b : url(../src/ar-ui-icons/icon_dimensions_b.svg);
+  --marevo-ui-icon_dimensions_w : url(../src/ar-ui-icons/icon_dimensions_w.svg);
+  --marevo-ui-icon_dimensions_g : url(../src/ar-ui-icons/icon_dimensions_g.svg);
+  --marevo-ui-icon_furniture_b : url(../src/ar-ui-icons/icon_furniture_b.svg);
+  --marevo-ui-icon_furniture_w : url(../src/ar-ui-icons/icon_furniture_w.svg);
+  --marevo-ui-icon_furniture_g : url(../src/ar-ui-icons/icon_furniture_g.svg);
   --marevo-ui-icon_ar : url(../src/ar-ui-icons/icon_ar.svg);
   --marevo-ui-icon_arrow_up45 : url(../src/ar-ui-icons/icon_arrow_up45.svg);
   --marevo-ui-icon_btn_download_down_w : url(../src/ar-ui-icons/icon_btn_download_down_w.svg);
   --marevo-ui-icon_btn_download_right_w : url(../src/ar-ui-icons/icon_btn_download_right_w.svg);
-  --marevo-ui-icon_dimensions : url(../src/ar-ui-icons/icon_dimensions.svg);
   --marevo-ui-icon_email : url(../src/ar-ui-icons/icon_email.svg);
   --marevo-ui-icon_facebook : url(../src/ar-ui-icons/icon_facebook.svg);
 
@@ -1142,10 +1148,23 @@ body, html {
   border: 1px solid var(--marevo-color-text-black, #000000);
   border-radius:20px;
   margin-right: 6px;
+  transition: all .3s ease;
 }
 
 .canvas_btn_top:hover .canvas_btn_top__image {
   box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.4);
+}
+
+.canvas_btn_top.disabled .canvas_btn_top__image {
+  border: 1px solid var(--marevo-color-disabled);
+}
+
+.canvas_btn_top.disabled .canvas_btn_text {
+  color: var(--marevo-color-disabled);
+}
+
+.canvas_btn_top.active .canvas_btn_top__image {
+  background-color: var(--marevo-color-text-black, #000000);
 }
 
 .canvas_btn__icon {
@@ -1153,17 +1172,89 @@ body, html {
   height: 18px;
 }
 
-#button_annotation .canvas_btn__icon {
-  content: var(--marevo-ui-icon_annotations);
+.canvas_btn_annotation .canvas_btn__icon {
+  content: var(--marevo-ui-icon_annotations_b);
 }
 
-#button_dimensions .canvas_btn__icon {
-  content: var(--marevo-ui-icon_dimensions);
+.canvas_btn_dimensions .canvas_btn__icon {
+  content: var(--marevo-ui-icon_dimensions_b);
 }
 
-#button_furniture .canvas_btn__icon {
-  content: var(--marevo-ui-icon_furniture);
+.canvas_btn_furniture .canvas_btn__icon {
+  content: var(--marevo-ui-icon_furniture_b);
 }
+
+.canvas_btn_annotation.active .canvas_btn_top__image .canvas_btn__icon {
+  content: var(--marevo-ui-icon_annotations_w);
+}
+
+.canvas_btn_dimensions.active .canvas_btn_top__image .canvas_btn__icon {
+  content: var(--marevo-ui-icon_dimensions_w);
+}
+
+.canvas_btn_furniture.active .canvas_btn_top__image .canvas_btn__icon {
+  content: var(--marevo-ui-icon_furniture_w);
+}
+
+.canvas_btn_annotation.disabled .canvas_btn_top__image .canvas_btn__icon {
+  content: var(--marevo-ui-icon_annotations_g);
+}
+
+.canvas_btn_dimensions.disabled .canvas_btn_top__image .canvas_btn__icon {
+  content: var(--marevo-ui-icon_dimensions_g);
+}
+
+.canvas_btn_furniture.disabled .canvas_btn_top__image .canvas_btn__icon {
+  content: var(--marevo-ui-icon_furniture_g);
+}
+
+/*!---------------*/
+
+.canvas_buttons__radio {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.canvas_btn_radio {
+  display: flex;
+  position: relative;
+  justify-content: start;
+  align-items: center;
+  text-align: center;
+  height: 20px;
+  cursor: pointer;
+  transition: .3s ease;
+}
+
+.canvas_btn_radio__image {
+  width: 20px;
+  height: 20px;
+  margin-right: 6px;
+  border-radius: 10px;
+  background-color: var(--marevo-color-bgrd-canvas, #fff);
+}
+
+.canvas_btn_radio.disabled .canvas_btn_text {
+  color: var(--marevo-color-disabled);
+}
+
+.canvas_btn_radio .canvas_btn_radio__image {
+  content: var(--marevo-ui-icon_radio_off);
+}
+
+.canvas_btn_radio.active .canvas_btn_radio__image {
+  content: var(--marevo-ui-icon_radio_on);
+}
+
+.canvas_btn_radio.disabled .canvas_btn_radio__image {
+  content: var(--marevo-ui-icon_radio_off_disabled);
+}
+
+.canvas_btn_radio.active.disabled .canvas_btn_radio__image {
+  content: var(--marevo-ui-icon_radio_on_disabled);
+}
+
 
 /*!------------------------------------*/
 

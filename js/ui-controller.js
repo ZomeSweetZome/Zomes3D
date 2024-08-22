@@ -29,11 +29,12 @@ export async function createMenu(mainData) {
         { '#button_share_url .canvas_btn_text': 'ui_btn_share' },
         { '#button_camera_inside .canvas_btn_text': 'ui_btn_camera_inside' },
         { '#button_camera_outside .canvas_btn_text': 'ui_btn_camera_outside' },
-        
         { '#button_annotation .canvas_btn_text': 'ui_btn_annotations' },
         { '#button_dimensions .canvas_btn_text': 'ui_btn_dimensions' },
         { '#button_furniture .canvas_btn_text': 'ui_btn_furniture' },
-
+        { '#button_sleep .canvas_btn_text': 'ui_btn_radio_sleep' },
+        { '#button_work .canvas_btn_text': 'ui_btn_radio_work' },
+        { '#button_live .canvas_btn_text': 'ui_btn_radio_live' },
         { '#ar_button_order__caption': 'ui_btn_buy' },
         { '.tbl-info-sharing-title': 'ui_popup-title-share' },
         { '#tbl-qr-title-ui': 'ui_popup-title-qr' },
