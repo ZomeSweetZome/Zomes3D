@@ -91,6 +91,7 @@ body, html {
   overflow-x: hidden;
   margin: 0;
   padding: 0;
+  font-family: "Satoshi", sans-serif;
 }
 
 #marevo_app .hidden {
@@ -120,7 +121,6 @@ body, html {
 }
 
 #marevo_app * {
-  font-family: "Satoshi", sans-serif;
   box-sizing: border-box;
 }
 
@@ -214,19 +214,23 @@ body, html {
   width: 50px;
 }
 
+.select-wrapper.currency-picker {
+  margin-right: 6px;
+}
+
 .select-wrapper.language-picker {
   width: 60px;
 }
 
-#external-link a {
-  display: inline-block;
+#marevo_app #external-link a {
+  display: inline-flex;
   vertical-align: middle;
   text-align: center;
   align-self: center;
   color: var(--marevo-color-text-black, #000);
   text-decoration: none;
   font-family: "Inter", sans-serif;
-  font-weight: normal;
+  font-weight: 400;
   font-size: 16px;
 }
 
@@ -242,9 +246,9 @@ body, html {
   display: inline-block;
   text-align: center;
   content: var(--marevo-ui-icon_arrow_up45);
-  width: 20px;
-  height: 20px;
-  margin-left: 10px;
+  width: 28px;
+  height: 28px;
+  margin-left: 3px;
 }
 
 .social-media__wrapper {
@@ -295,10 +299,11 @@ body, html {
   width: 100% !important;
   font-family: "Inter", sans-serif !important;
   font-size: 16px !important;
+  font-weight: 400 !important;
 }
 
 .select2-dropdown {
-  width: 60px !important;
+  width: 62px !important;
   border: 1px solid var(--marevo-color-popup-border, #ECECEF) !important;
   border-radius: 10px !important;
   margin-top: 10px;
@@ -306,6 +311,7 @@ body, html {
 
 .select2-container--default .select2-results>.select2-results__options {
   border-radius: 10px !important;
+  /* padding: 10px !important; */
 }
 
 .select2-container--default .select2-selection--single .select2-selection__arrow {
@@ -313,8 +319,9 @@ body, html {
   background-repeat: no-repeat;
   background-position: center center;
   background-size: contain;
-  width: 24px;
-  height: 24px;
+  width: 24px !important;
+  height: 28px !important;
+  right: 4px !important;
   transition: transform 0.3s ease;
 }
 
@@ -336,6 +343,15 @@ body, html {
   /* background-color: var(--marevo-color-text-lightgray, #d4d4d4) !important; */
   background-color: white !important;
   color: black !important;
+}
+
+.select2-results__option {
+  padding: 6px 12px !important;
+}
+
+.select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+  background-color: var(--marevo-color-text-black, #000) !important;
+  color: var(--marevo-color-text-white, #fff) !important;
 }
 
 /*!------------------------------------*/
