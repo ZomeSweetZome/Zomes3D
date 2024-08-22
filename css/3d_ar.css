@@ -87,7 +87,7 @@ body, html {
   padding: 0;
 }
 
-.hidden {
+#marevo_app .hidden {
   display: none;
 }
 
@@ -413,18 +413,6 @@ body, html {
 
 #tbl-instr-icons-img-3 {
   /* content: url("../src/ar-ui-icons/scroll.svg"); */
-}
-
-#tbl-window-btn-icon-ar-img {
-  content: var(--marevo-ui-icon_ar);
-}
-
-#tbl-window-btn-icon-share-img {
-  content: var(--marevo-ui-icon_share);
-}
-
-.tbl-window-btn-hider img {
-  content: var(--marevo-ui-icon-fullscreen);
 }
 
 .tbl-info-sharing-ico img {
@@ -1052,55 +1040,132 @@ body, html {
 }
 
 
+/*!------------------------------------*/
 
-
-
-.tbl-window-btn {
-  position: absolute;
+.canvas_buttons__bottom {
   display: flex;
-  cursor: pointer;
+  position: absolute;
+  flex-wrap: wrap;
+  justify-content: center;
+  left: 0;
+  right: 0;
+  bottom: 30px;
+  gap: 10px 40px;
+  margin: 0 20px;
+  z-index: 1;
+}
+
+.canvas_btn {
+  display: flex;
+  position: relative;
   justify-content: center;
   align-items: center;
-  bottom: 32px;
-  width: 44px;
-  height: 44px;
-  border: 1px solid var(--marevo-color-lines, #000000);
-  border-radius: 56px;
-  z-index: 1;
+  text-align: center;
+  height: 36px;
+  min-width: 142px;
+  padding: 0 16px;
+  background-color: var(--marevo-color-bgrd-menu, #fff);
+  border: 1px solid var(--marevo-color-text-black, #000000);
+  border-radius:20px;
+  cursor: pointer;
   transition: .3s ease;
 }
 
-.tbl-window-btn:hover {
-  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.3);
+.canvas_btn:hover {
+  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.4);
 }
 
-.tbl-window-btn-ar {
-  width: 183px;
-  left: 50%;
-  transform: translateX(-50%);
-  justify-content: space-between;
+.canvas_btn_text {
+  color: var(--marevo-color-text-black, #000000);
+  font-size: 14px;
+  font-weight: 500;
 }
 
-.tbl-window-btn-text {
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 18px;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  margin-right: 20px;
+.canvas_btn__image {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
 }
 
-.tbl-window-btn-icon-ar {
-  margin-left: 20px;
+#button_camera_inside .canvas_btn__image {
+  content: var(--marevo-ui-icon_go_inside);
 }
 
-.tbl-window-btn-share {
-  right: 76px;
+#button_camera_outside .canvas_btn__image {
+  content: var(--marevo-ui-icon_go_outside);
+  width: 21.5px;
 }
 
-.tbl-window-btn-hider {
-  right: 24px;
+#button_ar_qr .canvas_btn__image {
+  content: var(--marevo-ui-icon_ar);
+  width: 16px;
+  height: 16px;
+  margin-right: 10px;
 }
+
+#button_share_url .canvas_btn__image {
+  content: var(--marevo-ui-icon_share);
+}
+
+/*!---------------*/
+
+.canvas_buttons__top {
+  display: flex;
+  position: absolute;
+  flex-direction: column;
+  justify-content: center;
+  right: 30px;
+  top: 30px;
+  gap: 10px;
+  z-index: 1;
+}
+
+.canvas_btn_top {
+  display: flex;
+  position: relative;
+  justify-content: start;
+  align-items: center;
+  text-align: center;
+  height: 36px;
+  cursor: pointer;
+  transition: .3s ease;
+}
+
+.canvas_btn_top__image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 40px;
+  height: 30px;
+  background-color: var(--marevo-color-bgrd-menu, #fff);
+  border: 1px solid var(--marevo-color-text-black, #000000);
+  border-radius:20px;
+  margin-right: 6px;
+}
+
+.canvas_btn_top:hover .canvas_btn_top__image {
+  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.4);
+}
+
+.canvas_btn__icon {
+  width: 18px;
+  height: 18px;
+}
+
+#button_annotation .canvas_btn__icon {
+  content: var(--marevo-ui-icon_annotations);
+}
+
+#button_dimensions .canvas_btn__icon {
+  content: var(--marevo-ui-icon_dimensions);
+}
+
+#button_furniture .canvas_btn__icon {
+  content: var(--marevo-ui-icon_furniture);
+}
+
+/*!------------------------------------*/
 
 .tbl-info {
   display: none;
@@ -1468,21 +1533,9 @@ textarea[name="ar_order_comment"] {
     font-size: 13px;
   }
 
-  .tbl-window-btn-ar {
-    width: 174px;
-  }
 
-  .tbl-window-btn-text {
-    font-size: 11px;
-  }
 
-  .tbl-window-btn-hider {
-    display: none;
-  }
 
-  .tbl-window-btn-share {
-    right: 16px;
-  }
 
   .tbl-info-box {
     width: 90%;

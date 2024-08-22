@@ -24,29 +24,16 @@ export async function createMenu(mainData) {
         updateUIlanguages(mainData);
       });
 
-      // $('.product_title.entry-title').html(`${getData(mainData, 'ui_product_title', currentLanguage)}`);
-      // $('.summary .product_description').html(`${getData(mainData, 'ui_product_descr', currentLanguage)}`);
-      $('#button_ar_qr .tbl-window-btn-text').html(`${getData(mainData, 'ui_btn_ar', currentLanguage)}`);
-      $('#nav-title-inside').html(`${getData(mainData, 'ui-nav-btn-inside', currentLanguage)}`);
-      $('#nav-title-outside').html(`${getData(mainData, 'ui-nav-btn-outside', currentLanguage)}`);
-      $('#ar_button_order__caption').html(`${getData(mainData, 'ui_btn_buy', currentLanguage)}`);
-      $('.tbl-info-sharing-title').html(`${getData(mainData, 'ui_popup-title-share', currentLanguage)}`);
-      $('#tbl-qr-title-ui').html(`${getData(mainData, 'ui_popup-title-qr', currentLanguage)}`);
-      $('#tbl-qr-text-ui').html(`${getData(mainData, 'ui_popup-text-qr', currentLanguage)}`);
-
-      $('#delivery_info_title').html(`${getData(mainData, 'ui_delivery_info_title', currentLanguage)}`);
-      $('#delivery_info_caption').html(`${getData(mainData, 'ui_delivery_info_caption', currentLanguage)}`);
-      $('#payment_info_title').html(`${getData(mainData, 'ui_payment_info_title', currentLanguage)}`);
-
-      $('#menu_info_tab_descr').html(`${getData(mainData, 'ui_menu_info_tab_descr', currentLanguage)}`);
-      $('#menu_info_tab_specs').html(`${getData(mainData, 'ui_menu_info_tab_specs', currentLanguage)}`);
-
       uiMultiLanguages.push(
-        // { '.product_title.entry-title': 'ui_product_title' },
-        // { '.summary .product_description': 'ui_product_descr' },
-        { '#button_ar_qr .tbl-window-btn-text': 'ui_btn_ar' },
-        { '#nav-title-inside': 'ui-nav-btn-inside' },
-        { '#nav-title-outside': 'ui-nav-btn-outside' },
+        { '#button_ar_qr .canvas_btn_text': 'ui_btn_ar' },
+        { '#button_share_url .canvas_btn_text': 'ui_btn_share' },
+        { '#button_camera_inside .canvas_btn_text': 'ui_btn_camera_inside' },
+        { '#button_camera_outside .canvas_btn_text': 'ui_btn_camera_outside' },
+        
+        { '#button_annotation .canvas_btn_text': 'ui_btn_annotations' },
+        { '#button_dimensions .canvas_btn_text': 'ui_btn_dimensions' },
+        { '#button_furniture .canvas_btn_text': 'ui_btn_furniture' },
+
         { '#ar_button_order__caption': 'ui_btn_buy' },
         { '.tbl-info-sharing-title': 'ui_popup-title-share' },
         { '#tbl-qr-title-ui': 'ui_popup-title-qr' },
@@ -255,6 +242,7 @@ export async function createMenu(mainData) {
       // menuHider();
       if (gui_mode) { $('#ar_model_viewer').append($('<div id="gui-container"></div>')); }
 
+      updateUIlanguages(mainData);
       setEventListenersForMenuItems();
 
       $('.ar_button_back').on('click', function () {
@@ -290,10 +278,10 @@ export async function createMenu(mainData) {
   });
 }
 
-function updateUIlanguages(mainData) {
+function updateUIlanguages(mainData, lang = currentLanguage) {
   for (let i = 0; i < uiMultiLanguages.length; i++) {
     for (let key in uiMultiLanguages[i]) {
-      $(key).html(getData(mainData, uiMultiLanguages[i][key], currentLanguage));
+      $(key).html(getData(mainData, uiMultiLanguages[i][key], lang));
     }
   }
 }
