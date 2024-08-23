@@ -3,7 +3,7 @@
 
 import { DEFAULT_LANGUAGE, IS_PRICE_SIMPLE } from './settings.js';
 
-export let currentLanguage = DEFAULT_LANGUAGE;
+let currentLanguage;
 
 export let uiMultiLanguages = [];
 

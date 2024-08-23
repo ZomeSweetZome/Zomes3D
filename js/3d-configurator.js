@@ -15,6 +15,7 @@ import {
   DATAFILE_CSV_LINK_UI,
   DATAFILE_CSV_LINK_PRICE,
   DATA_CHECKING_PRICE,
+  DEFAULT_LANGUAGE,
   DEFAULT_CURRENCY,
   CURRENCY_SIGN,
   CONDITIONS,
@@ -45,12 +46,12 @@ import {
   createMenu,
   setLoadParseCSV,
   getData,
-  currentLanguage,
 } from './ui-controller.js';
 
 const DEBUG_MODE_FUNC_STARTS = false;
 const DEBUG_MODE_VALUES = false;
 
+let currentLanguage = DEFAULT_LANGUAGE;
 let currentCurrency = DEFAULT_CURRENCY;
 let currentCurrencySign = CURRENCY_SIGN[currentCurrency] || CURRENCY_SIGN['USD'];
 
@@ -86,6 +87,7 @@ let qrScaned = 0;
 let theModel;
 
 let justClicked = false;
+let isUrlEmpty = true;
 
 // CUSTOM SELECT
 jQuery(document).ready(function() {
@@ -103,8 +105,8 @@ const groupType = ['select', 'select_no_photo', 'range', 'checkbox', 'number', '
 const ar_filter = document.querySelector('.ar_filter');
 
 let SharedParameterList = [
-  {
-    id: 'zomeModel', // [0]
+  {  // [0] zomeModel
+    id: 'zomeModel',
     groupIds: ['group-0'],
     splitValue: 'M',
     type: 'string',
@@ -113,8 +115,8 @@ let SharedParameterList = [
     applyURLAction: null,
     applyURLActionReturn: false
   },
-  {
-    id: 'windows', // [1]
+  {  // [1] windows
+    id: 'windows',
     groupIds: ['group-1'],
     splitValue: 'a',
     type: 'array-string',
@@ -123,8 +125,8 @@ let SharedParameterList = [
     applyURLAction: null,
     applyURLActionReturn: false
   },
-  {
-    id: 'interior', // [2]
+  {  // [2] interior
+    id: 'interior',
     groupIds: ['group-2'],
     splitValue: 'r',
     type: 'array-string',
@@ -133,8 +135,8 @@ let SharedParameterList = [
     applyURLAction: null,
     applyURLActionReturn: false
   },
-  {
-    id: 'exterior', // [3]
+  {  // [3] exterior
+    id: 'exterior',
     groupIds: ['group-3'],
     splitValue: 'e',
     type: 'string',
@@ -143,8 +145,8 @@ let SharedParameterList = [
     applyURLAction: null,
     applyURLActionReturn: false
   },
-  {
-    id: 'addons', // [4]
+  {  // [4] addons
+    id: 'addons',
     groupIds: ['group-4'],
     splitValue: 'v',
     type: 'array-string',
@@ -153,8 +155,8 @@ let SharedParameterList = [
     applyURLAction: null,
     applyURLActionReturn: false
   },
-  {
-    id: 'customWindows', // [5] //! TODO: ADD CUSTOM WINDOWS TO URL
+  { // [5] customWindows //! TODO: ADD CUSTOM WINDOWS TO URL
+    id: 'customWindows',
     groupIds: null,
     splitValue: 'o',
     type: 'string',
@@ -163,8 +165,8 @@ let SharedParameterList = [
     applyURLAction: null,
     applyURLActionReturn: false
   },
-  {
-    id: 'lang', // [6] //! TODO: ADD LANGUAGE TO URL
+  { // [6] language
+    id: 'lang', // [6]
     groupIds: null,
     splitValue: 'U',
     type: 'string',
@@ -173,8 +175,8 @@ let SharedParameterList = [
     applyURLAction: null,
     applyURLActionReturn: false
   },
-  {
-    id: 'curr', // [7] //! TODO: ADD CURRENCY TO URL
+  { // [7] currency //! TODO: ADD CURRENCY TO URL
+    id: 'curr',
     groupIds: null,
     splitValue: 'A',
     type: 'string',
@@ -183,8 +185,8 @@ let SharedParameterList = [
     applyURLAction: null,
     applyURLActionReturn: false
   },
-  {
-    id: 'qr', // [8]
+  { // [8] qr
+    id: 'qr',
     groupIds: null,
     splitValue: 'n',
     type: 'int',
@@ -268,16 +270,45 @@ SharedParameterList[5].groupOptionAction = function () {
 SharedParameterList[6].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
   if (isFirstStart || justClicked) {
-    // if(SharedParameterList[3].value == '6') { // shape = rond
-    //   changeDiameter(this.value);
-    // }
+    let language = 'EN';
+    switch (this.value) {
+      case '0':
+        language = 'EN';
+        break;
+      case '1':
+        language = 'FR';
+        break;
+      case '2':
+        language = 'ES';
+        break;
+      default:
+        language = 'ES';
+        break;
+      }
+      
+    $('.language-picker select').val(language).trigger('change');
   }
 }
 
 // currency
 SharedParameterList[7].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
-  // if (isFirstStart || justClicked) {}
+  if (isFirstStart || justClicked) {
+    let currency = 'EN';
+    switch (this.value) {
+      case '0':
+        currency = 'USD';
+        break;
+      case '1':
+        currency = 'EUR';
+        break;
+      default:
+        currency = 'USD';
+        break;
+      }
+      
+    $('.currency-picker select').val(currency).trigger('change');
+  }
 }
 
 // qr
@@ -402,7 +433,7 @@ class ComponentOption {
 
 //#endregion
 
-//! #region START APP
+//#region START APP
 
 prepareDataFiles();
 
@@ -588,6 +619,7 @@ function InitializationGroups(callback) {
   if (callback != null) callback();
 }
 
+//! *****************   START   ********************
 async function Start() {
   (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ Start ~ ');
 
@@ -623,6 +655,11 @@ async function StartSettings() {
   
   preloadTextures();
   
+  if (!isUrlEmpty) {
+    applyAdditionalSharedParameters(6); // language
+    applyAdditionalSharedParameters(7); // currency
+  }
+
   PrepareAR();
   SetActionForGroups();
   ApplyURLParameters();
@@ -635,7 +672,11 @@ async function StartSettings() {
 
   isFirstStart = false;
 }
-  
+//! ************************************************
+
+function applyAdditionalSharedParameters(id) {
+  SharedParameterList[id].groupOptionAction();
+}
 
 function setDefaultValuesForGroups() {
   (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ setDefaultValuesForGroups ~ ');
@@ -2130,6 +2171,7 @@ function ReadURLParameters(callback) {
     return;
   }
 
+  isUrlEmpty = false;
   var arrayValue;
 
   for (let index = 0; index < SharedParameterList.length; index++) {
@@ -2437,6 +2479,52 @@ async function PrepareUI() {
 
   jQuery(document).ready(function () {
     cameraBtnHandlers();
+  });
+
+  jQuery(document).ready(function () {
+    $('.language-picker select').on('change', function () {
+      currentLanguage = $(this).val();
+      let valueForURL;
+      switch (currentLanguage) {
+        case 'EN':
+          valueForURL = '0';
+          break;
+        case 'FR':
+          valueForURL = '1';
+          break;
+        case 'ES':
+          valueForURL = '2';
+          break;
+        default:
+          valueForURL = '0';
+          break;
+      }
+
+      SharedParameterList[6].value = valueForURL;
+      CheckChanges();
+      WriteURLParameters();
+    });
+
+    $('.currency-picker select').on('change', function () {
+      currentCurrency = $(this).val();
+      console.log("🚀 ~ currentCurrency:", currentCurrency);
+      let valueForURL;
+      switch (currentCurrency) {
+        case 'USD':
+          valueForURL = '0';
+          break;
+        case 'EUR':
+          valueForURL = '1';
+          break;
+        default:
+          valueForURL = '0';
+          break;
+      }
+
+      SharedParameterList[7].value = valueForURL;
+      CheckChanges();
+      WriteURLParameters();
+    });
   });
 
 }
