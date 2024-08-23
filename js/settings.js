@@ -550,27 +550,65 @@ export const CONDITIONS = {
 
 export const NAV_CAM_POSITION = {
   // OUTSIDE
-  outMain: {
+  outPrepare: {
     outside: true,
-    1: {
-      camera: [9.336, 1.388, -10.518],
+    'pod': {
+      camera: [0.072, 1.536, 6.515],
       target: [0, HUMAN_HEIGHT, 0],
     },
-    2: {
-      camera: [11.237, 0.925, 8.438],
+    'office': {
+      camera: [0.072, 1.536, 6.515],
+      target: [0, HUMAN_HEIGHT, 0],
+    },
+    'studio': {
+      camera: [0.072, 1.536, 6.515],
+      target: [0, HUMAN_HEIGHT, 0],
+    },
+  },
+  outMain: {
+    outside: true,
+    'pod': {
+      camera: [2.741, 1.875, 7.51],
+      target: [0, HUMAN_HEIGHT, 0],
+    },
+    'office': {
+      camera: [2.741, 1.875, 7.51],
+      target: [0, HUMAN_HEIGHT, 0],
+    },
+    'studio': {
+      camera: [2.741, 1.875, 7.51],
       target: [0, HUMAN_HEIGHT, 0],
     },
   },
   // INSIDE
+  inPrepare: {
+    outside: false,
+    'pod': {
+      camera: [0.001, 1.599, -0.05],
+      target: [0, HUMAN_HEIGHT, 0],
+    },
+    'office': {
+      camera: [0.001, 1.599, -0.05],
+      target: [0, HUMAN_HEIGHT, 0],
+    },
+    'studio': {
+      camera: [0.001, 1.599, -0.05],
+      target: [0, HUMAN_HEIGHT, 0],
+    },
+  },
   inMain: {
     outside: false,
-    1: {
-      camera: [-0.357, 1.501, 2.256],
-      target: [-0.391, HUMAN_HEIGHT, 2.177],
+    'pod': {
+      camera: [-0.006, 1.593, 0.049],
+      target: [0, HUMAN_HEIGHT, 0],
     },
-    2: {
-      camera: [0.534, 1.502, 3.065],
-      target: [0.476, HUMAN_HEIGHT, 3.003],
+    'office': {
+      camera: [-0.006, 1.593, 0.049],
+      target: [0, HUMAN_HEIGHT, 0],
+    },
+    'studio': {
+      camera: [-0.006, 1.593, 0.049],
+      target: [0, HUMAN_HEIGHT, 0],
     },
   },
 };

@@ -2635,12 +2635,18 @@ function cameraBtnHandlers() {
     event.stopPropagation();
     $(this).toggleClass('hidden');
     $('#button_camera_outside').toggleClass('hidden');
+
+    // onChangePosition('inMain');
+    onChangePosition('outPrepare', () => { onChangePosition('inMain') });
   });
 
   $('#button_camera_outside').on('click', function (event) {
     event.stopPropagation();
     $(this).toggleClass('hidden');
     $('#button_camera_inside').toggleClass('hidden');
+
+    onChangePosition('outMain');
+    // onChangePosition('inPrepare', () => { onChangePosition('outMain') });
   });
 }
 
@@ -2722,7 +2728,7 @@ export function promiseDelay(time, callback) {
 
 //#region 3D FUNCTIONS
 
-function onChangePosition(pos, callback = () => { }, duration = 750, houseId = 0, isLeftSideHouse = true) {
+function onChangePosition(pos, callback = () => { }, duration = 750, houseId = 'office', isLeftSideHouse = true ) {
   let targetCameraPosition;
   let targetControlX;
   let targetControlY;
@@ -2781,7 +2787,7 @@ function onChangePosition(pos, callback = () => { }, duration = 750, houseId = 0
 
   function outsideCameraSettings() {
     controls.enableZoom = true;
-    targetControlMinDist = (houseId === 3) ? 7.5 : 8.1; //! NEED TO ADJUST
+    targetControlMinDist = 4;
     targetCameraFOV = 50;
     maxPolarAngle =  Math.PI / 1.88;
   }
