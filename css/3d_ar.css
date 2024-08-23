@@ -923,6 +923,13 @@ body, html {
   margin-bottom: 6px;
 }
 
+.menu__footer_delivery_info .wrapper {
+  display: flex;
+  flex: 0 0 130px;
+  padding: 0;
+  align-items: center;
+}
+
 .menu__footer_payment_info {
   margin-bottom: 30px;
 }
@@ -941,6 +948,10 @@ body, html {
   font-weight: 500;
   width: 100%;
   margin-bottom: 20px;
+}
+
+#delivery_info_title {
+  margin-right: 6px;
 }
 
 .ar_price {
@@ -1928,8 +1939,8 @@ textarea[name="ar_order_comment"] {
   .summary_container {
     width: var(--marevo-menu-max-width-767, 100%);
     border-right: none;
-    /* 198px - menu height, 45px - menu summary height */
-    height: calc(198px + 45px);
+    /* 198px - menu height, 44px - menu summary height */
+    height: calc(198px + 44px);
   }
 
   .ar_menu_info_container {
@@ -1955,7 +1966,7 @@ textarea[name="ar_order_comment"] {
     display: flex;
     flex: 1 1 auto;
     width: 100%;
-    height: calc(100dvh - var(--marevo-header-height-mobile, 53px) - 198px - 45px);
+    height: calc(100dvh - var(--marevo-header-height-mobile, 53px) - 198px - 44px);
 
     
   }
@@ -2178,14 +2189,6 @@ textarea[name="ar_order_comment"] {
     justify-content: center;
   }
 
-  .menu__footer_delivery_info .wrapper {
-    display: flex;
-    flex: 0 0 130px;
-    padding: 0;
-    align-items: center;
-  }
-
-
   .menu__footer_payment_info {
     display: flex;
     align-items: center;
@@ -2206,7 +2209,8 @@ textarea[name="ar_order_comment"] {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
+    /* padding: 10px 20px 0; */
+    padding: 0px 20px;
   }
 
   .ar_menu_footer_container .ar_buy-btn {
