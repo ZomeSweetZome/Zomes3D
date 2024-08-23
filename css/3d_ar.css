@@ -415,6 +415,7 @@ body, html {
   margin: 0;
   padding: 0;
   position: relative;
+  border-right: 1px solid var(--marevo-color-popup-border, #ECECEF);
 }
 
 .summary_wrapper {
@@ -733,8 +734,8 @@ body, html {
   padding: 30px;
   background-color: var(--marevo-color-bgrd-menu, #fff);
   overflow-y: auto;
-  border-left: 1px solid var(--marevo-color-popup-border);
-  border-right: 1px solid var(--marevo-color-popup-border);
+  border-left: 1px solid var(--marevo-color-popup-border, #ECECEF);
+  border-right: 1px solid var(--marevo-color-popup-border, #ECECEF);
   z-index: 2;
   transform: translateX(0);
   transition: transform .3s ease;
@@ -1386,7 +1387,7 @@ body, html {
   text-align: center;
   margin-bottom: 40px;
   padding-bottom: 10px;
-  border-bottom: 1px solid var(--marevo-color-popup-border, #C3C3C3);
+  border-bottom: 1px solid var(--marevo-color-popup-border, #ECECEF);
 }
 
 .popup-qr-img {
@@ -1397,7 +1398,7 @@ body, html {
   height: 220px;
   background-color: #fff;
   border-radius: 30px;
-  border: 1px solid var(--marevo-color-popup-border, #C3C3C3);
+  border: 1px solid var(--marevo-color-popup-border, #ECECEF);
   overflow: hidden;
 }
 
@@ -1622,6 +1623,7 @@ textarea[name="ar_order_comment"] {
   /*! -----------------------------*/
   .summary_container {
     width: var(--marevo-menu-max-width-767, 100%);
+    border-right: none;
   }
 
   .ar_menu_info_container {
@@ -1875,6 +1877,7 @@ textarea[name="ar_order_comment"] {
 @media screen and (max-width: 767px) and (orientation: portrait) {
   .summary_container {
     width: var(--marevo-menu-max-width-767, 100%);
+    border-right: none;
   }
 
   .ar_menu_info_container {
@@ -1924,7 +1927,7 @@ textarea[name="ar_order_comment"] {
 @media screen and (orientation: portrait) {
   .summary_container {
     width: var(--marevo-menu-max-width-767, 100%);
-    
+    border-right: none;
     /* 198px - menu height, 45px - menu summary height */
     height: calc(198px + 45px);
   }
@@ -1968,6 +1971,43 @@ textarea[name="ar_order_comment"] {
     transform: translateX(-50%);
     padding: 0 20px;
     bottom: 0;
+  }
+
+  /*!---------------*/
+
+  .ar_model_viewer .canvas_notification {
+    font-size: 14px;
+  }
+
+  .popup-sharing-title, 
+  .popup-qr-title,
+  .popup-info-title {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  .popup-close {
+    width: 16px;
+    height: 16px;
+  }
+
+  .popup-sharing-window input {
+    height: 35px;
+    padding-left: 13px;
+    padding-right: 19px;
+  }
+
+  .popup-sharing-ico {
+    height: 35px;
+    width: 48px;
+    padding: 0 20px;
+    border-radius: 50px;
+    margin-left: 10px;
+  }
+
+  .popup-sharing-ico div {
+    width: 20px;
+    height: 20px;
   }
 
   /*!---------------*/
