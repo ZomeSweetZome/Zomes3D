@@ -1189,7 +1189,7 @@ body, html {
   height: 20px;
   margin-right: 6px;
   border-radius: 10px;
-  background-color: var(--marevo-color-bgrd-canvas, #fff);
+  /* background-color: var(--marevo-color-bgrd-canvas, #fff); */
 }
 
 .canvas_btn_radio.disabled .canvas_btn_text {
@@ -2105,7 +2105,7 @@ textarea[name="ar_order_comment"] {
     width: calc(100vw - 40px);
     max-width: calc(400px - 40px);
     z-index: 3;
-    background-color: rgba(255, 255, 255, 0.7);
+    background-color: rgba(255, 255, 255, 0.3);
   }
 
   .canvas_btn_radio {

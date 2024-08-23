@@ -27,6 +27,7 @@ import {
   ENVIRONMENT_MAP,
   ENVIRONMENT_MAP_INTENSITY,
   TEXTURES,
+  NAV_CAM_POSITION,
 } from './settings.js';
 
 import {
@@ -37,6 +38,9 @@ import {
   animateScale,
   disposeModel,
   loadModel,
+  controls,
+  camera,
+  smoothCameraTransition,
 } from './3d-scene.js';
 
 import {
@@ -2519,6 +2523,11 @@ async function PrepareUI() {
       calculatePrice();
     });
   });
+
+  jQuery(document).ready(function () {
+    cameraBtnHandlers();
+  });
+
 }
 
 // *****   MENU-INFO   *****
@@ -2620,6 +2629,21 @@ function menuInfoBtnHandler(opt) {
   });
 }
 
+// *****   Camera Btns   *****
+function cameraBtnHandlers() {
+  $('#button_camera_inside').on('click', function (event) {
+    event.stopPropagation();
+    $(this).toggleClass('hidden');
+    $('#button_camera_outside').toggleClass('hidden');
+  });
+
+  $('#button_camera_outside').on('click', function (event) {
+    event.stopPropagation();
+    $(this).toggleClass('hidden');
+    $('#button_camera_inside').toggleClass('hidden');
+  });
+}
+
 // eslint-disable-next-line no-unused-vars
 function getScrollbarWidth() {
   const outer = $('<div>').css({visibility: 'hidden', width: 100, overflow: 'scroll'}).appendTo('body');
@@ -2697,6 +2721,80 @@ export function promiseDelay(time, callback) {
 //#endregion
 
 //#region 3D FUNCTIONS
+
+function onChangePosition(pos, callback = () => { }, duration = 750, houseId = 0, isLeftSideHouse = true) {
+  let targetCameraPosition;
+  let targetControlX;
+  let targetControlY;
+  let targetControlZ;
+  let targetControlMinDist;
+  let targetCameraFOV;
+  let maxPolarAngle;
+
+  if (NAV_CAM_POSITION[pos] && Object.prototype.hasOwnProperty.call(NAV_CAM_POSITION[pos][houseId], 'camera')) {
+    const k = (isLeftSideHouse) ? 1 : -1;
+
+    targetCameraPosition = new THREE.Vector3(
+      NAV_CAM_POSITION[pos][houseId].camera[0] * k,
+      NAV_CAM_POSITION[pos][houseId].camera[1],
+      NAV_CAM_POSITION[pos][houseId].camera[2],
+    );
+
+    targetControlX = NAV_CAM_POSITION[pos][houseId].target[0] * k;
+    targetControlY = NAV_CAM_POSITION[pos][houseId].target[1];
+    targetControlZ = NAV_CAM_POSITION[pos][houseId].target[2];
+
+    (NAV_CAM_POSITION[pos].outside) && (outsideCameraSettings());
+
+    if (!NAV_CAM_POSITION[pos].outside) {
+      const fov = 80;
+      insideCameraSettings(fov);
+    }
+
+    if (isEqualVector(camera.position, targetCameraPosition)) {
+      duration = 5;
+    }
+
+    smoothCameraTransition(
+      targetCameraPosition,
+      duration,
+      targetControlX,
+      targetControlY,
+      targetControlZ,
+      targetControlMinDist,
+      targetCameraFOV,
+      maxPolarAngle,
+      callback,
+    );
+  } else {
+    console.log(`🚀 Position '${pos}' is not available for house ${houseId}`);
+    callback();
+  }
+
+  function insideCameraSettings(fov = 80, envirMap = null) {
+    controls.enableZoom = false;
+    targetControlMinDist = 0;
+    targetCameraFOV = fov;
+    maxPolarAngle = Math.PI / 1;
+    scene.background = envirMap;
+  }
+
+  function outsideCameraSettings() {
+    controls.enableZoom = true;
+    targetControlMinDist = (houseId === 3) ? 7.5 : 8.1; //! NEED TO ADJUST
+    targetCameraFOV = 50;
+    maxPolarAngle =  Math.PI / 1.88;
+  }
+
+  function isEqualVector(vector1, vector2) {
+    const precision = 4;
+    return (
+      vector1.x.toFixed(precision) === vector2.x.toFixed(precision) &&
+      vector1.y.toFixed(precision) === vector2.y.toFixed(precision) &&
+      vector1.z.toFixed(precision) === vector2.z.toFixed(precision)
+    );
+  }
+}
 
 //#endregion
 

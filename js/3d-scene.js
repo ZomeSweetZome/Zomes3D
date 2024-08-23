@@ -23,6 +23,8 @@ export const IMPORTED_MODELS = [];
 const IMPORTED_MODELS_GLTF = [];
 export let isModelsLoaded = false;
 
+import { TONE_MAPPING_EXPOSURE, LIGHT_SCHEME, HUMAN_HEIGHT } from './settings.js';
+
 let externalProperties;
 
 const scenePropertiesDefault = {
@@ -34,7 +36,7 @@ const scenePropertiesDefault = {
   MODEL_CENTER_POSITION: 0,
 };
 
-import { TONE_MAPPING_EXPOSURE } from './settings.js';
+let startPosition = new THREE.Vector3(2.741, 1.875, 7.51);
 
 let dirLight, pointLight, pointLight2;
 let pointLightIntensity, dirLightIntencity;
@@ -77,7 +79,8 @@ export function create3DScene(properties = scenePropertiesDefault, loadFunction)
   //      Init CAMERA
   // ********************************************
 
-  camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera = new THREE.PerspectiveCamera(50, window.innerWidth /
+    window.innerHeight, 0.1, 1000);
 
   if (ENVIRONMENT_MAP != '') {
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
@@ -161,55 +164,77 @@ export function create3DScene(properties = scenePropertiesDefault, loadFunction)
   //                   LIGHTS
   // ********************************************
   if (ENVIRONMENT_MAP == '') {
-    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x000000, 16);
+    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x000000, 1.6);
     hemiLight.position.set(0, 0, 0);
     scene.add(hemiLight);
   }
-  const cameraSize = 2;
-  pointLightIntensity = 3;
-  
-  pointLight = new THREE.PointLight(0xffffff, pointLightIntensity, 20);
-  pointLight.position.set(0, -2, 0);
-  
-  pointLight2 = new THREE.PointLight(0xffffff, pointLightIntensity, 20);
-  pointLight2.position.set(2, 0.1, 0);
-  
-  dirLightIntencity = 1.2;
+  const cameraSize = (LIGHT_SCHEME === 0) ? 18 : 10;
+  dirLightIntencity = (LIGHT_SCHEME === 0) ? 6 : 0.6;
+  const dirPosY = (LIGHT_SCHEME === 0) ? 8 : 2;
+
   dirLight = new THREE.DirectionalLight(0xffffff, dirLightIntencity);
-  dirLight.position.set(0, 12, 0.000001);
+  dirLight.position.set(0, dirPosY, 0.000001);
   dirLight.castShadow = true;
   dirLight.shadow.bias = -0.0005;
+  dirLight.shadow.radius = 10;
   dirLight.shadow.camera.left = -cameraSize;
   dirLight.shadow.camera.right = cameraSize;
   dirLight.shadow.camera.top = cameraSize;
   dirLight.shadow.camera.bottom = -cameraSize;
   dirLight.shadow.camera.near = 0.5;
-  dirLight.shadow.camera.far = 50;
+  dirLight.shadow.camera.far = (LIGHT_SCHEME === 0) ? 50 : 100;
+
+  if (LIGHT_SCHEME !== 0) {
+    const planeGeometry = new THREE.PlaneGeometry(1, 1, 1, 1);
+    const planeMaterial = new THREE.MeshBasicMaterial({
+      transparent: true, opacity: 0,
+    });
+
+    const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
+    planeMesh.rotation.x = -Math.PI / 2;
+    planeMesh.position.set(0, 15, 0);
+    scene.add(planeMesh);
+
+    const dirLight2 = new THREE.DirectionalLight(0xffffff, 1.5);
+    dirLight2.position.set(0, 4, 0);
+    dirLight2.castShadow = true;
+    dirLight2.shadow.bias = -0.0005;
+    dirLight2.shadow.radius = 10;
+    dirLight2.shadow.camera.left = -cameraSize;
+    dirLight2.shadow.camera.right = cameraSize;
+    dirLight2.shadow.camera.top = cameraSize;
+    dirLight2.shadow.camera.bottom = -cameraSize;
+    dirLight2.shadow.camera.near = 0.5;
+    dirLight2.shadow.camera.far = 1000;
+
+    dirLight2.target = planeMesh;
+    scene.add(dirLight2);
+  }
 
   switch (getMobileOperatingSystem()) {
     case 'Android':
       dirLight.shadow.mapSize = new THREE.Vector2(1024, 1024);
-      dirLight.shadow.radius = 15;
+      dirLight.shadow.radius = (LIGHT_SCHEME === 0) ? 5 : 15;
       dirLight.shadow.blurSamples = 10;
       break;
     case 'iOS':
       dirLight.shadow.mapSize = new THREE.Vector2(2048, 2048);
-      dirLight.shadow.radius = 40;
+      dirLight.shadow.radius = (LIGHT_SCHEME === 0) ? 5 : 40;
       dirLight.shadow.blurSamples = 30;
       break;
     case 'Windows':
       dirLight.shadow.mapSize = new THREE.Vector2(2048, 2048);
-      dirLight.shadow.radius = 40;
+      dirLight.shadow.radius = (LIGHT_SCHEME === 0) ? 5 : 40;
       dirLight.shadow.blurSamples = 50;
       break;
     case 'Macintosh':
       dirLight.shadow.mapSize = new THREE.Vector2(2048, 2048);
-      dirLight.shadow.radius = 40;
+      dirLight.shadow.radius = (LIGHT_SCHEME === 0) ? 5 : 40;
       dirLight.shadow.blurSamples = 50;
       break;
     default:
       dirLight.shadow.mapSize = new THREE.Vector2(1024, 1024);
-      dirLight.shadow.radius = 15;
+      dirLight.shadow.radius = (LIGHT_SCHEME === 0) ? 15 : 15;
       dirLight.shadow.blurSamples = 10;
       break;
   }
@@ -246,25 +271,25 @@ export function create3DScene(properties = scenePropertiesDefault, loadFunction)
   //                 CONTROLS
   // ********************************************
   controls = new THREE.OrbitControls(camera, renderer.domElement);
-  controls.maxPolarAngle = Math.PI / 2; // 2.29
+  controls.maxPolarAngle = Math.PI / 1.85; // 2.29
+  controls.minAzimuthAngle = -Infinity;
+  controls.maxAzimuthAngle = Infinity;
   controls.enableDamping = true;
   controls.enablePan = false;
   controls.dampingFactor = 0.1;
   controls.autoRotateSpeed = -0.5;
-  controls.maxDistance = 50;
-  controls.minDistance = 1.78;
+  controls.maxDistance = 15;
+  controls.minDistance = 4;
   controls.autoRotate = false;
   controls.enableZoom = true;
 
-  camera.position.set(1.846, 0.88, -10.429);
-  controls.target.set(0, 0, 0);
+  (startPosition) && camera.position.copy(startPosition);
+  controls.target.set(0, HUMAN_HEIGHT, 0);
 
   if (TEST_MODE) {
     controls.enablePan = true;
     controls.minDistance = 0.01;
   }
-
-
 
   controls.addEventListener('end', () => {
     controls.autoRotate = false;
@@ -556,6 +581,71 @@ export function springScale(model, duration = 500, oscillations = 1, callback = 
   }
 
   requestAnimationFrame(animate);
+}
+
+export function smoothCameraTransition(
+    targetCameraPosition,
+    duration,
+    targetControlX = 0,
+    targetControlY = 0,
+    targetControlZ = 0,
+    targetControlMinDist,
+    targetCameraFOV,
+    maxPolarAngle = Math.PI / 1.88,
+    callback = () => {},
+) {
+  const correctedTargetPosition = new THREE.Vector3(0, 0, 0);
+  const delta = 0;
+  const deltaControlsX = targetControlX - controls.target.x;
+  const deltaControlsY = targetControlY - controls.target.y;
+  const deltaControlsZ = targetControlZ - controls.target.z;
+  const deltaControlMinDist = targetControlMinDist - controls.minDistance;
+  const deltaCameraFOV = targetCameraFOV - camera.fov;
+
+  correctedTargetPosition.x = targetCameraPosition.x + delta;
+  correctedTargetPosition.y = targetCameraPosition.y;
+  correctedTargetPosition.z = targetCameraPosition.z - delta;
+
+  const startPosition = camera.position.clone();
+  const startControlX = controls.target.x;
+  const startControlY = controls.target.y;
+  const startControlZ = controls.target.z;
+  const startControlMinDist = controls.minDistance;
+  const startCameraFOV = camera.fov;
+  const startTime = performance.now();
+
+  function animate() {
+    const currentTime = performance.now() - startTime;
+    const progress = Math.min(currentTime / duration, 1);
+    const t = 0.5 - 0.5 * Math.cos(Math.PI * progress);
+    const currentPosition = new THREE.Vector3().lerpVectors(
+        startPosition, correctedTargetPosition, t,
+    );
+
+    const currentControlX = startControlX + deltaControlsX * t;
+    const currentControlY = startControlY + deltaControlsY * t;
+    const currentControlZ = startControlZ + deltaControlsZ * t;
+    const currentControlZoom = startControlMinDist + deltaControlMinDist * t;
+    const currentCameraFOV = startCameraFOV + deltaCameraFOV * t;
+
+    camera.position.copy(currentPosition);
+    controls.target.x = currentControlX;
+    controls.target.y = currentControlY;
+    controls.target.z = currentControlZ;
+    controls.minDistance = currentControlZoom;
+    camera.fov = currentCameraFOV;
+    camera.updateProjectionMatrix();
+
+    controls.maxPolarAngle = maxPolarAngle;
+
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    } else {
+      callback();
+    }
+  }
+
+  animate();
 }
 
 //#region DEVELOPER GUI

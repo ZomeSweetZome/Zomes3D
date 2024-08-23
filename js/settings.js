@@ -3,17 +3,28 @@
 export const GUI_MODE_UI = false;
 
 export const BACKGROUND_COLOR = 0xffffff;
-export const ENVIRONMENT_MAP = './src/environment/neutral.hdr';
-export const ENVIRONMENT_MAP_INTENSITY = 1;
-export const SHADOW_TRANSPARENCY = 0.075;
-export const TONE_MAPPING_EXPOSURE = 1.1;
+
+export const LIGHT_SCHEME = 1;
+// LIGHT_SCHEME 0:
+export let ENVIRONMENT_MAP = './src/environment/neutral.hdr';
+export let ENVIRONMENT_MAP_INTENSITY = 1.1;
+export let SHADOW_TRANSPARENCY = 0.1;
+export let TONE_MAPPING_EXPOSURE = 1;
+// LIGHT_SCHEME 1:
+if (LIGHT_SCHEME === 1) {
+  ENVIRONMENT_MAP = './src/environment/belfast_open_field_1k.hdr';
+  ENVIRONMENT_MAP_INTENSITY = 3.5;
+  SHADOW_TRANSPARENCY = 0.4;
+  TONE_MAPPING_EXPOSURE = 0.9;
+}
 
 export const MODEL_PATHS = [
-  './src/models/zomes_empty.glb',
-  // './src/models/zomes_office.glb',
+  // './src/models/zomes_empty.glb',
+  './src/models/zomes_office.glb',
 ];
 
-export const MODEL_CENTER_POSITION = -0.3;
+export const HUMAN_HEIGHT = 1.6;
+export const MODEL_CENTER_POSITION = 0.6;
 
 export const IS_PRICE_SIMPLE = false;
 export const DEFAULT_LANGUAGE = 'EN';
@@ -535,4 +546,31 @@ export const CONDITIONS = {
   // 'option_0-0': { 'group-1': 'on', 'option_1-0': 'on', 'option_1-1': 'on', 'group-2': '', 'option_2-0': '', 'option_2-1': '', 'group-5': '', 'option_5-0': '', 'option_5-1': '', 'option_5-2': '', 'option_5-3': '', 'option_5-4': '', 'option_5-5': '', 'option_5-6': '', 'option_5-7': '', 'group-6': '', 'option_6-0': '', 'option_6-1': '', 'option_6-2': '', 'option_6-3': '', 'option_6-4': '', 'option_6-5': '', 'option_6-6': '', 'option_6-7': '', 'group-7': '', 'option_7-0': '', 'option_7-1': '', 'option_7-2': '', 'option_7-3': '', 'option_7-4': '', 'option_7-5': '', 'option_7-6': '', 'option_7-7': '', 'group-8': '', 'option_8-0': '', 'option_8-1': '', 'option_8-2': '', 'option_8-3': '', 'option_8-4': '', 'option_8-5': '', 'option_8-6': '', 'option_8-7': '', 'group-9': '', 'option_9-0': '', 'option_9-1': '', 'option_9-2': '', 'option_9-3': '', 'option_9-4': '', 'option_9-5': '', 'option_9-6': '', 'option_9-7': '', 'group-10': '', 'option_10-0': '', 'option_10-1': '', 'option_10-2': '', 'option_10-3': '', 'option_10-4': '', 'option_10-5': '', 'option_10-6': '', 'option_10-7': '', 'group-11': '', 'option_11-0': '', 'option_11-1': '', 'option_11-2': '', 'option_11-3': '', 'option_11-4': '', 'option_11-5': '', 'option_11-6': '', 'option_11-7': '', 'group-12': '', 'option_12-0': '', 'option_12-1': '', 'option_12-2': '', 'option_12-3': '', 'option_12-4': '', 'option_12-5': '', 'option_12-6': '', 'option_12-7': '', 'group-13': '', 'option_13-0': '', 'option_13-1': '', 'option_13-2': '', 'option_13-3': '', 'group-14': '', 'option_14-0': '', 'option_14-1': '', 'option_14-2': '', 'option_14-3': '', 'option_14-4': '', 'group-15': '', 'group-16': '', 'group-17': '', 'group-18': '', 'group-19': '', 'group-20': '', 'group-21': '', 'group-22': '', 'group-23': '', 'option_23-0': '', 'option_23-1': '', 'option_23-2': '', 'group-27': '', 'option_27-0': '', 'option_27-1': '', 'option_27-2': '', 'group-28': '', 'option_28-0': '', 'option_28-1': '', 'option_28-2': '', 'group-24': '', 'option_24-0': '', 'option_24-1': '', 'option_24-2': '', 'group-25': 'on', 'option_25-0': 'on', 'option_25-1': 'on', 'option_25-2': 'on', 'option_25-3': 'on', 'option_25-4': 'on', 'option_25-5': 'on', 'option_25-6': 'on', 'option_25-7': 'on', 'option_25-8': 'off', 'group-26': '', meshes: { 'ovaal_bol': '', 'ovaal_halfrond': '', 'ovaal_recht': '', 'ovaal_verjongd': '', 'round_bol': '', 'round_halfrond': '', 'round_recht': '', 'round_verjongd': '', 'semi-ovaal_bol': '', 'semi-ovaal_halfrond': '', 'semi-ovaal_recht': '', 'semi-ovaal_verjongd': '', 'semi-recht_bol': '', 'semi-recht_halfrond': '', 'semi-recht_recht': '', 'semi-recht_verjongd': '', 'rechthoekig_bol': '', 'rechthoekig_halfrond': '', 'rechthoekig_recht': '', 'rechthoekig_verjongd': '', 'plat-ovaal_bol': '', 'plat-ovaal_halfrond': '', 'plat-ovaal_recht': '', 'plat-ovaal_verjongd': '', 'organish_bol': '', 'organish_halfrond': '', 'organish_recht': '', 'organish_verjongd': '', 'Rechthoek_radius_bol': '', 'Rechthoek_radius_halfrond': '', 'Rechthoek_radius_recht': '', 'Rechthoek_radius_verjongd': '', 'novum-15': '', 'novum-15-round': '', 'novum-30': '', 'novum-30-round': '', 'steelo': '', } },
   // 'option_0-1': { 'group-1': 'on', 'option_1-0': 'on', 'option_1-1': 'off', 'group-2': '', 'option_2-0': '', 'option_2-1': '', 'group-5': '', 'option_5-0': '', 'option_5-1': '', 'option_5-2': '', 'option_5-3': '', 'option_5-4': '', 'option_5-5': '', 'option_5-6': '', 'option_5-7': '', 'group-6': '', 'option_6-0': '', 'option_6-1': '', 'option_6-2': '', 'option_6-3': '', 'option_6-4': '', 'option_6-5': '', 'option_6-6': '', 'option_6-7': '', 'group-7': '', 'option_7-0': '', 'option_7-1': '', 'option_7-2': '', 'option_7-3': '', 'option_7-4': '', 'option_7-5': '', 'option_7-6': '', 'option_7-7': '', 'group-8': '', 'option_8-0': '', 'option_8-1': '', 'option_8-2': '', 'option_8-3': '', 'option_8-4': '', 'option_8-5': '', 'option_8-6': '', 'option_8-7': '', 'group-9': '', 'option_9-0': '', 'option_9-1': '', 'option_9-2': '', 'option_9-3': '', 'option_9-4': '', 'option_9-5': '', 'option_9-6': '', 'option_9-7': '', 'group-10': '', 'option_10-0': '', 'option_10-1': '', 'option_10-2': '', 'option_10-3': '', 'option_10-4': '', 'option_10-5': '', 'option_10-6': '', 'option_10-7': '', 'group-11': '', 'option_11-0': '', 'option_11-1': '', 'option_11-2': '', 'option_11-3': '', 'option_11-4': '', 'option_11-5': '', 'option_11-6': '', 'option_11-7': '', 'group-12': '', 'option_12-0': '', 'option_12-1': '', 'option_12-2': '', 'option_12-3': '', 'option_12-4': '', 'option_12-5': '', 'option_12-6': '', 'option_12-7': '', 'group-13': '', 'option_13-0': '', 'option_13-1': '', 'option_13-2': '', 'option_13-3': '', 'group-14': '', 'option_14-0': '', 'option_14-1': '', 'option_14-2': '', 'option_14-3': '', 'option_14-4': '', 'group-15': '', 'group-16': '', 'group-17': '', 'group-18': '', 'group-19': '', 'group-20': '', 'group-21': '', 'group-22': '', 'group-23': '', 'option_23-0': '', 'option_23-1': '', 'option_23-2': '', 'group-27': '', 'option_27-0': '', 'option_27-1': '', 'option_27-2': '', 'group-28': '', 'option_28-0': '', 'option_28-1': '', 'option_28-2': '', 'group-24': '', 'option_24-0': '', 'option_24-1': '', 'option_24-2': '', 'group-25': 'on', 'option_25-0': 'on', 'option_25-1': 'on', 'option_25-2': 'on', 'option_25-3': 'on', 'option_25-4': 'on', 'option_25-5': 'on', 'option_25-6': 'on', 'option_25-7': 'on', 'option_25-8': 'off', 'group-26': '', meshes: { 'ovaal_bol': '', 'ovaal_halfrond': '', 'ovaal_recht': '', 'ovaal_verjongd': '', 'round_bol': '', 'round_halfrond': '', 'round_recht': '', 'round_verjongd': '', 'semi-ovaal_bol': '', 'semi-ovaal_halfrond': '', 'semi-ovaal_recht': '', 'semi-ovaal_verjongd': '', 'semi-recht_bol': '', 'semi-recht_halfrond': '', 'semi-recht_recht': '', 'semi-recht_verjongd': '', 'rechthoekig_bol': '', 'rechthoekig_halfrond': '', 'rechthoekig_recht': '', 'rechthoekig_verjongd': '', 'plat-ovaal_bol': '', 'plat-ovaal_halfrond': '', 'plat-ovaal_recht': '', 'plat-ovaal_verjongd': '', 'organish_bol': '', 'organish_halfrond': '', 'organish_recht': '', 'organish_verjongd': '', 'Rechthoek_radius_bol': '', 'Rechthoek_radius_halfrond': '', 'Rechthoek_radius_recht': '', 'Rechthoek_radius_verjongd': '', 'novum-15': '', 'novum-15-round': '', 'novum-30': '', 'novum-30-round': '', 'steelo': '', } },
   // 'option_0-2': { 'group-1': 'on', 'option_1-0': 'on', 'option_1-1': 'on', 'group-2': '', 'option_2-0': '', 'option_2-1': '', 'group-5': '', 'option_5-0': '', 'option_5-1': '', 'option_5-2': '', 'option_5-3': '', 'option_5-4': '', 'option_5-5': '', 'option_5-6': '', 'option_5-7': '', 'group-6': '', 'option_6-0': '', 'option_6-1': '', 'option_6-2': '', 'option_6-3': '', 'option_6-4': '', 'option_6-5': '', 'option_6-6': '', 'option_6-7': '', 'group-7': '', 'option_7-0': '', 'option_7-1': '', 'option_7-2': '', 'option_7-3': '', 'option_7-4': '', 'option_7-5': '', 'option_7-6': '', 'option_7-7': '', 'group-8': '', 'option_8-0': '', 'option_8-1': '', 'option_8-2': '', 'option_8-3': '', 'option_8-4': '', 'option_8-5': '', 'option_8-6': '', 'option_8-7': '', 'group-9': '', 'option_9-0': '', 'option_9-1': '', 'option_9-2': '', 'option_9-3': '', 'option_9-4': '', 'option_9-5': '', 'option_9-6': '', 'option_9-7': '', 'group-10': '', 'option_10-0': '', 'option_10-1': '', 'option_10-2': '', 'option_10-3': '', 'option_10-4': '', 'option_10-5': '', 'option_10-6': '', 'option_10-7': '', 'group-11': '', 'option_11-0': '', 'option_11-1': '', 'option_11-2': '', 'option_11-3': '', 'option_11-4': '', 'option_11-5': '', 'option_11-6': '', 'option_11-7': '', 'group-12': '', 'option_12-0': '', 'option_12-1': '', 'option_12-2': '', 'option_12-3': '', 'option_12-4': '', 'option_12-5': '', 'option_12-6': '', 'option_12-7': '', 'group-13': '', 'option_13-0': '', 'option_13-1': '', 'option_13-2': '', 'option_13-3': '', 'group-14': '', 'option_14-0': '', 'option_14-1': '', 'option_14-2': '', 'option_14-3': '', 'option_14-4': '', 'group-15': '', 'group-16': '', 'group-17': '', 'group-18': '', 'group-19': '', 'group-20': '', 'group-21': '', 'group-22': '', 'group-23': '', 'option_23-0': '', 'option_23-1': '', 'option_23-2': '', 'group-27': '', 'option_27-0': '', 'option_27-1': '', 'option_27-2': '', 'group-28': '', 'option_28-0': '', 'option_28-1': '', 'option_28-2': '', 'group-24': '', 'option_24-0': '', 'option_24-1': '', 'option_24-2': '', 'group-25': 'on', 'option_25-0': 'on', 'option_25-1': 'on', 'option_25-2': 'on', 'option_25-3': 'on', 'option_25-4': 'on', 'option_25-5': 'on', 'option_25-6': 'on', 'option_25-7': 'on', 'option_25-8': 'off', 'group-26': '', meshes: { 'ovaal_bol': '', 'ovaal_halfrond': '', 'ovaal_recht': '', 'ovaal_verjongd': '', 'round_bol': '', 'round_halfrond': '', 'round_recht': '', 'round_verjongd': '', 'semi-ovaal_bol': '', 'semi-ovaal_halfrond': '', 'semi-ovaal_recht': '', 'semi-ovaal_verjongd': '', 'semi-recht_bol': '', 'semi-recht_halfrond': '', 'semi-recht_recht': '', 'semi-recht_verjongd': '', 'rechthoekig_bol': '', 'rechthoekig_halfrond': '', 'rechthoekig_recht': '', 'rechthoekig_verjongd': '', 'plat-ovaal_bol': '', 'plat-ovaal_halfrond': '', 'plat-ovaal_recht': '', 'plat-ovaal_verjongd': '', 'organish_bol': '', 'organish_halfrond': '', 'organish_recht': '', 'organish_verjongd': '', 'Rechthoek_radius_bol': '', 'Rechthoek_radius_halfrond': '', 'Rechthoek_radius_recht': '', 'Rechthoek_radius_verjongd': '', 'novum-15': '', 'novum-15-round': '', 'novum-30': '', 'novum-30-round': '', 'steelo': '', } },
+};
+
+export const NAV_CAM_POSITION = {
+  // OUTSIDE
+  outMain: {
+    outside: true,
+    1: {
+      camera: [9.336, 1.388, -10.518],
+      target: [0, HUMAN_HEIGHT, 0],
+    },
+    2: {
+      camera: [11.237, 0.925, 8.438],
+      target: [0, HUMAN_HEIGHT, 0],
+    },
+  },
+  // INSIDE
+  inMain: {
+    outside: false,
+    1: {
+      camera: [-0.357, 1.501, 2.256],
+      target: [-0.391, HUMAN_HEIGHT, 2.177],
+    },
+    2: {
+      camera: [0.534, 1.502, 3.065],
+      target: [0.476, HUMAN_HEIGHT, 3.003],
+    },
+  },
 };
