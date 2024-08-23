@@ -35,7 +35,7 @@ export async function createMenu(mainData) {
         { '#button_sleep .canvas_btn_text': 'ui_btn_radio_sleep' },
         { '#button_work .canvas_btn_text': 'ui_btn_radio_work' },
         { '#button_live .canvas_btn_text': 'ui_btn_radio_live' },
-        { '#ar_button_order__caption': 'ui_btn_buy' },
+        { '#ar_button_order__caption .ar_button_order__caption_large': 'ui_btn_buy' },
         { '.popup-sharing-title': 'ui_popup-title-share' },
         { '#popup-qr-title-ui': 'ui_popup-title-qr' },
         { '#popup-qr-text-ui': 'ui_popup-text-qr' },
@@ -101,11 +101,11 @@ export async function createMenu(mainData) {
           const filterGroup = $(`<div class="ar_filter_group ${customClass} disabled" id="group-${groupId}"></div>`);
 
           const filterHeaderHTML = `
-            <div class="ar_button_back">
-              <div class="ar_button_back__image"></div>
-              <div class="ar_button_back__caption">${getData(mainData, 'ui_btn_back', currentLanguage)}</div>
-            </div>
             <div class="ar_filter_header">
+              <div class="ar_button_back">
+                <div class="ar_button_back__image"></div>
+                <div class="ar_button_back__caption">${getData(mainData, 'ui_btn_back', currentLanguage)}</div>
+              </div>
               <div class="ar_filter_number">${uiNumber}</div>
               <div class="ar_filter_caption">${getData(mainData, mainData[i][0], currentLanguage)}</div>
               <div class="ar_filter_selected_item" id="summary-item2-${groupId}"></div>
