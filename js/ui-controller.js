@@ -1,9 +1,8 @@
 'use strict';
 /* global jQuery, $ */
 
-import { DEFAULT_LANGUAGE, GUI_MODE_UI, IS_PRICE_SIMPLE } from './settings.js';
+import { DEFAULT_LANGUAGE, IS_PRICE_SIMPLE } from './settings.js';
 
-export let gui_mode = GUI_MODE_UI;
 export let currentLanguage = DEFAULT_LANGUAGE;
 
 export let uiMultiLanguages = [];
@@ -48,7 +47,6 @@ export async function createMenu(mainData) {
         { '.canvas_notification': 'ui_canvas_notification' },
       );
 
-      const speedUiAnim = 300;
       const groupsContainer = $('#ar_filter');
       const summaryList = $('.ar_summary .ar_summary_list');
 
@@ -59,8 +57,6 @@ export async function createMenu(mainData) {
         let optionTypeClass = 'type_select';
         let dataDefault = '';
         let uiNumber = '';
-
-        if (mainData[i][0].toUpperCase().includes("TEST")) { gui_mode = true; }
 
         if (mainData[i][0].includes("group")) {
           dataGroup = mainData[i][0];
@@ -133,13 +129,6 @@ export async function createMenu(mainData) {
           uiMultiLanguages.push(
             { [`#group-${groupId} .ar_filter_caption`]: mainData[i][0] },
           );
-
-          // $(`#group-${groupId} .ar_filter_header`).on('click', function () {
-          //   $(`#group-${groupId} div.ar_filter_description`)?.slideToggle(speedUiAnim);
-          //   $(`#group-${groupId} div.ar_filter_inputs`)?.slideToggle(speedUiAnim);
-          //   $(`#group-${groupId} div.ar_filter_options`)?.slideToggle(speedUiAnim);
-          //   $(`#group-${groupId} div.ar_filter_options_result`)?.slideToggle(speedUiAnim);
-          // });
 
           const summaryItemHTML = `
             <div class="ar_summary_list_item" id="summary-item-${groupId}">
@@ -242,7 +231,6 @@ export async function createMenu(mainData) {
       }
 
       // menuHider();
-      if (gui_mode) { $('#ar_model_viewer').append($('<div id="gui-container"></div>')); }
 
       updateUIlanguages(mainData);
       setEventListenersForMenuItems();

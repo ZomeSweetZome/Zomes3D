@@ -1,5 +1,5 @@
 /* eslint-disable no-case-declarations */
-/* global THREE, jQuery, $, dat */
+/* global THREE, jQuery, $ */
 
 // Created by Marevo (Pavlo Voronin)
 // Welcome to our custom script!
@@ -17,8 +17,6 @@ import {
   DATA_CHECKING_PRICE,
   DEFAULT_CURRENCY,
   CURRENCY_SIGN,
-  MORPH_DATA,
-  MORPH_DATA_LEGS_LENGTH,
   CONDITIONS,
   MODEL_PATHS,
   MODEL_CENTER_POSITION,
@@ -47,7 +45,6 @@ import {
   createMenu,
   setLoadParseCSV,
   getData,
-  gui_mode,
   currentLanguage,
 } from './ui-controller.js';
 
@@ -620,7 +617,7 @@ async function StartSettings() {
   theModel && scene.add(theModel);
   //!------
     
-  InitMorphModel(theModel);
+  // InitMorphModel(theModel);
   $('#js-loader').addClass('invisible');
   $('.summary.entry-summary').removeClass('hidden');
   
@@ -637,8 +634,6 @@ async function StartSettings() {
   animateScale(theModel);
 
   isFirstStart = false;
-
-  (gui_mode) && guiModeController();
 }
   
 
@@ -1201,6 +1196,7 @@ function clickActiveOption(groupId) { // if !groupId will scan every groupId
   }
 }
 
+// eslint-disable-next-line no-unused-vars
 function assignOptionsInRelatedGroups(groupIDs) {
   (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ assignOptionsInRelatedGroups ~ ');
 
@@ -1309,13 +1305,13 @@ function CheckChanges(callback = () => {}) {
 
 function preloadTextures() {
   for (let i = 0; i < 9; i++) {
-    loadTexture(TEXTURES.top[i]);
-    loadTexture(TEXTURES.end[i]);
+    // loadTexture(TEXTURES.top[i]);
+    // loadTexture(TEXTURES.end[i]);
   }
-  loadTexture(TEXTURES.oak.mat);
-  loadTexture(TEXTURES.oak.gloss);
-  loadTexture(TEXTURES.noten.mat);
-  loadTexture(TEXTURES.noten.gloss);
+  // loadTexture(TEXTURES.oak.mat);
+  // loadTexture(TEXTURES.oak.gloss);
+  // loadTexture(TEXTURES.noten.mat);
+  // loadTexture(TEXTURES.noten.gloss);
 }
 
 
@@ -1330,91 +1326,6 @@ function changeTexture(value, type) {
   if (type === 'legs') {
     setObjectTexture(TEXTURES.top.materialNamesLeg, TEXTURES.top[value]);
   }
-}
-
-function changeThickness(value) {
-  const targetValue = (value == '1') ? 2 : 0;
-  ChangeGlobalMorph('20-30mm', targetValue);
-}
-
-let oldLengthTop = 0;
-let oldLengthLegs = 0;
-function changeLength(value, needsAnimate = true) {
-  if(SharedParameterList[3].value == '6') { // shape = rond
-    changeDiameter(SharedParameterList[6].value);
-    return;
-  }
-
-  const targetValueTop = ConvertMorphValue(MORPH_DATA.length[value], MORPH_DATA.length.min, MORPH_DATA.length.max);
-  const legType = SharedParameterList[8].value;
-  const formType = SharedParameterList[3].value;
-  const dimensionType = (SharedParameterList[3].value == '6') ? SharedParameterList[6].value : SharedParameterList[4].value;
-  let targetValueLegs = MORPH_DATA_LEGS_LENGTH[legType][formType][dimensionType];
-  
-  if (!targetValueLegs) { targetValueLegs = 0; }
-
-  if (isFirstStart || !needsAnimate) {
-    ChangeGlobalMorph('length', targetValueTop);
-    ChangeGlobalMorph('length-legs', targetValueLegs);
-  } else {
-    animateMorph('length', oldLengthTop, targetValueTop);
-    animateMorph('length-legs', oldLengthLegs, targetValueLegs);
-  }
-
-  let widthLegsValue = 1;
-
-  if (SharedParameterList[3].value == '3' || // form = ( Ovaal || Semi-ovaal || Organisch )
-  SharedParameterList[3].value == '4' ||
-  SharedParameterList[3].value == '7') {
-    widthLegsValue = 0;
-  }
-
-  ChangeGlobalMorph('width-legs', widthLegsValue);
-
-  if (MORPH_DATA.length[value] >= 280 || SharedParameterList[2].value == '1') { // changing thickness
-    // SharedParameterList[2].value = '1';
-    changeThickness('1'); // = 4cm
-  } else if (SharedParameterList[2].value == '0') {
-    changeThickness('0'); // = 2cm
-  }
-
-  oldLengthTop = targetValueTop;
-  oldLengthLegs = targetValueLegs;
-}
-
-let oldWidth = 0;
-function changeWidth(value) {
-  const targetValue = ConvertMorphValue(MORPH_DATA.width[value], MORPH_DATA.width.min, MORPH_DATA.width.max);
-  (DEBUG_MODE_VALUES) && console.log("🚀 ~ changeWidth ~ value, targetValue:", MORPH_DATA.width[value], targetValue);
-
-  if (isFirstStart) {
-    ChangeGlobalMorph('width', targetValue);
-  } else {
-    animateMorph('width', oldWidth, targetValue);
-  }
-
-  oldWidth = targetValue;
-}
-
-let oldDiameter = 0;
-function changeDiameter(value) {
-  if (SharedParameterList[8].value == '2') { // Legs = Steelo
-    ChangeGlobalMorph(
-      'length-legs', 
-      MORPH_DATA_LEGS_LENGTH[SharedParameterList[8].value][SharedParameterList[3].value][SharedParameterList[6].value]
-    );
-  }
-
-  const targetValue = ConvertMorphValue(MORPH_DATA.diameter[value], MORPH_DATA.diameter.min, MORPH_DATA.diameter.max);
-  (DEBUG_MODE_VALUES) && console.log("🚀 ~ changeDiameter ~ value, targetValue:", MORPH_DATA.diameter[value], targetValue);
-
-  if (isFirstStart) {
-    ChangeGlobalMorph('diameter', targetValue);
-  } else {
-    animateMorph('diameter', oldDiameter, targetValue);
-  }
-
-  oldDiameter = targetValue;
 }
 
 //#endregion
@@ -1543,6 +1454,18 @@ function calculatePrice() {
   totalAmountElement.innerText = formatPrice(totalAmount, currentCurrencySign);
 }
 
+// function extractPercentage(qString) {
+//   const cleanedString = qString.replace(/[^\d.%]/g, '');
+//   const match = cleanedString.match(/\d+/);
+
+//   if (match) {
+//       const percentage = parseFloat(match[0]);
+//       return isNaN(percentage) ? null : percentage;
+//   }
+
+//   return null;
+// }
+
 function convertPriceToNumber(priceString) {
   if (!priceString) return 0;
 
@@ -1551,18 +1474,6 @@ function convertPriceToNumber(priceString) {
   const priceNumber = parseFloat(priceWithDot);
 
   return priceNumber;
-}
-
-function extractPercentage(qString) {
-  const cleanedString = qString.replace(/[^\d.%]/g, '');
-  const match = cleanedString.match(/\d+/);
-
-  if (match) {
-      const percentage = parseFloat(match[0]);
-      return isNaN(percentage) ? null : percentage;
-  }
-
-  return null;
 }
 
 function getOrderList() {
@@ -2853,6 +2764,7 @@ function promiseDelayShaderSettings(time, object, callback) {
   });
 }
 
+// eslint-disable-next-line no-unused-vars
 function InitMorphModel(model) {
   var BufferGeometryUtils_script = document.createElement('script');
   BufferGeometryUtils_script.setAttribute('src', 'https://cdn.jsdelivr.net/npm/three@0.147/examples/js/utils/BufferGeometryUtils.js');
@@ -2938,12 +2850,14 @@ function ChangeGlobalMorph(morphName, inputvalue) {
   }
 }
 
+// eslint-disable-next-line no-unused-vars
 function ConvertMorphValue(inputval, srcStart, srcEnd, destStart = 0, destEnd = 1) {
   const result =  destStart + (inputval - srcStart) * (destEnd - destStart) / (srcEnd - srcStart);
 
   return result;
 }
 
+// eslint-disable-next-line no-unused-vars
 function animateMorph(morphName, valueStart, valueEnd, callback = () => {}, timeInterval = 200, steps = 5) {
   (DEBUG_MODE_VALUES) && console.log("🚀 ~ animateMorph ~ ");
   const stepDuration = timeInterval / steps;
@@ -2962,130 +2876,6 @@ function animateMorph(morphName, valueStart, valueEnd, callback = () => {}, time
       }
     }, i * stepDuration);
   }
-}
-
-//#endregion
-
-//#region GUI
-
-function guiModeController() {
-  const materialEquilNames = {
-    names: {
-      'Kleur onderstel': ['paint'],
-    },
-    colors: {
-      'Kleur onderstel': getColorArray('option_17'),
-    }
-  };
-
-  const materialUiNames = Object.keys(materialEquilNames.names);
-  let colorControllers = [];
-  let applyButtons = [];
-  let colorValues = {};
-
-  const gui = new dat.GUI();
-  const guiContainer = $('#gui-container');
-  guiContainer.append(gui.domElement);
-
-  const colorConfig = {
-    selectedMaterial: materialUiNames[0],
-    selectedColor: materialEquilNames.colors[materialUiNames[0]],
-  };
-
-  function updateMaterialColor(color = colorConfig.selectedColor) {
-    const materialNames = getMaterialNames(colorConfig.selectedMaterial);
-
-    for (let i = 0; i < materialNames.length; i++) {
-      setMaterialColor(materialNames[i], color);
-    }
-  }
-
-  function getMaterialNames(title) {
-    return materialEquilNames.names[title];
-  }
-
-  function getMaterialColors(materialName) {
-    return materialEquilNames.colors[materialName];
-  }
-
-  const materialController = gui.add(colorConfig, 'selectedMaterial', materialUiNames).name('Choose the material');
-  gui.add({ getListColor: getListColorBtnHandler }, 'getListColor').name('GET COLOR LIST');
-
-  function updateColorOptions() {
-    colorControllers.forEach(controller => controller.remove());
-    applyButtons.forEach(button => button.remove());
-    colorControllers = [];
-    applyButtons = [];
-    colorValues = {};
-
-    const materialColors = getMaterialColors(colorConfig.selectedMaterial);
-
-    materialColors.forEach(color => {
-      colorValues[color.name] = color.hesh;
-      colorConfig.selectedColor = color.hesh;
-
-      const colorController = gui.addColor(colorConfig, 'selectedColor').name(`${color.name}`);
-      const applyButton = gui.add({ apply: applyBtnHandler }, 'apply').name('Set');
-
-      function applyBtnHandler() {
-        updateMaterialColor(colorValues[color.name]);
-      }
-
-      colorController.onChange(function () {
-        colorValues[color.name] = colorConfig.selectedColor;
-        updateMaterialColor();
-      });
-
-      colorControllers.push(colorController);
-      applyButtons.push(applyButton);
-    });
-  }
-
-  materialController.onChange(function () {
-    updateColorOptions();
-    updateMaterialColor();
-  });
-
-  function getListColorBtnHandler() {
-    $('.gui_prompt').remove();
-
-    const guiPrompt = $('<div class="gui_prompt">');
-    const guiPromptText = $('<div class="gui_prompt_text">');
-    const guiPromptBtn = $('<button class="gui_prompt_btn">Close</button>');
-    guiPrompt.append(guiPromptText).append(guiPromptBtn);
-    $('body').append(guiPrompt);
-
-    guiPromptBtn.on('click', function () {
-      guiPrompt.remove();
-    });
-
-    let colorsList = `Accurated colors for "${colorConfig.selectedMaterial}":<br>`;
-
-    for (const colorName in colorValues) {
-      colorsList += `${colorName}: ${colorValues[colorName]}<br>`;
-    }
-
-    guiPromptText.html(colorsList);
-  }
-
-  function getColorArray(optName, nameIndex = 4, heshIndex = 1) {
-    let colorArray = [];
-
-    mainData.forEach(item => {
-      if (item[0].includes(optName)) {
-        const colorElement = {
-          name: item[nameIndex],
-          hesh: item[heshIndex],
-        }
-        colorArray.push(colorElement);
-      }
-    });
-
-    return colorArray;
-  }
-
-  updateColorOptions();
-  updateMaterialColor();
 }
 
 //#endregion

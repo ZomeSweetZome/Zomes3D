@@ -2331,66 +2331,6 @@ model-viewer {
 
 /*! ######################################################################## */
 
-/* *********  GUI  ********* */
-
-#gui-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 99999;
-}
-
-#gui-container .cr.function {
-  background-color: #c4c3c3;
-  color: #494949;
-  text-align: center;
-}
-
-#gui-container ul li:nth-child(2) {
-  background-color: #24571f !important;
-  color: #ffffff !important;
-
-}
-
-#gui-container ul li:nth-child(2n) {
-  margin-bottom: 2px;
-}
-
-#gui-container .cr.color .property-name {
-  width: 60%;
-}
-
-#gui-container .cr.color .c {
-  width: 40%;
-}
-
-#gui-container .close-button.close-bottom {
-  background-color: darkred;
-}
-
-.gui_prompt {
-  display: flex;
-  flex-direction: column;
-
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-
-  background-color: #d4c4af;
-  box-shadow: 20px 10px 30px 0 rgba(3, 70, 70, 0.8);
-}
-
-.gui_prompt_text {
-  font-size: 18px;
-  padding: 10px 15px;
-}
-
-.gui_prompt_btn {
-  font-size: 18px;
-  height: 40px;
-}
-
 /* ---------------MAREVO LOADER ----------------- */
 
 :root {

@@ -1,9 +1,8 @@
 /* eslint-disable no-unused-vars */
 'use strict';
-/* global THREE, $, dat */
+/* global THREE, $ */
 
 const TEST_MODE = false;
-const DEV_GUI_MODE = false;
 
 const LOADER = document.getElementById('js-loader');
 
@@ -38,8 +37,8 @@ const scenePropertiesDefault = {
 
 let startPosition = new THREE.Vector3(2.741, 1.875, 7.51);
 
-let dirLight, pointLight, pointLight2;
-let pointLightIntensity, dirLightIntencity;
+let dirLight;
+let dirLightIntencity;
 
 export function Get3DScene() {
   return scene;
@@ -147,12 +146,6 @@ export function create3DScene(properties = scenePropertiesDefault, loadFunction)
     // LOADER.classList.add('invisible');
     // $('.summary.entry-summary').removeClass('hidden');
     isModelsLoaded = true;
-
-    initDatGui(
-      SHADOW_TRANSPARENCY,
-      TONE_MAPPING_EXPOSURE,
-      IMPORTED_MODELS[0],
-    );
 
     loadFunction();
   }
@@ -647,126 +640,3 @@ export function smoothCameraTransition(
 
   animate();
 }
-
-//#region DEVELOPER GUI
-
-// import * as dat from 'dat.gui';
-function initDatGui(SHADOW_TRANSPARENCY, toneMappingExposure, model) {
-  if (!DEV_GUI_MODE) return;
-
-  const gui = new dat.GUI();
-  const guiContainer = $('#gui-container');
-  guiContainer.append(gui.domElement);
-
-  // Define parameters
-  const guiParams = {
-    SHADOW_TRANSPARENCY: SHADOW_TRANSPARENCY,
-    toneMappingExposure: toneMappingExposure,
-    pointLightIntensity: pointLightIntensity,
-    dirLightIntencity: dirLightIntencity,
-    pointLightPosition: [pointLight.position.x, pointLight.position.y, pointLight.position.z],
-    pointLight2Position: [pointLight2.position.x, pointLight2.position.y, pointLight2.position.z],
-    dirLightPosition: [dirLight.position.x, dirLight.position.y, dirLight.position.z],
-    dirLightShadowNear: dirLight.shadow.camera.near,
-    dirLightShadowFar: dirLight.shadow.camera.far,
-    modelPos: [model.position.x, model.position.y, model.position.z],
-    cameraFov: camera.fov,
-    cameraPos: [camera.position.x, camera.position.y, camera.position.z],
-    controlsMaxPolarAngle: controls.maxPolarAngle,
-    controlsMinPolarAngle: controls.minPolarAngle,
-    controlsMinDistance: controls.minDistance,
-    controlsMaxDistance: controls.maxDistance,
-    controlsMinAzimuthAngle: controls.minAzimuthAngle,
-    controlsMaxAzimuthAngle: controls.maxAzimuthAngle,
-    controlsTarget: [controls.target.x, controls.target.y, controls.target.z],
-  };
-
-  const controllers = {};
-
-  controllers.shadowTransparency = gui.add(guiParams, 'SHADOW_TRANSPARENCY', 0, 5, 0.05).onChange(value => {
-    floorMaterial.opacity = value;
-  });
-  controllers.toneMappingExposure = gui.add(guiParams, 'toneMappingExposure', 0, 5, 0.05).name('Exposure').onChange(value => {
-    renderer.toneMappingExposure = value;
-  });
-  // -----------------------------------------------------------
-  const pointLightFolder = gui.addFolder('Point Light 1');
-  controllers.pointLightIntensity = pointLightFolder.add(guiParams, 'pointLightIntensity', 0, 20, 0.1).onChange(value => {
-    pointLight.intensity = value;
-  });
-  controllers.pointLightPositionX = pointLightFolder.add(guiParams.pointLightPosition, '0', -10, 10, 0.1).name('X').onChange(value => {
-    pointLight.position.x = value;
-  });
-  controllers.pointLightPositionY = pointLightFolder.add(guiParams.pointLightPosition, '1', -10, 10, 0.1).name('Y').onChange(value => {
-    pointLight.position.y = value;
-  });
-  controllers.pointLightPositionZ = pointLightFolder.add(guiParams.pointLightPosition, '2', -10, 10, 0.1).name('Z').onChange(value => {
-    pointLight.position.z = value;
-  });
-  // -----------------------------------------------------------
-  const pointLight2Folder = gui.addFolder('Point Light 2');
-  controllers.pointLight2PositionX = pointLight2Folder.add(guiParams.pointLight2Position, '0', -10, 10, 0.1).name('X').onChange(value => {
-    pointLight2.position.x = value;
-  });
-  controllers.pointLight2PositionY = pointLight2Folder.add(guiParams.pointLight2Position, '1', -10, 10, 0.1).name('Y').onChange(value => {
-    pointLight2.position.y = value;
-  });
-  controllers.pointLight2PositionZ = pointLight2Folder.add(guiParams.pointLight2Position, '2', -10, 10, 0.1).name('Z').onChange(value => {
-    pointLight2.position.z = value;
-  });
-  // -----------------------------------------------------------
-  const dirLightFolder = gui.addFolder('Directional Light');
-  controllers.dirLightIntencity = dirLightFolder.add(guiParams, 'dirLightIntencity').onChange(value => {
-    dirLight.intensity = value;
-  });
-  controllers.dirLightShadowNear = dirLightFolder.add(guiParams, 'dirLightShadowNear', 0.1, 10, 0.1).name('Dir Light Shadow Near').onChange(value => {
-    dirLight.shadow.camera.near = value;
-  });
-  controllers.dirLightShadowFar = dirLightFolder.add(guiParams, 'dirLightShadowFar', 10, 500, 10).name('Dir Light Shadow Far').onChange(value => {
-    dirLight.shadow.camera.far = value;
-  });
-  controllers.dirLightPositionX = dirLightFolder.add(guiParams.dirLightPosition, '0', -10, 10, 0.1).name('X').onChange(value => {
-    dirLight.position.x = value;
-  });
-  controllers.dirLightPositionY = dirLightFolder.add(guiParams.dirLightPosition, '1', -10, 10, 0.1).name('Y').onChange(value => {
-    dirLight.position.y = value;
-  });
-  controllers.dirLightPositionZ = dirLightFolder.add(guiParams.dirLightPosition, '2', -10, 10, 0.1).name('Z').onChange(value => {
-    dirLight.position.z = value;
-  });
-  // -----------------------------------------------------------
-  const modelPositionController = gui.addFolder('Model Position');
-  modelPositionController.add(model.position, 'x', -1, 1, 0.01).name('Model X');
-  modelPositionController.add(model.position, 'y', -1, 1, 0.01).name('Model Y');
-  modelPositionController.add(model.position, 'z', -1, 1, 0.01).name('Model Z');
-  // -----------------------------------------------------------
-  const cameraFolder = gui.addFolder('Camera');
-  controllers.fov = cameraFolder.add(guiParams, 'cameraFov', 1, 180).name('FOV').onChange(value => {
-    camera.fov = value;
-    camera.updateProjectionMatrix();
-  });
-  // -----------------------------------------------------------
-  const controlsFolder = gui.addFolder('Controls');
-  controllers.controlsMaxPolarAngle = controlsFolder.add(guiParams, 'controlsMaxPolarAngle', -Math.PI, Math.PI).name('MaxPolarAngle').onChange(value => {
-    controls.maxPolarAngle = value;
-  });
-  controllers.controlsMinPolarAngle = controlsFolder.add(guiParams, 'controlsMinPolarAngle', -Math.PI, Math.PI).name('MinPolarAngle').onChange(value => {
-    controls.minPolarAngle = value;
-  });
-  controllers.controlsMinAzimuthAngle = controlsFolder.add(guiParams, 'controlsMinAzimuthAngle', -Math.PI, Math.PI).name('MinAzimuthAngle').onChange(value => {
-    controls.minPolarAngle = value;
-  });
-  controllers.controlsMaxAzimuthAngle = controlsFolder.add(guiParams, 'controlsMaxAzimuthAngle', -Math.PI, Math.PI).name('MaxAzimuthAngle').onChange(value => {
-    controls.minPolarAngle = value;
-  });
-  controllers.controlsMaxDistance = controlsFolder.add(guiParams, 'controlsMaxDistance', 2.2, 6.2, 0.1).name('MaxDistance').onChange(value => {
-    controls.maxDistance = value;
-  });
-  controllers.controlsMinDistance = controlsFolder.add(guiParams, 'controlsMinDistance', 0.1, 2.2, 0.1).name('MinDistance').onChange(value => {
-    controls.minDistance = value;
-  });
-
-  gui.close();
-}
-
-//#endregion
