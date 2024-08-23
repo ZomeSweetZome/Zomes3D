@@ -22,7 +22,10 @@
 <body>
   <div id="marevo_app">
     <div id="main-header">
-      <div id="identity"></div>
+      <div id="identity">
+        <!-- <a target="_blank" href="http://fdomes.com/">
+        </a> -->
+        </div>
 
       <div class="header_blocks">
         <div id="social-media" class="top-frame-panel">
@@ -92,22 +95,37 @@
               </div>
             </div>
           </div>
-
+          
+          
+          <!--! MENU FOOTER CONTAINER BEGIN -->
           <div class="ar_menu_footer_container">
-            <div class="menu__footer_delivery_info">
-              <span id="delivery_info_title">Estimated delivery time</span>
-              <span class="menu__footer__info_icon"></span>
+
+            <div id="button_ar_qr_menu" class="button_ar_qr hidden">
+              <div class="button_ar_qr_menu__image"></div>
             </div>
 
-            <div class="delivery_info_caption" id="delivery_info_caption"></div>
+            <div class="menu_footer_amount__wrapper">
+              <div class="menu__footer_delivery_info">
+                <span id="delivery_info_title">Estimated delivery time:</span>
+                <!-- &nbsp; -->
+                <div class="wrapper">
+                  <span id="delivery_info_date">February 1, 2025</span>
+                  <span class="menu__footer__info_icon"></span>
+                </div>
+              </div>
+              
+              <div id="delivery_info_caption" class="delivery_info_caption"></div>
 
-            <div class="ar_total_amount-price" id="ar_total_price">$0,00</div>
-
-            <div class="menu__footer_payment_info">
-              <span id="payment_info_title">+ VAT (if applicable) & shipping</span>
-              <span class="menu__footer__info_icon"></span>
+              <div class="ar_total_amount__container">
+                <div id="ar_total_price" class="ar_total_amount-price">$0,00</div>
+                
+                <div class="menu__footer_payment_info">
+                  <span id="payment_info_title">+ TAX (if applicable) & shipping</span>
+                  <span class="menu__footer__info_icon"></span>
+                </div>
+              </div>
             </div>
-
+              
             <div id="ar_button_order" class="ar_buy-btn">
               <div id="ar_button_order__caption" class="ar_button_order__caption">
                 <span class="ar_button_order__caption_large">Download a free PDF</span>
@@ -116,7 +134,10 @@
 
               <div class="ar_button_order__image"></div>
             </div>
+
           </div>
+          <!--! MENU FOOTER CONTAINER END-->
+
 
           <div class="ar_menu_info_container">
             <div class="ar_menu_info__header">
@@ -152,7 +173,6 @@
             </div>
           </div>
         </div>
-
 
         <div class="ar_model_viewer" id="ar_model_viewer">
           <canvas class="ar_model_view" id="ar_model_view" data-engine="three.js r146" width="819" height="819"
@@ -237,7 +257,7 @@
                 <div class="canvas_btn_text canvas_btn_share__text">SHARE</div>
               </div>
   
-              <div id="button_ar_qr" class="canvas_btn canvas_btn_ar hidden">
+              <div id="button_ar_qr" class="button_ar_qr canvas_btn canvas_btn_ar hidden">
                 <div class="canvas_btn__image"></div>
                 <div class="canvas_btn_text canvas_btn_ar__text">AR</div>
               </div>

@@ -2439,10 +2439,10 @@ async function PrepareUI() {
 
   // *****   POP-UPs   *****
   jQuery(document).ready(function ($) {
-    const canvasBtnAR = $('#button_ar_qr');
+    const BtnsAR = $('.button_ar_qr');
     const canvasBtnShare = $('#button_share_url');
     
-    canvasBtnAR.removeClass('hidden');
+    BtnsAR.removeClass('hidden');
 
     popup = $('.popup');
     popupItemSharing = $('#popup-item-share');
@@ -2487,7 +2487,7 @@ async function PrepareUI() {
       sharingHandler();
     });
 
-    canvasBtnAR.on('click', function () {
+    BtnsAR.on('click', function () {
       OpenARorQR();
     });
 
