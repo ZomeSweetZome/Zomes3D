@@ -1439,6 +1439,71 @@ function changeTexture(value, type) {
   }
 }
 
+function furnitureController(value) {
+  if (value) {
+    $('.canvas_buttons__radio').removeClass('hidden');
+
+    $('#button_sleep').on('click', function () {
+      $(this).toggleClass('active');
+      $('#button_work').removeClass('active');
+      $('#button_live').removeClass('active');
+    });
+
+    $('#button_work').on('click', function () {
+      $(this).toggleClass('active');
+      $('#button_sleep').removeClass('active');
+      $('#button_live').removeClass('active');
+    });
+
+    $('#button_live').on('click', function () {
+      $(this).toggleClass('active');
+      $('#button_sleep').removeClass('active');
+      $('#button_work').removeClass('active');
+    });
+
+    if ($('#button_sleep').hasClass('active')) {
+      //! turn OFF furniture: work
+      //! turn OFF furniture: live
+      
+      //! turn ON furniture: sleep
+    }
+
+    if ($('#button_work').hasClass('active')) {
+      //! turn OFF furniture: sleep
+      //! turn OFF furniture: live
+      
+      //! turn ON furniture: work
+    }
+
+    if ($('#button_live').hasClass('active')) {
+      //! turn OFF furniture: sleep
+      //! turn OFF furniture: work
+
+      //! turn ON furniture: live
+    }
+
+  } else {
+    $('.canvas_buttons__radio').addClass('hidden');
+    //! TODO turn off all furniture
+  }
+}
+
+function annotationController(value) {
+  if (value) {
+    //! TODO turn ON annotations
+  } else {
+    //! TODO turn OFF annotations
+  }
+}
+
+function dimensionsController(value) {
+  if (value) {
+    //! TODO turn ON dimensions
+  } else {
+    //! TODO turn OFF dimensions
+  }
+}
+
 //#endregion
 
 //#region PRICE CALCULATION
@@ -2598,6 +2663,7 @@ async function PrepareUI() {
     annotationsBtnHandler();
     dimensionsBtnHandler();
     furnitureBtnHandler();
+    notificationHandler();
   });
 }
 
@@ -2734,9 +2800,11 @@ function annotationsBtnHandler() {
 
     if ($(this).hasClass('active')) {
       $('#button_dimensions').addClass('disabled');
+      annotationController(true);
     } else {
       if (!$('#button_furniture').hasClass('active')) {
         $('#button_dimensions').removeClass('disabled');
+        annotationController(false);
       }
     }
   });
@@ -2750,9 +2818,11 @@ function dimensionsBtnHandler() {
     if ($(this).hasClass('active')) {
       $('#button_annotation').addClass('disabled');
       $('#button_furniture').addClass('disabled');
+      dimensionsController(true);
     } else {
       $('#button_annotation').removeClass('disabled');
       $('#button_furniture').removeClass('disabled');
+      dimensionsController(true);
     }
   });
 }
@@ -2775,56 +2845,17 @@ function furnitureBtnHandler() {
   });
 }
 
-function furnitureController(value) {
-  if (value) {
-    $('.canvas_buttons__radio').removeClass('hidden');
-    //! TODO furniture selector handler
+function notificationHandler() {
+  $('.option_1-2').on('click', function () {
+    if (!$(this).hasClass('active')) {
+      $('.canvas_notification').removeClass('hidden');
 
-    $('#button_sleep').on('click', function () {
-      $(this).toggleClass('active');
-      $('#button_work').removeClass('active');
-      $('#button_live').removeClass('active');
-    });
-
-    $('#button_work').on('click', function () {
-      $(this).toggleClass('active');
-      $('#button_sleep').removeClass('active');
-      $('#button_live').removeClass('active');
-    });
-
-    $('#button_live').on('click', function () {
-      $(this).toggleClass('active');
-      $('#button_sleep').removeClass('active');
-      $('#button_work').removeClass('active');
-    });
-
-    if ($('#button_sleep').hasClass('active')) {
-      //! turn OFF furniture: work
-      //! turn OFF furniture: live
-      
-      //! turn ON furniture: sleep
+      setTimeout(function() {
+        $('.canvas_notification').addClass('hidden');
+      }, 2500);
     }
-
-    if ($('#button_work').hasClass('active')) {
-      //! turn OFF furniture: sleep
-      //! turn OFF furniture: live
-      
-      //! turn ON furniture: work
-    }
-
-    if ($('#button_live').hasClass('active')) {
-      //! turn OFF furniture: sleep
-      //! turn OFF furniture: work
-
-      //! turn ON furniture: live
-    }
-
-  } else {
-    $('.canvas_buttons__radio').addClass('hidden');
-    //! TODO turn off all furniture
-  }
+  });
 }
-
 
 // eslint-disable-next-line no-unused-vars
 function getScrollbarWidth() {
