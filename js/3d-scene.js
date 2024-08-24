@@ -335,7 +335,7 @@ export async function disposeModel(model) {
   console.log("🚀 ~ disposeModel ~ model:", model);
   
   if (model) {
-    // model.visible = false;
+    model.visible = false;
 
     model.traverse((object) => {
       if (object.isMesh) {

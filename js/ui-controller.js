@@ -94,7 +94,7 @@ export async function createMenu(mainData) {
             uiNumber = mainData[i][0].split("-")[1];
           }
 
-          const filterGroup = $(`<div class="ar_filter_group ${customClass} disabled" id="group-${groupId}"></div>`);
+          const filterGroup = $(`<div class="ar_filter_group ${customClass} invisible" id="group-${groupId}"></div>`);
 
           const filterHeaderHTML = `
             <div class="ar_filter_header">
@@ -293,8 +293,8 @@ function setEventListenersForMenuItems() {
     const itemId = $(this).attr('id');
     const identifier = itemId.split('title_list__item_')[1];
 
-    $('.ar_filter .ar_filter_group').addClass('disabled');
-    $(`#group-${identifier}`).removeClass('disabled');
+    $('.ar_filter .ar_filter_group').addClass('invisible');
+    $(`#group-${identifier}`).removeClass('invisible');
     $('.ar_filter').addClass('active');
   });
 }
@@ -364,8 +364,6 @@ function parseCSV(text, output) {
       }, []),
     );
   });
-
-  console.log("🚀 ~ parseCSV ~ output:", output);
 }
 
 export function getData(data, text, desiredId, titleId = 'id') {

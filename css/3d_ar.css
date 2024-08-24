@@ -25,8 +25,9 @@
   --marevo-ui-icon_text_question : url(../src/ar-ui-icons/icon_text_question.svg);
   --marevo-ui-select_arrow_down : url(../src/ar-ui-icons/select_arrow_down.svg);
   --marevo-ui-zomes_logo : url(../src/ar-ui-icons/zomes_logo.svg);
-  --marevo-ui-icon_checkbox_disabled : url(../src/ar-ui-icons/icon_checkbox_disabled.svg);
+  --marevo-ui-icon_checkbox_off_disabled : url(../src/ar-ui-icons/icon_checkbox_off_disabled.svg);
   --marevo-ui-icon_checkbox_off : url(../src/ar-ui-icons/icon_checkbox_off.svg);
+  --marevo-ui-icon_checkbox_on_disabled : url(../src/ar-ui-icons/icon_checkbox_on_disabled.svg);
   --marevo-ui-icon_checkbox_on : url(../src/ar-ui-icons/icon_checkbox_on.svg);
   --marevo-ui-icon_popup_close : url(../src/ar-ui-icons/icon_popup_close.svg);
   --marevo-ui-icon_popup_btn_share_w : url(../src/ar-ui-icons/icon_popup_btn_share_w.svg);
@@ -369,6 +370,10 @@ body, html {
   display: none;
 }
 
+.ar_filter .ar_filter_group.invisible {
+  display: none;
+}
+
 /*!------------------------------------*/
 .popup-open {
   overflow: hidden;
@@ -654,12 +659,21 @@ body, html {
 }
 
 .ar_filter .ar_filter_group .ar_filter_options.type_checkbox .option.disabled .option__status_icon {
-  content: var(--marevo-ui-icon_checkbox_disabled);
+  content: var(--marevo-ui-icon_checkbox_off_disabled);
 }
 
 .ar_filter .ar_filter_group .ar_filter_options.type_checkbox .option.active .option__status_icon {
   content: var(--marevo-ui-icon_checkbox_on);
 }
+
+.ar_filter .ar_filter_group .ar_filter_options.type_checkbox .option.active.disabled .option__status_icon {
+  content: var(--marevo-ui-icon_checkbox_on_disabled);
+}
+
+.ar_filter .ar_filter_group .ar_filter_options.type_checkbox .option.disabled .component_title {
+  color: var(--marevo-color-disabled, #B9B9B9);
+}
+
 
 .ar_filter .ar_filter_group .ar_filter_options.type_select .option .image {
   width: 70px;

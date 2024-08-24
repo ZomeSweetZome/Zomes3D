@@ -18,7 +18,8 @@ import {
   DEFAULT_LANGUAGE,
   DEFAULT_CURRENCY,
   CURRENCY_SIGN,
-  CONDITIONS,
+  CONDITIONS_ACTIVE,
+  CONDITIONS_UNCHECKED,
   MODEL_PATHS,
   MODEL_CENTER_POSITION,
   SHADOW_TRANSPARENCY,
@@ -203,7 +204,7 @@ let SharedParameterList = [
 SharedParameterList[0].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
 
-  if (isFirstStart || justClicked) {
+  if (justClicked) {
     currentModel = this.value;
     changeModel(this.value);
   }
@@ -668,7 +669,7 @@ async function StartSettings() {
   $('.summary.entry-summary').removeClass('hidden');
   // theModel?.scale.set(0, 0, 0);
   // setVisibility(theModel, true);
-  animateScale(theModel);
+  animateScale(theModel, 500);
 
   isFirstStart = false;
 }
@@ -965,7 +966,7 @@ function SetGroupActionForSharedParametersCheckboxArray(targetID, array, callbac
   }
 }
 
-function applyAllConditions() {
+function applyAllConditionsActive() {
   (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ applyAllConditions ~ ');
 
   mainGroups.forEach(target => {
@@ -973,9 +974,9 @@ function applyAllConditions() {
       for (let i = 0; i < target.group.options.length; i++) {
         const opt = target.group.options[i];
         const optionName = `option_${opt.group_id}-${opt.component_id}`;
-        const condObj = CONDITIONS[optionName];
+        const condObj = CONDITIONS_ACTIVE[optionName];
         
-        // option is active
+        // select option is active
         if (opt.element.classList.contains('active')) {
           for (let targetName in condObj) {
             if (targetName.includes('group') && condObj[targetName]) {
@@ -1003,12 +1004,33 @@ function applyAllConditions() {
                 if (condObj[targetName] == 'on') {
                   option.element.classList.remove('disabled');
                   option.element.classList.remove('invisible');
-                } else if (condObj[targetName] == 'off') { // make option inactive
-                  option.element.classList.remove('active');
+                } else if (condObj[targetName] == 'off') { // make option inactive (checkbox just disabled)
                   option.element.classList.add('disabled');
+                  const groupType = mainGroups.find(element => element.id == `group-${option.group_id}`).type;
+                  if (groupType !== 'checkbox') {
+                    option.element.classList.remove('active');
+                  }
+                } else if (condObj[targetName] == 'ud') { // make checkbox disabled and unchecked
+                  const groupType = mainGroups.find(element => element.id == `group-${option.group_id}`).type;
+                  if (groupType === 'checkbox' && option.element.classList.contains('active')) {
+                    option.element.click();
+                    option.element.classList.add('disabled');
+                  }
+                  if (groupType === 'checkbox' && !option.element.classList.contains('active')) {
+                    option.element.classList.add('disabled');
+                  }
+                } else if (condObj[targetName] == 'unchecked') { // make checkbox just unchecked
+                  const groupType = mainGroups.find(element => element.id == `group-${option.group_id}`).type;
+                  if (groupType === 'checkbox' && option.element.classList.contains('active')) {
+                    option.element.click();
+                    option.element.classList.remove('disabled');
+                  }
+                  if (groupType === 'checkbox' && !option.element.classList.contains('active')) {
+                    option.element.classList.remove('disabled');
+                  }
                 } else if (condObj[targetName] == 'inv') { // make option inactive and invisible
-                  option.element.classList.remove('active');
                   option.element.classList.add('disabled');
+                  option.element.classList.remove('active');
                   option.element.classList.add('invisible');
                 }
               }
@@ -1031,49 +1053,83 @@ function applyAllConditions() {
             }
           }
         }
+      }
+    }
+  });
+}
 
-        // CHECKBOX and option is NOT active
+function applyAllConditionsUnchecked() {
+  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ applyAllConditions ~ ');
+
+  mainGroups.forEach(target => {
+    if (!target.group.element.classList.contains('disabled')) {
+      for (let i = 0; i < target.group.options.length; i++) {
+        const opt = target.group.options[i];
+        const optionName = `option_${opt.group_id}-${opt.component_id}`;
+        const condObj = CONDITIONS_UNCHECKED[optionName];
+        
+        // checkbox is UNCHECKED (not active)
         if (target.type === 'checkbox' && !opt.element.classList.contains('active')) {
           for (let targetName in condObj) {
-
             if (targetName.includes('group') && condObj[targetName]) {
               const parentGroup = mainGroups.find(element => element.id == targetName);
 
               if (condObj[targetName] == 'on') {
-                parentGroup.group.element.classList.add('disabled');
+                parentGroup?.group.element.classList.remove('disabled');
+                summaryItemVisibility(targetName, true);
+              } else if (condObj[targetName] == 'off') {
+                parentGroup?.group.element.classList.add('disabled');
                 summaryItemVisibility(targetName, false);
               }
             }
 
-            if (targetName.includes('option') && condObj[targetName]) {
+            else if (targetName.includes('option') && condObj[targetName]) {
               const groupId = 'group-' + targetName.split(/[_-]/)[1];
               const parentGroup = mainGroups.find(element => element.id == groupId);
-
               if (!parentGroup) { continue; }
               const compId = targetName.split('-')[1];
               const group = parentGroup.group;
 
-              if (!group.element.classList.contains('disabled')) {
+              // if (!group.element.classList.contains('disabled')) {
                 const option = group.options.find(element => element.component_id == compId);
 
                 if (condObj[targetName] == 'on') {
+                  option.element.classList.remove('disabled');
+                  option.element.classList.remove('invisible');
+                } else if (condObj[targetName] == 'off') { // make option inactive (checkbox just disabled)
                   option.element.classList.add('disabled');
-
-                  if (option.element.classList.contains('active')) {
+                  const groupType = mainGroups.find(element => element.id == `group-${option.group_id}`).type;
+                  if (groupType !== 'checkbox') {
                     option.element.classList.remove('active');
                   }
+                } else if (condObj[targetName] == 'ud') { // make checkbox disabled and unchecked
+                  const groupType = mainGroups.find(element => element.id == `group-${option.group_id}`).type;
+                  if (groupType === 'checkbox' && option.element.classList.contains('active')) {
+                    option.element.click();
+                    option.element.classList.add('disabled');
+                  }
+                  if (groupType === 'checkbox' && !option.element.classList.contains('active')) {
+                    option.element.classList.add('disabled');
+                  }
+                } else if (condObj[targetName] == 'inv') { // make option inactive and invisible
+                  option.element.classList.add('disabled');
+                  option.element.classList.remove('active');
+                  option.element.classList.add('invisible');
                 }
-              }
+              // }
             }
 
-            if (targetName.includes('mesh')) {
+            else if (targetName.includes('mesh')) {
               for (let meshName in condObj[targetName]) {
+
                 let object = GetMesh(meshName);
 
                 if (!object) object = GetGroup(meshName);
                 if (!object) continue;
 
-                if (condObj[targetName][meshName] === 'on') {
+                if (condObj[targetName][meshName] == 'on') {
+                  object.visible = true;
+                } else if (condObj[targetName][meshName] == 'off') {
                   object.visible = false;
                 }
               }
@@ -1324,20 +1380,21 @@ function clickOption(groupId, optionId) {
 }
 
 //! ************************************************
-function CheckChanges(callback = () => {}) {
+function CheckChanges() {
   (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ CheckChanges ~ ');
 
-  applyAllConditions();
+  applyAllConditionsActive();
+  applyAllConditionsUnchecked();
   additionalConditions();
   // assignOptionsInRelatedGroups(SharedParameterList[4].groupIds);
-  applyActiveGroupOptionAction();
-  applyAllConditions();
-  applyActiveGroupOptionAction();
-  setOptionsResult();
-  calculatePrice();
-  getOrderList();
 
-  callback();
+  // applyActiveGroupOptionAction();
+  // applyAllConditions();
+  applyActiveGroupOptionAction();
+
+  // setOptionsResult();
+  // calculatePrice();
+  // getOrderList();
 }
 //! ************************************************
 //#endregion
@@ -1351,8 +1408,8 @@ async function changeModel(model) {
   theModel?.scale.set(0, 0, 0);
   theModel && scene.add(theModel);
   
-  onChangePosition(DATA_HOUSE_NAME[model], 'outMain', () => { }, 5);
-  animateScale(theModel);
+  onChangePosition(DATA_HOUSE_NAME[model], 'outMain', () => {}, 5);
+  animateScale(theModel, 500);
 }
 
 function preloadTextures() {
@@ -2147,7 +2204,6 @@ function GetSharedArrayValues(arrayValue, type) {
     }
   }
 
-  console.log('🚀 ~ GetSharedArrayValues ~ output:', output);
   return output;
 }
 
