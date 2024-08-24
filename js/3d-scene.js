@@ -35,7 +35,7 @@ const scenePropertiesDefault = {
   MODEL_CENTER_POSITION: 0,
 };
 
-let startPosition = new THREE.Vector3(2.741, 1.875, 7.51);
+let startPosition = new THREE.Vector3(3.757, 1.801, 9.629);
 
 let dirLight;
 let dirLightIntencity;

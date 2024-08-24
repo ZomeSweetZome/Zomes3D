@@ -1179,6 +1179,10 @@ body, html {
   content: var(--marevo-ui-icon_furniture_g);
 }
 
+.canvas_btn_top.disabled {
+  pointer-events: none;
+}
+
 /*!---------------*/
 
 .canvas_buttons__radio {

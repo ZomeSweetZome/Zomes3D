@@ -76,7 +76,7 @@ let parametersKey = 'config';
 let parametersValue = '';
 let loaded = false;
 let paramsLoaded = false;
-let isFirstStart = true;
+let isUrlEmpty = true;
 
 let popup;
 let popupItemQr;
@@ -89,8 +89,9 @@ let qrScaned = 0;
 
 let theModel;
 
+let isFirstStart = true;
 let justClicked = false;
-let isUrlEmpty = true;
+let isCameraInside = false;
 
 // CUSTOM SELECT
 jQuery(document).ready(function() {
@@ -1145,6 +1146,7 @@ function additionalConditions() {
   // Additional custom conditions if needed
 }
 
+// eslint-disable-next-line no-unused-vars
 function setOptionsResult() {
   mainGroups.forEach(target => {
     if (!target.group.element.classList.contains('disabled')) {
@@ -2545,10 +2547,6 @@ async function PrepareUI() {
   });
 
   jQuery(document).ready(function () {
-    cameraBtnHandlers();
-  });
-
-  jQuery(document).ready(function () {
     $('.language-picker select').on('change', function () {
       currentLanguage = $(this).val();
       let valueForURL;
@@ -2594,6 +2592,13 @@ async function PrepareUI() {
     });
   });
 
+  // Buttons handlers
+  jQuery(document).ready(function () {
+    cameraBtnHandlers();
+    annotationsBtnHandler();
+    dimensionsBtnHandler();
+    furnitureBtnHandler();
+  });
 }
 
 // *****   MENU-INFO   *****
@@ -2705,6 +2710,8 @@ function cameraBtnHandlers() {
     // onChangePosition(DATA_HOUSE_NAME[currentModel], 'inMain');
     onChangePosition(DATA_HOUSE_NAME[currentModel], 'outPrepare', 
       () => { onChangePosition(DATA_HOUSE_NAME[currentModel], 'inMain') });
+
+      isCameraInside = true;
   });
 
   $('#button_camera_outside').on('click', function (event) {
@@ -2715,8 +2722,63 @@ function cameraBtnHandlers() {
     onChangePosition(DATA_HOUSE_NAME[currentModel], 'outMain');
     // onChangePosition(DATA_HOUSE_NAME[currentModel], 'inPrepare', 
     //   () => { onChangePosition(DATA_HOUSE_NAME[currentModel], 'outMain') });
+
+    isCameraInside = false;
   });
 }
+
+// *****   Annotation Btn   *****
+function annotationsBtnHandler() {
+  $('#button_annotation').on('click', function () {
+    $(this).toggleClass('active');
+
+    if ($(this).hasClass('active')) {
+      $('#button_dimensions').addClass('disabled');
+    } else {
+      if (!$('#button_furniture').hasClass('active')) {
+        $('#button_dimensions').removeClass('disabled');
+      }
+    }
+  });
+}
+
+// *****   Dimensions Btn   *****
+function dimensionsBtnHandler() {
+  $('#button_dimensions').on('click', function () {
+    $(this).toggleClass('active');
+    
+    if ($(this).hasClass('active')) {
+      $('#button_annotation').addClass('disabled');
+      $('#button_furniture').addClass('disabled');
+    } else {
+      $('#button_annotation').removeClass('disabled');
+      $('#button_furniture').removeClass('disabled');
+    }
+  });
+}
+
+// *****   Furniture Btn   *****
+function furnitureBtnHandler() {
+  $('#button_furniture').on('click', function () {
+    $(this).toggleClass('active');
+    $('.canvas_buttons__radio').toggleClass('hidden');
+
+    if ($(this).hasClass('active')) {
+      $('#button_dimensions').addClass('disabled');
+      !isCameraInside && $('#button_camera_inside').click();
+      furnitureController();
+    } else {
+      if (!$('#button_annotation').hasClass('active')) {
+        $('#button_dimensions').removeClass('disabled');
+      }
+    }
+  });
+}
+
+function furnitureController() {
+  //! TODO
+}
+
 
 // eslint-disable-next-line no-unused-vars
 function getScrollbarWidth() {

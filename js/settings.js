@@ -72,15 +72,15 @@ export const NAV_CAM_POSITION = {
   outMain: {
     outside: true,
     'pod': {
-      camera: [2.741, 1.875, 7.51],
+      camera: [3.757, 1.801, 9.629],
       target: [0, HUMAN_HEIGHT, 0],
     },
     'office': {
-      camera: [2.741, 1.875, 7.51],
+      camera: [3.757, 1.801, 9.629],
       target: [0, HUMAN_HEIGHT, 0],
     },
     'studio': {
-      camera: [2.741, 1.875, 7.51],
+      camera: [3.757, 1.801, 9.629],
       target: [0, HUMAN_HEIGHT, 0],
     },
   },
