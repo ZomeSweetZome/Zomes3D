@@ -44,7 +44,7 @@ import {
 
 import {
   createMenu,
-  setLoadParseCSV,
+  loadAndParseCSV,
   getData,
 } from './ui-controller.js';
 
@@ -118,7 +118,7 @@ let SharedParameterList = [
   {  // [1] windows
     id: 'windows',
     groupIds: ['group-1'],
-    splitValue: 'a',
+    splitValue: 'A',
     type: 'array-string',
     value: [0, 0, 0],
     groupOptionAction: null,
@@ -128,7 +128,7 @@ let SharedParameterList = [
   {  // [2] interior
     id: 'interior',
     groupIds: ['group-2'],
-    splitValue: 'r',
+    splitValue: 'R',
     type: 'array-string',
     value: [0, 0, 0],
     groupOptionAction: null,
@@ -138,7 +138,7 @@ let SharedParameterList = [
   {  // [3] exterior
     id: 'exterior',
     groupIds: ['group-3'],
-    splitValue: 'e',
+    splitValue: 'E',
     type: 'string',
     value: '0',
     groupOptionAction: null,
@@ -148,37 +148,37 @@ let SharedParameterList = [
   {  // [4] addons
     id: 'addons',
     groupIds: ['group-4'],
-    splitValue: 'v',
+    splitValue: 'V',
     type: 'array-string',
     value: [0, 0, 0, 0],
     groupOptionAction: null,
     applyURLAction: null,
     applyURLActionReturn: false
   },
-  { // [5] customWindows //! TODO: ADD CUSTOM WINDOWS TO URL
-    id: 'customWindows',
-    groupIds: null,
-    splitValue: 'o',
-    type: 'string',
-    value: '0',
-    groupOptionAction: null,
-    applyURLAction: null,
-    applyURLActionReturn: false
-  },
-  { // [6] language
+  { // [5] language
     id: 'lang', // [6]
     groupIds: null,
-    splitValue: 'U',
+    splitValue: 'O',
     type: 'string',
     value: '0',
     groupOptionAction: null,
     applyURLAction: null,
     applyURLActionReturn: false
   },
-  { // [7] currency //! TODO: ADD CURRENCY TO URL
+  { // [6] currency
     id: 'curr',
     groupIds: null,
-    splitValue: 'A',
+    splitValue: 'u',
+    type: 'string',
+    value: '0',
+    groupOptionAction: null,
+    applyURLAction: null,
+    applyURLActionReturn: false
+  },
+  { // [7] customWindows //! TODO: ADD CUSTOM WINDOWS TO URL
+    id: 'customWindows',
+    groupIds: null,
+    splitValue: 'a',
     type: 'string',
     value: '0',
     groupOptionAction: null,
@@ -188,7 +188,7 @@ let SharedParameterList = [
   { // [8] qr
     id: 'qr',
     groupIds: null,
-    splitValue: 'n',
+    splitValue: 'q',
     type: 'int',
     value: 0,
     groupOptionAction: null,
@@ -256,18 +256,8 @@ SharedParameterList[4].groupOptionAction = function () {
   }
 }
 
-// customWindows
-SharedParameterList[5].groupOptionAction = function () {
-  (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
-  if (isFirstStart || justClicked) {
-    // if(SharedParameterList[3].value !== '6') { // shape != rond
-    //   changeWidth(this.value);
-    // }
-  }
-}
-
 // language
-SharedParameterList[6].groupOptionAction = function () {
+SharedParameterList[5].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
   if (isFirstStart || justClicked) {
     let language = 'EN';
@@ -291,7 +281,7 @@ SharedParameterList[6].groupOptionAction = function () {
 }
 
 // currency
-SharedParameterList[7].groupOptionAction = function () {
+SharedParameterList[6].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
   if (isFirstStart || justClicked) {
     let currency = 'EN';
@@ -308,6 +298,16 @@ SharedParameterList[7].groupOptionAction = function () {
       }
       
     $('.currency-picker select').val(currency).trigger('change');
+  }
+}
+
+// customWindows
+SharedParameterList[7].groupOptionAction = function () {
+  (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
+  if (isFirstStart || justClicked) {
+    // if(SharedParameterList[3].value !== '6') { // shape != rond
+    //   changeWidth(this.value);
+    // }
   }
 }
 
@@ -437,9 +437,14 @@ class ComponentOption {
 
 prepareDataFiles();
 
-function prepareDataFiles() {
-  setLoadParseCSV(DATAFILE_CSV_LINK_PRICE, 'text', dataPrice);
-  setLoadParseCSV(DATAFILE_CSV_LINK_UI, 'text', mainData, Start);
+async function prepareDataFiles() {
+  try {
+    await loadAndParseCSV(DATAFILE_CSV_LINK_PRICE, 'text', dataPrice);
+    await loadAndParseCSV(DATAFILE_CSV_LINK_UI, 'text', mainData);
+    Start();
+  } catch (error) {
+    console.error("Error loading data files:", error);
+  }
 }
 
 //#endregion
@@ -656,8 +661,8 @@ async function StartSettings() {
   preloadTextures();
   
   if (!isUrlEmpty) {
-    applyAdditionalSharedParameters(6); // language
-    applyAdditionalSharedParameters(7); // currency
+    applyAdditionalSharedParameters(5); // language
+    applyAdditionalSharedParameters(6); // currency
   }
 
   PrepareAR();
@@ -2500,7 +2505,7 @@ async function PrepareUI() {
           break;
       }
 
-      SharedParameterList[6].value = valueForURL;
+      SharedParameterList[5].value = valueForURL;
       CheckChanges();
       WriteURLParameters();
     });
@@ -2521,7 +2526,7 @@ async function PrepareUI() {
           break;
       }
 
-      SharedParameterList[7].value = valueForURL;
+      SharedParameterList[6].value = valueForURL;
       CheckChanges();
       WriteURLParameters();
     });
@@ -2964,6 +2969,80 @@ function animateMorph(morphName, valueStart, valueEnd, callback = () => {}, time
       }
     }, i * stepDuration);
   }
+}
+
+//#endregion
+
+//#region FILE LOADER
+
+async function fetchWithRetry(url, type = "blob", retries = 999, delay = 1000) {
+
+  for (let i = 0; i < retries; i++) {
+      try {
+          const response = await fetch(url, { mode: 'no-cors' });
+          if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          switch (type) {
+            case "text":
+              return await response.text();
+            case "json":
+              return await response.json();
+            case "bytes":
+              return await response.bytes();
+            case "formData":
+              return await response.formData();
+            case "arrayBuffer":
+              return await response.arrayBuffer();
+            default:
+              return await response.blob();
+          }
+
+      } catch (error) {
+          // if all attempts are exhausted, throw an error
+          if (i === retries - 1) {
+              throw error;
+          }
+          // delay before the next attempt
+          await new Promise(res => setTimeout(res, delay));
+      }
+  
+  }
+}
+
+async function waitForInternetConnection() {
+  // checking every second
+  while (!navigator.onLine) {
+      await new Promise(res => setTimeout(res, 1000));
+  }
+}
+
+async function downloadFiles(data, callback) {
+  let results = [];
+  for (const d of data) {
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+          try {
+              const file = await fetchWithRetry(d[0], d[1]);
+              results.push(file);
+              if(d[2] != null){
+                d[2](file);
+              }
+              break; // exit the loop if the download is successful
+          } catch (error) {
+            // waiting for the Internet connection to be restored
+              if (!navigator.onLine) {
+                  await waitForInternetConnection();
+              } else {
+                  console.error(`Failed to download ${d[0]}: ${error.message}`);
+                  console.log(error);
+              }
+          }
+      }
+  }
+  // call the callback function with the results
+  callback(results);
 }
 
 //#endregion

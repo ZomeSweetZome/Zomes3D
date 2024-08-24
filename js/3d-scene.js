@@ -44,7 +44,7 @@ export function Get3DScene() {
   return scene;
 }
 
-export function create3DScene(properties = scenePropertiesDefault, loadFunction) {
+export function create3DScene(properties = scenePropertiesDefault, startFunction) {
   if (!properties) {
     properties = scenePropertiesDefault;
   }
@@ -147,11 +147,11 @@ export function create3DScene(properties = scenePropertiesDefault, loadFunction)
     // $('.summary.entry-summary').removeClass('hidden');
     isModelsLoaded = true;
 
-    loadFunction();
+    startFunction();
   }
 
   // importAllModels(MODEL_PATHS, onImportModelSuccessful); //! loading all models at once
-  loadFunction(); //! the models will be loaded on demand (in 3d-conficurator.js by loadModel function in the StartSettings())
+  startFunction(); //! the models will be loaded on demand (in 3d-conficurator.js by loadModel function in the StartSettings())
 
   // ********************************************
   //                   LIGHTS
@@ -392,7 +392,7 @@ export async function disposeModel(model, indexForNull) {
   }
 }
 
-export async function loadModel(modelPath, i = -1) {
+export async function loadModel(modelPath, i = -1, retryCount = 999, retryDelay = 1000) {
   console.log("🚀 ~ loadModel ~ model:", modelPath);
   if (!modelPath) { return; }
 
@@ -405,8 +405,22 @@ export async function loadModel(modelPath, i = -1) {
   LOADER.classList.remove('invisible');
   const loader = new THREE.GLTFLoader();
 
-  const gltf = await loader.loadAsync(modelPath);
-  const model = gltf.scene;
+  let model;
+  try {
+    const gltf = await loader.loadAsync(modelPath);
+    model = gltf.scene;
+  } catch (error) {
+    console.error("🚀 ~ loadModel error:", error);
+    if (retryCount > 0) {
+      console.log(`Retrying loadModel... Attempts left: ${retryCount}`);
+      await new Promise(resolve => setTimeout(resolve, retryDelay));
+      return loadModel(modelPath, i, retryCount - 1, retryDelay);
+    } else {
+      console.error("Failed to load model after multiple attempts:", modelPath);
+      LOADER?.classList.add('invisible');
+      return;
+    }
+  }
 
   model.traverse((o) => {
     if (o.isMesh) {

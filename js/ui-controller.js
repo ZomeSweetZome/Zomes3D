@@ -302,21 +302,39 @@ function setEventListenersForMenuItems() {
 
 //#region CSV READING FUNCTIONS
 
-export function setLoadParseCSV(link, fileType, output, callback = () => { }) {
-  const request = new XMLHttpRequest();
-  request.open('GET', link, true);
-  request.send(null);
-  request.onreadystatechange = function () {
-    if (request.readyState === 4 && request.status === 200) {
-      const type = request.getResponseHeader('Content-Type');
-      if (type.indexOf(fileType) !== 1) {
-        parseCSV(request.responseText, output, callback);
+export async function loadAndParseCSV(link, fileType, output, retryCount = 999, retryDelay = 1000) {
+  for (let attempt = 0; attempt < retryCount; attempt++) {
+    try {
+      const response = await fetch(link);
+      
+      if (response.ok) {
+        const type = response.headers.get('Content-Type');
+        if (type && type.includes(fileType)) {
+          const text = await response.text();
+          parseCSV(text, output);
+          return;
+        } else {
+          throw new Error(`Unexpected content type: ${type}`);
+        }
+      } else {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+    } catch (error) {
+      console.error(`Attempt ${attempt + 1} to load ${link} failed:`, error);
+
+      if (attempt < retryCount - 1) {
+        console.log(`Retrying in ${retryDelay / 1000} seconds...`);
+        await new Promise(resolve => setTimeout(resolve, retryDelay));
+      } else {
+        throw new Error(`Failed to load ${link} after ${retryCount} attempts`);
       }
     }
-  };
+  }
 }
 
-export function parseCSV(text, output, callback) {
+// added smart file loader (for unstable Internet connection)
+
+function parseCSV(text, output) {
   const lines = text.split('\n');
 
   lines.forEach((line) => {
@@ -350,7 +368,6 @@ export function parseCSV(text, output, callback) {
   });
 
   console.log("🚀 ~ parseCSV ~ output:", output);
-  callback();
 }
 
 export function getData(data, text, desiredId, titleId = 'id') {
