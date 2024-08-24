@@ -1060,6 +1060,10 @@ body, html {
   margin-right: 8px;
 }
 
+.canvas_btn_camera.disabled {
+  pointer-events: none;
+}
+
 #button_camera_inside .canvas_btn__image {
   content: var(--marevo-ui-icon_go_inside);
 }
