@@ -4,7 +4,7 @@
 
 const TEST_MODE = false;
 
-const LOADER = document.getElementById('js-loader');
+const LOADER = document.getElementById('canvas-loader');
 
 const correctionFloor = 0;
 let floor;
@@ -331,10 +331,11 @@ export function create3DScene(properties = scenePropertiesDefault, startFunction
   animate();
 }
 
-export async function disposeModel(model, indexForNull) {
+export async function disposeModel(model) {
   console.log("🚀 ~ disposeModel ~ model:", model);
+  
   if (model) {
-    model.visible = false;
+    // model.visible = false;
 
     model.traverse((object) => {
       if (object.isMesh) {
@@ -385,14 +386,10 @@ export async function disposeModel(model, indexForNull) {
     });
 
     scene.remove(model);
-
-    if (indexForNull !== undefined || indexForNull !== null) {
-      IMPORTED_MODELS[indexForNull] = null;
-    }
   }
 }
 
-export async function loadModel(modelPath, i = -1, retryCount = 999, retryDelay = 1000) {
+export async function loadModel(modelPath, i = 1, retryCount = 999, retryDelay = 1000) {
   console.log("🚀 ~ loadModel ~ model:", modelPath);
   if (!modelPath) { return; }
 
@@ -406,6 +403,7 @@ export async function loadModel(modelPath, i = -1, retryCount = 999, retryDelay 
   const loader = new THREE.GLTFLoader();
 
   let model;
+
   try {
     const gltf = await loader.loadAsync(modelPath);
     model = gltf.scene;
@@ -444,10 +442,10 @@ export async function loadModel(modelPath, i = -1, retryCount = 999, retryDelay 
   model.scale.set(1, 1, 1);
   model.position.y = MODEL_CENTER_POSITION;
 
-  if (i < 0) {
+  if (i > 0) {
     IMPORTED_MODELS.push(model);
   } else {
-    IMPORTED_MODELS.splice(i, 1, model);
+    IMPORTED_MODELS.splice(0, 1, model);
   }
 
   LOADER?.classList.add('invisible');

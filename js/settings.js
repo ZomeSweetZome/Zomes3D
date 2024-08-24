@@ -17,9 +17,11 @@ if (LIGHT_SCHEME === 1) {
 }
 
 export const MODEL_PATHS = [
+  './TEMP/Model_T.glb',
   // './src/models/zomes_pod.glb',
   './src/models/zomes_office.glb',
   // './src/models/zomes_studio.glb',
+  './TEMP/SCANDI DOUBLE-4.glb',
 ];
 
 export const HUMAN_HEIGHT = 1.6;
@@ -40,6 +42,15 @@ const MAIN_LINK_PART = 'https://docs.google.com/spreadsheets/d/1wlPf19JZoBj4w6Aq
 
 export const DATAFILE_CSV_LINK_UI = MAIN_LINK_PART + '0';
 export const DATAFILE_CSV_LINK_PRICE = MAIN_LINK_PART + '1512053788';
+
+export const DATA_HOUSE_NAME = {
+  0: 'pod',
+  1: 'office',
+  2: 'studio',
+  'pod': 0,
+  'office': 1,
+  'studio': 2,
+};
 
 export const NAV_CAM_POSITION = {
   // OUTSIDE

@@ -26,6 +26,7 @@ import {
   ENVIRONMENT_MAP,
   ENVIRONMENT_MAP_INTENSITY,
   TEXTURES,
+  DATA_HOUSE_NAME,
   NAV_CAM_POSITION,
 } from './settings.js';
 
@@ -54,6 +55,7 @@ const DEBUG_MODE_VALUES = false;
 let currentLanguage = DEFAULT_LANGUAGE;
 let currentCurrency = DEFAULT_CURRENCY;
 let currentCurrencySign = CURRENCY_SIGN[currentCurrency] || CURRENCY_SIGN['USD'];
+let currentModel = 0;
 
 let dataPrice = [];
 let mainData = [];
@@ -201,14 +203,9 @@ let SharedParameterList = [
 SharedParameterList[0].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
 
-  if (isFirstStart) {
-    // changeTexture(this.value, 'top');
-  }
-
-  if (justClicked) {
-    // changeTexture(this.value, 'top');
-    // SharedParameterList[9].value = this.value;
-    // changeTexture(this.value, 'legs');
+  if (isFirstStart || justClicked) {
+    currentModel = this.value;
+    changeModel(this.value);
   }
 }
 
@@ -645,19 +642,15 @@ async function Start() {
 async function StartSettings() {
   (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ StartSettings ~ ');
   
-  // theModel = IMPORTED_MODELS[0];
-
-  //! TODO -----
-  const targetHouse = 0;
-  await loadModel(MODEL_PATHS[targetHouse], targetHouse);
-  theModel = IMPORTED_MODELS[0];
-  theModel && scene.add(theModel);
-  //!------
-    
-  // InitMorphModel(theModel);
-  $('#js-loader').addClass('invisible');
-  $('.summary.entry-summary').removeClass('hidden');
+  currentModel = SharedParameterList[0].value || 0;
   
+  await loadModel(MODEL_PATHS[currentModel], 0);
+  theModel = IMPORTED_MODELS[0];
+  theModel?.scale.set(0, 0, 0);
+  theModel && scene.add(theModel);
+
+  // InitMorphModel(theModel);
+    
   preloadTextures();
   
   if (!isUrlEmpty) {
@@ -671,8 +664,10 @@ async function StartSettings() {
 
   CheckChanges();
 
-  theModel?.scale.set(0, 0, 0);
-  setVisibility(theModel, true);
+  $('#js-loader').addClass('invisible');
+  $('.summary.entry-summary').removeClass('hidden');
+  // theModel?.scale.set(0, 0, 0);
+  // setVisibility(theModel, true);
   animateScale(theModel);
 
   isFirstStart = false;
@@ -1348,6 +1343,17 @@ function CheckChanges(callback = () => {}) {
 //#endregion
 
 //#region CUSTOM FUNCTIONS
+
+async function changeModel(model) {
+  await disposeModel(IMPORTED_MODELS[0]);
+  await loadModel(MODEL_PATHS[model], 0);
+  theModel = IMPORTED_MODELS[0];
+  theModel?.scale.set(0, 0, 0);
+  theModel && scene.add(theModel);
+  
+  onChangePosition(DATA_HOUSE_NAME[model], 'outMain', () => { }, 5);
+  animateScale(theModel);
+}
 
 function preloadTextures() {
   for (let i = 0; i < 9; i++) {
@@ -2640,8 +2646,9 @@ function cameraBtnHandlers() {
     $(this).toggleClass('hidden');
     $('#button_camera_outside').toggleClass('hidden');
 
-    // onChangePosition('inMain');
-    onChangePosition('outPrepare', () => { onChangePosition('inMain') });
+    // onChangePosition(DATA_HOUSE_NAME[currentModel], 'inMain');
+    onChangePosition(DATA_HOUSE_NAME[currentModel], 'outPrepare', 
+      () => { onChangePosition(DATA_HOUSE_NAME[currentModel], 'inMain') });
   });
 
   $('#button_camera_outside').on('click', function (event) {
@@ -2649,8 +2656,9 @@ function cameraBtnHandlers() {
     $(this).toggleClass('hidden');
     $('#button_camera_inside').toggleClass('hidden');
 
-    onChangePosition('outMain');
-    // onChangePosition('inPrepare', () => { onChangePosition('outMain') });
+    onChangePosition(DATA_HOUSE_NAME[currentModel], 'outMain');
+    // onChangePosition(DATA_HOUSE_NAME[currentModel], 'inPrepare', 
+    //   () => { onChangePosition(DATA_HOUSE_NAME[currentModel], 'outMain') });
   });
 }
 
@@ -2732,7 +2740,7 @@ export function promiseDelay(time, callback) {
 
 //#region 3D FUNCTIONS
 
-function onChangePosition(pos, callback = () => { }, duration = 750, houseId = 'office', isLeftSideHouse = true ) {
+function onChangePosition(houseId, pos, callback = () => { }, duration = 750, isLeftSideHouse = true ) {
   let targetCameraPosition;
   let targetControlX;
   let targetControlY;
@@ -2969,80 +2977,6 @@ function animateMorph(morphName, valueStart, valueEnd, callback = () => {}, time
       }
     }, i * stepDuration);
   }
-}
-
-//#endregion
-
-//#region FILE LOADER
-
-async function fetchWithRetry(url, type = "blob", retries = 999, delay = 1000) {
-
-  for (let i = 0; i < retries; i++) {
-      try {
-          const response = await fetch(url, { mode: 'no-cors' });
-          if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
-          }
-
-          switch (type) {
-            case "text":
-              return await response.text();
-            case "json":
-              return await response.json();
-            case "bytes":
-              return await response.bytes();
-            case "formData":
-              return await response.formData();
-            case "arrayBuffer":
-              return await response.arrayBuffer();
-            default:
-              return await response.blob();
-          }
-
-      } catch (error) {
-          // if all attempts are exhausted, throw an error
-          if (i === retries - 1) {
-              throw error;
-          }
-          // delay before the next attempt
-          await new Promise(res => setTimeout(res, delay));
-      }
-  
-  }
-}
-
-async function waitForInternetConnection() {
-  // checking every second
-  while (!navigator.onLine) {
-      await new Promise(res => setTimeout(res, 1000));
-  }
-}
-
-async function downloadFiles(data, callback) {
-  let results = [];
-  for (const d of data) {
-      // eslint-disable-next-line no-constant-condition
-      while (true) {
-          try {
-              const file = await fetchWithRetry(d[0], d[1]);
-              results.push(file);
-              if(d[2] != null){
-                d[2](file);
-              }
-              break; // exit the loop if the download is successful
-          } catch (error) {
-            // waiting for the Internet connection to be restored
-              if (!navigator.onLine) {
-                  await waitForInternetConnection();
-              } else {
-                  console.error(`Failed to download ${d[0]}: ${error.message}`);
-                  console.log(error);
-              }
-          }
-      }
-  }
-  // call the callback function with the results
-  callback(results);
 }
 
 //#endregion

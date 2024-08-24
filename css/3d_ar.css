@@ -2346,11 +2346,27 @@ model-viewer {
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 25;
+  z-index: 30;
   background-color: #FFFFFF;
 }
 
 .loading.invisible {
+  display: none;
+}
+
+.canvas_loading {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 25;
+}
+
+.canvas_loading.invisible {
   display: none;
 }
 
@@ -2387,6 +2403,12 @@ model-viewer {
   background-image: url("../src/index/zomes_logo_loader.png");
   background-size: cover;
   margin-bottom: 20px;
+}
+
+.marevo_loader__logo_canvas {
+  width: 128px;
+  height: 128px;
+  margin-bottom: 15px;
 }
 
 .marevo_loader__title {

@@ -332,8 +332,6 @@ export async function loadAndParseCSV(link, fileType, output, retryCount = 999, 
   }
 }
 
-// added smart file loader (for unstable Internet connection)
-
 function parseCSV(text, output) {
   const lines = text.split('\n');
 
