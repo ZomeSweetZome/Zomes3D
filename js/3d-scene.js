@@ -23,6 +23,7 @@ const IMPORTED_MODELS_GLTF = [];
 export let isModelsLoaded = false;
 
 import { TONE_MAPPING_EXPOSURE, LIGHT_SCHEME, HUMAN_HEIGHT } from './settings.js';
+import { updateAnnotations } from './annotations.js';
 
 let externalProperties;
 
@@ -301,6 +302,8 @@ export function create3DScene(properties = scenePropertiesDefault, startFunction
     
     if (controls.enabled) { controls.update(); }
     
+    updateAnnotations(camera, scene);
+    
     renderer.render(scene, camera);
 
     if (resizeRendererToDisplaySize(renderer)) {
@@ -309,6 +312,10 @@ export function create3DScene(properties = scenePropertiesDefault, startFunction
       camera.updateProjectionMatrix();
     }
   }
+
+  window.addEventListener('resize', () => {
+    updateAnnotations(camera, scene);
+  });
 
   function resizeRendererToDisplaySize(renderer) {
     const canvasContainer = document.getElementById('ar_model_viewer');

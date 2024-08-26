@@ -34,6 +34,7 @@
   --marevo-ui-icon_annotations_b : url(../src/ar-ui-icons/icon_annotations_b.svg);
   --marevo-ui-icon_annotations_w : url(../src/ar-ui-icons/icon_annotations_w.svg);
   --marevo-ui-icon_annotations_g : url(../src/ar-ui-icons/icon_annotations_g.svg);
+  --marevo-ui-icon_hotspot : url(../src/ar-ui-icons/hotspot.png);
   --marevo-ui-icon_dimensions_b : url(../src/ar-ui-icons/icon_dimensions_b.svg);
   --marevo-ui-icon_dimensions_w : url(../src/ar-ui-icons/icon_dimensions_w.svg);
   --marevo-ui-icon_dimensions_g : url(../src/ar-ui-icons/icon_dimensions_g.svg);
@@ -1512,6 +1513,43 @@ textarea[name="ar_order_comment"] {
 .ar_result_container button.disabled_always {
   opacity: 0.5;
 }
+
+/*! ANNOTATIONS */
+
+.annotation {
+  width: 20px;
+  height: 20px;
+  z-index: 1;
+  background-image: var(--marevo-ui-icon_hotspot);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.annotation-text {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  border: 1px solid var(--marevo-color-popup-border, #ECECEF);
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 20px;
+  height: 36px;
+  width: max-content;
+  padding: 0 14px;
+  color: var(--marevo-color-text-black, #000);
+  font-size: 12px;
+  font-weight: 500;
+  position: relative;
+  top: -9px;
+  right: -28px;
+}
+
+.annotation,
+.annotation-text {
+  transition: opacity 0.2s ease;
+}
+
 
 
 /* ################  MOBILE ################ */
