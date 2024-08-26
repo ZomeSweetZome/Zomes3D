@@ -133,8 +133,8 @@ let SharedParameterList = [
     id: 'interior',
     groupIds: ['group-2'],
     splitValue: 'R',
-    type: 'array-string',
-    value: [0, 0, 0],
+    type: 'string',
+    value: '0',
     groupOptionAction: null,
     applyURLAction: null,
     applyURLActionReturn: false

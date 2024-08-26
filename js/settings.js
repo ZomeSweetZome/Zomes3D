@@ -17,11 +17,9 @@ if (LIGHT_SCHEME === 1) {
 }
 
 export const MODEL_PATHS = [
-  './TEMP/Model_T.glb',
-  // './src/models/zomes_pod.glb',
-  './src/models/zomes_office.glb',
-  // './src/models/zomes_studio.glb',
-  './TEMP/SCANDI DOUBLE-4.glb',
+  './src/models/zomes-pod.glb',
+  './src/models/zomes-office.glb',
+  './src/models/zomes-studio.glb',
 ];
 
 export const HUMAN_HEIGHT = 1.6;
