@@ -148,7 +148,7 @@ let SharedParameterList = [
     groupIds: ['group-2'],
     splitValue: 'R',
     type: 'string',
-    value: '0',
+    value: '1',
     groupOptionAction: null,
     applyURLAction: null,
     applyURLActionReturn: false
@@ -1490,12 +1490,12 @@ function setAllPanelsOn() {
 }
 
 function setStripAndViewportForDoubleDoorsStudio() {
-  if (isExtraDoorOn && isWindowStripOn) {
+  if (currentModel == '2' && isExtraDoorOn && isWindowStripOn) {
     setVisibility(theModel, false, STRIP_VIEWPORT_MESHES_STUDIO_EXTRADOOR.strip.panel);
     setVisibility(theModel, true, STRIP_VIEWPORT_MESHES_STUDIO_EXTRADOOR.strip.window);
   }
 
-  if (isExtraDoorOn && isWindowViewportOn) {
+  if (currentModel == '2' && isExtraDoorOn && isWindowViewportOn) {
     setVisibility(theModel, false, STRIP_VIEWPORT_MESHES_STUDIO_EXTRADOOR.viewport.panel);
     setVisibility(theModel, true, STRIP_VIEWPORT_MESHES_STUDIO_EXTRADOOR.viewport.window);
   }
