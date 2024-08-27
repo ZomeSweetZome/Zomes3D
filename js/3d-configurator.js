@@ -663,7 +663,7 @@ async function StartSettings() {
   theModel && scene.add(theModel);
 
   // InitMorphModel(theModel);
-    
+  
   preloadTextures();
   
   if (!isUrlEmpty) {
@@ -1049,17 +1049,24 @@ function applyAllConditionsActiveRadios() {
             }
 
             else if (targetName.includes('mesh')) {
-              for (let meshName in condObj[targetName]) {
+              for (let meshNameComplex in condObj[targetName]) {
+                const modelId = splitString(meshNameComplex)[0];
+                const meshName = splitString(meshNameComplex)[1];
+                let object;
 
-                let object = GetMesh(meshName);
-
-                if (!object) object = GetGroup(meshName);
-                if (!object) continue;
-
-                if (condObj[targetName][meshName] == 'on') {
-                  object.visible = true;
-                } else if (condObj[targetName][meshName] == 'off') {
-                  object.visible = false;
+                if (modelId === 'all' || modelId == currentModel) {
+                  object = GetMesh(meshName);
+                  if (!object) object = GetGroup(meshName);
+                  if (!object) continue;
+  
+                  if (condObj[targetName][meshNameComplex] == 'on') {
+                    console.log("🚀 ~ meshName:", modelId, currentModel, meshName);
+                    object.visible = true;
+                  } else if (condObj[targetName][meshNameComplex] == 'off') {
+                    object.visible = false;
+                  }
+                } else {
+                  continue;
                 }
               }
             }
@@ -1068,6 +1075,19 @@ function applyAllConditionsActiveRadios() {
       }
     }
   });
+}
+
+function splitString(input) {
+  let result = [];
+
+  if (input.startsWith('*')) {
+    const parts = input.split('*');
+    result = [parts[1] || '', parts[2] || ''];
+  } else {
+    result = ['all', input];
+  }
+
+  return result;
 }
 
 function applyAllConditionsUncheckedCHeckboxes() {
@@ -1132,17 +1152,23 @@ function applyAllConditionsUncheckedCHeckboxes() {
             }
 
             else if (targetName.includes('mesh')) {
-              for (let meshName in condObj[targetName]) {
+              for (let meshNameComplex in condObj[targetName]) {
+                const modelId = splitString(meshNameComplex)[0];
+                const meshName = splitString(meshNameComplex)[1];
+                let object;
 
-                let object = GetMesh(meshName);
+                if (modelId === 'all' || modelId == currentModel) {
+                  object = GetMesh(meshName);
+                  if (!object) object = GetGroup(meshName);
+                  if (!object) continue;
 
-                if (!object) object = GetGroup(meshName);
-                if (!object) continue;
-
-                if (condObj[targetName][meshName] == 'on') {
-                  object.visible = true;
-                } else if (condObj[targetName][meshName] == 'off') {
-                  object.visible = false;
+                  if (condObj[targetName][meshNameComplex] == 'on') {
+                    object.visible = true;
+                  } else if (condObj[targetName][meshNameComplex] == 'off') {
+                    object.visible = false;
+                  }
+                } else {
+                  continue;
                 }
               }
             }
@@ -1155,7 +1181,6 @@ function applyAllConditionsUncheckedCHeckboxes() {
 
 function additionalConditions() {
   // Additional custom conditions if needed
-  skylightsHandler();
 }
 
 function updateStateVars() {
@@ -1408,21 +1433,21 @@ function clickOption(groupId, optionId) {
 }
 
 //! ************************************************
-function CheckChanges(modelId = 'auto') {
+function CheckChanges(modelId = '') {
   (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ CheckChanges ~ ');
   const allMeshes =getGroupNamesList(theModel);
   console.log("🚀 ~ CheckChanges ~ theModel:", modelId);
   console.log("🚀 ~ StartSettings ~ allMeshes:", allMeshes);
 
   updateStateVars();
-
+  setAllPanelsOn();
+  
   applyAllConditionsActiveRadios();
   applyAllConditionsUncheckedCHeckboxes();
   additionalConditions();
+  setSskylights();
   // assignOptionsInRelatedGroups(SharedParameterList[4].groupIds);
-
   // applyActiveGroupOptionAction();
-  // applyAllConditions();
   applyActiveGroupOptionAction();
   
   updateStateVars();
@@ -1435,6 +1460,8 @@ function CheckChanges(modelId = 'auto') {
 //#endregion
 
 //#region CUSTOM FUNCTIONS
+
+
 
 async function changeModel(modelId) {
   await disposeModel(IMPORTED_MODELS[0]);
@@ -1449,7 +1476,14 @@ async function changeModel(modelId) {
   animateScale(theModel, 500);
 }
 
-function skylightsHandler() {
+function setAllPanelsOn() {
+  const allPanelMeshes = getGroupNamesList(theModel, 'panel');
+  const allWindowMeshes = getGroupNamesList(theModel, 'window');
+  setVisibility(theModel, true, allPanelMeshes);
+  setVisibility(theModel, false, allWindowMeshes);
+}
+
+function setSskylights() {
   if (!isWindowStripOn && !isWindowViewportOn) {
     setVisibility(theModel, true, SKYLIGHTS_MESHES[currentModel].panel);
     setVisibility(theModel, false, SKYLIGHTS_MESHES[currentModel].window);
@@ -2185,15 +2219,19 @@ function getMeshNamesList(parent) {
 }
 
 // eslint-disable-next-line no-unused-vars
-function getGroupNamesList(parent) {
+function getGroupNamesList(parent, searchString = '') {
   const groupNames = [];
-  
+  const normalizedSearchString = searchString.toLowerCase();
+
   parent.traverse((object) => {
     if (object.isGroup && object.name) {
-      groupNames.push(object.name);
+      const normalizedGroupName = object.name.toLowerCase();
+      if (!searchString || normalizedGroupName.includes(normalizedSearchString)) {
+        groupNames.push(object.name);
+      }
     }
   });
-  
+
   return groupNames;
 }
 
