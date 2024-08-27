@@ -6,8 +6,7 @@ const TEST_MODE = false;
 
 const LOADER = document.getElementById('canvas-loader');
 
-const correctionFloor = 0;
-let floor;
+export let floor;
 let floorMaterial;
 
 export let scene;
@@ -257,7 +256,7 @@ export function create3DScene(properties = scenePropertiesDefault, startFunction
   floor = new THREE.Mesh(floorGeometry, floorMaterial);
   floor.rotation.x = -0.5 * Math.PI;
   floor.receiveShadow = true;
-  floor.position.y = MODEL_CENTER_POSITION + correctionFloor;
+  floor.position.y = MODEL_CENTER_POSITION;
   
   scene.add(floor);
 

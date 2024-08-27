@@ -30,6 +30,7 @@ import {
   DATA_HOUSE_NAME,
   NAV_CAM_POSITION,
   SKYLIGHTS_MESHES,
+  FOUNDATION_HEIGHT,
 } from './settings.js';
 
 import {
@@ -42,6 +43,7 @@ import {
   loadModel,
   controls,
   camera,
+  floor,
   smoothCameraTransition,
 } from './3d-scene.js';
 
@@ -260,9 +262,12 @@ SharedParameterList[3].groupOptionAction = function () {
 SharedParameterList[4].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
   if (isFirstStart || justClicked) {
-    // if(SharedParameterList[3].value !== '6') { // shape = rond
-    //   changeLength(this.value);
-    // }
+  }
+
+  if (this.value[2] == '1') {
+    floor.position.y = MODEL_CENTER_POSITION - FOUNDATION_HEIGHT;
+  } else {
+    floor.position.y = MODEL_CENTER_POSITION;
   }
 }
 
