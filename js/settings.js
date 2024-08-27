@@ -229,6 +229,40 @@ export const STRIP_VIEWPORT_MESHES_STUDIO_EXTRADOOR = {
 
 }
 
+export const TEXTURES = {
+  interior: {
+    materialNames: ['wall-in'],
+    '0': { // oxide
+      map: './src/textures/Oxide-Panels_Base_color.jpg',
+      normal: 'null',
+      roughness: './src/textures/Oxide-Panels_roughness.jpg',
+    },
+    '1': { // wood
+      map: './src/textures/wood-wall_Base_color.jpg',
+      normal: 'null',
+      roughness: './src/textures/wood-wall_roughness.jpg',
+    },
+    '2': { // sound
+      map: './src/textures/Soundproofing_Base_Color.jpg',
+      normal: './src/textures/Soundproofing_Normal_OpenGL.jpg',
+      roughness: './src/textures/Soundproofing_Roughness.jpg',
+    },
+  },
+  exterior: {
+    materialNames: ['wall-outer'],
+    '0': { // grey
+      map: './src/textures/EQUITONE_gray_Base_Color.jpg',
+      normal: './src/textures/EQUITONE_Normal_OpenGL.jpg',
+      roughness: './src/textures/EQUITONE_Roughness.jpg',
+    },
+    '1': { // white
+      map: './src/textures/EQUITONE_white_Base_Color.jpg',
+      normal: './src/textures/EQUITONE_Normal_OpenGL.jpg',
+      roughness: './src/textures/EQUITONE_Roughness.jpg',
+    },
+  },
+};
+
 //! TODO
 export const DATA_CHECKING_PRICE = {
   // {index of SharedParameterList : name in price file}
@@ -350,41 +384,6 @@ export const DATA_CHECKING_PRICE = {
       '8': 'RAL 7035',
       '9': 'RAL 1015',
       '10': 'RAL 7032',
-    },
-  },
-};
-
-//! TODO
-export const TEXTURES = {
-  interior: {
-    materialNames: ['wall-in'],
-    '0': { // oxide
-      map: './src/textures/Oxide-Panels_Base_color.jpg',
-      normal: 'null',
-      roughness: './src/textures/Oxide-Panels_roughness.jpg',
-    },
-    '1': { // wood
-      map: './src/textures/wood-wall_Base_color.jpg',
-      normal: 'null',
-      roughness: './src/textures/wood-wall_roughness.jpg',
-    },
-    '2': { // sound
-      map: './src/textures/Soundproofing_Base_Color.jpg',
-      normal: './src/textures/Soundproofing_Normal_OpenGL.jpg',
-      roughness: './src/textures/Soundproofing_Roughness.jpg',
-    },
-  },
-  exterior: {
-    materialNames: ['wall-outer'],
-    '0': { // grey
-      map: './src/textures/EQUITONE_gray_Base_Color.jpg',
-      normal: './src/textures/EQUITONE_Normal_OpenGL.jpg',
-      roughness: './src/textures/EQUITONE_Roughness.jpg',
-    },
-    '1': { // white
-      map: './src/textures/EQUITONE_white_Base_Color.jpg',
-      normal: './src/textures/EQUITONE_Normal_OpenGL.jpg',
-      roughness: './src/textures/EQUITONE_Roughness.jpg',
     },
   },
 };

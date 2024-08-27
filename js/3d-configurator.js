@@ -72,6 +72,15 @@ let isBuiltInDeskOn = false;
 let isFoundationKitOn = false;
 let isExtraDoorOn = false;
 
+let customWindows = {
+  c: [],
+  d: [],
+  e: [],
+  f: [],
+  g: [],
+  h: [],
+};
+
 let dataPrice = [];
 let mainData = [];
 let mainGroups = [];
@@ -1065,7 +1074,6 @@ function applyAllConditionsActiveRadios() {
                   if (!object) continue;
   
                   if (condObj[targetName][meshNameComplex] == 'on') {
-                    console.log("🚀 ~ meshName:", modelId, currentModel, meshName);
                     object.visible = true;
                   } else if (condObj[targetName][meshNameComplex] == 'off') {
                     object.visible = false;
@@ -1442,7 +1450,7 @@ function CheckChanges(modelId = '') {
   (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ CheckChanges ~ ');
   console.log("🚀 ~ CheckChanges ~ theModel:", modelId);
   // console.log("🚀 ~ All Materials:", getMaterialsList(theModel));
-  console.log("🚀 ~ All groups:", getGroupNamesList(theModel));
+  // console.log("🚀 ~ All groups:", getGroupNamesList(theModel));
 
   updateStateVars();
   setAllPanelsOn();
@@ -3148,6 +3156,134 @@ function onChangePosition(houseId, pos, callback = () => { }, duration = 750, is
       vector1.z.toFixed(precision) === vector2.z.toFixed(precision)
     );
   }
+}
+
+//#endregion
+
+//#region RAYCASTING (WINDOWS/PANELS CLICKS)
+
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+const canvas = document.getElementById('ar_model_view');
+
+let isMouseMoved = false;
+let clickThreshold = 5;
+
+let startX, startY;
+
+function onMouseDown(event) {
+  isMouseMoved = false;
+  startX = event.clientX;
+  startY = event.clientY;
+}
+
+function onMouseMove(event) {
+  if (Math.abs(event.clientX - startX) > clickThreshold || Math.abs(event.clientY - startY) > clickThreshold) {
+    isMouseMoved = true;
+  }
+}
+
+function onMouseUp(event) {
+  if (!isMouseMoved && isWindowCustomOn) {
+    const rect = canvas.getBoundingClientRect();
+
+    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+
+    const intersects = raycaster.intersectObjects(scene.children, true);
+
+    if (intersects.length > 0) {
+      const intersectedObject = intersects[0].object;
+      let clickedMeshName = '';
+      if (intersectedObject.parent && intersectedObject.parent !== scene) {
+        clickedMeshName = intersectedObject.parent.name;
+      } else {
+        clickedMeshName = intersectedObject.name;
+      }
+
+      if (clickedMeshName && containsPanelOrWindow(clickedMeshName)) {
+        const [letter, number] = extractLastLetterAndNumber(clickedMeshName);
+
+        if (letter && number) {
+          clickedMeshName = `${letter}-${number}`;
+          updateCustomWindows([letter, number]);
+          //! update custom windows URL (part)
+        }
+
+        console.log('Clicked on mesh:', clickedMeshName);
+        console.log("🚀 ~ customWindows:", customWindows);
+      }
+    }
+  }
+
+  function extractLastLetterAndNumber(name) {
+    const match = name.match(/-([A-Za-z])-(\d+)$/);
+  
+    if (match) {
+      return [match[1], match[2]];
+    }
+  
+    return [null, null];
+  }
+  
+  function containsPanelOrWindow(name) {
+    return name.includes("panel") || name.includes("window");
+  }
+}
+
+canvas.addEventListener('mousedown', onMouseDown);
+canvas.addEventListener('mousemove', onMouseMove);
+canvas.addEventListener('mouseup', onMouseUp);
+
+
+function updateCustomWindows([letter, number]) {
+  const keyName = letter.toLowerCase();
+  if (Object.prototype.hasOwnProperty.call(customWindows, keyName)) {
+    const index = customWindows[keyName].indexOf(number);
+    const { panelMeshName, windowMeshName } = findMeshByLetterAndNumber(theModel, letter, number);
+    console.log("🚀 ~ updateCustomWindows ~ panelMeshName:", panelMeshName);
+    console.log("🚀 ~ updateCustomWindows ~ windowMeshName:", windowMeshName);
+
+    if (index === -1) {
+      customWindows[keyName].push(number);
+      // make it WINDOW
+      (panelMeshName) && setVisibility(theModel, false, [panelMeshName]);
+      (windowMeshName) && setVisibility(theModel, true, [windowMeshName]);
+    } else {
+      customWindows[keyName].splice(index, 1);
+      // make it PANEL
+      (panelMeshName) && setVisibility(theModel, true, [panelMeshName]);
+      (windowMeshName) && setVisibility(theModel, false, [windowMeshName]);
+    }
+  } else {
+    console.warn(`Letter "${letter}" not found in customWindows object.`);
+  }
+}
+
+function findMeshByLetterAndNumber(parent, letter, number) {
+  const panelSearchPattern = new RegExp(`panel.*-${letter.toLowerCase()}-${number}$`, 'i');
+  const windowSearchPattern = new RegExp(`window.*-${letter.toLowerCase()}-${number}$`, 'i');
+
+  let panelMeshName = null;
+  let windowMeshName = null;
+
+  parent.traverse((o) => {
+    if (o.isMesh) {
+      const groupName = o.parent.name.toLowerCase().trim();
+
+      if (panelSearchPattern.test(groupName)) {
+        panelMeshName = o.parent.name;
+      }
+
+      if (windowSearchPattern.test(groupName)) {
+        windowMeshName = o.parent.name;
+      }
+    }
+  });
+
+  return { panelMeshName, windowMeshName };
 }
 
 //#endregion
