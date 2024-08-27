@@ -227,53 +227,48 @@ SharedParameterList[0].groupOptionAction = function () {
 // windows
 SharedParameterList[1].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
+ 
   if (isFirstStart || justClicked) {
-    // const woodType = (SharedParameterList[0].value == '8') ? 'noten' : 'oak';
-    // const afwerkingType = (this.value == '1') ? 'gloss' : 'mat';
-    // setObjectTexture(TEXTURES.top.materialNames, TEXTURES[woodType][afwerkingType]);
-    // setObjectTexture(TEXTURES.end.materialNames, TEXTURES[woodType][afwerkingType]);
-    // setObjectTexture(TEXTURES.top.materialNamesLeg, TEXTURES[woodType][afwerkingType]);
   }
 }
 
 // interior
 SharedParameterList[2].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
+  
   if (isFirstStart || justClicked) {
-    // changeThickness(this.value);
   }
+  
+  setObjectTexture(TEXTURES.interior.materialNames, TEXTURES.interior[this.value]);
 }
 
 // exterior
 SharedParameterList[3].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
+  
   if (isFirstStart || justClicked) {
-    // if(this.value !== '6') {// shape != rond
-    //   changeLength(SharedParameterList[4].value);
-    // }
-
-    // if (this.value == '6') { // shape = rond
-    //   changeDiameter(SharedParameterList[6].value);
-    // }
   }
+
+  setObjectTexture(TEXTURES.exterior.materialNames, TEXTURES.exterior[this.value]);
 }
 
 // addons
 SharedParameterList[4].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
+  
   if (isFirstStart || justClicked) {
-  }
-
-  if (this.value[2] == '1') {
-    floor.position.y = MODEL_CENTER_POSITION - FOUNDATION_HEIGHT;
-  } else {
-    floor.position.y = MODEL_CENTER_POSITION;
+    if (this.value[2] == '1') {
+      floor.position.y = MODEL_CENTER_POSITION - FOUNDATION_HEIGHT;
+    } else {
+      floor.position.y = MODEL_CENTER_POSITION;
+    }
   }
 }
 
 // language
 SharedParameterList[5].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
+  
   if (isFirstStart || justClicked) {
     let language = 'EN';
     switch (this.value) {
@@ -298,6 +293,7 @@ SharedParameterList[5].groupOptionAction = function () {
 // currency
 SharedParameterList[6].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
+  
   if (isFirstStart || justClicked) {
     let currency = 'EN';
     switch (this.value) {
@@ -316,7 +312,7 @@ SharedParameterList[6].groupOptionAction = function () {
   }
 }
 
-// customWindows
+//! customWindows
 SharedParameterList[7].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
   if (isFirstStart || justClicked) {
@@ -1440,9 +1436,8 @@ function clickOption(groupId, optionId) {
 //! ************************************************
 function CheckChanges(modelId = '') {
   (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ CheckChanges ~ ');
-  const allMeshes =getGroupNamesList(theModel);
   console.log("🚀 ~ CheckChanges ~ theModel:", modelId);
-  console.log("🚀 ~ StartSettings ~ allMeshes:", allMeshes);
+  console.log("🚀 ~ All Materials:", getMaterialsList(theModel));
 
   updateStateVars();
   setAllPanelsOn();
@@ -1465,8 +1460,6 @@ function CheckChanges(modelId = '') {
 //#endregion
 
 //#region CUSTOM FUNCTIONS
-
-
 
 async function changeModel(modelId) {
   await disposeModel(IMPORTED_MODELS[0]);
@@ -1496,28 +1489,21 @@ function setSskylights() {
 }
 
 function preloadTextures() {
-  for (let i = 0; i < 9; i++) {
-    // loadTexture(TEXTURES.top[i]);
-    // loadTexture(TEXTURES.end[i]);
+  for (let i = 0; i < 3; i++) {
+    loadTexture(TEXTURES.interior[i]);
   }
-  // loadTexture(TEXTURES.oak.mat);
-  // loadTexture(TEXTURES.oak.gloss);
-  // loadTexture(TEXTURES.noten.mat);
-  // loadTexture(TEXTURES.noten.gloss);
+
+  for (let i = 0; i < 2; i++) {
+    loadTexture(TEXTURES.exterior[i]);
+  }
 }
 
 
-function changeTexture(value, type) {
+function changeTexture(value) {
   (DEBUG_MODE_VALUES) && console.log("🚀 ~ changeTexture ~ :", value, type);
 
-  if (type === 'top') {
     setObjectTexture(TEXTURES.top.materialNames, TEXTURES.top[value]);
     setObjectTexture(TEXTURES.end.materialNames, TEXTURES.end[value]);
-  }
-
-  if (type === 'legs') {
-    setObjectTexture(TEXTURES.top.materialNamesLeg, TEXTURES.top[value]);
-  }
 }
 
 function furnitureController(value) {
@@ -2201,13 +2187,15 @@ function getMeshDimensions(mesh) {
 function getMaterialsList(parent) {
   (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ getMaterialsList ~ ');
 
-  const materials = [];
+  const materialsSet = new Set();
+
   parent.traverse((o) => {
     if (o.material) {
-      materials.push(o.material.name);
+      materialsSet.add(o.material.name);
     }
   });
-  return materials;
+
+  return Array.from(materialsSet);
 }
 
 // eslint-disable-next-line no-unused-vars
