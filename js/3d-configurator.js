@@ -53,6 +53,7 @@ import {
 const DEBUG_MODE_FUNC_STARTS = false;
 const DEBUG_MODE_VALUES = false;
 
+
 let currentLanguage = DEFAULT_LANGUAGE;
 let currentCurrency = DEFAULT_CURRENCY;
 let currentCurrencySign = CURRENCY_SIGN[currentCurrency] || CURRENCY_SIGN['USD'];
@@ -967,7 +968,7 @@ function SetGroupActionForSharedParametersCheckboxArray(targetID, array, callbac
   }
 }
 
-function applyAllConditionsActive() {
+function applyAllConditionsActiveRadios() {
   (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ applyAllConditions ~ ');
 
   mainGroups.forEach(target => {
@@ -1059,7 +1060,7 @@ function applyAllConditionsActive() {
   });
 }
 
-function applyAllConditionsUnchecked() {
+function applyAllConditionsUncheckedCHeckboxes() {
   (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ applyAllConditions ~ ');
 
   mainGroups.forEach(target => {
@@ -1144,6 +1145,21 @@ function applyAllConditionsUnchecked() {
 
 function additionalConditions() {
   // Additional custom conditions if needed
+  skylightsHandler();
+}
+
+function updateStateVars() {
+  // Update state vars if needed
+  // currentModel = SharedParameterList[0].value;
+  // isWindowStripOn = (SharedParameterList[1].value[0] == '1') ? true : false;
+  // isWindowViewportOn = (SharedParameterList[1].value[1] == '1') ? true : false;
+  // isWindowCustomOn = (SharedParameterList[1].value[2] == '1') ? true : false;
+  // currentInteriorOption = SharedParameterList[2].value;
+  // currentExteriorOption = SharedParameterList[3].value;
+  // Extreme Weather package
+  // Built in Desk
+  // Foundation Kit
+  // Extra Door
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -1388,15 +1404,18 @@ function CheckChanges(modelId = 'auto') {
   console.log("🚀 ~ CheckChanges ~ theModel:", modelId);
   console.log("🚀 ~ StartSettings ~ allMeshes:", allMeshes);
 
+  updateStateVars();
 
-  applyAllConditionsActive();
-  applyAllConditionsUnchecked();
+  applyAllConditionsActiveRadios();
+  applyAllConditionsUncheckedCHeckboxes();
   additionalConditions();
   // assignOptionsInRelatedGroups(SharedParameterList[4].groupIds);
 
   // applyActiveGroupOptionAction();
   // applyAllConditions();
   applyActiveGroupOptionAction();
+  
+  updateStateVars();
 
   // setOptionsResult();
   // calculatePrice();
@@ -1418,6 +1437,11 @@ async function changeModel(modelId) {
 
   onChangePosition(DATA_HOUSE_NAME[modelId], 'outMain', () => {}, 5);
   animateScale(theModel, 500);
+}
+
+function skylightsHandler() {
+  
+  
 }
 
 function preloadTextures() {
