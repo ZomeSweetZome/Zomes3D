@@ -3086,7 +3086,7 @@ function onChangePosition(houseId, pos, callback = () => { }, duration = 750, is
     (NAV_CAM_POSITION[pos].outside) && (outsideCameraSettings());
 
     if (!NAV_CAM_POSITION[pos].outside) {
-      const fov = 80;
+      const fov = 85;
       insideCameraSettings(fov);
     }
 

@@ -22,7 +22,7 @@ export const MODEL_PATHS = [
   './src/models/zomes-studio.glb',
 ];
 
-export const HUMAN_HEIGHT = 1.6;
+export const HUMAN_HEIGHT = 2.0; // 1.6
 export const MODEL_CENTER_POSITION = 0.6;
 
 export const IS_PRICE_SIMPLE = false;
