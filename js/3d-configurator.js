@@ -30,6 +30,7 @@ import {
   DATA_HOUSE_NAME,
   NAV_CAM_POSITION,
   SKYLIGHTS_MESHES,
+  STRIP_VIEWPORT_MESHES_STUDIO_EXTRADOOR,
   FOUNDATION_HEIGHT,
 } from './settings.js';
 
@@ -229,6 +230,7 @@ SharedParameterList[1].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
  
   if (isFirstStart || justClicked) {
+
   }
 }
 
@@ -1445,6 +1447,8 @@ function CheckChanges(modelId = '') {
   applyAllConditionsActiveRadios();
   applyAllConditionsUncheckedCHeckboxes();
   additionalConditions();
+  
+  setStripAndViewportForDoubleDoorsStudio();
   setSskylights();
   // assignOptionsInRelatedGroups(SharedParameterList[4].groupIds);
   // applyActiveGroupOptionAction();
@@ -1479,6 +1483,18 @@ function setAllPanelsOn() {
   const allWindowMeshes = getGroupNamesList(theModel, 'window');
   setVisibility(theModel, true, allPanelMeshes);
   setVisibility(theModel, false, allWindowMeshes);
+}
+
+function setStripAndViewportForDoubleDoorsStudio() {
+  if (isExtraDoorOn && isWindowStripOn) {
+    setVisibility(theModel, false, STRIP_VIEWPORT_MESHES_STUDIO_EXTRADOOR.strip.panel);
+    setVisibility(theModel, true, STRIP_VIEWPORT_MESHES_STUDIO_EXTRADOOR.strip.window);
+  }
+
+  if (isExtraDoorOn && isWindowViewportOn) {
+    setVisibility(theModel, false, STRIP_VIEWPORT_MESHES_STUDIO_EXTRADOOR.viewport.panel);
+    setVisibility(theModel, true, STRIP_VIEWPORT_MESHES_STUDIO_EXTRADOOR.viewport.window);
+  }
 }
 
 function setSskylights() {
@@ -3079,7 +3095,7 @@ function onChangePosition(houseId, pos, callback = () => { }, duration = 750, is
     (NAV_CAM_POSITION[pos].outside) && (outsideCameraSettings());
 
     if (!NAV_CAM_POSITION[pos].outside) {
-      const fov = 85;
+      const fov = 82; // 80
       insideCameraSettings(fov);
     }
 

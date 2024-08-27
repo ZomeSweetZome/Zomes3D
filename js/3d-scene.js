@@ -185,10 +185,10 @@ export function create3DScene(properties = scenePropertiesDefault, startFunction
 
     const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
     planeMesh.rotation.x = -Math.PI / 2;
-    planeMesh.position.set(0, 15, 0);
+    planeMesh.position.set(0, 20, 0);
     scene.add(planeMesh);
 
-    const dirLight2 = new THREE.DirectionalLight(0xffffff, 1.5);
+    const dirLight2 = new THREE.DirectionalLight(0xffffff, 0.75); // 1.5
     dirLight2.position.set(0, 4, 0);
     dirLight2.castShadow = true;
     dirLight2.shadow.bias = -0.0005;
