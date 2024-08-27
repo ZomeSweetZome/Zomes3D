@@ -29,6 +29,7 @@ import {
   TEXTURES,
   DATA_HOUSE_NAME,
   NAV_CAM_POSITION,
+  SKYLIGHTS_MESHES,
 } from './settings.js';
 
 import {
@@ -58,6 +59,15 @@ let currentLanguage = DEFAULT_LANGUAGE;
 let currentCurrency = DEFAULT_CURRENCY;
 let currentCurrencySign = CURRENCY_SIGN[currentCurrency] || CURRENCY_SIGN['USD'];
 let currentModel = 0;
+let isWindowStripOn = false;
+let isWindowViewportOn = false;
+let isWindowCustomOn = false;
+let currentInteriorOption = 0;
+let currentExteriorOption = 0;
+let isExtrimeWeatherPackOn = false;
+let isBuiltInDeskOn = false;
+let isFoundationKitOn = false;
+let isExtraDoorOn = false;
 
 let dataPrice = [];
 let mainData = [];
@@ -1150,16 +1160,16 @@ function additionalConditions() {
 
 function updateStateVars() {
   // Update state vars if needed
-  // currentModel = SharedParameterList[0].value;
-  // isWindowStripOn = (SharedParameterList[1].value[0] == '1') ? true : false;
-  // isWindowViewportOn = (SharedParameterList[1].value[1] == '1') ? true : false;
-  // isWindowCustomOn = (SharedParameterList[1].value[2] == '1') ? true : false;
-  // currentInteriorOption = SharedParameterList[2].value;
-  // currentExteriorOption = SharedParameterList[3].value;
-  // Extreme Weather package
-  // Built in Desk
-  // Foundation Kit
-  // Extra Door
+  currentModel = SharedParameterList[0].value;
+  isWindowStripOn = (SharedParameterList[1].value[0] == '1') ? true : false;
+  isWindowViewportOn = (SharedParameterList[1].value[1] == '1') ? true : false;
+  isWindowCustomOn = (SharedParameterList[1].value[2] == '1') ? true : false;
+  currentInteriorOption = SharedParameterList[2].value;
+  currentExteriorOption = SharedParameterList[3].value;
+  isExtrimeWeatherPackOn = (SharedParameterList[4].value[0] == '1') ? true : false;
+  isBuiltInDeskOn = (SharedParameterList[4].value[1] == '1') ? true : false;
+  isFoundationKitOn = (SharedParameterList[4].value[2] == '1') ? true : false;
+  isExtraDoorOn = (SharedParameterList[4].value[3] == '1') ? true : false;
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -1440,8 +1450,10 @@ async function changeModel(modelId) {
 }
 
 function skylightsHandler() {
-  
-  
+  if (!isWindowStripOn && !isWindowViewportOn) {
+    setVisibility(theModel, true, SKYLIGHTS_MESHES[currentModel].panel);
+    setVisibility(theModel, false, SKYLIGHTS_MESHES[currentModel].window);
+  }
 }
 
 function preloadTextures() {
