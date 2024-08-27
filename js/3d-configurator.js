@@ -680,6 +680,8 @@ async function StartSettings() {
 
   CheckChanges();
 
+  setVisibility(theModel, false, ['man']);
+  
   $('#js-loader').addClass('invisible');
   $('.summary.entry-summary').removeClass('hidden');
   // theModel?.scale.set(0, 0, 0);
@@ -1439,7 +1441,8 @@ function clickOption(groupId, optionId) {
 function CheckChanges(modelId = '') {
   (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ CheckChanges ~ ');
   console.log("🚀 ~ CheckChanges ~ theModel:", modelId);
-  console.log("🚀 ~ All Materials:", getMaterialsList(theModel));
+  // console.log("🚀 ~ All Materials:", getMaterialsList(theModel));
+  console.log("🚀 ~ All groups:", getGroupNamesList(theModel));
 
   updateStateVars();
   setAllPanelsOn();
@@ -1474,6 +1477,7 @@ async function changeModel(modelId) {
   
   CheckChanges(modelId);
 
+  setVisibility(theModel, false, ['man']);
   onChangePosition(DATA_HOUSE_NAME[modelId], 'outMain', () => {}, 5);
   animateScale(theModel, 500);
 }
@@ -1581,8 +1585,10 @@ function annotationController(value) {
 
 function dimensionsController(value) {
   if (value) {
+    setVisibility(theModel, true, ['man']);
     //! TODO turn ON dimensions
   } else {
+    setVisibility(theModel, false, ['man']);
     //! TODO turn OFF dimensions
   }
 }
@@ -2957,7 +2963,7 @@ function dimensionsBtnHandler() {
     } else {
       $('#button_annotation').removeClass('disabled');
       $('#button_furniture').removeClass('disabled');
-      dimensionsController(true);
+      dimensionsController(false);
     }
   });
 }

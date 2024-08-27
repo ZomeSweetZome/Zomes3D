@@ -11,18 +11,18 @@ export const annotations = [
 
 const $canvasContainer = $('#ar_model_viewer');
 
-annotations.forEach((annotation) => {
-  const $annotationElement = $('<div>', { class: 'annotation' })
-    .html(`<div class="annotation-text">${annotation.text}</div>`)
-    .css({
-      position: 'absolute',
-      cursor: 'pointer'
-    });
+// annotations.forEach((annotation) => {
+//   const $annotationElement = $('<div>', { class: 'annotation' })
+//     .html(`<div class="annotation-text">${annotation.text}</div>`)
+//     .css({
+//       position: 'absolute',
+//       cursor: 'pointer'
+//     });
 
-  $canvasContainer.append($annotationElement);
+//   $canvasContainer.append($annotationElement);
 
-  annotation.element = $annotationElement;
-});
+//   annotation.element = $annotationElement;
+// });
 
 export function updateAnnotations(camera, scene) {
   annotations.forEach(annotation => {

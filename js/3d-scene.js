@@ -302,6 +302,8 @@ export function create3DScene(properties = scenePropertiesDefault, startFunction
     if (controls.enabled) { controls.update(); }
     
     updateAnnotations(camera, scene);
+
+    updateMeshRotationToCameraY(camera, scene, 'man');
     
     renderer.render(scene, camera);
 
@@ -657,4 +659,19 @@ export function smoothCameraTransition(
   }
 
   animate();
+}
+
+function updateMeshRotationToCameraY(camera, scene, meshName) {
+  const man = scene.getObjectByName(meshName);
+  if (man) {
+    const cameraPosition = new THREE.Vector3();
+    camera.getWorldPosition(cameraPosition);
+    const manPosition = new THREE.Vector3();
+    man.getWorldPosition(manPosition);
+    const direction = cameraPosition.sub(manPosition);
+    direction.y = 0;
+    direction.normalize();
+    const angle = Math.atan2(direction.x, direction.z);
+    man.rotation.set(0, angle, 0);
+  }
 }
