@@ -124,7 +124,7 @@ let SharedParameterList = [
     groupIds: ['group-1'],
     splitValue: 'A',
     type: 'array-string',
-    value: [0, 0, 0],
+    value: [0, 1, 0],
     groupOptionAction: null,
     applyURLAction: null,
     applyURLActionReturn: false
@@ -1382,8 +1382,12 @@ function clickOption(groupId, optionId) {
 }
 
 //! ************************************************
-function CheckChanges() {
+function CheckChanges(modelId = 'auto') {
   (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ CheckChanges ~ ');
+  const allMeshes =getGroupNamesList(theModel);
+  console.log("🚀 ~ CheckChanges ~ theModel:", modelId);
+  console.log("🚀 ~ StartSettings ~ allMeshes:", allMeshes);
+
 
   applyAllConditionsActive();
   applyAllConditionsUnchecked();
@@ -1403,14 +1407,16 @@ function CheckChanges() {
 
 //#region CUSTOM FUNCTIONS
 
-async function changeModel(model) {
+async function changeModel(modelId) {
   await disposeModel(IMPORTED_MODELS[0]);
-  await loadModel(MODEL_PATHS[model], 0);
+  await loadModel(MODEL_PATHS[modelId], 0);
   theModel = IMPORTED_MODELS[0];
   theModel?.scale.set(0, 0, 0);
   theModel && scene.add(theModel);
   
-  onChangePosition(DATA_HOUSE_NAME[model], 'outMain', () => {}, 5);
+  CheckChanges(modelId);
+
+  onChangePosition(DATA_HOUSE_NAME[modelId], 'outMain', () => {}, 5);
   animateScale(theModel, 500);
 }
 
@@ -1906,6 +1912,26 @@ function ChangeMaterialOffset(materialName, x, y) {
   }
 }
 
+function getMeshesWithMaterial(model, materialName) {
+  const meshesWithMaterial = [];
+
+  model.traverse((object) => {
+    if (object.isMesh && object.material) {
+      if (Array.isArray(object.material)) {
+        object.material.forEach((material) => {
+          if (material.name === materialName) {
+            meshesWithMaterial.push(object.name);
+          }
+        });
+      } else if (object.material.name === materialName) {
+        meshesWithMaterial.push(object.name);
+      }
+    }
+  });
+
+  return meshesWithMaterial;
+}
+
 function setVisibility(model, value, meshArray = []) {
   (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ setVisibility ~ ');
 
@@ -2120,6 +2146,19 @@ function getMeshNamesList(parent) {
     }
   });
   return names;
+}
+
+// eslint-disable-next-line no-unused-vars
+function getGroupNamesList(parent) {
+  const groupNames = [];
+  
+  parent.traverse((object) => {
+    if (object.isGroup && object.name) {
+      groupNames.push(object.name);
+    }
+  });
+  
+  return groupNames;
 }
 
 //#endregion
