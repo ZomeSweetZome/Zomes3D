@@ -117,7 +117,7 @@ let justClicked = false;
 let isCameraInside = false;
 
 // CUSTOM SELECT
-jQuery(document).ready(function() {
+jQuery(document).ready(function () {
   $('.custom-select').select2({
     minimumResultsForSearch: Infinity, // Removes the search line if not needed
   });
@@ -206,8 +206,8 @@ let SharedParameterList = [
     id: 'customWindows',
     groupIds: null,
     splitValue: 'a',
-    type: 'string',
-    value: '0',
+    type: 'array-string',
+    value: [],
     groupOptionAction: null,
     applyURLAction: null,
     applyURLActionReturn: false
@@ -237,7 +237,7 @@ SharedParameterList[0].groupOptionAction = function () {
 // windows
 SharedParameterList[1].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
- 
+
   if (isFirstStart || justClicked) {
 
   }
@@ -246,17 +246,17 @@ SharedParameterList[1].groupOptionAction = function () {
 // interior
 SharedParameterList[2].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
-  
+
   if (isFirstStart || justClicked) {
   }
-  
+
   setObjectTexture(TEXTURES.interior.materialNames, TEXTURES.interior[this.value]);
 }
 
 // exterior
 SharedParameterList[3].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
-  
+
   if (isFirstStart || justClicked) {
   }
 
@@ -266,7 +266,7 @@ SharedParameterList[3].groupOptionAction = function () {
 // addons
 SharedParameterList[4].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
-  
+
   if (isFirstStart || justClicked) {
     if (this.value[2] == '1') {
       floor.position.y = MODEL_CENTER_POSITION - FOUNDATION_HEIGHT;
@@ -279,7 +279,7 @@ SharedParameterList[4].groupOptionAction = function () {
 // language
 SharedParameterList[5].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
-  
+
   if (isFirstStart || justClicked) {
     let language = 'EN';
     switch (this.value) {
@@ -295,8 +295,8 @@ SharedParameterList[5].groupOptionAction = function () {
       default:
         language = 'ES';
         break;
-      }
-      
+    }
+
     $('.language-picker select').val(language).trigger('change');
   }
 }
@@ -304,7 +304,7 @@ SharedParameterList[5].groupOptionAction = function () {
 // currency
 SharedParameterList[6].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
-  
+
   if (isFirstStart || justClicked) {
     let currency = 'EN';
     switch (this.value) {
@@ -317,19 +317,20 @@ SharedParameterList[6].groupOptionAction = function () {
       default:
         currency = 'USD';
         break;
-      }
-      
+    }
+
     $('.currency-picker select').val(currency).trigger('change');
   }
 }
 
-//! customWindows
+// customWindows
 SharedParameterList[7].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
+  
   if (isFirstStart || justClicked) {
-    // if(SharedParameterList[3].value !== '6') { // shape != rond
-    //   changeWidth(this.value);
-    // }
+    if (this.value.length > 0) {
+      restoreCustomWindows();
+    }
   }
 }
 
@@ -666,18 +667,17 @@ async function Start() {
 
 async function StartSettings() {
   (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ StartSettings ~ ');
-  
   currentModel = SharedParameterList[0].value || 0;
-  
+
   await loadModel(MODEL_PATHS[currentModel], 0);
   theModel = IMPORTED_MODELS[0];
   theModel?.scale.set(0, 0, 0);
   theModel && scene.add(theModel);
 
   // InitMorphModel(theModel);
-  
+
   preloadTextures();
-  
+
   if (!isUrlEmpty) {
     applyAdditionalSharedParameters(5); // language
     applyAdditionalSharedParameters(6); // currency
@@ -689,8 +689,10 @@ async function StartSettings() {
 
   CheckChanges();
 
+  applyAdditionalSharedParameters(7); // customWindows
+
   setVisibility(theModel, false, ['man']);
-  
+
   $('#js-loader').addClass('invisible');
   $('.summary.entry-summary').removeClass('hidden');
   // theModel?.scale.set(0, 0, 0);
@@ -937,23 +939,23 @@ function ParseAllGroups() {
 function SetGroupActionForSharedParameters(targetID, value, callback, parse = false) {
   for (let i = 0; i < SharedParameterList.length; i++) {
     const element = SharedParameterList[i];
-    
+
     if (element.groupIds == undefined || element.groupIds == null) { continue; }
     if (!element.groupIds.includes(targetID)) { continue; }
-    
+
     if (element.value == value) { continue; }
-    
+
     element.value = value;
-    
+
     if (element.groupOptionAction != null && parse == false) {
       element.groupOptionAction();
     }
   }
-  
+
   if (callback != null) {
     callback();
   }
-  
+
 }
 
 function SetGroupActionForSharedParametersCheckboxArray(targetID, array, callback, parse = false, lastClicked = '0') {
@@ -1001,7 +1003,7 @@ function applyAllConditionsActiveRadios() {
         const opt = target.group.options[i];
         const optionName = `option_${opt.group_id}-${opt.component_id}`;
         const condObj = CONDITIONS_ACTIVE[optionName];
-        
+
         // select option is active
         if (opt.element.classList.contains('active')) {
           for (let targetName in condObj) {
@@ -1072,7 +1074,7 @@ function applyAllConditionsActiveRadios() {
                   object = GetMesh(meshName);
                   if (!object) object = GetGroup(meshName);
                   if (!object) continue;
-  
+
                   if (condObj[targetName][meshNameComplex] == 'on') {
                     object.visible = true;
                   } else if (condObj[targetName][meshNameComplex] == 'off') {
@@ -1112,7 +1114,7 @@ function applyAllConditionsUncheckedCHeckboxes() {
         const opt = target.group.options[i];
         const optionName = `option_${opt.group_id}-${opt.component_id}`;
         const condObj = CONDITIONS_UNCHECKED[optionName];
-        
+
         // checkbox is UNCHECKED (not active)
         if (target.type === 'checkbox' && !opt.element.classList.contains('active')) {
           for (let targetName in condObj) {
@@ -1136,31 +1138,31 @@ function applyAllConditionsUncheckedCHeckboxes() {
               const group = parentGroup.group;
 
               // if (!group.element.classList.contains('disabled')) {
-                const option = group.options.find(element => element.component_id == compId);
+              const option = group.options.find(element => element.component_id == compId);
 
-                if (condObj[targetName] == 'on') {
-                  option.element.classList.remove('disabled');
-                  option.element.classList.remove('invisible');
-                } else if (condObj[targetName] == 'off') { // make option inactive (checkbox just disabled)
-                  option.element.classList.add('disabled');
-                  const groupType = mainGroups.find(element => element.id == `group-${option.group_id}`).type;
-                  if (groupType !== 'checkbox') {
-                    option.element.classList.remove('active');
-                  }
-                } else if (condObj[targetName] == 'ud') { // make checkbox disabled and unchecked
-                  const groupType = mainGroups.find(element => element.id == `group-${option.group_id}`).type;
-                  if (groupType === 'checkbox' && option.element.classList.contains('active')) {
-                    option.element.click();
-                    option.element.classList.add('disabled');
-                  }
-                  if (groupType === 'checkbox' && !option.element.classList.contains('active')) {
-                    option.element.classList.add('disabled');
-                  }
-                } else if (condObj[targetName] == 'inv') { // make option inactive and invisible
-                  option.element.classList.add('disabled');
+              if (condObj[targetName] == 'on') {
+                option.element.classList.remove('disabled');
+                option.element.classList.remove('invisible');
+              } else if (condObj[targetName] == 'off') { // make option inactive (checkbox just disabled)
+                option.element.classList.add('disabled');
+                const groupType = mainGroups.find(element => element.id == `group-${option.group_id}`).type;
+                if (groupType !== 'checkbox') {
                   option.element.classList.remove('active');
-                  option.element.classList.add('invisible');
                 }
+              } else if (condObj[targetName] == 'ud') { // make checkbox disabled and unchecked
+                const groupType = mainGroups.find(element => element.id == `group-${option.group_id}`).type;
+                if (groupType === 'checkbox' && option.element.classList.contains('active')) {
+                  option.element.click();
+                  option.element.classList.add('disabled');
+                }
+                if (groupType === 'checkbox' && !option.element.classList.contains('active')) {
+                  option.element.classList.add('disabled');
+                }
+              } else if (condObj[targetName] == 'inv') { // make option inactive and invisible
+                option.element.classList.add('disabled');
+                option.element.classList.remove('active');
+                option.element.classList.add('invisible');
+              }
               // }
             }
 
@@ -1290,7 +1292,7 @@ function setActiveSelectOption(groupId, optionId) {
   // updating active option WITHOUT clicking on it
   if (!optionId) return;
   if (Array.isArray(optionId)) return;
-  
+
   const parentGroup = mainGroups.find(element => element.id == groupId);
   if (!parentGroup) { return; }
 
@@ -1308,7 +1310,7 @@ function setActiveSelectOption(groupId, optionId) {
 
       for (let i = 0; i < group.options.length; i++) {
         const opt = group.options[i];
-        
+
         if (!opt.element.classList.contains('disabled')) {
           group.activeOption = i;
           group.options[i].active = true;
@@ -1454,17 +1456,17 @@ function CheckChanges(modelId = '') {
 
   updateStateVars();
   setAllPanelsOn();
-  
+
   applyAllConditionsActiveRadios();
   applyAllConditionsUncheckedCHeckboxes();
   additionalConditions();
-  
+
   setStripAndViewportForDoubleDoorsStudio();
   setSskylights();
   // assignOptionsInRelatedGroups(SharedParameterList[4].groupIds);
   // applyActiveGroupOptionAction();
   applyActiveGroupOptionAction();
-  
+
   updateStateVars();
 
   // setOptionsResult();
@@ -1482,11 +1484,12 @@ async function changeModel(modelId) {
   theModel = IMPORTED_MODELS[0];
   theModel?.scale.set(0, 0, 0);
   theModel && scene.add(theModel);
-  
+
+  resetWindowsToStandard();
   CheckChanges(modelId);
 
   setVisibility(theModel, false, ['man']);
-  onChangePosition(DATA_HOUSE_NAME[modelId], 'outMain', () => {}, 5);
+  onChangePosition(DATA_HOUSE_NAME[modelId], 'outMain', () => { }, 5);
   animateScale(theModel, 500);
 }
 
@@ -1495,6 +1498,11 @@ function setAllPanelsOn() {
   const allWindowMeshes = getGroupNamesList(theModel, 'window');
   setVisibility(theModel, true, allPanelMeshes);
   setVisibility(theModel, false, allWindowMeshes);
+}
+
+function resetWindowsToStandard() {
+  $('.option_1-2').trigger('click');
+  $('.option_1-1').trigger('click');
 }
 
 function setStripAndViewportForDoubleDoorsStudio() {
@@ -1530,8 +1538,8 @@ function preloadTextures() {
 function changeTexture(value) {
   (DEBUG_MODE_VALUES) && console.log("🚀 ~ changeTexture ~ :", value, type);
 
-    setObjectTexture(TEXTURES.top.materialNames, TEXTURES.top[value]);
-    setObjectTexture(TEXTURES.end.materialNames, TEXTURES.end[value]);
+  setObjectTexture(TEXTURES.top.materialNames, TEXTURES.top[value]);
+  setObjectTexture(TEXTURES.end.materialNames, TEXTURES.end[value]);
 }
 
 function furnitureController(value) {
@@ -1559,14 +1567,14 @@ function furnitureController(value) {
     if ($('#button_sleep').hasClass('active')) {
       //! turn OFF furniture: work
       //! turn OFF furniture: live
-      
+
       //! turn ON furniture: sleep
     }
 
     if ($('#button_work').hasClass('active')) {
       //! turn OFF furniture: sleep
       //! turn OFF furniture: live
-      
+
       //! turn ON furniture: work
     }
 
@@ -1612,7 +1620,7 @@ function calculatePrice() {
   let basePrice = 0;
   let percentage = 0;
   let selectedShape = '';
-  
+
   switch (SharedParameterList[3].value) {
     case '0':
       selectedShape = 'rechthoek';
@@ -1664,18 +1672,18 @@ function calculatePrice() {
     //   let targetIndex = 0;
     //   let targetHeadIndex = 0;
     //   let price = 0;
-      
+
     //   if (DATA_CHECKING_PRICE[i]) {
     //     for (let j = 0; j < SharedParameterList[i].groupIds.length; j++) {
     //       if (isGroupActive(SharedParameterList[i].groupIds[j])) {
     //         dataNameMainPart = DATA_CHECKING_PRICE[i]?.name;
     //         dataName = dataNameMainPart + ' ' + DATA_CHECKING_PRICE[i]?.value[SharedParameterList[i].value];
-            
+
     //         if (dataNameMainPart === 'Afwerking') {
     //           dataNameMainPart = dataNameMainPart + ` [${DATA_CHECKING_PRICE[i]?.value[SharedParameterList[i].value]}]`;
     //           dataName = dataNameMainPart + ' ' + DATA_CHECKING_PRICE[0]?.value[SharedParameterList[0].value]; // color
     //         }
-            
+
     //         if (dataNameMainPart === 'Breedte') {
     //           dataNameMainPart = dataNameMainPart + ` [${DATA_CHECKING_PRICE[8]?.value[SharedParameterList[8].value]}]`; // legs
     //           dataName = dataNameMainPart + ' ' + DATA_CHECKING_PRICE[i]?.value[SharedParameterList[i].value];
@@ -1755,7 +1763,7 @@ function getOrderList() {
   for (let i = 0; i < SharedParameterList.length; i++) {
     if (DATA_CHECKING_PRICE[i]) {
       const dataName = DATA_CHECKING_PRICE[i]?.name + ': ' +
-                       DATA_CHECKING_PRICE[i]?.value[SharedParameterList[i].value];
+        DATA_CHECKING_PRICE[i]?.value[SharedParameterList[i].value];
 
       if (SharedParameterList[i].groupIds) {
         for (let k = 0; k < SharedParameterList[i].groupIds.length; k++) {
@@ -1851,7 +1859,7 @@ function SendProductInfo(element) {
 function setColorOfActiveOption(groupIDs, materialNames) {
   for (let i = 0; i < groupIDs.length; i++) {
     const group = mainGroups.find(element => element.id == groupIDs[i])?.group;
-    
+
     for (let j = 0; j < group?.options.length; j++) {
       if (group.options[j].active) {
         const color = group.options[j].componentOptions[0].color;
@@ -2061,45 +2069,45 @@ textureLoader.setCrossOrigin('anonymous');
 const textureCache = {};
 
 function loadTexture(textureValue, tilingValue = 1) {
-    applyTexture(textureValue, tilingValue);
+  applyTexture(textureValue, tilingValue);
 
-    function applyTexture(textureValue, tilingValue) {
-      const textureProperties = {
-        'Map': {},
-        'Normal': {},
-        'Roughness': {},
-        'Metalness': {},
-        'Emission': {},
-        'AO': {},
-        'Gloss': {},
-      };
-    
-      for (const node in textureProperties) {
-        const value = textureValue[node.toLowerCase()];
-        if (!value || value === 'null') continue;
+  function applyTexture(textureValue, tilingValue) {
+    const textureProperties = {
+      'Map': {},
+      'Normal': {},
+      'Roughness': {},
+      'Metalness': {},
+      'Emission': {},
+      'AO': {},
+      'Gloss': {},
+    };
 
-        if (value && !textureCache[value]) {
-          textureLoader.load(value, (texture) => {
-            // console.log("texture is loading");
-            texture.magFilter = THREE.NearestFilter;
-            texture.minFilter = THREE.NearestMipmapNearestFilter;
-            texture.anisotropy = 16;
-            texture.flipY = false;
-            setTiling(texture, tilingValue);
-            textureCache[value] = texture;
-          }, undefined, () => {
-            console.error('An error happened.');
-          });
-        } 
+    for (const node in textureProperties) {
+      const value = textureValue[node.toLowerCase()];
+      if (!value || value === 'null') continue;
+
+      if (value && !textureCache[value]) {
+        textureLoader.load(value, (texture) => {
+          // console.log("texture is loading");
+          texture.magFilter = THREE.NearestFilter;
+          texture.minFilter = THREE.NearestMipmapNearestFilter;
+          texture.anisotropy = 16;
+          texture.flipY = false;
+          setTiling(texture, tilingValue);
+          textureCache[value] = texture;
+        }, undefined, () => {
+          console.error('An error happened.');
+        });
       }
     }
-    
-    function setTiling(texture, tiling) {
-      texture.repeat.set(tiling, tiling);
-      texture.wrapS = THREE.RepeatWrapping;
-      texture.wrapT = THREE.RepeatWrapping;
-      texture.needsUpdate = true;
-    }
+  }
+
+  function setTiling(texture, tiling) {
+    texture.repeat.set(tiling, tiling);
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.needsUpdate = true;
+  }
 }
 
 function setObjectTexture(materialNames, textureValue, tilingValue = 1, model = theModel) {
@@ -2159,17 +2167,17 @@ function setObjectTexture(materialNames, textureValue, tilingValue = 1, model = 
         },
       },
     };
-  
+
     for (const node in textureProperties) {
       const value = textureValue[node.toLowerCase()];
       if (!value) continue;
-      
+
       if (value === 'null') {
         textureProperties[node].apply(material, null);
         material.needsUpdate = true;
         continue;
       }
-      
+
       if (!textureCache[value]) {
         textureLoader.load(value, (texture) => {
           texture.magFilter = THREE.NearestFilter;
@@ -2178,7 +2186,7 @@ function setObjectTexture(materialNames, textureValue, tilingValue = 1, model = 
           texture.flipY = false;
           setTiling(texture, tilingValue);
           textureCache[value] = texture;
-          
+
           textureProperties[node].apply(material, texture);
           material.needsUpdate = true;
         }, undefined, () => {
@@ -2190,7 +2198,7 @@ function setObjectTexture(materialNames, textureValue, tilingValue = 1, model = 
       }
     }
   }
-  
+
   function setTiling(texture, tiling) {
     texture.repeat.set(tiling, tiling);
     texture.wrapS = THREE.RepeatWrapping;
@@ -2668,7 +2676,7 @@ async function PrepareUI() {
   jQuery(document).ready(function ($) {
     const BtnsAR = $('.button_ar_qr');
     const canvasBtnShare = $('#button_share_url');
-    
+
     BtnsAR.removeClass('hidden');
 
     popup = $('.popup');
@@ -2728,7 +2736,7 @@ async function PrepareUI() {
       popupItemLoupe.removeClass('active');
 
       document.documentElement.classList.add('popup-open');
-      
+
       infoSharingInput[0].value = GetURLWithParameters();
     }
 
@@ -2853,7 +2861,7 @@ function menuInfoBtnHandler(opt) {
           <img src="${imgLink}">
         </div>
       `;
-    
+
       if ($('#menu_info_content_specs .ar_menu_info_content__image').length) {
         $('#menu_info_content_specs .ar_menu_info_content__image').remove();
       }
@@ -2880,7 +2888,7 @@ function menuInfoBtnHandler(opt) {
 
     // check the descr content available
     if ($('#menu_info_content_descr .ar_menu_info_content__text').html() === '' &&
-    $('#menu_info_content_descr .ar_menu_info_content__image').length === 0) {
+      $('#menu_info_content_descr .ar_menu_info_content__image').length === 0) {
       $('#menu_info_tab_specs').click();
       $('#menu_info_tab_descr').addClass('disabled');
       $('#menu_info_tab_descr').removeClass('active');
@@ -2890,7 +2898,7 @@ function menuInfoBtnHandler(opt) {
 
     // check the specs content available
     if ($('#menu_info_content_specs .ar_menu_info_content__text').html() === '' &&
-    $('#menu_info_content_specs .ar_menu_info_content__image').length === 0) {
+      $('#menu_info_content_specs .ar_menu_info_content__image').length === 0) {
       $('#menu_info_tab_specs').addClass('disabled');
       $('#menu_info_tab_specs').removeClass('disactiveabled');
     } else {
@@ -2912,14 +2920,16 @@ function cameraBtnHandlers() {
     $('.canvas_btn_camera').addClass('disabled');
 
     // onChangePosition(DATA_HOUSE_NAME[currentModel], 'inMain');
-    onChangePosition(DATA_HOUSE_NAME[currentModel], 'outPrepare', 
-      () => { onChangePosition(DATA_HOUSE_NAME[currentModel], 'inMain',
-        () => { 
-          $('.canvas_btn_camera').removeClass('disabled');
-         }
-      ) });
+    onChangePosition(DATA_HOUSE_NAME[currentModel], 'outPrepare',
+      () => {
+        onChangePosition(DATA_HOUSE_NAME[currentModel], 'inMain',
+          () => {
+            $('.canvas_btn_camera').removeClass('disabled');
+          }
+        )
+      });
 
-      isCameraInside = true;
+    isCameraInside = true;
   });
 
   $('#button_camera_outside').on('click', function (event) {
@@ -2930,9 +2940,9 @@ function cameraBtnHandlers() {
     $('.canvas_btn_camera').addClass('disabled');
 
     onChangePosition(DATA_HOUSE_NAME[currentModel], 'outMain',
-      () => { 
+      () => {
         $('.canvas_btn_camera').removeClass('disabled');
-       }
+      }
     );
 
     // onChangePosition(DATA_HOUSE_NAME[currentModel], 'inPrepare', 
@@ -2963,7 +2973,7 @@ function annotationsBtnHandler() {
 function dimensionsBtnHandler() {
   $('#button_dimensions').on('click', function () {
     $(this).toggleClass('active');
-    
+
     if ($(this).hasClass('active')) {
       $('#button_annotation').addClass('disabled');
       $('#button_furniture').addClass('disabled');
@@ -2980,7 +2990,7 @@ function dimensionsBtnHandler() {
 function furnitureBtnHandler() {
   $('#button_furniture').on('click', function () {
     $(this).toggleClass('active');
-  
+
     if ($(this).hasClass('active')) {
       $('#button_dimensions').addClass('disabled');
       !isCameraInside && $('#button_camera_inside').click();
@@ -2999,7 +3009,7 @@ function notificationHandler() {
     if (!$(this).hasClass('active')) {
       $('.canvas_notification').removeClass('hidden');
 
-      setTimeout(function() {
+      setTimeout(function () {
         $('.canvas_notification').addClass('hidden');
       }, 2500);
     }
@@ -3008,8 +3018,8 @@ function notificationHandler() {
 
 // eslint-disable-next-line no-unused-vars
 function getScrollbarWidth() {
-  const outer = $('<div>').css({visibility: 'hidden', width: 100, overflow: 'scroll'}).appendTo('body');
-  const widthWithScroll = $('<div>').css({width: '100%'}).appendTo(outer).outerWidth();
+  const outer = $('<div>').css({ visibility: 'hidden', width: 100, overflow: 'scroll' }).appendTo('body');
+  const widthWithScroll = $('<div>').css({ width: '100%' }).appendTo(outer).outerWidth();
   outer.remove();
   return 100 - widthWithScroll;
 }
@@ -3084,7 +3094,7 @@ export function promiseDelay(time, callback) {
 
 //#region 3D FUNCTIONS
 
-function onChangePosition(houseId, pos, callback = () => { }, duration = 750, isLeftSideHouse = true ) {
+function onChangePosition(houseId, pos, callback = () => { }, duration = 750, isLeftSideHouse = true) {
   let targetCameraPosition;
   let targetControlX;
   let targetControlY;
@@ -3145,7 +3155,7 @@ function onChangePosition(houseId, pos, callback = () => { }, duration = 750, is
     controls.enableZoom = true;
     targetControlMinDist = 4;
     targetCameraFOV = 50;
-    maxPolarAngle =  Math.PI / 1.88;
+    maxPolarAngle = Math.PI / 1.88;
   }
 
   function isEqualVector(vector1, vector2) {
@@ -3209,28 +3219,56 @@ function onMouseUp(event) {
         if (letter && number) {
           clickedMeshName = `${letter}-${number}`;
           updateCustomWindows([letter, number]);
-          //! update custom windows URL (part)
+          SharedParameterList[7].value = convertObjectToArray(customWindows);
+          WriteURLParameters();
+          console.log("🚀 ~ onMouseUp ~ SharedParameterList[7].value:", SharedParameterList[7].value);
         }
 
-        console.log('Clicked on mesh:', clickedMeshName);
-        console.log("🚀 ~ customWindows:", customWindows);
+        console.log('🚀 Clicked on mesh:', clickedMeshName);
       }
     }
   }
 
+  
+
   function extractLastLetterAndNumber(name) {
     const match = name.match(/-([A-Za-z])-(\d+)$/);
-  
+
     if (match) {
       return [match[1], match[2]];
     }
-  
+
     return [null, null];
   }
-  
+
   function containsPanelOrWindow(name) {
     return name.includes("panel") || name.includes("window");
   }
+}
+
+function convertObjectToArray(customWindowsObj) {
+  const customWindowsArray = [];
+  for (const [key, values] of Object.entries(customWindowsObj)) {
+    customWindowsArray.push(key);
+    customWindowsArray.push(...values);
+  }
+  return customWindowsArray;
+}
+
+function convertArrayToObject(customWindowsArray) {
+  const customWindowsObj = {};
+  let currentKey = null;
+
+  customWindowsArray.forEach(item => {
+      if (isNaN(item)) {
+          currentKey = item;
+          customWindowsObj[currentKey] = [];
+      } else if (currentKey) {
+        customWindowsObj[currentKey].push(item);
+      }
+  });
+
+  return customWindowsObj;
 }
 
 canvas.addEventListener('mousedown', onMouseDown);
@@ -3284,6 +3322,23 @@ function findMeshByLetterAndNumber(parent, letter, number) {
   });
 
   return { panelMeshName, windowMeshName };
+}
+
+function restoreCustomWindows() {
+  customWindows = convertArrayToObject(SharedParameterList[7].value);
+
+  if (!isWindowCustomOn) return;
+
+  // setAllPanelsOn();
+
+  for (const [key, values] of Object.entries(customWindows)) {
+    for (const value of values) {
+      const { panelMeshName, windowMeshName } = findMeshByLetterAndNumber(theModel, key, value);
+      (panelMeshName) && setVisibility(theModel, false, [panelMeshName]);
+      (windowMeshName) && setVisibility(theModel, true, [windowMeshName]);
+    }
+  }
+  
 }
 
 //#endregion
@@ -3425,19 +3480,19 @@ function ChangeGlobalMorph(morphName, inputvalue) {
 
 // eslint-disable-next-line no-unused-vars
 function ConvertMorphValue(inputval, srcStart, srcEnd, destStart = 0, destEnd = 1) {
-  const result =  destStart + (inputval - srcStart) * (destEnd - destStart) / (srcEnd - srcStart);
+  const result = destStart + (inputval - srcStart) * (destEnd - destStart) / (srcEnd - srcStart);
 
   return result;
 }
 
 // eslint-disable-next-line no-unused-vars
-function animateMorph(morphName, valueStart, valueEnd, callback = () => {}, timeInterval = 200, steps = 5) {
+function animateMorph(morphName, valueStart, valueEnd, callback = () => { }, timeInterval = 200, steps = 5) {
   (DEBUG_MODE_VALUES) && console.log("🚀 ~ animateMorph ~ ");
   const stepDuration = timeInterval / steps;
   const stepValue = (valueEnd - valueStart) / steps;
   let currentValue = valueStart;
   let completedSteps = 0;
-  
+
   for (let i = 1; i <= steps; i++) {
     setTimeout(() => {
       ChangeGlobalMorph(morphName, currentValue);
