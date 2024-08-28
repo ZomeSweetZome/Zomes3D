@@ -32,6 +32,7 @@ import {
   SKYLIGHTS_MESHES,
   STRIP_VIEWPORT_MESHES_STUDIO_EXTRADOOR,
   FOUNDATION_HEIGHT,
+  WINDOWS_LIMIT_IN_ROW,
 } from './settings.js';
 
 import {
@@ -78,7 +79,7 @@ let customWindows = {
   e: [],
   f: [],
   g: [],
-  h: [],
+  // h: [],
 };
 
 let dataPrice = [];
@@ -239,7 +240,7 @@ SharedParameterList[1].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
 
   if (isFirstStart || justClicked) {
-
+    
   }
 }
 
@@ -326,7 +327,7 @@ SharedParameterList[6].groupOptionAction = function () {
 // customWindows
 SharedParameterList[7].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
-  
+
   if (isFirstStart || justClicked) {
     if (this.value.length > 0) {
       restoreCustomWindows();
@@ -1462,10 +1463,14 @@ function CheckChanges(modelId = '') {
   additionalConditions();
 
   setStripAndViewportForDoubleDoorsStudio();
+
+  if (isWindowCustomOn && SharedParameterList[7].value.length > 0) {
+    restoreCustomWindows();
+  }
   // setSskylights();
 
   // assignOptionsInRelatedGroups(SharedParameterList[4].groupIds);
-  
+
   applyActiveGroupOptionAction();
 
   updateStateVars();
@@ -1487,6 +1492,7 @@ async function changeModel(modelId) {
   theModel && scene.add(theModel);
 
   (isWindowCustomOn) && resetWindowsToStandard();
+  resetCustomWindowsObject();
   CheckChanges(modelId);
 
   setVisibility(theModel, false, ['man']);
@@ -1494,12 +1500,15 @@ async function changeModel(modelId) {
   animateScale(theModel, 500);
 }
 
-function resetCustomWindows() {
+function resetCustomWindowsObject() {
   for (const key in customWindows) {
-      if (Array.isArray(customWindows[key])) {
-          customWindows[key] = [];
-      }
+    if (Array.isArray(customWindows[key])) {
+      customWindows[key] = [];
+    }
   }
+
+  SharedParameterList[7].value = convertObjectToArray(customWindows);
+  WriteURLParameters();
 }
 
 function setAllPanelsOn() {
@@ -1512,9 +1521,7 @@ function setAllPanelsOn() {
 function resetWindowsToStandard() {
   $('.option_1-2').trigger('click');
   $('.option_1-1').trigger('click');
-  resetCustomWindows();
-  SharedParameterList[7].value = convertObjectToArray(customWindows);
-  WriteURLParameters();
+  resetCustomWindowsObject();
 }
 
 function setStripAndViewportForDoubleDoorsStudio() {
@@ -3011,10 +3018,10 @@ function furnitureBtnHandler() {
 function notificationHandler() {
   $('.option_1-2').on('click', function () {
     if (!$(this).hasClass('active')) {
-      $('.canvas_notification').removeClass('hidden');
+      $('#canvas_notification').removeClass('hidden');
 
       setTimeout(function () {
-        $('.canvas_notification').addClass('hidden');
+        $('#canvas_notification').addClass('hidden');
       }, 2500);
     }
   });
@@ -3232,7 +3239,6 @@ function onMouseUp(event) {
     }
   }
 
-  
 
   function extractLastLetterAndNumber(name) {
     const match = name.match(/-([A-Za-z])-(\d+)$/);
@@ -3263,12 +3269,12 @@ function convertArrayToObject(customWindowsArray) {
   let currentKey = null;
 
   customWindowsArray.forEach(item => {
-      if (isNaN(item)) {
-          currentKey = item;
-          customWindowsObj[currentKey] = [];
-      } else if (currentKey) {
-        customWindowsObj[currentKey].push(item);
-      }
+    if (isNaN(item)) {
+      currentKey = item;
+      customWindowsObj[currentKey] = [];
+    } else if (currentKey) {
+      customWindowsObj[currentKey].push(item);
+    }
   });
 
   return customWindowsObj;
@@ -3281,14 +3287,30 @@ canvas.addEventListener('mouseup', onMouseUp);
 
 function updateCustomWindows([letter, number]) {
   const keyName = letter.toLowerCase();
+
+  if (keyName === 'g' && currentModel !== '2') {
+    return;
+  }
+
   if (Object.prototype.hasOwnProperty.call(customWindows, keyName)) {
     const index = customWindows[keyName].indexOf(number);
     const { panelMeshName, windowMeshName } = findMeshByLetterAndNumber(theModel, letter, number);
-    console.log("🚀 ~ updateCustomWindows ~ panelMeshName:", panelMeshName);
-    console.log("🚀 ~ updateCustomWindows ~ windowMeshName:", windowMeshName);
 
     if (index === -1) {
+
+      if (customWindows[keyName].length >= WINDOWS_LIMIT_IN_ROW) {
+
+        $('#canvas_notification_limit').removeClass('hidden');
+
+        setTimeout(function () {
+          $('#canvas_notification_limit').addClass('hidden');
+        }, 2500);
+
+        return;
+      }
+
       customWindows[keyName].push(number);
+
       // make it WINDOW
       (panelMeshName) && setVisibility(theModel, false, [panelMeshName]);
       (windowMeshName) && setVisibility(theModel, true, [windowMeshName]);
@@ -3341,7 +3363,7 @@ function restoreCustomWindows() {
       (windowMeshName) && setVisibility(theModel, true, [windowMeshName]);
     }
   }
-  
+
 }
 
 //#endregion
