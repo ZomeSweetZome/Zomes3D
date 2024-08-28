@@ -1462,9 +1462,10 @@ function CheckChanges(modelId = '') {
   additionalConditions();
 
   setStripAndViewportForDoubleDoorsStudio();
-  setSskylights();
+  // setSskylights();
+
   // assignOptionsInRelatedGroups(SharedParameterList[4].groupIds);
-  // applyActiveGroupOptionAction();
+  
   applyActiveGroupOptionAction();
 
   updateStateVars();
@@ -1485,12 +1486,20 @@ async function changeModel(modelId) {
   theModel?.scale.set(0, 0, 0);
   theModel && scene.add(theModel);
 
-  resetWindowsToStandard();
+  (isWindowCustomOn) && resetWindowsToStandard();
   CheckChanges(modelId);
 
   setVisibility(theModel, false, ['man']);
   onChangePosition(DATA_HOUSE_NAME[modelId], 'outMain', () => { }, 5);
   animateScale(theModel, 500);
+}
+
+function resetCustomWindows() {
+  for (const key in customWindows) {
+      if (Array.isArray(customWindows[key])) {
+          customWindows[key] = [];
+      }
+  }
 }
 
 function setAllPanelsOn() {
@@ -1503,6 +1512,9 @@ function setAllPanelsOn() {
 function resetWindowsToStandard() {
   $('.option_1-2').trigger('click');
   $('.option_1-1').trigger('click');
+  resetCustomWindows();
+  SharedParameterList[7].value = convertObjectToArray(customWindows);
+  WriteURLParameters();
 }
 
 function setStripAndViewportForDoubleDoorsStudio() {
@@ -1532,14 +1544,6 @@ function preloadTextures() {
   for (let i = 0; i < 2; i++) {
     loadTexture(TEXTURES.exterior[i]);
   }
-}
-
-
-function changeTexture(value) {
-  (DEBUG_MODE_VALUES) && console.log("🚀 ~ changeTexture ~ :", value, type);
-
-  setObjectTexture(TEXTURES.top.materialNames, TEXTURES.top[value]);
-  setObjectTexture(TEXTURES.end.materialNames, TEXTURES.end[value]);
 }
 
 function furnitureController(value) {
@@ -3221,7 +3225,6 @@ function onMouseUp(event) {
           updateCustomWindows([letter, number]);
           SharedParameterList[7].value = convertObjectToArray(customWindows);
           WriteURLParameters();
-          console.log("🚀 ~ onMouseUp ~ SharedParameterList[7].value:", SharedParameterList[7].value);
         }
 
         console.log('🚀 Clicked on mesh:', clickedMeshName);
