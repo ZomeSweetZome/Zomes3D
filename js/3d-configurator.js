@@ -1495,6 +1495,15 @@ async function changeModel(modelId) {
   if ($('.ar_menu_info_container').hasClass('active')) {
     $('.ar_menu_info__header_close').trigger('click');
   }
+  if ($('#button_annotation').hasClass('active')) {
+    $('#button_annotation').trigger('click');
+  }
+  if ($('#button_dimensions').hasClass('active')) {
+    $('#button_dimensions').trigger('click');
+  }
+  if ($('#button_furniture').hasClass('active')) {
+    $('#button_furniture').trigger('click');
+  }
 
   await disposeModel(IMPORTED_MODELS[0]);
   await loadModel(MODEL_PATHS[modelId], 0);
