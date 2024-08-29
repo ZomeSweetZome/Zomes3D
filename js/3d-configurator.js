@@ -1485,6 +1485,10 @@ function CheckChanges(modelId = '') {
 //#region CUSTOM FUNCTIONS
 
 async function changeModel(modelId) {
+  if ($('.ar_menu_info_container').hasClass('active')) {
+    $('.ar_menu_info__header_close').trigger('click');
+  }
+
   await disposeModel(IMPORTED_MODELS[0]);
   await loadModel(MODEL_PATHS[modelId], 0);
   theModel = IMPORTED_MODELS[0];
