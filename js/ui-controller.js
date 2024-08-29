@@ -269,10 +269,10 @@ export async function createMenu(mainData) {
   });
 }
 
-function updateUIlanguages(mainData, lang = currentLanguage) {
-  for (let i = 0; i < uiMultiLanguages.length; i++) {
-    for (let key in uiMultiLanguages[i]) {
-      let contentText = getData(mainData, uiMultiLanguages[i][key], lang);
+export function updateUIlanguages(dataArr, uiDataArr = uiMultiLanguages, langKey = currentLanguage) {
+  for (let i = 0; i < uiDataArr.length; i++) {
+    for (let key in uiDataArr[i]) {
+      let contentText = getData(dataArr, uiDataArr[i][key], langKey);
       
       if (!contentText) continue;
 

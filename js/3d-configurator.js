@@ -54,6 +54,7 @@ import {
   createMenu,
   loadAndParseCSV,
   getData,
+  updateUIlanguages,
 } from './ui-controller.js';
 
 const DEBUG_MODE_FUNC_STARTS = false;
@@ -73,6 +74,9 @@ let isExtrimeWeatherPackOn = false;
 let isBuiltInDeskOn = false;
 let isFoundationKitOn = false;
 let isExtraDoorOn = false;
+
+let uiLangInfo = [];
+let uiLangAnnotations = [];
 
 let customWindows = {
   c: [],
@@ -2795,6 +2799,8 @@ async function PrepareUI() {
       SharedParameterList[5].value = valueForURL;
       CheckChanges();
       WriteURLParameters();
+
+      updateUIlanguages(dataAnnotations, uiLangAnnotations, `SHORT_${currentLanguage}`);
     });
 
     $('.currency-picker select').on('change', function () {
@@ -3553,6 +3559,7 @@ function showAnnotations() {
   if (idIndex == -1) return;
   
   annotations = [];
+  uiLangAnnotations = [];
 
   dataAnnotations.forEach((item) => {
     if (item[idIndex].includes(DATA_HOUSE_NAME[currentModel])) {
@@ -3560,6 +3567,7 @@ function showAnnotations() {
       const [x, y, z] = parseCoordinates(coordsString);
 
       annotations.push({
+        id: item[idIndex],
         position: new THREE.Vector3(x, y + MODEL_CENTER_POSITION, z),
         text: getData(dataAnnotations, item[idIndex], `SHORT_${currentLanguage.toUpperCase()}`),
       });
@@ -3568,16 +3576,17 @@ function showAnnotations() {
   
   annotations.forEach((annotation) => {
     const $annotationElement = $('<div>', { class: 'annotation' })
-      .html(`<div class="annotation-text">${annotation.text}</div>`)
+      .html(`<div id="annotation_text_short_${annotation.id}" class="annotation-text">${annotation.text}</div>`)
       .css({
         position: 'absolute',
         cursor: 'pointer',
       });
-  
+    
     $canvasContainer.append($annotationElement);
     annotation.element = $annotationElement;
+    
+    uiLangAnnotations.push({ [`#annotation_text_short_${annotation.id}`]: annotation.id });
   });
-  
 }
 
 function hideAnnotations() {
