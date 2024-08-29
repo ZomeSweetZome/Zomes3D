@@ -14,6 +14,7 @@
 import {
   DATAFILE_CSV_LINK_UI,
   DATAFILE_CSV_LINK_PRICE,
+  DATAFILE_CSV_LINK_ANNOTATIONS,
   DATA_CHECKING_PRICE,
   DEFAULT_LANGUAGE,
   DEFAULT_CURRENCY,
@@ -82,6 +83,7 @@ let customWindows = {
   // h: [],
 };
 
+export let dataAnnotations = [];
 let dataPrice = [];
 let mainData = [];
 let mainGroups = [];
@@ -178,7 +180,7 @@ let SharedParameterList = [
     groupIds: ['group-4'],
     splitValue: 'V',
     type: 'array-string',
-    value: [0, 0, 0, 0],
+    value: [0, 0, 0, 0, 0],
     groupOptionAction: null,
     applyURLAction: null,
     applyURLActionReturn: false
@@ -463,6 +465,7 @@ prepareDataFiles();
 
 async function prepareDataFiles() {
   try {
+    await loadAndParseCSV(DATAFILE_CSV_LINK_ANNOTATIONS, 'text', dataAnnotations);
     await loadAndParseCSV(DATAFILE_CSV_LINK_PRICE, 'text', dataPrice);
     await loadAndParseCSV(DATAFILE_CSV_LINK_UI, 'text', mainData);
     Start();
@@ -3491,7 +3494,7 @@ function ChangeObjectMorph(morph, inputvalue) {
     if (morph.object.morphTargetInfluences != null) {
       morph.object.morphTargetInfluences[morph.key] = inputvalue;
     }
-  }
+  }f
 }
 
 function ChangeGlobalMorph(morphName, inputvalue) {
@@ -3533,6 +3536,83 @@ function animateMorph(morphName, valueStart, valueEnd, callback = () => { }, tim
       }
     }, i * stepDuration);
   }
+}
+
+//#endregion
+
+//#region ANNOTATIONS
+
+console.log("🚀 ~ dataAnnotations:", dataAnnotations);
+
+function showAnnotations() {
+  const annotations = [
+    { position: new THREE.Vector3(0, 0 + MODEL_CENTER_POSITION, 0), text: 'Annotation 1' },
+    { position: new THREE.Vector3(-2, 2.5 + MODEL_CENTER_POSITION, 0), text: 'Annotation 2' },
+    //! TODO
+  ];
+  
+  const $canvasContainer = $('#ar_model_viewer');
+  
+  // annotations.forEach((annotation) => {
+  //   const $annotationElement = $('<div>', { class: 'annotation' })
+  //     .html(`<div class="annotation-text">${annotation.text}</div>`)
+  //     .css({
+  //       position: 'absolute',
+  //       cursor: 'pointer'
+  //     });
+  
+  //   $canvasContainer.append($annotationElement);
+  
+  //   annotation.element = $annotationElement;
+  // });
+  
+}
+
+function hideAnnotations() {
+}
+
+export function updateAnnotations(camera, scene) {
+  annotations.forEach(annotation => {
+    const screenPosition = annotation.position.clone();
+    screenPosition.project(camera);
+
+    const x = (screenPosition.x * 0.5 + 0.5) * $canvasContainer.width();
+    const y = (screenPosition.y * -0.5 + 0.5) * $canvasContainer.height();
+
+    $(annotation.element).css({
+      left: `${x}px`,
+      top: `${y}px`
+    });
+
+    const raycaster = new THREE.Raycaster();
+    raycaster.setFromCamera(screenPosition, camera);
+
+    let isBehindModel = false;
+
+    scene.traverse((object) => {
+      if (object.isMesh) {
+        const intersects = raycaster.intersectObject(object, true);
+        if (intersects.length > 0 && intersects[0].distance < annotation.position.distanceTo(camera.position)) {
+          isBehindModel = true;
+        }
+      }
+    });
+
+    if (isBehindModel) {
+      $(annotation.element).css('opacity', 0.1);
+    } else {
+      $(annotation.element).css('opacity', 1);
+    }
+
+    $(annotation.element).on('click', () => {
+      const $annotationText = $(annotation.element).find('.annotation-text');
+      if ($annotationText.css('display') === 'none' || !$annotationText.css('display')) {
+        $annotationText.css('display', 'flex');
+      } else {
+        $annotationText.css('display', 'none');
+      }
+    });
+  });
 }
 
 //#endregion

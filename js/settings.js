@@ -41,6 +41,7 @@ const MAIN_LINK_PART = 'https://docs.google.com/spreadsheets/d/1wlPf19JZoBj4w6Aq
 
 export const DATAFILE_CSV_LINK_UI = MAIN_LINK_PART + '0';
 export const DATAFILE_CSV_LINK_PRICE = MAIN_LINK_PART + '1512053788';
+export const DATAFILE_CSV_LINK_ANNOTATIONS = MAIN_LINK_PART + '1110711170';
 
 export const WINDOWS_LIMIT_IN_ROW = 4;
 

@@ -22,7 +22,7 @@ const IMPORTED_MODELS_GLTF = [];
 export let isModelsLoaded = false;
 
 import { TONE_MAPPING_EXPOSURE, LIGHT_SCHEME, HUMAN_HEIGHT } from './settings.js';
-import { updateAnnotations } from './annotations.js';
+import { updateAnnotations } from './3d-configurator.js';
 
 let externalProperties;
 
