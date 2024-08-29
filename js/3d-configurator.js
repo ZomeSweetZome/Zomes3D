@@ -1495,15 +1495,8 @@ async function changeModel(modelId) {
   if ($('.ar_menu_info_container').hasClass('active')) {
     $('.ar_menu_info__header_close').trigger('click');
   }
-  if ($('#button_annotation').hasClass('active')) {
-    $('#button_annotation').trigger('click');
-  }
-  if ($('#button_dimensions').hasClass('active')) {
-    $('#button_dimensions').trigger('click');
-  }
-  if ($('#button_furniture').hasClass('active')) {
-    $('#button_furniture').trigger('click');
-  }
+
+  resetCanvasButtons();
 
   await disposeModel(IMPORTED_MODELS[0]);
   await loadModel(MODEL_PATHS[modelId], 0);
@@ -1518,6 +1511,18 @@ async function changeModel(modelId) {
   setVisibility(theModel, false, ['man']);
   onChangePosition(DATA_HOUSE_NAME[modelId], 'outMain', () => { }, 5);
   animateScale(theModel, 500);
+}
+
+function resetCanvasButtons() {
+  if ($('#button_annotation').hasClass('active')) {
+    $('#button_annotation').trigger('click');
+  }
+  if ($('#button_dimensions').hasClass('active')) {
+    $('#button_dimensions').trigger('click');
+  }
+  if ($('#button_furniture').hasClass('active')) {
+    $('#button_furniture').trigger('click');
+  }
 }
 
 function resetCustomWindowsObject() {
@@ -3046,6 +3051,8 @@ function notificationHandler() {
         $('#canvas_notification').addClass('hidden');
       }, 2500);
     }
+
+    // resetCanvasButtons();
   });
 }
 
@@ -3579,20 +3586,28 @@ function showAnnotations() {
         id: item[idIndex],
         position: new THREE.Vector3(x, y + MODEL_CENTER_POSITION, z),
         text: getData(dataAnnotations, item[idIndex], `SHORT_${currentLanguage.toUpperCase()}`),
+        textLong: getData(dataAnnotations, item[idIndex], `LONG_${currentLanguage.toUpperCase()}`),
       });
     }
   });
   
   annotations.forEach((annotation) => {
-    const $annotationElement = $('<div>', { class: 'annotation' })
-      .html(`<div id="annotation_text_short_${annotation.id}" class="annotation-text">${annotation.text}</div>`)
-      .css({
-        position: 'absolute',
-        cursor: 'pointer',
-      });
-    
+    const $annotationElement = $('<div>', { class: 'annotation' }).html(`
+      <div id="annotation_text_short_${annotation.id}" class="annotation-text">
+        ${annotation.text}
+      </div>
+    `);
+
+    const $annotationElementLong = $('<div>', {
+      id: `annotation_text_long_${annotation.id}`,
+      class: 'annotation-text long',
+    }).html(`${annotation.textLong}`);
+
     $canvasContainer.append($annotationElement);
+    $annotationElement.append($annotationElementLong);
+
     annotation.element = $annotationElement;
+    annotation.elementLong = $annotationElementLong;
     
     uiLangAnnotations.push({ [`#annotation_text_short_${annotation.id}`]: annotation.id });
   });
@@ -3628,9 +3643,6 @@ export function updateAnnotations(camera, scene) {
       top: `${y}px`
     });
 
-    const raycaster = new THREE.Raycaster();
-    raycaster.setFromCamera(screenPosition, camera);
-
     let isBehindModel = false;
 
     scene.traverse((object) => {
@@ -3648,13 +3660,9 @@ export function updateAnnotations(camera, scene) {
       $(annotation.element).css('opacity', 1);
     }
 
-    $(annotation.element).on('click', () => {
-      const $annotationText = $(annotation.element).find('.annotation-text');
-      if ($annotationText.css('display') === 'none' || !$annotationText.css('display')) {
-        $annotationText.css('display', 'flex');
-      } else {
-        $annotationText.css('display', 'none');
-      }
+    $(annotation.element).off('click').on('click', () => {
+      const $annotationTextLong = $(annotation.element).find('.annotation-text.long');
+      $annotationTextLong.toggleClass('active');
     });
   });
 }

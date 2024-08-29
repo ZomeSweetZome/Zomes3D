@@ -1524,6 +1524,8 @@ textarea[name="ar_order_comment"] {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  position: absolute;
+  cursor: pointer;
 }
 
 .annotation-text {
@@ -1532,7 +1534,7 @@ textarea[name="ar_order_comment"] {
   align-items: center;
   text-align: center;
   border: 1px solid var(--marevo-color-popup-border, #ECECEF);
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 0.85);
   border-radius: 20px;
   height: 36px;
   width: max-content;
@@ -1550,6 +1552,18 @@ textarea[name="ar_order_comment"] {
   transition: opacity 0.2s ease;
 }
 
+.annotation-text.long {
+  text-align: start;
+  width: 240px;
+  height: auto;
+  padding: 20px 20px;
+  top: 0px;
+  display: none;
+}
+
+.annotation-text.long.active {
+  display: flex;
+}
 
 
 /* ################  MOBILE ################ */
