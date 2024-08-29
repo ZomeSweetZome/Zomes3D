@@ -77,6 +77,7 @@ let isExtraDoorOn = false;
 
 let uiLangInfo = [];
 let uiLangAnnotations = [];
+let uiLangAnnotationsLong = [];
 
 let customWindows = {
   c: [],
@@ -2815,6 +2816,7 @@ async function PrepareUI() {
       WriteURLParameters();
 
       updateUIlanguages(dataAnnotations, uiLangAnnotations, `SHORT_${currentLanguage}`);
+      updateUIlanguages(dataAnnotations, uiLangAnnotationsLong, `LONG_${currentLanguage}`);
     });
 
     $('.currency-picker select').on('change', function () {
@@ -3576,6 +3578,7 @@ function showAnnotations() {
   
   annotations = [];
   uiLangAnnotations = [];
+  uiLangAnnotationsLong = [];
 
   dataAnnotations.forEach((item) => {
     if (item[idIndex].includes(DATA_HOUSE_NAME[currentModel])) {
@@ -3610,6 +3613,7 @@ function showAnnotations() {
     annotation.elementLong = $annotationElementLong;
     
     uiLangAnnotations.push({ [`#annotation_text_short_${annotation.id}`]: annotation.id });
+    uiLangAnnotationsLong.push({ [`#annotation_text_long_${annotation.id}`]: annotation.id });
   });
 }
 
