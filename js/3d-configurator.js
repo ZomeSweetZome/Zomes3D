@@ -3643,11 +3643,14 @@ export function updateAnnotations(camera, scene) {
       top: `${y}px`
     });
 
+    const raycasterAnotation = new THREE.Raycaster();
+    raycasterAnotation.setFromCamera(screenPosition, camera);
+
     let isBehindModel = false;
 
     scene.traverse((object) => {
       if (object.isMesh) {
-        const intersects = raycaster.intersectObject(object, true);
+        const intersects = raycasterAnotation.intersectObject(object, true);
         if (intersects.length > 0 && intersects[0].distance < annotation.position.distanceTo(camera.position)) {
           isBehindModel = true;
         }
