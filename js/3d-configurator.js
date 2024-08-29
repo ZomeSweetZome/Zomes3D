@@ -1493,6 +1493,9 @@ function CheckChanges(modelId = '') {
 //#region CUSTOM FUNCTIONS
 
 async function changeModel(modelId) {
+  $('.summary_container').css('pointer-events', 'none');
+  $('.product-type-3dmodel').css('cursor', 'progress');
+
   if ($('.ar_menu_info_container').hasClass('active')) {
     $('.ar_menu_info__header_close').trigger('click');
   }
@@ -1504,6 +1507,9 @@ async function changeModel(modelId) {
   theModel = IMPORTED_MODELS[0];
   theModel?.scale.set(0, 0, 0);
   theModel && scene.add(theModel);
+
+  $('.summary_container').css('pointer-events', '');
+  $('.product-type-3dmodel').css('cursor', '');
 
   (isWindowCustomOn) && resetWindowsToStandard();
   resetCustomWindowsObject();
@@ -3670,13 +3676,10 @@ export function updateAnnotations(camera, scene) {
     const $annotationText = $(annotation.element).find('.annotation-text');
     const $annotationTextLong = $(annotation.element).find('.annotation-text.long');
     
-    // if (x > $canvasContainer.width() / 2) {
-    if ($canvasContainer.width()) {
+    if($canvasContainer.width() - x < 250) {
       $annotationText.addClass('left');
-      $annotationTextLong.addClass('left');
     } else {
       $annotationText.removeClass('left');
-      $annotationTextLong.removeClass('left');
     }
 
     $(annotation.element).off('click').on('click', () => {
