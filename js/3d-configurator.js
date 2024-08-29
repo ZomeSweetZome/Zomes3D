@@ -30,8 +30,8 @@ import {
   TEXTURES,
   DATA_HOUSE_NAME,
   NAV_CAM_POSITION,
-  SKYLIGHTS_MESHES,
   STRIP_VIEWPORT_MESHES_STUDIO_EXTRADOOR,
+  STUDIO_EXTRADOOR_SECTORS,
   FOUNDATION_HEIGHT,
   WINDOWS_LIMIT_IN_ROW,
 } from './settings.js';
@@ -1460,8 +1460,6 @@ function clickOption(groupId, optionId) {
 function CheckChanges(modelId = '') {
   (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ CheckChanges ~ ');
   console.log("🚀 ~ CheckChanges ~ theModel:", modelId);
-  // console.log("🚀 ~ All Materials:", getMaterialsList(theModel));
-  // console.log("🚀 ~ All groups:", getGroupNamesList(theModel));
 
   updateStateVars();
   setAllPanelsOn();
@@ -1470,11 +1468,21 @@ function CheckChanges(modelId = '') {
   applyAllConditionsUncheckedCHeckboxes();
   additionalConditions();
 
-  setStripAndViewportForDoubleDoorsStudio();
+  // setStripAndViewportForDoubleDoorsStudio();
+
+  if (currentModel == '2' && isExtraDoorOn) {
+    console.log("🚀 ~ CheckChanges ~ customWindows:", customWindows);
+    removeFromCustomWindows();
+    console.log("🚀 ~ CheckChanges ~ customWindows:", customWindows);
+    SharedParameterList[7].value = convertObjectToArray(customWindows);
+    WriteURLParameters();
+    restoreCustomWindows();
+  }
 
   if (isWindowCustomOn && SharedParameterList[7].value.length > 0) {
     restoreCustomWindows();
   }
+
   // setSskylights();
 
   // assignOptionsInRelatedGroups(SharedParameterList[4].groupIds);
@@ -1565,13 +1573,6 @@ function setStripAndViewportForDoubleDoorsStudio() {
   if (currentModel == '2' && isExtraDoorOn && isWindowViewportOn) {
     setVisibility(theModel, false, STRIP_VIEWPORT_MESHES_STUDIO_EXTRADOOR.viewport.panel);
     setVisibility(theModel, true, STRIP_VIEWPORT_MESHES_STUDIO_EXTRADOOR.viewport.window);
-  }
-}
-
-function setSskylights() {
-  if (!isWindowStripOn && !isWindowViewportOn) {
-    setVisibility(theModel, true, SKYLIGHTS_MESHES[currentModel].panel);
-    setVisibility(theModel, false, SKYLIGHTS_MESHES[currentModel].window);
   }
 }
 
@@ -3265,13 +3266,11 @@ function onMouseUp(event) {
         const [letter, number] = extractLastLetterAndNumber(clickedMeshName);
 
         if (letter && number) {
-          clickedMeshName = `${letter}-${number}`;
+          // clickedMeshName = `${letter}-${number}`;
           updateCustomWindows([letter, number]);
           SharedParameterList[7].value = convertObjectToArray(customWindows);
           WriteURLParameters();
         }
-
-        console.log('🚀 Clicked on mesh:', clickedMeshName);
       }
     }
   }
@@ -3325,6 +3324,13 @@ canvas.addEventListener('mouseup', onMouseUp);
 function updateCustomWindows([letter, number]) {
   const keyName = letter.toLowerCase();
 
+  if (STUDIO_EXTRADOOR_SECTORS.includes(`${keyName}${number}`) 
+    && isExtraDoorOn 
+    && currentModel == '2') 
+  {
+    return;
+  }
+
   if (keyName === 'g' && currentModel !== '2') {
     return;
   }
@@ -3334,7 +3340,6 @@ function updateCustomWindows([letter, number]) {
     const { panelMeshName, windowMeshName } = findMeshByLetterAndNumber(theModel, letter, number);
 
     if (index === -1) {
-
       if (customWindows[keyName].length >= WINDOWS_LIMIT_IN_ROW) {
 
         $('#canvas_notification_limit').removeClass('hidden');
@@ -3391,8 +3396,6 @@ function restoreCustomWindows() {
 
   if (!isWindowCustomOn) return;
 
-  // setAllPanelsOn();
-
   for (const [key, values] of Object.entries(customWindows)) {
     for (const value of values) {
       const { panelMeshName, windowMeshName } = findMeshByLetterAndNumber(theModel, key, value);
@@ -3400,7 +3403,22 @@ function restoreCustomWindows() {
       (windowMeshName) && setVisibility(theModel, true, [windowMeshName]);
     }
   }
+}
 
+function removeFromCustomWindows() {
+  STUDIO_EXTRADOOR_SECTORS.forEach(section => {
+    const letter = section[0].toLowerCase();
+    // const number = parseInt(section.slice(1), 10);
+    const number = section[1];
+    
+    if (Object.prototype.hasOwnProperty.call(customWindows, letter)) {
+      const index = customWindows[letter].indexOf(number);
+      console.log("🚀 ~ removeFromCustomWindows ~ index:", index);
+      if (index !== -1) {
+        customWindows[letter].splice(index, 1);
+      }
+    }
+  });
 }
 
 //#endregion
