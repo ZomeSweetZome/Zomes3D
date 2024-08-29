@@ -3667,9 +3667,19 @@ export function updateAnnotations(camera, scene) {
       $(annotation.element).css('opacity', 1);
     }
 
+    const $annotationText = $(annotation.element).find('.annotation-text');
+    const $annotationTextLong = $(annotation.element).find('.annotation-text.long');
+    
+    // if (x > $canvasContainer.width() / 2) {
+    if ($canvasContainer.width()) {
+      $annotationText.addClass('left');
+      $annotationTextLong.addClass('left');
+    } else {
+      $annotationText.removeClass('left');
+      $annotationTextLong.removeClass('left');
+    }
+
     $(annotation.element).off('click').on('click', () => {
-      const $annotationText = $(annotation.element).find('.annotation-text');
-      const $annotationTextLong = $(annotation.element).find('.annotation-text.long');
       $annotationText.toggleClass('disabled');
       $annotationTextLong.toggleClass('active');
     });

@@ -1561,8 +1561,11 @@ textarea[name="ar_order_comment"] {
   width: 240px;
   height: auto;
   padding: 20px 20px;
-  /* top: 0px; */
   display: none;
+}
+
+.annotation-text.long.left {
+  left: -240px;
 }
 
 .annotation-text.long.active {
@@ -1984,6 +1987,13 @@ textarea[name="ar_order_comment"] {
     transform: translateX(0);
   }
 
+  .annotation-text.long {
+    right: 110px;
+  }
+
+  .annotation-text.long.left {
+    left: auto;
+  }
 
 
   /*! -----------------------------*/
