@@ -180,7 +180,7 @@ let SharedParameterList = [
     groupIds: ['group-4'],
     splitValue: 'V',
     type: 'array-string',
-    value: [0, 0, 0, 0, 0],
+    value: [0, 0, 0, 0, 0, 0],
     groupOptionAction: null,
     applyURLAction: null,
     applyURLActionReturn: false
@@ -1611,9 +1611,9 @@ function furnitureController(value) {
 
 function annotationController(value) {
   if (value) {
-    //! TODO turn ON annotations
+    showAnnotations();
   } else {
-    //! TODO turn OFF annotations
+    hideAnnotations();
   }
 }
 
@@ -3544,34 +3544,60 @@ function animateMorph(morphName, valueStart, valueEnd, callback = () => { }, tim
 
 console.log("🚀 ~ dataAnnotations:", dataAnnotations);
 
+const $canvasContainer = $('#ar_model_viewer');
+let annotations = [];
+
 function showAnnotations() {
-  const annotations = [
-    { position: new THREE.Vector3(0, 0 + MODEL_CENTER_POSITION, 0), text: 'Annotation 1' },
-    { position: new THREE.Vector3(-2, 2.5 + MODEL_CENTER_POSITION, 0), text: 'Annotation 2' },
-    //! TODO
-  ];
+  const idIndex = dataAnnotations[0].findIndex(item => item.toLowerCase() === 'id');
   
-  const $canvasContainer = $('#ar_model_viewer');
+  if (idIndex == -1) return;
   
-  // annotations.forEach((annotation) => {
-  //   const $annotationElement = $('<div>', { class: 'annotation' })
-  //     .html(`<div class="annotation-text">${annotation.text}</div>`)
-  //     .css({
-  //       position: 'absolute',
-  //       cursor: 'pointer'
-  //     });
+  annotations = [];
+
+  dataAnnotations.forEach((item) => {
+    if (item[idIndex].includes(DATA_HOUSE_NAME[currentModel])) {
+      const coordsString = getData(dataAnnotations, item[idIndex],'COORDS');
+      const [x, y, z] = parseCoordinates(coordsString);
+
+      annotations.push({
+        position: new THREE.Vector3(x, y + MODEL_CENTER_POSITION, z),
+        text: getData(dataAnnotations, item[idIndex], `SHORT_${currentLanguage.toUpperCase()}`),
+      });
+    }
+  });
   
-  //   $canvasContainer.append($annotationElement);
+  annotations.forEach((annotation) => {
+    const $annotationElement = $('<div>', { class: 'annotation' })
+      .html(`<div class="annotation-text">${annotation.text}</div>`)
+      .css({
+        position: 'absolute',
+        cursor: 'pointer',
+      });
   
-  //   annotation.element = $annotationElement;
-  // });
+    $canvasContainer.append($annotationElement);
+    annotation.element = $annotationElement;
+  });
   
 }
 
 function hideAnnotations() {
+  $('.annotation').remove();
+}
+
+function parseCoordinates(str) {
+  const parts = str.replace(/^"(.*)"$/, '$1').split(',').map(part => part.trim());
+
+  const numbers = parts.map(part => {
+    const num = parseFloat(part);
+    return isNaN(num) ? 0 : num;
+  });
+
+  return numbers;
 }
 
 export function updateAnnotations(camera, scene) {
+  if (!annotations) return;
+
   annotations.forEach(annotation => {
     const screenPosition = annotation.position.clone();
     screenPosition.project(camera);
