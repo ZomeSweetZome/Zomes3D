@@ -3668,7 +3668,9 @@ export function updateAnnotations(camera, scene) {
     }
 
     $(annotation.element).off('click').on('click', () => {
+      const $annotationText = $(annotation.element).find('.annotation-text');
       const $annotationTextLong = $(annotation.element).find('.annotation-text.long');
+      $annotationText.toggleClass('disabled');
       $annotationTextLong.toggleClass('active');
     });
   });

@@ -1552,12 +1552,16 @@ textarea[name="ar_order_comment"] {
   transition: opacity 0.2s ease;
 }
 
+.annotation-text.disabled {
+  display: none;
+}
+
 .annotation-text.long {
   text-align: start;
   width: 240px;
   height: auto;
   padding: 20px 20px;
-  top: 0px;
+  /* top: 0px; */
   display: none;
 }
 
