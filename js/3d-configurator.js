@@ -82,6 +82,8 @@ let uiLangInfo = [];
 let uiLangAnnotations = [];
 let uiLangAnnotationsLong = [];
 
+let allOptions = [];
+
 let customWindows = {
   c: [],
   d: [],
@@ -700,6 +702,15 @@ async function Start() {
 
 async function StartSettings() {
   (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ StartSettings ~ ');
+  
+  // get all options
+  document.querySelectorAll('.option').forEach(option => {
+    const groupId = option.getAttribute('data-group_id');
+    const componentId = option.getAttribute('data-component_id');
+    const optionString = `option_${groupId}-${componentId}`;
+    allOptions.push(optionString);
+  });
+
   currentHouse = SharedParameterList[0].value || 0;
   
   await loadModel(MODEL_PATHS[currentHouse], 0);
@@ -1698,11 +1709,10 @@ function calculatePrice() {
   const totalAmountElement = document.getElementById('ar_total_price');
   totalAmount = 0;
   
-  console.log("🚀 ~ calculatePrice ~ dataPrice:", dataPrice);
-
   let optionId = '';
   let activeOptions = [];
 
+  // get active options array
   for (let i = 0; i < SharedParameterList.length - 4; i++) {
     if (SharedParameterList[i].type === 'string') {
       optionId = `option_${i}-${SharedParameterList[i].value}`;
@@ -1717,42 +1727,51 @@ function calculatePrice() {
     }
   }
 
-  console.log("🚀 ~ calculatePrice ~ activeOptions:", activeOptions);
+  let price = 0;
+  allOptions.forEach((option) => {
+    if (option === 'option_0-0') { // pod
+      price = convertPriceToNumber(getData(dataPrice, option, `${DATA_HOUSE_NAME[0]}_${currentCurrency}`));
+    } else if (option === 'option_0-1') { // office
+      price = convertPriceToNumber(getData(dataPrice, option, `${DATA_HOUSE_NAME[1]}_${currentCurrency}`));
+    } else if (option === 'option_0-2') { // studio
+      price = convertPriceToNumber(getData(dataPrice, option, `${DATA_HOUSE_NAME[2]}_${currentCurrency}`));
+    } else if (option === 'option_1-2') {
+      price = convertPriceToNumber(getData(dataPrice, option, `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
+      $(`.${option} .component_price`).html(
+        `${formatPrice(price, currentCurrencySign)} ${getData(mainData, 'ui_per_window', currentLanguage)}`
+      );
+    } else if (option === 'option_4-6') {
+      price = '';
+    } else {
+      price = convertPriceToNumber(getData(dataPrice, option, `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
+    }
+    
+    if ((option !== 'option_1-2')) {
+      $(`.${option} .component_price`).html(formatPrice(price, currentCurrencySign));
+    }
+  });
+
   let optionPrice = 0;
 
   for (let i = 0; i < activeOptions.length; i++) {
     optionPrice = convertPriceToNumber(getData(dataPrice, activeOptions[i], `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
     if (activeOptions[i] === 'option_1-2') { // custom windows
       const windowsQty = Object.values(customWindows).reduce((total, array) => total + array.length, 0);
-      console.log("🚀 ~ calculatePrice ~ windowsQty:", windowsQty);
       const windowsPrice = optionPrice * windowsQty;
+      $(`.${activeOptions[i]} .component_price`).html(formatPrice(windowsPrice, currentCurrencySign));
       totalAmount += windowsPrice;
     } else if (activeOptions[i] === 'option_4-6') { // smart windows
       continue;
     } else {
+      $(`.${activeOptions[i]} .component_price`).html(formatPrice(optionPrice, currentCurrencySign));
       totalAmount += optionPrice;
     }
   }
 
   totalAmount = totalAmount.toFixed(2);
 
-  //! TEMP
-  // totalAmount = 1;
-
   totalAmountElement.innerText = formatPrice(totalAmount, currentCurrencySign);
 }
-
-// function extractPercentage(qString) {
-//   const cleanedString = qString.replace(/[^\d.%]/g, '');
-//   const match = cleanedString.match(/\d+/);
-
-//   if (match) {
-//       const percentage = parseFloat(match[0]);
-//       return isNaN(percentage) ? null : percentage;
-//   }
-
-//   return null;
-// }
 
 function convertPriceToNumber(priceString) {
   if (!priceString) return 0;
@@ -1799,11 +1818,11 @@ function formatPrice(price, currency) {
       secondSeparator = ',';
       break;
     case '$':
-      firstSeparator = ',';
+      firstSeparator = ' ';
       secondSeparator = '.';
       break;
     case '€':
-      firstSeparator = '.';
+      firstSeparator = ' ';
       secondSeparator = ',';
       break;
 
@@ -1828,8 +1847,8 @@ function formatPrice(price, currency) {
       : `${integerPart}${secondSeparator}00 ${currency}`;
   } else {
     result = (decimalPart)
-      ? `${currency}${integerPart}${secondSeparator}${decimalPart}`
-      : `${currency}${integerPart}${secondSeparator}00`;
+      ? `${currency} ${integerPart}${secondSeparator}${decimalPart}`
+      : `${currency} ${integerPart}${secondSeparator}00`;
   }
 
   return result;

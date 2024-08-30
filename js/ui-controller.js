@@ -197,6 +197,7 @@ export async function createMenu(mainData) {
                 </div>
 
                 <div class="component_title">${getData(mainData, mainData[i][0], currentLanguage)}</div>
+                <div class="component_price"></div>
               </div>
 
               ${optInfoHTML}

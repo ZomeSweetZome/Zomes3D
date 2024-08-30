@@ -1572,6 +1572,14 @@ textarea[name="ar_order_comment"] {
   display: flex;
 }
 
+.option .component_price {
+  margin-left: auto;
+  margin-right: 12px;
+}
+
+.option.disabled .component_price {
+  color: var(--marevo-color-disabled, #B9B9B9);
+}
 
 /* ################  MOBILE ################ */
 
