@@ -698,10 +698,12 @@ async function StartSettings() {
   modelHouse = IMPORTED_MODELS[0];
   modelHouse?.scale.set(0, 0, 0);
   modelHouse && scene.add(modelHouse);
-
+  
   modelFurniture = IMPORTED_MODELS[1];
   modelFurniture.visible = false;
   modelFurniture && scene.add(modelFurniture);
+  disableModelCastingShadows(modelFurniture);
+  disableModelReceivingShadows(modelFurniture);
 
   console.log("🚀 ~ StartSettings ~ IMPORTED_MODELS 2:", IMPORTED_MODELS);
 
@@ -1533,6 +1535,10 @@ async function changeModel(modelId) {
     $('.ar_menu_info__header_close').trigger('click');
   }
 
+  if (isCameraInside) {
+    $('#button_camera_outside').trigger('click');
+  }
+
   resetCanvasButtons();
   console.log("🚀 ~ changeModel ~ IMPORTED_MODELS 1:", IMPORTED_MODELS, modelId, parseInt(parseInt(modelId) + 3));
 
@@ -1550,6 +1556,8 @@ async function changeModel(modelId) {
   modelFurniture = IMPORTED_MODELS[1];
   modelFurniture.visible = false;
   modelFurniture && scene.add(modelFurniture);
+  disableModelCastingShadows(modelFurniture);
+  disableModelReceivingShadows(modelFurniture);
 
   console.log("🚀 ~ changeModel ~ IMPORTED_MODELS 2:", IMPORTED_MODELS);
 
@@ -1652,6 +1660,7 @@ function updateFurnitureSet() {
 }
 
 function annotationController(value) {
+  console.log("🚀 ~ annotationController ~ value:", value);
   if (value) {
     showAnnotations();
   } else {
@@ -2123,7 +2132,6 @@ function setMaterialColor(materialName, color) {
   materialObject.needsUpdate = true;
 }
 
-
 const textureLoader = new THREE.TextureLoader();
 textureLoader.setCrossOrigin('anonymous');
 const textureCache = {};
@@ -2324,6 +2332,26 @@ function getGroupNamesList(parent, searchString = '') {
   });
 
   return groupNames;
+}
+
+function disableModelCastingShadows(model) {
+  if (!model) return;
+
+  model.traverse((object) => {
+    if (object.isMesh) {
+      object.castShadow = false;
+    }
+  });
+}
+
+function disableModelReceivingShadows(model) {
+  if (!model) return;
+
+  model.traverse((object) => {
+    if (object.isMesh) {
+      object.receiveShadow = false;
+    }
+  });
 }
 
 //#endregion
@@ -2983,15 +3011,16 @@ function cameraBtnHandlers() {
 
     $('.canvas_btn_camera').addClass('disabled');
 
-    // onChangePosition(DATA_HOUSE_NAME[currentModel], 'inMain');
-    onChangePosition(DATA_HOUSE_NAME[currentHouse], 'outPrepare',
-      () => {
-        onChangePosition(DATA_HOUSE_NAME[currentHouse], 'inMain',
-          () => {
-            $('.canvas_btn_camera').removeClass('disabled');
-          }
-        )
-      });
+    onChangePosition(DATA_HOUSE_NAME[currentHouse], 'inMain',
+      () => { $('.canvas_btn_camera').removeClass('disabled'); });
+
+    // onChangePosition(DATA_HOUSE_NAME[currentHouse], 'outPrepare', () => {
+    //   onChangePosition(DATA_HOUSE_NAME[currentHouse], 'inMain',
+    //     () => {
+    //       $('.canvas_btn_camera').removeClass('disabled');
+    //     }
+    //   )
+    // });
 
     isCameraInside = true;
   });
@@ -3027,8 +3056,8 @@ function annotationsBtnHandler() {
     } else {
       if (!$('#button_furniture').hasClass('active')) {
         $('#button_dimensions').removeClass('disabled');
-        annotationController(false);
       }
+      annotationController(false);
     }
   });
 }
