@@ -20,6 +20,9 @@ export const MODEL_PATHS = [
   './src/models/zomes-pod.glb',
   './src/models/zomes-office.glb',
   './src/models/zomes-studio.glb',
+  './src/models/furniture-pod.glb',
+  './src/models/furniture-office.glb',
+  './src/models/furniture-studio.glb',
 ];
 
 export const HUMAN_HEIGHT = 2.0; // 1.6

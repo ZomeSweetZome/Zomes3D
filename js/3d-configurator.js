@@ -60,11 +60,11 @@ import {
 const DEBUG_MODE_FUNC_STARTS = false;
 const DEBUG_MODE_VALUES = false;
 
-
+// state variables
 let currentLanguage = DEFAULT_LANGUAGE;
 let currentCurrency = DEFAULT_CURRENCY;
 let currentCurrencySign = CURRENCY_SIGN[currentCurrency] || CURRENCY_SIGN['USD'];
-let currentModel = 0;
+let currentHouse = 0;
 let isWindowStripOn = false;
 let isWindowViewportOn = false;
 let isWindowCustomOn = false;
@@ -74,6 +74,10 @@ let isExtrimeWeatherPackOn = false;
 let isBuiltInDeskOn = false;
 let isFoundationKitOn = false;
 let isExtraDoorOn = false;
+let isHeatCoolUnitOn = false;
+let isAirconditionOn = false;
+let isSmartGlassOn = false;
+
 
 let uiLangInfo = [];
 let uiLangAnnotations = [];
@@ -118,7 +122,8 @@ let modelViewer;
 let qrcode;
 let qrScaned = 0;
 
-let theModel;
+let modelHouse;
+let modelFurniture;
 
 let isFirstStart = true;
 let justClicked = false;
@@ -237,7 +242,7 @@ SharedParameterList[0].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
 
   if (justClicked) {
-    currentModel = this.value;
+    currentHouse = this.value;
     changeModel(this.value);
   }
 }
@@ -276,10 +281,20 @@ SharedParameterList[4].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
 
   if (isFirstStart || justClicked) {
-    if (this.value[2] == '1') {
+    if (this.value[2] == '1') { // foundation kit
       floor.position.y = MODEL_CENTER_POSITION - FOUNDATION_HEIGHT;
     } else {
       floor.position.y = MODEL_CENTER_POSITION;
+    }
+
+    if (currentHouse == '2') {
+      if (this.value[3] == '1') { // extra door
+        isExtraDoorOn = true;
+      } else {
+        isExtraDoorOn = false;
+      }
+      
+      updateFurnitureSet();
     }
   }
 }
@@ -676,14 +691,21 @@ async function Start() {
 
 async function StartSettings() {
   (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ StartSettings ~ ');
-  currentModel = SharedParameterList[0].value || 0;
+  currentHouse = SharedParameterList[0].value || 0;
+  
+  await loadModel(MODEL_PATHS[currentHouse], 0);
+  await loadModel(MODEL_PATHS[parseInt(parseInt(currentHouse) + 3)], 1);
+  modelHouse = IMPORTED_MODELS[0];
+  modelHouse?.scale.set(0, 0, 0);
+  modelHouse && scene.add(modelHouse);
 
-  await loadModel(MODEL_PATHS[currentModel], 0);
-  theModel = IMPORTED_MODELS[0];
-  theModel?.scale.set(0, 0, 0);
-  theModel && scene.add(theModel);
+  modelFurniture = IMPORTED_MODELS[1];
+  modelFurniture.visible = false;
+  modelFurniture && scene.add(modelFurniture);
 
-  // InitMorphModel(theModel);
+  console.log("🚀 ~ StartSettings ~ IMPORTED_MODELS 2:", IMPORTED_MODELS);
+
+  // InitMorphModel(modelHouse);
 
   preloadTextures();
 
@@ -700,13 +722,13 @@ async function StartSettings() {
 
   applyAdditionalSharedParameters(7); // customWindows
 
-  setVisibility(theModel, false, ['man']);
+  setVisibility(modelHouse, false, ['man']);
 
   $('#js-loader').addClass('invisible');
   $('.summary.entry-summary').removeClass('hidden');
-  // theModel?.scale.set(0, 0, 0);
-  // setVisibility(theModel, true);
-  animateScale(theModel, 500);
+  // modelHouse?.scale.set(0, 0, 0);
+  // setVisibility(modelHouse, true);
+  animateScale(modelHouse, 500);
 
   isFirstStart = false;
 }
@@ -1079,7 +1101,7 @@ function applyAllConditionsActiveRadios() {
                 const meshName = splitString(meshNameComplex)[1];
                 let object;
 
-                if (modelId === 'all' || modelId == currentModel) {
+                if (modelId === 'all' || modelId == currentHouse) {
                   object = GetMesh(meshName);
                   if (!object) object = GetGroup(meshName);
                   if (!object) continue;
@@ -1181,7 +1203,7 @@ function applyAllConditionsUncheckedCHeckboxes() {
                 const meshName = splitString(meshNameComplex)[1];
                 let object;
 
-                if (modelId === 'all' || modelId == currentModel) {
+                if (modelId === 'all' || modelId == currentHouse) {
                   object = GetMesh(meshName);
                   if (!object) object = GetGroup(meshName);
                   if (!object) continue;
@@ -1209,7 +1231,7 @@ function additionalConditions() {
 
 function updateStateVars() {
   // Update state vars if needed
-  currentModel = SharedParameterList[0].value;
+  currentHouse = SharedParameterList[0].value;
   isWindowStripOn = (SharedParameterList[1].value[0] == '1') ? true : false;
   isWindowViewportOn = (SharedParameterList[1].value[1] == '1') ? true : false;
   isWindowCustomOn = (SharedParameterList[1].value[2] == '1') ? true : false;
@@ -1219,6 +1241,9 @@ function updateStateVars() {
   isBuiltInDeskOn = (SharedParameterList[4].value[1] == '1') ? true : false;
   isFoundationKitOn = (SharedParameterList[4].value[2] == '1') ? true : false;
   isExtraDoorOn = (SharedParameterList[4].value[3] == '1') ? true : false;
+  isHeatCoolUnitOn = (SharedParameterList[4].value[3] == '1') ? true : false;
+  isAirconditionOn = (SharedParameterList[4].value[3] == '1') ? true : false;
+  isSmartGlassOn = (SharedParameterList[4].value[3] == '1') ? true : false;
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -1457,9 +1482,9 @@ function clickOption(groupId, optionId) {
 }
 
 //! ************************************************
-function CheckChanges(modelId = '') {
+function CheckChanges(houseId = '') {
   (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ CheckChanges ~ ');
-  console.log("🚀 ~ CheckChanges ~ theModel:", modelId);
+  console.log("🚀 ~ CheckChanges ~ HouseId:", houseId);
 
   updateStateVars();
   setAllPanelsOn();
@@ -1470,7 +1495,7 @@ function CheckChanges(modelId = '') {
 
   // setStripAndViewportForDoubleDoorsStudio();
 
-  if (currentModel == '2' && isExtraDoorOn) {
+  if (currentHouse == '2' && isExtraDoorOn) {
     console.log("🚀 ~ CheckChanges ~ customWindows:", customWindows);
     removeFromCustomWindows();
     console.log("🚀 ~ CheckChanges ~ customWindows:", customWindows);
@@ -1509,12 +1534,24 @@ async function changeModel(modelId) {
   }
 
   resetCanvasButtons();
+  console.log("🚀 ~ changeModel ~ IMPORTED_MODELS 1:", IMPORTED_MODELS, modelId, parseInt(parseInt(modelId) + 3));
 
-  await disposeModel(IMPORTED_MODELS[0]);
+  IMPORTED_MODELS[0] && await disposeModel(IMPORTED_MODELS[0]);
+  IMPORTED_MODELS[1] && await disposeModel(IMPORTED_MODELS[1]);
+
+  IMPORTED_MODELS.length = 0;
+
   await loadModel(MODEL_PATHS[modelId], 0);
-  theModel = IMPORTED_MODELS[0];
-  theModel?.scale.set(0, 0, 0);
-  theModel && scene.add(theModel);
+  await loadModel(MODEL_PATHS[parseInt(parseInt(modelId) + 3)], 1);
+  modelHouse = IMPORTED_MODELS[0];
+  modelHouse?.scale.set(0, 0, 0);
+  modelHouse && scene.add(modelHouse);
+
+  modelFurniture = IMPORTED_MODELS[1];
+  modelFurniture.visible = false;
+  modelFurniture && scene.add(modelFurniture);
+
+  console.log("🚀 ~ changeModel ~ IMPORTED_MODELS 2:", IMPORTED_MODELS);
 
   $('.summary_container').css('pointer-events', '');
   $('.product-type-3dmodel').css('cursor', '');
@@ -1523,9 +1560,9 @@ async function changeModel(modelId) {
   resetCustomWindowsObject();
   CheckChanges(modelId);
 
-  setVisibility(theModel, false, ['man']);
+  setVisibility(modelHouse, false, ['man']);
   onChangePosition(DATA_HOUSE_NAME[modelId], 'outMain', () => { }, 5);
-  animateScale(theModel, 500);
+  animateScale(modelHouse, 500);
 }
 
 function resetCanvasButtons() {
@@ -1552,28 +1589,16 @@ function resetCustomWindowsObject() {
 }
 
 function setAllPanelsOn() {
-  const allPanelMeshes = getGroupNamesList(theModel, 'panel');
-  const allWindowMeshes = getGroupNamesList(theModel, 'window');
-  setVisibility(theModel, true, allPanelMeshes);
-  setVisibility(theModel, false, allWindowMeshes);
+  const allPanelMeshes = getGroupNamesList(modelHouse, 'panel');
+  const allWindowMeshes = getGroupNamesList(modelHouse, 'window');
+  setVisibility(modelHouse, true, allPanelMeshes);
+  setVisibility(modelHouse, false, allWindowMeshes);
 }
 
 function resetWindowsToStandard() {
   $('.option_1-2').trigger('click');
   $('.option_1-1').trigger('click');
   resetCustomWindowsObject();
-}
-
-function setStripAndViewportForDoubleDoorsStudio() {
-  if (currentModel == '2' && isExtraDoorOn && isWindowStripOn) {
-    setVisibility(theModel, false, STRIP_VIEWPORT_MESHES_STUDIO_EXTRADOOR.strip.panel);
-    setVisibility(theModel, true, STRIP_VIEWPORT_MESHES_STUDIO_EXTRADOOR.strip.window);
-  }
-
-  if (currentModel == '2' && isExtraDoorOn && isWindowViewportOn) {
-    setVisibility(theModel, false, STRIP_VIEWPORT_MESHES_STUDIO_EXTRADOOR.viewport.panel);
-    setVisibility(theModel, true, STRIP_VIEWPORT_MESHES_STUDIO_EXTRADOOR.viewport.window);
-  }
 }
 
 function preloadTextures() {
@@ -1589,49 +1614,40 @@ function preloadTextures() {
 function furnitureController(value) {
   if (value) {
     $('.canvas_buttons__radio').removeClass('hidden');
-
-    $('#button_sleep').on('click', function () {
-      $(this).toggleClass('active');
-      $('#button_work').removeClass('active');
-      $('#button_live').removeClass('active');
-    });
-
-    $('#button_work').on('click', function () {
-      $(this).toggleClass('active');
-      $('#button_sleep').removeClass('active');
-      $('#button_live').removeClass('active');
-    });
-
-    $('#button_live').on('click', function () {
-      $(this).toggleClass('active');
-      $('#button_sleep').removeClass('active');
-      $('#button_work').removeClass('active');
-    });
-
-    if ($('#button_sleep').hasClass('active')) {
-      //! turn OFF furniture: work
-      //! turn OFF furniture: live
-
-      //! turn ON furniture: sleep
-    }
-
-    if ($('#button_work').hasClass('active')) {
-      //! turn OFF furniture: sleep
-      //! turn OFF furniture: live
-
-      //! turn ON furniture: work
-    }
-
-    if ($('#button_live').hasClass('active')) {
-      //! turn OFF furniture: sleep
-      //! turn OFF furniture: work
-
-      //! turn ON furniture: live
-    }
-
   } else {
     $('.canvas_buttons__radio').addClass('hidden');
-    //! TODO turn off all furniture
+  }
+
+  modelFurniture.visible = value;
+}
+
+function updateFurnitureSet() {
+  if ($('#button_sleep').hasClass('active')) {
+    setVisibility(modelFurniture, false, ['work-back-door', 'work', 'live']);
+    setVisibility(modelFurniture, true, ['sleep']);
+  }
+
+  if ($('#button_live').hasClass('active')) {
+    setVisibility(modelFurniture, false, ['sleep', 'work', 'work-back-door']);
+    setVisibility(modelFurniture, true, ['live']);
+  }
+
+  if ($('#button_work').hasClass('active')) {
+    setVisibility(modelFurniture, false, ['sleep', 'live']);
+    
+    if (currentHouse == '2' && !isExtraDoorOn) {
+      setVisibility(modelFurniture, false, ['work-back-door']);
+      setVisibility(modelFurniture, true, ['work']);
+    }
+
+    if (currentHouse == '2' && isExtraDoorOn) {
+      setVisibility(modelFurniture, true, ['work-back-door']);
+      setVisibility(modelFurniture, false, ['work']);
+    }
+
+    if (currentHouse != '2') {
+      setVisibility(modelFurniture, true, ['work']);
+    }
   }
 }
 
@@ -1645,10 +1661,10 @@ function annotationController(value) {
 
 function dimensionsController(value) {
   if (value) {
-    setVisibility(theModel, true, ['man']);
+    setVisibility(modelHouse, true, ['man']);
     //! TODO turn ON dimensions
   } else {
-    setVisibility(theModel, false, ['man']);
+    setVisibility(modelHouse, false, ['man']);
     //! TODO turn OFF dimensions
   }
 }
@@ -1924,7 +1940,7 @@ function setColorOfActiveOption(groupIDs, materialNames) {
 
 //#region MESH / MATERIAL utils
 
-function GetMesh(name, model = theModel) {
+function GetMesh(name, model = modelHouse) {
   var object = null;
   model?.traverse((o) => {
     if (o.isMesh) {
@@ -1937,7 +1953,7 @@ function GetMesh(name, model = theModel) {
   return object;
 }
 
-function GetGroup(name, model = theModel) {
+function GetGroup(name, model = modelHouse) {
   var group = null;
   model?.traverse((o) => {
     if (o.isGroup) {
@@ -1951,7 +1967,7 @@ function GetGroup(name, model = theModel) {
 }
 
 // eslint-disable-next-line no-unused-vars
-function GetMaterial(name, model = theModel) {
+function GetMaterial(name, model = modelHouse) {
   (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ GetMaterial ~ ');
 
   var material = null;
@@ -2154,7 +2170,7 @@ function loadTexture(textureValue, tilingValue = 1) {
   }
 }
 
-function setObjectTexture(materialNames, textureValue, tilingValue = 1, model = theModel) {
+function setObjectTexture(materialNames, textureValue, tilingValue = 1, model = modelHouse) {
   model?.traverse((o) => {
     if (o.material) {
       for (let i = 0; i < materialNames.length; i++) {
@@ -2854,6 +2870,7 @@ async function PrepareUI() {
     annotationsBtnHandler();
     dimensionsBtnHandler();
     furnitureBtnHandler();
+    furnitureRadioBtnsHandlers();
     notificationHandler();
   });
 }
@@ -2967,9 +2984,9 @@ function cameraBtnHandlers() {
     $('.canvas_btn_camera').addClass('disabled');
 
     // onChangePosition(DATA_HOUSE_NAME[currentModel], 'inMain');
-    onChangePosition(DATA_HOUSE_NAME[currentModel], 'outPrepare',
+    onChangePosition(DATA_HOUSE_NAME[currentHouse], 'outPrepare',
       () => {
-        onChangePosition(DATA_HOUSE_NAME[currentModel], 'inMain',
+        onChangePosition(DATA_HOUSE_NAME[currentHouse], 'inMain',
           () => {
             $('.canvas_btn_camera').removeClass('disabled');
           }
@@ -2986,7 +3003,7 @@ function cameraBtnHandlers() {
 
     $('.canvas_btn_camera').addClass('disabled');
 
-    onChangePosition(DATA_HOUSE_NAME[currentModel], 'outMain',
+    onChangePosition(DATA_HOUSE_NAME[currentHouse], 'outMain',
       () => {
         $('.canvas_btn_camera').removeClass('disabled');
       }
@@ -3042,12 +3059,38 @@ function furnitureBtnHandler() {
       $('#button_dimensions').addClass('disabled');
       !isCameraInside && $('#button_camera_inside').click();
       furnitureController(true);
+      updateFurnitureSet();
     } else {
       if (!$('#button_annotation').hasClass('active')) {
         $('#button_dimensions').removeClass('disabled');
       }
       furnitureController(false);
     }
+
+    updateFurnitureSet();
+  });
+}
+
+function furnitureRadioBtnsHandlers() {
+  $('#button_sleep').on('click', function () {
+    $(this).toggleClass('active');
+    $('#button_work').removeClass('active');
+    $('#button_live').removeClass('active');
+    updateFurnitureSet();
+  });
+
+  $('#button_work').on('click', function () {
+    $(this).toggleClass('active');
+    $('#button_sleep').removeClass('active');
+    $('#button_live').removeClass('active');
+    updateFurnitureSet();
+  });
+
+  $('#button_live').on('click', function () {
+    $(this).toggleClass('active');
+    $('#button_sleep').removeClass('active');
+    $('#button_work').removeClass('active');
+    updateFurnitureSet();
   });
 }
 
@@ -3326,18 +3369,18 @@ function updateCustomWindows([letter, number]) {
 
   if (STUDIO_EXTRADOOR_SECTORS.includes(`${keyName}${number}`) 
     && isExtraDoorOn 
-    && currentModel == '2') 
+    && currentHouse == '2') 
   {
     return;
   }
 
-  if (keyName === 'g' && currentModel !== '2') {
+  if (keyName === 'g' && currentHouse !== '2') {
     return;
   }
 
   if (Object.prototype.hasOwnProperty.call(customWindows, keyName)) {
     const index = customWindows[keyName].indexOf(number);
-    const { panelMeshName, windowMeshName } = findMeshByLetterAndNumber(theModel, letter, number);
+    const { panelMeshName, windowMeshName } = findMeshByLetterAndNumber(modelHouse, letter, number);
 
     if (index === -1) {
       if (customWindows[keyName].length >= WINDOWS_LIMIT_IN_ROW) {
@@ -3354,13 +3397,13 @@ function updateCustomWindows([letter, number]) {
       customWindows[keyName].push(number);
 
       // make it WINDOW
-      (panelMeshName) && setVisibility(theModel, false, [panelMeshName]);
-      (windowMeshName) && setVisibility(theModel, true, [windowMeshName]);
+      (panelMeshName) && setVisibility(modelHouse, false, [panelMeshName]);
+      (windowMeshName) && setVisibility(modelHouse, true, [windowMeshName]);
     } else {
       customWindows[keyName].splice(index, 1);
       // make it PANEL
-      (panelMeshName) && setVisibility(theModel, true, [panelMeshName]);
-      (windowMeshName) && setVisibility(theModel, false, [windowMeshName]);
+      (panelMeshName) && setVisibility(modelHouse, true, [panelMeshName]);
+      (windowMeshName) && setVisibility(modelHouse, false, [windowMeshName]);
     }
   } else {
     console.warn(`Letter "${letter}" not found in customWindows object.`);
@@ -3398,9 +3441,9 @@ function restoreCustomWindows() {
 
   for (const [key, values] of Object.entries(customWindows)) {
     for (const value of values) {
-      const { panelMeshName, windowMeshName } = findMeshByLetterAndNumber(theModel, key, value);
-      (panelMeshName) && setVisibility(theModel, false, [panelMeshName]);
-      (windowMeshName) && setVisibility(theModel, true, [windowMeshName]);
+      const { panelMeshName, windowMeshName } = findMeshByLetterAndNumber(modelHouse, key, value);
+      (panelMeshName) && setVisibility(modelHouse, false, [panelMeshName]);
+      (windowMeshName) && setVisibility(modelHouse, true, [windowMeshName]);
     }
   }
 }
@@ -3605,7 +3648,7 @@ function showAnnotations() {
   uiLangAnnotationsLong = [];
 
   dataAnnotations.forEach((item) => {
-    if (item[idIndex].includes(DATA_HOUSE_NAME[currentModel])) {
+    if (item[idIndex].includes(DATA_HOUSE_NAME[currentHouse])) {
       const coordsString = getData(dataAnnotations, item[idIndex],'COORDS');
       const [x, y, z] = parseCoordinates(coordsString);
 
