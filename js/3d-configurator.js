@@ -15,7 +15,6 @@ import {
   DATAFILE_CSV_LINK_UI,
   DATAFILE_CSV_LINK_PRICE,
   DATAFILE_CSV_LINK_ANNOTATIONS,
-  DATA_CHECKING_PRICE,
   DEFAULT_LANGUAGE,
   DEFAULT_CURRENCY,
   CURRENCY_SIGN,
@@ -30,7 +29,6 @@ import {
   TEXTURES,
   DATA_HOUSE_NAME,
   NAV_CAM_POSITION,
-  STRIP_VIEWPORT_MESHES_STUDIO_EXTRADOOR,
   STUDIO_EXTRADOOR_SECTORS,
   FOUNDATION_HEIGHT,
   WINDOWS_LIMIT_IN_ROW,
@@ -1530,7 +1528,7 @@ function CheckChanges(houseId = '') {
   updateStateVars();
 
   // setOptionsResult();
-  // calculatePrice();
+  calculatePrice();
   // getOrderList();
 }
 //! ************************************************
@@ -1695,124 +1693,40 @@ function dimensionsController(value) {
 
 //#region PRICE CALCULATION
 
-let totalAmount;
+let totalAmount = 0;
 function calculatePrice() {
   const totalAmountElement = document.getElementById('ar_total_price');
   totalAmount = 0;
-  let basePrice = 0;
-  let percentage = 0;
-  let selectedShape = '';
+  
+  console.log("🚀 ~ calculatePrice ~ dataPrice:", dataPrice);
 
-  switch (SharedParameterList[3].value) {
-    case '0':
-      selectedShape = 'rechthoek';
-      break;
-    case '1':
-      selectedShape = 'semiRechthoek';
-      break;
-    case '2':
-      selectedShape = 'rechthoekGroteRadius';
-      break;
-    case '3':
-      selectedShape = 'ovaal';
-      break;
-    case '4':
-      selectedShape = 'semiOvaal';
-      break;
-    case '5':
-      selectedShape = 'platOvaal';
-      break;
-    case '6':
-      selectedShape = 'rond';
-      break;
-    case '7':
-      selectedShape = 'organisch';
-      break;
-    default:
-      break;
-  }
+  let optionId = '';
+  let activeOptions = [];
 
-  if (selectedShape) {
-    let searchParameter = '';
-
-    if (selectedShape === 'rond') {
-      // searchParameter is current Diameter
-      searchParameter = DATA_CHECKING_PRICE['6'].value[SharedParameterList[6].value];
-    } else {
-      // searchParameter is current Lengte
-      searchParameter = DATA_CHECKING_PRICE['4'].value[SharedParameterList[4].value];
+  for (let i = 0; i < SharedParameterList.length - 4; i++) {
+    if (SharedParameterList[i].type === 'string') {
+      optionId = `option_${i}-${SharedParameterList[i].value}`;
+      activeOptions.push(optionId);
+    } else if (SharedParameterList[i].type === 'array-string') {
+      for (let j = 0; j < SharedParameterList[i].value.length; j++) {
+        if (SharedParameterList[i].value[j] == '1') {
+          optionId = `option_${i}-${j}`;
+          activeOptions.push(optionId);
+        }
+      }
     }
-
-    basePrice = convertPriceToNumber(getData(dataPrice, 'base price', searchParameter, selectedShape));
-    if (!basePrice) { basePrice = 0 }
-
-    //! TODO CALCULATING PRICE
-    // for (let i = 0; i < SharedParameterList.length - 1; i++) {
-    //   let dataName = '';
-    //   let searchName = '';
-    //   let dataNameMainPart = '';
-    //   let targetIndex = 0;
-    //   let targetHeadIndex = 0;
-    //   let price = 0;
-
-    //   if (DATA_CHECKING_PRICE[i]) {
-    //     for (let j = 0; j < SharedParameterList[i].groupIds.length; j++) {
-    //       if (isGroupActive(SharedParameterList[i].groupIds[j])) {
-    //         dataNameMainPart = DATA_CHECKING_PRICE[i]?.name;
-    //         dataName = dataNameMainPart + ' ' + DATA_CHECKING_PRICE[i]?.value[SharedParameterList[i].value];
-
-    //         if (dataNameMainPart === 'Afwerking') {
-    //           dataNameMainPart = dataNameMainPart + ` [${DATA_CHECKING_PRICE[i]?.value[SharedParameterList[i].value]}]`;
-    //           dataName = dataNameMainPart + ' ' + DATA_CHECKING_PRICE[0]?.value[SharedParameterList[0].value]; // color
-    //         }
-
-    //         if (dataNameMainPart === 'Breedte') {
-    //           dataNameMainPart = dataNameMainPart + ` [${DATA_CHECKING_PRICE[8]?.value[SharedParameterList[8].value]}]`; // legs
-    //           dataName = dataNameMainPart + ' ' + DATA_CHECKING_PRICE[i]?.value[SharedParameterList[i].value];
-    //         }
-
-    //         break;
-    //       }
-    //     }
-    //   }
-
-    //   if (dataName) {
-    //     for (let k = 0; k < dataPrice.length; k++) {
-    //       searchName = dataPrice[k][0] + ' ' + dataPrice[k][1];
-
-    //       if (dataName === searchName) {
-    //         targetIndex = k;
-    //         break;
-    //       }
-    //     }
-    //   }
-
-    //   if (targetIndex) {
-    //     for (let n = 2; n < dataPrice[0].length; n++) {
-    //       if (dataPrice[0][n] === searchParameter) {
-    //         targetHeadIndex = n;
-    //         break;
-    //       }
-    //     }
-
-    //     if (targetHeadIndex) {
-    //       const stringPrice = (dataPrice[targetIndex][targetHeadIndex]);
-
-    //       if (stringPrice.includes('%')) {
-    //         percentage += extractPercentage(stringPrice);
-    //       } else {
-    //           price = convertPriceToNumber(stringPrice);
-    //       }
-
-    //       totalAmount += price;
-    //     }
-    //   }
-    // }
   }
 
-  totalAmount += basePrice;
-  totalAmount += totalAmount * percentage / 100;
+  console.log("🚀 ~ calculatePrice ~ activeOptions:", activeOptions);
+
+  for (let i = 0; i < activeOptions.length; i++) {
+    // totalAmount += getData();
+  }
+
   totalAmount = totalAmount.toFixed(2);
+
+  //! TEMP
+  totalAmount = 1;
 
   totalAmountElement.innerText = formatPrice(totalAmount, currentCurrencySign);
 }
@@ -3883,7 +3797,7 @@ function createVerticalDimensionLine(start, end, label, scene) {
 
   const spriteMaterial = new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(createTextTexture(label)) });
   const sprite = new THREE.Sprite(spriteMaterial);
-  const midPoint = start.clone().lerp(end, 0.5).add(new THREE.Vector3(-textOffsetVertical, 0, 0));
+  const midPoint = start.clone().lerp(end, 0.7).add(new THREE.Vector3(-textOffsetVertical, 0, 0));
   sprite.position.copy(midPoint);
 
   const k = 0.8;
