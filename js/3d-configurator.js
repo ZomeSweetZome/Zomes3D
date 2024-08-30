@@ -78,6 +78,7 @@ let isHeatCoolUnitOn = false;
 let isAirconditionOn = false;
 let isSmartGlassOn = false;
 
+let [houseDiameter, houseHeight] = [0, 0];
 
 let uiLangInfo = [];
 let uiLangAnnotations = [];
@@ -295,6 +296,16 @@ SharedParameterList[4].groupOptionAction = function () {
       }
       
       updateFurnitureSet();
+    }
+
+    if ($('#button_dimensions').hasClass('active')) {
+      if (this.value[2] == '1') { // foundation kit
+        isFoundationKitOn = true;
+      } else {
+        isFoundationKitOn = false;
+      }
+
+      dimensionsController(true);
     }
   }
 }
@@ -1670,12 +1681,14 @@ function annotationController(value) {
 
 function dimensionsController(value) {
   if (value) {
-    setVisibility(modelHouse, true, ['man']);
-    //! TODO turn ON dimensions
+    removeDimensions();
+    [houseDiameter, houseHeight] = getHouseDimensions();
+    createDimensions(houseDiameter, houseHeight);
   } else {
-    setVisibility(modelHouse, false, ['man']);
-    //! TODO turn OFF dimensions
+    removeDimensions();
   }
+
+  setVisibility(modelHouse, value, ['man']);
 }
 
 //#endregion
@@ -2276,17 +2289,35 @@ function setObjectTexture(materialNames, textureValue, tilingValue = 1, model = 
 }
 
 // eslint-disable-next-line no-unused-vars
-function getMeshDimensions(mesh) {
+function getMeshDimensions(object) {
   (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ getMeshDimensions ~ ');
 
   const boundingBox = new THREE.Box3();
-  boundingBox.setFromObject(mesh);
+  boundingBox.setFromObject(object);
   const size = new THREE.Vector3();
   boundingBox.getSize(size);
+  
   const width = size.x;
   const height = size.y;
   const depth = size.z;
+  
   return { width: width, height: height, depth: depth };
+}
+
+function setMeshPosition(model, meshName, x = 0, y = 0, z = 0) {
+  if (!model || !meshName) {
+    console.warn('Model, mesh name, or new position not provided.');
+    return;
+  }
+
+  const newPosition = new THREE.Vector3(x, y, z);
+
+  model.traverse((object) => {
+    if (object.isMesh && object.name === meshName) {
+      object.position.set(newPosition.x, newPosition.y, newPosition.z);
+      console.log(`Position of mesh '${meshName}' set to:`, newPosition);
+    }
+  });
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -3777,6 +3808,135 @@ export function updateAnnotations(camera, scene) {
       $annotationTextLong.toggleClass('active');
     });
   });
+}
+
+//#endregion
+
+//#region DIMENSIONS
+
+let dimensionObjects = [];
+const crossLineLength = 0.2;
+const textOffsetHorizontal = 0.15;
+const textOffsetVertical = 0.6;
+const manOffset = 0.6;
+const lineOffset = 0.3;
+const lineColor = '0xececef';
+const manColor = '#ececef';
+
+function createHorizontalDimensionLine(start, end, label, scene) {
+  const material = new THREE.LineBasicMaterial({ color: lineColor });
+  
+  const points = [start, end];
+  const geometry = new THREE.BufferGeometry().setFromPoints(points);
+  const line = new THREE.Line(geometry, material);
+  scene.add(line);
+  dimensionObjects.push(line);
+
+  const crossStart1 = start.clone().add(new THREE.Vector3(0, crossLineLength / 2, 0));
+  const crossEnd1 = start.clone().add(new THREE.Vector3(0, -crossLineLength / 2, 0));
+  const crossGeometry1 = new THREE.BufferGeometry().setFromPoints([crossStart1, crossEnd1]);
+  const crossLine1 = new THREE.Line(crossGeometry1, material);
+  scene.add(crossLine1);
+  dimensionObjects.push(crossLine1);
+
+  const crossStart2 = end.clone().add(new THREE.Vector3(0, crossLineLength / 2, 0));
+  const crossEnd2 = end.clone().add(new THREE.Vector3(0, -crossLineLength / 2, 0));
+  const crossGeometry2 = new THREE.BufferGeometry().setFromPoints([crossStart2, crossEnd2]);
+  const crossLine2 = new THREE.Line(crossGeometry2, material);
+  scene.add(crossLine2);
+  dimensionObjects.push(crossLine2);
+
+  const spriteMaterial = new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(createTextTexture(label)) });
+  const sprite = new THREE.Sprite(spriteMaterial);
+
+  const midPoint = start.clone().lerp(end, 0.5).add(new THREE.Vector3(0, textOffsetHorizontal, 0));
+  sprite.position.copy(midPoint);
+
+  const k = 0.8;
+  sprite.scale.set(2 * k, 1 * k, 1);
+  scene.add(sprite);
+  dimensionObjects.push(sprite);
+}
+
+function createVerticalDimensionLine(start, end, label, scene) {
+  const material = new THREE.LineBasicMaterial({ color: lineColor });
+  
+  const points = [start, end];
+  const geometry = new THREE.BufferGeometry().setFromPoints(points);
+  const line = new THREE.Line(geometry, material);
+  scene.add(line);
+  dimensionObjects.push(line);
+
+  const crossStart1 = start.clone().add(new THREE.Vector3(crossLineLength / 2, 0, 0));
+  const crossEnd1 = start.clone().add(new THREE.Vector3(-crossLineLength / 2, 0, 0));
+  const crossGeometry1 = new THREE.BufferGeometry().setFromPoints([crossStart1, crossEnd1]);
+  const crossLine1 = new THREE.Line(crossGeometry1, material);
+  scene.add(crossLine1);
+  dimensionObjects.push(crossLine1);
+
+  const crossStart2 = end.clone().add(new THREE.Vector3(crossLineLength / 2, 0, 0));
+  const crossEnd2 = end.clone().add(new THREE.Vector3(-crossLineLength / 2, 0, 0));
+  const crossGeometry2 = new THREE.BufferGeometry().setFromPoints([crossStart2, crossEnd2]);
+  const crossLine2 = new THREE.Line(crossGeometry2, material);
+  scene.add(crossLine2);
+  dimensionObjects.push(crossLine2);
+
+  const spriteMaterial = new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(createTextTexture(label)) });
+  const sprite = new THREE.Sprite(spriteMaterial);
+  const midPoint = start.clone().lerp(end, 0.5).add(new THREE.Vector3(-textOffsetVertical, 0, 0));
+  sprite.position.copy(midPoint);
+
+  const k = 0.8;
+  sprite.scale.set(2 * k, 1 * k, 1);
+  scene.add(sprite);
+  dimensionObjects.push(sprite);
+}
+
+
+function createTextTexture(text) {
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+  context.font = '32px Arial';
+  context.fillStyle = 'black';
+  context.fillText(text, 50, 50);
+  return canvas;
+}
+
+function createDimensions(diameter, height) {
+  const heightFoundation = (isFoundationKitOn) ? FOUNDATION_HEIGHT : 0;
+
+  const startDiameter = new THREE.Vector3(-diameter / 2, height + MODEL_CENTER_POSITION - heightFoundation + lineOffset, 0);
+  const endDiameter = new THREE.Vector3(diameter / 2, height + MODEL_CENTER_POSITION - heightFoundation + lineOffset, 0);
+  createHorizontalDimensionLine(startDiameter, endDiameter, `D = ${(diameter * 3.28084).toFixed(2)} ft`, scene);
+
+  const startHeight = new THREE.Vector3(-diameter / 2 - lineOffset, 0 + MODEL_CENTER_POSITION - heightFoundation, 0);
+  const endHeight = new THREE.Vector3(-diameter / 2 - lineOffset, height + MODEL_CENTER_POSITION - heightFoundation, 0);
+  createVerticalDimensionLine(startHeight, endHeight, `H = ${((height - heightFoundation) * 3.28084).toFixed(2)} ft`, scene);
+
+  setMaterialColor('man', manColor);
+  setMeshPosition(modelHouse, 'man', -diameter / 2 - lineOffset - manOffset, - heightFoundation, 0);
+}
+
+function getHouseDimensions() {
+  let diameter = 0;
+  let height = 0;
+
+  if (modelHouse) {
+    height = getMeshDimensions(modelHouse).height;
+    const meshName = (currentHouse == '1') ? 'entry-center' : 'entry-L1-center';
+    diameter = getMeshDimensions(modelHouse.getObjectByName(meshName)).width;
+  }
+
+  return [diameter, height];
+}
+
+function removeDimensions() {
+  dimensionObjects.forEach(obj => {
+    scene.remove(obj);
+    if (obj.geometry) obj.geometry.dispose();
+    if (obj.material) obj.material.dispose();
+  });
+  dimensionObjects = [];
 }
 
 //#endregion

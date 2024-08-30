@@ -522,6 +522,7 @@ export function isEqualVector(vector1, vector2) {
 export function animateScale(
   model,
   duration = 500,
+  userCallback = () => {},
   startScale = 0,
   endScale = 1,
   timingKeyword = 'ease-in',
@@ -559,6 +560,7 @@ export function animateScale(
       requestAnimationFrame(animate);
     } else {
       model.scale.set(endScale, endScale, endScale);
+      userCallback();
       callback();
     }
   }
