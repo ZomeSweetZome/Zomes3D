@@ -37,6 +37,9 @@ export const CURRENCY_SIGN = {
   'USD': '$',
   'EUR': '€',
   'UAH': '₴',
+  0: 'USD',
+  1: 'EUR',
+  2: 'UAH',
 };
 
 // Zomes_3D_data_v_001

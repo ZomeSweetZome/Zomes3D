@@ -1718,15 +1718,26 @@ function calculatePrice() {
   }
 
   console.log("🚀 ~ calculatePrice ~ activeOptions:", activeOptions);
+  let optionPrice = 0;
 
   for (let i = 0; i < activeOptions.length; i++) {
-    // totalAmount += getData();
+    optionPrice = convertPriceToNumber(getData(dataPrice, activeOptions[i], `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
+    if (activeOptions[i] === 'option_1-2') { // custom windows
+      const windowsQty = Object.values(customWindows).reduce((total, array) => total + array.length, 0);
+      console.log("🚀 ~ calculatePrice ~ windowsQty:", windowsQty);
+      const windowsPrice = optionPrice * windowsQty;
+      totalAmount += windowsPrice;
+    } else if (activeOptions[i] === 'option_4-6') { // smart windows
+      continue;
+    } else {
+      totalAmount += optionPrice;
+    }
   }
 
   totalAmount = totalAmount.toFixed(2);
 
   //! TEMP
-  totalAmount = 1;
+  // totalAmount = 1;
 
   totalAmountElement.innerText = formatPrice(totalAmount, currentCurrencySign);
 }
@@ -3373,11 +3384,13 @@ function updateCustomWindows([letter, number]) {
       // make it WINDOW
       (panelMeshName) && setVisibility(modelHouse, false, [panelMeshName]);
       (windowMeshName) && setVisibility(modelHouse, true, [windowMeshName]);
+      calculatePrice();
     } else {
       customWindows[keyName].splice(index, 1);
       // make it PANEL
       (panelMeshName) && setVisibility(modelHouse, true, [panelMeshName]);
       (windowMeshName) && setVisibility(modelHouse, false, [windowMeshName]);
+      calculatePrice();
     }
   } else {
     console.warn(`Letter "${letter}" not found in customWindows object.`);
