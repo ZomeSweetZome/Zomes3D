@@ -78,9 +78,16 @@ let isSmartGlassOn = false;
 
 let [houseDiameter, houseHeight] = [0, 0];
 
-let uiLangInfo = [];
-let uiLangAnnotations = [];
-let uiLangAnnotationsLong = [];
+let uiMenuInfoDescLanguages = [
+  { '#menu_info_content_descr .ar_menu_info_content__text': '' },
+];
+
+let uiMenuInfoSpecsLanguages = [
+  { '#menu_info_content_specs .ar_menu_info_content__text': '' },
+];
+
+let uiAnnotationsLanguages = [];
+let uiAnnotationsLongLanguages = [];
 
 let allOptions = [];
 
@@ -2847,8 +2854,8 @@ async function PrepareUI() {
       CheckChanges();
       WriteURLParameters();
 
-      updateUIlanguages(dataAnnotations, uiLangAnnotations, `SHORT_${currentLanguage}`);
-      updateUIlanguages(dataAnnotations, uiLangAnnotationsLong, `LONG_${currentLanguage}`);
+      updateUIlanguages(dataAnnotations, uiAnnotationsLanguages, `SHORT_${currentLanguage}`);
+      updateUIlanguages(dataAnnotations, uiAnnotationsLongLanguages, `LONG_${currentLanguage}`);
     });
 
     $('.currency-picker select').on('change', function () {
@@ -2914,6 +2921,7 @@ function menuInfoBtnHandler(opt) {
 
     // description text
     let descrText = getData(mainData, $(this).attr('data-option'), `DESC_${currentLanguage}`);
+    
 
     if (descrText !== '' && descrText.toLowerCase() !== 'null') {
       if (descrText[0] === '"' && descrText[descrText.length - 1] === '"') {
@@ -2922,6 +2930,8 @@ function menuInfoBtnHandler(opt) {
     } else {
       descrText = '';
     }
+
+    uiMenuInfoDescLanguages[0]['#menu_info_content_descr .ar_menu_info_content__text'] = $(this).attr('data-option');
 
     $('#menu_info_content_descr .ar_menu_info_content__text').html(descrText);
 
@@ -2954,6 +2964,8 @@ function menuInfoBtnHandler(opt) {
     } else {
       specsText = '';
     }
+
+    uiMenuInfoSpecsLanguages[0]['#menu_info_content_specs .ar_menu_info_content__text'] = $(this).attr('data-option');
 
     $('#menu_info_content_specs .ar_menu_info_content__text').html(specsText);
 
@@ -3154,6 +3166,7 @@ function infoPopup(infoPopupTitle, infoPopupDescription, infoPopupImage) {
   document.documentElement.classList.add('popup-open');
 }
 
+// Camera Flying
 $(document).on('click', '#title_list__item_2', function () { // interior group
   flyCameraTo('inMain', 'inside');
 });
@@ -3178,6 +3191,15 @@ $(document).on('click', '.option.option_4-1', function () { // in-build desk
   } else {
     flyCameraTo('inBuildInDesk', 'inside');
   }
+});
+
+// *******************
+
+// dynamic change language for info menu
+$('.language-picker select').on('change', function () {
+  currentLanguage = $(this).val();
+  updateUIlanguages(mainData, uiMenuInfoDescLanguages, `DESC_${currentLanguage}`);
+  updateUIlanguages(mainData, uiMenuInfoSpecsLanguages, `SPECS_${currentLanguage}`);
 });
 
 //#endregion
@@ -3685,8 +3707,8 @@ function showAnnotations() {
   if (idIndex == -1) return;
   
   annotations = [];
-  uiLangAnnotations = [];
-  uiLangAnnotationsLong = [];
+  uiAnnotationsLanguages = [];
+  uiAnnotationsLongLanguages = [];
 
   dataAnnotations.forEach((item) => {
     if (item[idIndex].includes(DATA_HOUSE_NAME[currentHouse])) {
@@ -3720,8 +3742,8 @@ function showAnnotations() {
     annotation.element = $annotationElement;
     annotation.elementLong = $annotationElementLong;
     
-    uiLangAnnotations.push({ [`#annotation_text_short_${annotation.id}`]: annotation.id });
-    uiLangAnnotationsLong.push({ [`#annotation_text_long_${annotation.id}`]: annotation.id });
+    uiAnnotationsLanguages.push({ [`#annotation_text_short_${annotation.id}`]: annotation.id });
+    uiAnnotationsLongLanguages.push({ [`#annotation_text_long_${annotation.id}`]: annotation.id });
   });
 }
 
