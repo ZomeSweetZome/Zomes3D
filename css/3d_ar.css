@@ -316,13 +316,15 @@ body, html {
   box-sizing: border-box;
   font-family: "Satoshi", sans-serif;
   font-weight: normal;
-  /* user-select: none; */
+}
+
+.product-type-3dmodel b {
+  font-weight: bold;
 }
 
 .product-type-3dmodel {
   position: relative;
   top: var(--marevo-header-height, 100px);
-  /* overflow-y: hidden; */
   overflow: hidden;
 }
 

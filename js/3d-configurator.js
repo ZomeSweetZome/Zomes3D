@@ -78,6 +78,20 @@ let isSmartGlassOn = false;
 
 let [houseDiameter, houseHeight] = [0, 0];
 
+const optionsWithoutTabs = [
+  'option_2-0', // Interior - Magnesium Oxide Panels
+  'option_2-2', // Interior - Sound Panels
+  'option_3-0', // Exterior - Dark Grey
+  'option_3-1', // Exterior - White
+  'option_4-0', // Add-ons - Extreme Weather package
+  'option_4-1', // Add-ons - In-build desk
+  'option_4-3', // Add-ons - Extra door
+];
+
+let uiMenuInfoLanguages = [
+  { '#menu_info_title': '' },
+];
+
 let uiMenuInfoDescLanguages = [
   { '#menu_info_content_descr .ar_menu_info_content__text': '' },
 ];
@@ -2896,6 +2910,16 @@ function menuInfoBtnHandler(opt) {
   $(opt.element).find('.image-info').on('click', function (event) {
     event.stopPropagation();
 
+    // hiding ar_menu_info__tabs buttons for specific options
+    const optionValue = $(this).data('option');
+    console.log("🚀 ~ optionValue:", optionValue);
+  
+    if (optionsWithoutTabs.includes(optionValue)) {
+        $('.ar_menu_info__tabs').hide();
+    } else {
+        $('.ar_menu_info__tabs').show();
+    }
+
     // title
     const infoTitle = getData(mainData, $(this).attr('data-option'), currentLanguage);
     $('#menu_info_title').html(infoTitle);
@@ -2931,6 +2955,7 @@ function menuInfoBtnHandler(opt) {
       descrText = '';
     }
 
+    uiMenuInfoLanguages[0]['#menu_info_title'] = $(this).attr('data-option');
     uiMenuInfoDescLanguages[0]['#menu_info_content_descr .ar_menu_info_content__text'] = $(this).attr('data-option');
 
     $('#menu_info_content_descr .ar_menu_info_content__text').html(descrText);
@@ -3198,9 +3223,12 @@ $(document).on('click', '.option.option_4-1', function () { // in-build desk
 // dynamic change language for info menu
 $('.language-picker select').on('change', function () {
   currentLanguage = $(this).val();
+  updateUIlanguages(mainData, uiMenuInfoLanguages, currentLanguage);
   updateUIlanguages(mainData, uiMenuInfoDescLanguages, `DESC_${currentLanguage}`);
   updateUIlanguages(mainData, uiMenuInfoSpecsLanguages, `SPECS_${currentLanguage}`);
 });
+
+// *******************
 
 //#endregion
 
