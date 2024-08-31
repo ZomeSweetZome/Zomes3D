@@ -14,6 +14,10 @@
   --marevo-ui-icon_go_inside : url(../src/ar-ui-icons/icon_go_inside.svg);
   --marevo-ui-icon_go_outside : url(../src/ar-ui-icons/icon_go_outside.svg);
   --marevo-ui-icon_instagram : url(../src/ar-ui-icons/icon_instagram.svg);
+  --marevo-ui-icon_youtube : url(../src/ar-ui-icons/icon_youtube.svg);
+  --marevo-ui-icon_tiktok : url(../src/ar-ui-icons/icon_tiktok.svg);
+  --marevo-ui-icon_twitter : url(../src/ar-ui-icons/icon_twitter.svg);
+  --marevo-ui-icon_pinterest : url(../src/ar-ui-icons/icon_pinterest.svg);
   --marevo-ui-icon_menu_arrow_left : url(../src/ar-ui-icons/icon_menu_arrow_left.svg);
   --marevo-ui-icon_menu_arrow_right : url(../src/ar-ui-icons/icon_menu_arrow_right.svg);
   --marevo-ui-icon_menu_info: url(../src/ar-ui-icons/icon_menu_info.svg);
@@ -235,6 +239,31 @@ body, html {
   width: 24px;
   height: 24px;
 }
+
+.social-media-button--youtube {
+  background-image: var(--marevo-ui-icon_youtube);
+  width: 24px;
+  height: 24px;
+}
+
+.social-media-button--tiktok {
+  background-image: var(--marevo-ui-icon_tiktok);
+  width: 24px;
+  height: 24px;
+}
+
+.social-media-button--pinterest {
+  background-image: var(--marevo-ui-icon_pinterest);
+  width: 24px;
+  height: 24px;
+}
+
+.social-media-button--twitter {
+  background-image: var(--marevo-ui-icon_twitter);
+  width: 24px;
+  height: 24px;
+}
+
 
 /*!------------------------------------*/
 /* CUSTOM-SELECT */
