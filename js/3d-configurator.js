@@ -291,11 +291,17 @@ SharedParameterList[4].groupOptionAction = function () {
     if (currentHouse == '2') {
       if (this.value[3] == '1') { // extra door
         isExtraDoorOn = true;
-      } else {
+      } else if (this.value[3] == '0') {
         isExtraDoorOn = false;
       }
       
       updateFurnitureSet();
+    }
+
+    if (this.value[1] == '1') { // in-build desk
+      isBuiltInDeskOn = true;
+    } else if (this.value[1] == '0') {
+      isBuiltInDeskOn = false;
     }
 
     if ($('#button_dimensions').hasClass('active')) {
@@ -3147,6 +3153,32 @@ function infoPopup(infoPopupTitle, infoPopupDescription, infoPopupImage) {
 
   document.documentElement.classList.add('popup-open');
 }
+
+$(document).on('click', '#title_list__item_2', function () { // interior group
+  flyCameraTo('inMain', 'inside');
+});
+
+$(document).on('click', '#title_list__item_3', function () { // exterior group
+  flyCameraTo('outMain', 'outside');
+});
+
+$(document).on('click', '.option.option_4-3', function () { // extra door
+  if (currentHouse == '2') {
+    if (isCameraInside) {
+      flyCameraTo('inExtraDoor', 'inside');
+    } else {
+      flyCameraTo('outExtraDoor', 'outside');
+    }
+  }
+});
+
+$(document).on('click', '.option.option_4-1', function () { // in-build desk
+  if (isCameraInside) {
+    flyCameraTo('inBuildInDesk', 'inside');
+  } else {
+    flyCameraTo('inBuildInDesk', 'inside');
+  }
+});
 
 //#endregion
 
