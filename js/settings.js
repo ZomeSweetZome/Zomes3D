@@ -92,6 +92,21 @@ export const NAV_CAM_POSITION = {
       target: [0, HUMAN_HEIGHT, 0],
     },
   },
+  outDimensions: {
+    outside: true,
+    'pod': {
+      camera: [0, 1.188 - 1.6 + HUMAN_HEIGHT, 11.426],
+      target: [0, HUMAN_HEIGHT, 0],
+    },
+    'office': {
+      camera: [0, 1.188 - 1.6 + HUMAN_HEIGHT, 11.426],
+      target: [0, HUMAN_HEIGHT, 0],
+    },
+    'studio': {
+      camera: [0, 1.188 - 1.6 + HUMAN_HEIGHT, 11.426],
+      target: [0, HUMAN_HEIGHT, 0],
+    },
+  },
   // INSIDE
   inPrepare: {
     outside: false,

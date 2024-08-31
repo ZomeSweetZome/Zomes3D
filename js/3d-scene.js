@@ -2,7 +2,7 @@
 'use strict';
 /* global THREE, $ */
 
-const TEST_MODE = false;
+const TEST_MODE = true;
 
 const LOADER = document.getElementById('canvas-loader');
 

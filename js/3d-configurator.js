@@ -2986,16 +2986,9 @@ function cameraBtnHandlers() {
 
     $('.canvas_btn_camera').addClass('disabled');
 
-    onChangePosition(DATA_HOUSE_NAME[currentHouse], 'inMain',
-      () => { $('.canvas_btn_camera').removeClass('disabled'); });
-
-    // onChangePosition(DATA_HOUSE_NAME[currentHouse], 'outPrepare', () => {
-    //   onChangePosition(DATA_HOUSE_NAME[currentHouse], 'inMain',
-    //     () => {
-    //       $('.canvas_btn_camera').removeClass('disabled');
-    //     }
-    //   )
-    // });
+    flyCameraTo('inMain', 'inside', () => {
+      $('.canvas_btn_camera').removeClass('disabled');
+    });
 
     isCameraInside = true;
   });
@@ -3007,14 +3000,9 @@ function cameraBtnHandlers() {
 
     $('.canvas_btn_camera').addClass('disabled');
 
-    onChangePosition(DATA_HOUSE_NAME[currentHouse], 'outMain',
-      () => {
-        $('.canvas_btn_camera').removeClass('disabled');
-      }
-    );
-
-    // onChangePosition(DATA_HOUSE_NAME[currentModel], 'inPrepare', 
-    //   () => { onChangePosition(DATA_HOUSE_NAME[currentModel], 'outMain') });
+    flyCameraTo('outMain', 'outside', () => {
+      $('.canvas_btn_camera').removeClass('disabled');
+    });
 
     isCameraInside = false;
   });
@@ -3046,6 +3034,7 @@ function dimensionsBtnHandler() {
       $('#button_annotation').addClass('disabled');
       $('#button_furniture').addClass('disabled');
       dimensionsController(true);
+      flyCameraTo('outDimensions', 'outside');
     } else {
       $('#button_annotation').removeClass('disabled');
       $('#button_furniture').removeClass('disabled');
@@ -3262,6 +3251,20 @@ function onChangePosition(houseId, pos, callback = () => { }, duration = 750, is
       vector1.z.toFixed(precision) === vector2.z.toFixed(precision)
     );
   }
+}
+
+function flyCameraTo(namePosition, inOrOut, callback = () => { }, duration = 750) {
+ if (inOrOut === 'inside') {
+  $('#button_camera_inside').addClass('hidden');
+  $('#button_camera_outside').removeClass('hidden');
+  isCameraInside = true;
+ } else if (inOrOut === 'outside') {
+  $('#button_camera_outside').addClass('hidden');
+  $('#button_camera_inside').removeClass('hidden');
+  isCameraInside = false;
+ }
+
+  onChangePosition(DATA_HOUSE_NAME[currentHouse], namePosition, callback, duration);
 }
 
 //#endregion
