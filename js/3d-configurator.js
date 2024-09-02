@@ -274,7 +274,7 @@ SharedParameterList[1].groupOptionAction = function () {
   (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
 
   if (isFirstStart || justClicked) {
-    
+
   }
 }
 
@@ -315,7 +315,7 @@ SharedParameterList[4].groupOptionAction = function () {
       } else if (this.value[3] == '0') {
         isExtraDoorOn = false;
       }
-      
+
       updateFurnitureSet();
     }
 
@@ -729,7 +729,7 @@ async function Start() {
 
 async function StartSettings() {
   (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ StartSettings ~ ');
-  
+
   // get all options
   document.querySelectorAll('.option').forEach(option => {
     const groupId = option.getAttribute('data-group_id');
@@ -739,13 +739,13 @@ async function StartSettings() {
   });
 
   currentHouse = SharedParameterList[0].value || 0;
-  
+
   await loadModel(MODEL_PATHS[currentHouse], 0);
   await loadModel(MODEL_PATHS[parseInt(parseInt(currentHouse) + 3)], 1);
   modelHouse = IMPORTED_MODELS[0];
   modelHouse?.scale.set(0, 0, 0);
   modelHouse && scene.add(modelHouse);
-  
+
   modelFurniture = IMPORTED_MODELS[1];
   modelFurniture.visible = false;
   modelFurniture && scene.add(modelFurniture);
@@ -1690,7 +1690,7 @@ function updateFurnitureSet() {
 
   if ($('#button_work').hasClass('active')) {
     setVisibility(modelFurniture, false, ['sleep', 'live']);
-    
+
     if (currentHouse == '2' && !isExtraDoorOn) {
       setVisibility(modelFurniture, false, ['work-back-door']);
       setVisibility(modelFurniture, true, ['work']);
@@ -1736,7 +1736,7 @@ let totalAmount = 0;
 function calculatePrice() {
   const totalAmountElement = document.getElementById('ar_total_price');
   totalAmount = 0;
-  
+
   let optionId = '';
   let activeOptions = [];
 
@@ -1773,7 +1773,7 @@ function calculatePrice() {
     } else {
       price = convertPriceToNumber(getData(dataPrice, option, `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
     }
-    
+
     if ((option !== 'option_1-2')) {
       $(`.${option} .component_price`).html(formatPrice(price, currentCurrencySign));
     }
@@ -2268,11 +2268,11 @@ function getMeshDimensions(object) {
   boundingBox.setFromObject(object);
   const size = new THREE.Vector3();
   boundingBox.getSize(size);
-  
+
   const width = size.x;
   const height = size.y;
   const depth = size.z;
-  
+
   return { width: width, height: height, depth: depth };
 }
 
@@ -2919,6 +2919,27 @@ async function PrepareUI() {
       $('.popup__info').addClass('hidden');
     });
   });
+
+  // Summary popup
+  jQuery(document).ready(function () {
+
+    // form validation
+    const $form = $('#popupForm');
+    const $submitButton = $('#submitButton');
+
+    $form.on('input', function () {
+      const isFormValid = $form[0].checkValidity();
+      $submitButton.prop('disabled', !isFormValid);
+    });
+
+    $form.on('submit', function (event) {
+      event.preventDefault();
+      if ($form[0].checkValidity()) {
+        alert('Form submitted successfully!');
+        // Here we can add the logic of sending the form to the server or other actions
+      }
+    });
+  });
 }
 
 function calculateAndSetEstimateDate() {
@@ -2972,11 +2993,11 @@ function menuInfoBtnHandler(opt) {
     // hiding ar_menu_info__tabs buttons for specific options
     const optionValue = $(this).data('option');
     console.log("🚀 ~ optionValue:", optionValue);
-  
+
     if (optionsWithoutTabs.includes(optionValue)) {
-        $('.ar_menu_info__tabs').hide();
+      $('.ar_menu_info__tabs').hide();
     } else {
-        $('.ar_menu_info__tabs').show();
+      $('.ar_menu_info__tabs').show();
     }
 
     // title
@@ -3004,7 +3025,7 @@ function menuInfoBtnHandler(opt) {
 
     // description text
     let descrText = getData(mainData, $(this).attr('data-option'), `DESC_${currentLanguage}`);
-    
+
 
     if (descrText !== '' && descrText.toLowerCase() !== 'null') {
       if (descrText[0] === '"' && descrText[descrText.length - 1] === '"') {
@@ -3395,15 +3416,15 @@ function onChangePosition(houseId, pos, callback = () => { }, duration = 750, is
 }
 
 function flyCameraTo(namePosition, inOrOut, callback = () => { }, duration = 750) {
- if (inOrOut === 'inside') {
-  $('#button_camera_inside').addClass('hidden');
-  $('#button_camera_outside').removeClass('hidden');
-  isCameraInside = true;
- } else if (inOrOut === 'outside') {
-  $('#button_camera_outside').addClass('hidden');
-  $('#button_camera_inside').removeClass('hidden');
-  isCameraInside = false;
- }
+  if (inOrOut === 'inside') {
+    $('#button_camera_inside').addClass('hidden');
+    $('#button_camera_outside').removeClass('hidden');
+    isCameraInside = true;
+  } else if (inOrOut === 'outside') {
+    $('#button_camera_outside').addClass('hidden');
+    $('#button_camera_inside').removeClass('hidden');
+    isCameraInside = false;
+  }
 
   onChangePosition(DATA_HOUSE_NAME[currentHouse], namePosition, callback, duration);
 }
@@ -3515,10 +3536,9 @@ canvas.addEventListener('mouseup', onMouseUp);
 function updateCustomWindows([letter, number]) {
   const keyName = letter.toLowerCase();
 
-  if (STUDIO_EXTRADOOR_SECTORS.includes(`${keyName}${number}`) 
-    && isExtraDoorOn 
-    && currentHouse == '2') 
-  {
+  if (STUDIO_EXTRADOOR_SECTORS.includes(`${keyName}${number}`)
+    && isExtraDoorOn
+    && currentHouse == '2') {
     return;
   }
 
@@ -3603,7 +3623,7 @@ function removeFromCustomWindows() {
     const letter = section[0].toLowerCase();
     // const number = parseInt(section.slice(1), 10);
     const number = section[1];
-    
+
     if (Object.prototype.hasOwnProperty.call(customWindows, letter)) {
       const index = customWindows[letter].indexOf(number);
       console.log("🚀 ~ removeFromCustomWindows ~ index:", index);
@@ -3735,7 +3755,7 @@ function ChangeObjectMorph(morph, inputvalue) {
     if (morph.object.morphTargetInfluences != null) {
       morph.object.morphTargetInfluences[morph.key] = inputvalue;
     }
-  }f
+  } f
 }
 
 function ChangeGlobalMorph(morphName, inputvalue) {
@@ -3790,16 +3810,16 @@ let annotations = [];
 
 function showAnnotations() {
   const idIndex = dataAnnotations[0].findIndex(item => item.toLowerCase() === 'id');
-  
+
   if (idIndex == -1) return;
-  
+
   annotations = [];
   uiAnnotationsLanguages = [];
   uiAnnotationsLongLanguages = [];
 
   dataAnnotations.forEach((item) => {
     if (item[idIndex].includes(DATA_HOUSE_NAME[currentHouse])) {
-      const coordsString = getData(dataAnnotations, item[idIndex],'COORDS');
+      const coordsString = getData(dataAnnotations, item[idIndex], 'COORDS');
       const [x, y, z] = parseCoordinates(coordsString);
 
       annotations.push({
@@ -3810,7 +3830,7 @@ function showAnnotations() {
       });
     }
   });
-  
+
   annotations.forEach((annotation) => {
     const $annotationElement = $('<div>', { class: 'annotation' }).html(`
       <div id="annotation_text_short_${annotation.id}" class="annotation-text">
@@ -3828,7 +3848,7 @@ function showAnnotations() {
 
     annotation.element = $annotationElement;
     annotation.elementLong = $annotationElementLong;
-    
+
     uiAnnotationsLanguages.push({ [`#annotation_text_short_${annotation.id}`]: annotation.id });
     uiAnnotationsLongLanguages.push({ [`#annotation_text_long_${annotation.id}`]: annotation.id });
   });
@@ -3886,8 +3906,8 @@ export function updateAnnotations(camera, scene) {
 
     const $annotationText = $(annotation.element).find('.annotation-text');
     const $annotationTextLong = $(annotation.element).find('.annotation-text.long');
-    
-    if($canvasContainer.width() - x < 250) {
+
+    if ($canvasContainer.width() - x < 250) {
       $annotationText.addClass('left');
     } else {
       $annotationText.removeClass('left');
@@ -3915,7 +3935,7 @@ const manColor = '#ececef';
 
 function createHorizontalDimensionLine(start, end, label, scene) {
   const material = new THREE.LineBasicMaterial({ color: lineColor });
-  
+
   const points = [start, end];
   const geometry = new THREE.BufferGeometry().setFromPoints(points);
   const line = new THREE.Line(geometry, material);
@@ -3950,7 +3970,7 @@ function createHorizontalDimensionLine(start, end, label, scene) {
 
 function createVerticalDimensionLine(start, end, label, scene) {
   const material = new THREE.LineBasicMaterial({ color: lineColor });
-  
+
   const points = [start, end];
   const geometry = new THREE.BufferGeometry().setFromPoints(points);
   const line = new THREE.Line(geometry, material);

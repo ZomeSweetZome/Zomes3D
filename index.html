@@ -82,14 +82,7 @@
           <div class="summary_wrapper">
             <div class="summary entry-summary hidden">
               <div class="title_list__container">
-                <ul id="title_menu_list" class="title_list">
-                  <!-- 
-                    <li class="title_list__item" id="title_list__item_0">
-                      <div class="title_list__item-text">Zome Model</div>
-                      <div class="title_list__item-arrow"></div>
-                    </li>
-                    -->
-                </ul>
+                <ul id="title_menu_list" class="title_list"></ul>
               </div>
 
               <div class="ar_filter" id="ar_filter">
@@ -161,20 +154,10 @@
             <div class="ar_menu_info_content__container">
               <div class="ar_menu_info_content__wrapper">
                 <div id="menu_info_content_descr" class="ar_menu_info__content active">
-                  <!--
-                  <div class="ar_menu_info_content__image">
-                    <img src="">
-                  </div> 
-                   -->
                   <div class="ar_menu_info_content__text"></div>
                 </div>
 
                 <div id="menu_info_content_specs" class="ar_menu_info__content">
-                  <!--
-                  <div class="ar_menu_info_content__image">
-                    <img src="">
-                  </div> 
-                   -->
                   <div class="ar_menu_info_content__text">${specs}</div>
                 </div>
               </div>
@@ -211,7 +194,6 @@
               <div class="marevo_loader__circle circle4"></div>
               <div class="marevo_loader__circle circle5"></div>
             </div>
-            <!-- <div class="marevo_loader__text">Loading...</div> -->
           </div>
 
           <div class="canvas_buttons__wrapper">
@@ -338,6 +320,82 @@
         </div>
 
         <div class="popup-overlay"></div>
+      </div>
+
+      <!-- SUMMARY and FORM -->
+      <!-- active -->
+      <div class="summary__popup-overlay ">
+        <div class="summary__popup-content">
+          <!-- !TODO  <img src="path_to_image" alt="Zome Model"> -->
+          <div class="details">
+            <h2>Zome Model</h2>
+            <p>Office - 170</p>
+            
+            <h3>Windows</h3>
+            <p>Strip</p>
+            
+            <h3>Interior</h3>
+            <p>Wood Paneling</p>
+            
+            <h3>Exterior</h3>
+            <p>Off White</p>
+            
+            <h3>Add-ons</h3>
+            <ul>
+              <li>Winter Package: Not included</li>
+              <li>Desk: Not included</li>
+              <li>Foundation Kit: Not included</li>
+            </ul>
+            
+            <a href="#" class="modify-config">MODIFY CONFIGURATION ↗</a>
+          </div>
+
+          <div class="shipping-rates">
+            <h2>Shipping Rates</h2>
+            <p>Your dome needs 1 pallet(s). Check your region for the costs of the shipping:</p>
+            
+            <p><strong>North & South America:</strong> For shipping quotes to North and South America, Australia and New Zealand please contact us directly. We will check the cost for your customization individually.</p>
+
+            <ul>
+              <li>USA Northeast - $0</li>
+              <li>USA Northeast - $0</li>
+              <li>USA Northeast - $0</li>
+              <li>USA Northeast - $0</li>
+              <li>USA Northeast - $0</li>
+            </ul>
+            
+            <p><strong>Europe:</strong> For shipping quotes to Europe please contact us directly. We will check the cost for your customization individually.</p>
+            
+            <ul>
+              <li>England - $0</li>
+              <li>Wales - $0</li>
+              <li>Scotland - $0</li>
+              <li>Germany - $0</li>
+              <li>Germany - $0</li>
+              <li>Germany - $0</li>
+              <li>Germany - $0</li>
+            </ul>
+          </div>
+          
+          <div class="estimated-delivery-time">
+            <h2>Estimated Delivery Time</h2>
+            <p>Production and delivery time depend on the FDomes customization and quantity. Please contact our Sales Team for more details and current lead times.</p>
+          </div>
+
+          <form id="popupForm">
+            <input type="text" name="name" id="name" placeholder="First & last name" required>
+            <input type="tel" name="phone" id="phone" placeholder="Telephone" required>
+            <input type="email" name="email" id="email" placeholder="Email address" required>
+            <input type="text" name="address" id="address" placeholder="Address" required>
+            <input type="text" name="city" id="city" placeholder="City" required>
+            <input type="text" name="country" id="country" placeholder="Country" required>
+            <input type="text" name="zipcode" id="zipcode" placeholder="Zipcode" required>
+            <textarea name="inquiries" id="inquiries" placeholder="Any questions or inquiries?" class="full-width"></textarea>
+            <label class="full-width"><input type="checkbox" id="fdExpert" name="fdExpert"> Allow FDomes Expert to get in touch with me about my Zome</label>
+            <label class="full-width"><input type="checkbox" id="newsletter" name="newsletter"> Sign me up for monthly email updates and special deals (only 1x email per month)</label>
+            <button type="submit" id="submitButton" disabled>Mail PDF</button>
+          </form>
+        </div>
       </div>
     </div>
   </div>
