@@ -4038,11 +4038,11 @@ function createDimensions(diameter, height) {
 
   const startDiameter = new THREE.Vector3(-diameter / 2, height + MODEL_CENTER_POSITION - heightFoundation + lineOffset, 0);
   const endDiameter = new THREE.Vector3(diameter / 2, height + MODEL_CENTER_POSITION - heightFoundation + lineOffset, 0);
-  createHorizontalDimensionLine(startDiameter, endDiameter, `D = ${(diameter * 3.28084).toFixed(2)} ft`, scene);
+  createHorizontalDimensionLine(startDiameter, endDiameter, `D = ${Math.round((diameter * 3.28084) / 0.5) * 0.5} ft`, scene);
 
   const startHeight = new THREE.Vector3(-diameter / 2 - lineOffset, 0 + MODEL_CENTER_POSITION - heightFoundation, 0);
   const endHeight = new THREE.Vector3(-diameter / 2 - lineOffset, height + MODEL_CENTER_POSITION - heightFoundation, 0);
-  createVerticalDimensionLine(startHeight, endHeight, `H = ${((height - heightFoundation) * 3.28084).toFixed(2)} ft`, scene);
+  createVerticalDimensionLine(startHeight, endHeight, `H = ${Math.round((height - heightFoundation) * 3.28084 / 0.5) * 0.5} ft`, scene);
 
   setMaterialColor('man', manColor);
   setMeshPosition(modelHouse, 'man', -diameter / 2 - lineOffset - manOffset, - heightFoundation, 0);
@@ -4060,7 +4060,7 @@ function getHouseDimensions() {
 
   return [diameter, height];
 }
-
+округление ряазмеров кратно 0,5
 function removeDimensions() {
   dimensionObjects.forEach(obj => {
     scene.remove(obj);
