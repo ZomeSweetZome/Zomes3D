@@ -1797,7 +1797,7 @@ function calculatePrice() {
     }
   }
 
-  totalAmount = totalAmount.toFixed(2);
+  totalAmount = totalAmount.toFixed(0);
 
   totalAmountElement.innerText = formatPrice(totalAmount, currentCurrencySign);
 }
@@ -1834,50 +1834,85 @@ function getOrderList() {
   return orderList;
 }
 
+// function formatPrice(price, currency) {
+//   if (!price) { return ''; }
+//   if (!currency) { currency = '' }
+
+//   let result, firstSeparator, secondSeparator;
+//   const priceString = price + '';
+
+//   switch (currency) {
+//     case 'грн':
+//       firstSeparator = ' ';
+//       secondSeparator = ',';
+//       break;
+//     case '$':
+//       firstSeparator = ' ';
+//       secondSeparator = '.';
+//       break;
+//     case '€':
+//       firstSeparator = ' ';
+//       secondSeparator = ',';
+//       break;
+
+//     default:
+//       firstSeparator = '.';
+//       secondSeparator = ',';
+//       currency = '';
+//       break;
+//   }
+
+//   const parts = priceString.split('.');
+//   const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, firstSeparator);
+//   let decimalPart = parts[1] && parts[1].replace('.', secondSeparator);
+
+//   if (decimalPart && decimalPart.length === 1) {
+//     decimalPart += '0';
+//   }
+
+//   if (currency === 'грн') {
+//     result = (decimalPart)
+//       ? `${integerPart}${secondSeparator}${decimalPart} ${currency}`
+//       : `${integerPart}${secondSeparator}00 ${currency}`;
+//   } else {
+//     result = (decimalPart)
+//       ? `${currency} ${integerPart}${secondSeparator}${decimalPart}`
+//       : `${currency} ${integerPart}${secondSeparator}00`;
+//   }
+
+//   return result;
+// }
+
 function formatPrice(price, currency) {
   if (!price) { return ''; }
   if (!currency) { currency = '' }
 
-  let result, firstSeparator, secondSeparator;
-  const priceString = price + '';
+  let result, firstSeparator;
+  const priceString = Math.floor(price).toString(); // Округляем цену до целого числа
 
   switch (currency) {
     case 'грн':
       firstSeparator = ' ';
-      secondSeparator = ',';
       break;
     case '$':
-      firstSeparator = ' ';
-      secondSeparator = '.';
+      firstSeparator = ',';
       break;
     case '€':
-      firstSeparator = ' ';
-      secondSeparator = ',';
+      firstSeparator = ',';
       break;
-
     default:
       firstSeparator = '.';
-      secondSeparator = ',';
       currency = '';
       break;
   }
 
-  const parts = priceString.split('.');
-  const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, firstSeparator);
-  let decimalPart = parts[1] && parts[1].replace('.', secondSeparator);
-
-  if (decimalPart && decimalPart.length === 1) {
-    decimalPart += '0';
-  }
+  // Форматируем целую часть числа с разделителем тысяч
+  const integerPart = priceString.replace(/\B(?=(\d{3})+(?!\d))/g, firstSeparator);
 
   if (currency === 'грн') {
-    result = (decimalPart)
-      ? `${integerPart}${secondSeparator}${decimalPart} ${currency}`
-      : `${integerPart}${secondSeparator}00 ${currency}`;
+    result = `${integerPart} ${currency}`;
   } else {
-    result = (decimalPart)
-      ? `${currency} ${integerPart}${secondSeparator}${decimalPart}`
-      : `${currency} ${integerPart}${secondSeparator}00`;
+    result = `${currency} ${integerPart}`;
   }
 
   return result;
