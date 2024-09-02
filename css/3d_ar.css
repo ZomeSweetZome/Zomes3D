@@ -847,6 +847,8 @@ body, html {
   border: 1px solid rgb(180, 180, 180);
   cursor: auto;
   pointer-events: none;
+
+  display: none;
 }
 
 .ar_menu_info_tab:hover {

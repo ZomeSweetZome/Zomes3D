@@ -183,7 +183,7 @@ let SharedParameterList = [
     groupIds: ['group-1'],
     splitValue: 'A',
     type: 'array-string',
-    value: [0, 1, 0],
+    value: [0, 0, 0],
     groupOptionAction: null,
     applyURLAction: null,
     applyURLActionReturn: false
@@ -193,7 +193,7 @@ let SharedParameterList = [
     groupIds: ['group-2'],
     splitValue: 'R',
     type: 'string',
-    value: '1',
+    value: '0',
     groupOptionAction: null,
     applyURLAction: null,
     applyURLActionReturn: false
@@ -1769,7 +1769,7 @@ function calculatePrice() {
       $(`.${option} .component_price`).html(
         `${formatPrice(price, currentCurrencySign)} ${getData(mainData, 'ui_per_window', currentLanguage)}`
       );
-    } else if (option === 'option_4-6') {
+    } else if (option === 'option_4-5') {
       price = '';
     } else {
       price = convertPriceToNumber(getData(dataPrice, option, `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
@@ -1789,7 +1789,7 @@ function calculatePrice() {
       const windowsPrice = optionPrice * windowsQty;
       $(`.${activeOptions[i]} .component_price`).html(formatPrice(windowsPrice, currentCurrencySign));
       totalAmount += windowsPrice;
-    } else if (activeOptions[i] === 'option_4-6') { // smart windows
+    } else if (activeOptions[i] === 'option_4-5') { // smart windows
       continue;
     } else {
       $(`.${activeOptions[i]} .component_price`).html(formatPrice(optionPrice, currentCurrencySign));
@@ -2995,11 +2995,11 @@ function menuInfoBtnHandler(opt) {
     const optionValue = $(this).data('option');
     console.log("🚀 ~ optionValue:", optionValue);
 
-    if (optionsWithoutTabs.includes(optionValue)) {
-      $('.ar_menu_info__tabs').hide();
-    } else {
-      $('.ar_menu_info__tabs').show();
-    }
+    // if (optionsWithoutTabs.includes(optionValue)) {
+    //   $('.ar_menu_info__tabs').hide();
+    // } else {
+    //   $('.ar_menu_info__tabs').show();
+    // }
 
     // title
     const infoTitle = getData(mainData, $(this).attr('data-option'), currentLanguage);
@@ -3096,8 +3096,16 @@ function menuInfoBtnHandler(opt) {
       $('#menu_info_tab_specs').removeClass('disabled');
     }
 
+    // hide menu info tabs if there is no content
+    if ($('#menu_info_tab_descr').hasClass('disabled') || $('#menu_info_tab_specs').hasClass('disabled')) {
+      $('.ar_menu_info__tabs').hide();
+    } else {
+      $('.ar_menu_info__tabs').show();
+    }
+
     // show menu info
     $('.ar_menu_info_container').addClass('active');
+
   });
 }
 
