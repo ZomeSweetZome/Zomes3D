@@ -46,6 +46,7 @@ import {
   camera,
   floor,
   smoothCameraTransition,
+  envMap,
 } from './3d-scene.js';
 
 import {
@@ -1991,20 +1992,20 @@ function GetMaterialFromScene(name) {
 }
 
 // eslint-disable-next-line no-unused-vars
-function setMaterialProperty(materialName, value, propery = 'metalness') {
+function setMaterialProperty(materialName, value, property = 'metalness') {
   const materialObject = GetMaterialFromScene(materialName);
   if (materialObject == null) {
     console.error(`ERROR: Material ${materialName} is not found !`);
     return;
   }
   // eslint-disable-next-line no-prototype-builtins
-  if (!materialObject.hasOwnProperty(propery)) {
-    console.error(`ERROR: Material ${materialName} has no property ${propery} !`);
+  if (!materialObject.hasOwnProperty(property)) {
+    console.error(`ERROR: Material ${materialName} has no property ${property} !`);
     return;
   }
 
-  materialObject[propery] = value;
-  console.log(`${propery} for material ${materialName} was set up to ${value}`);
+  materialObject[property] = value;
+  console.log(`${property} for material ${materialName} was set up to ${value}`);
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -3350,6 +3351,8 @@ function onChangePosition(houseId, pos, callback = () => { }, duration = 750, is
   let targetCameraFOV;
   let maxPolarAngle;
 
+  let callback_env = null;
+
   if (NAV_CAM_POSITION[pos] && Object.prototype.hasOwnProperty.call(NAV_CAM_POSITION[pos][houseId], 'camera')) {
     const k = (isLeftSideHouse) ? 1 : -1;
 
@@ -3367,7 +3370,17 @@ function onChangePosition(houseId, pos, callback = () => { }, duration = 750, is
 
     if (!NAV_CAM_POSITION[pos].outside) {
       const fov = 82; // 80
+      // const env = envMap; //! TODO
+      const env = null;
       insideCameraSettings(fov);
+      callback_env = () => { 
+        scene.background = env;
+        // setMaterialProperty('glass', 0);
+        // setMaterialProperty('glass', 1, 'opacity');
+      };
+    } else {
+      scene.background = null;
+      // setMaterialProperty('glass', 1);
     }
 
     if (isEqualVector(camera.position, targetCameraPosition)) {
@@ -3384,6 +3397,7 @@ function onChangePosition(houseId, pos, callback = () => { }, duration = 750, is
       targetCameraFOV,
       maxPolarAngle,
       callback,
+      callback_env,
     );
   } else {
     console.log(`🚀 Position '${pos}' is not available for house ${houseId}`);

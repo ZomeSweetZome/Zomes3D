@@ -608,6 +608,7 @@ export function smoothCameraTransition(
     targetCameraFOV,
     maxPolarAngle = Math.PI / 1.88,
     callback = () => {},
+    callback_env = () => {},
 ) {
   const correctedTargetPosition = new THREE.Vector3(0, 0, 0);
   const delta = 0;
@@ -657,6 +658,7 @@ export function smoothCameraTransition(
       requestAnimationFrame(animate);
     } else {
       callback();
+      if (callback_env) callback_env();
     }
   }
 
