@@ -3370,17 +3370,16 @@ function onChangePosition(houseId, pos, callback = () => { }, duration = 750, is
 
     if (!NAV_CAM_POSITION[pos].outside) {
       const fov = 82; // 80
-      // const env = envMap; //! TODO
-      const env = null;
+      const env = envMap;
+      // const env = null;
       insideCameraSettings(fov);
       callback_env = () => { 
         scene.background = env;
-        // setMaterialProperty('glass', 0);
-        // setMaterialProperty('glass', 1, 'opacity');
+        setMaterialProperty('glass', 0);
       };
     } else {
       scene.background = null;
-      // setMaterialProperty('glass', 1);
+      setMaterialProperty('glass', 1);
     }
 
     if (isEqualVector(camera.position, targetCameraPosition)) {

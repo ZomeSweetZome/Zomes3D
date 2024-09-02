@@ -10,7 +10,8 @@ export let SHADOW_TRANSPARENCY = 0.1;
 export let TONE_MAPPING_EXPOSURE = 1;
 // LIGHT_SCHEME 1:
 if (LIGHT_SCHEME === 1) {
-  ENVIRONMENT_MAP = './src/environment/belfast_open_field_1k.hdr';
+  // ENVIRONMENT_MAP = './src/environment/belfast_open_field_1k.hdr';
+  ENVIRONMENT_MAP = './src/environment/symmetrical_garden_02_1k.hdr';
   ENVIRONMENT_MAP_INTENSITY = 3.0; // 3.5
   SHADOW_TRANSPARENCY = 0.4;
   TONE_MAPPING_EXPOSURE = 0.9;
@@ -68,60 +69,60 @@ export const NAV_CAM_POSITION = {
   outPrepare: {
     outside: true,
     'pod': {
-      camera: [0.072, 1.536 - 1.6 + HUMAN_HEIGHT, 6.515],
+      camera: [0.072, -0.064 + HUMAN_HEIGHT, 6.515],
       target: [0, HUMAN_HEIGHT, 0],
     },
     'office': {
-      camera: [0.072, 1.536 - 1.6 + HUMAN_HEIGHT, 6.515],
+      camera: [0.072, -0.064 + HUMAN_HEIGHT, 6.515],
       target: [0, HUMAN_HEIGHT, 0],
     },
     'studio': {
-      camera: [0.072, 1.536 - 1.6 + HUMAN_HEIGHT, 6.515],
+      camera: [0.072, -0.064 + HUMAN_HEIGHT, 6.515],
       target: [0, HUMAN_HEIGHT, 0],
     },
   },
   outMain: {
     outside: true,
     'pod': {
-      camera: [3.757, 1.801 - 1.6 + HUMAN_HEIGHT, 9.629],
+      camera: [3.757, 0.201 + HUMAN_HEIGHT, 9.629],
       target: [0, HUMAN_HEIGHT, 0],
     },
     'office': {
-      camera: [3.757, 1.801 - 1.6 + HUMAN_HEIGHT, 9.629],
+      camera: [3.757, 0.201 + HUMAN_HEIGHT, 9.629],
       target: [0, HUMAN_HEIGHT, 0],
     },
     'studio': {
-      camera: [3.757, 1.801 - 1.6 + HUMAN_HEIGHT, 9.629],
+      camera: [3.757, 0.201 + HUMAN_HEIGHT, 9.629],
       target: [0, HUMAN_HEIGHT, 0],
     },
   },
   outDimensions: {
     outside: true,
     'pod': {
-      camera: [0, 1.188 - 1.6 + HUMAN_HEIGHT, 11.426],
+      camera: [0, -0.412 + HUMAN_HEIGHT, 11.426],
       target: [0, HUMAN_HEIGHT, 0],
     },
     'office': {
-      camera: [0, 1.188 - 1.6 + HUMAN_HEIGHT, 11.426],
+      camera: [0, -0.412 + HUMAN_HEIGHT, 11.426],
       target: [0, HUMAN_HEIGHT, 0],
     },
     'studio': {
-      camera: [0, 1.188 - 1.6 + HUMAN_HEIGHT, 11.426],
+      camera: [0, -0.412 + HUMAN_HEIGHT, 11.426],
       target: [0, HUMAN_HEIGHT, 0],
     },
   },
   outExtraDoor: {
     outside: true,
     'pod': {
-      camera: [0, 1.233 - 1.6 + HUMAN_HEIGHT, -9.327],
+      camera: [0, -0.367 + HUMAN_HEIGHT, -9.327],
       target: [0, HUMAN_HEIGHT, 0],
     },
     'office': {
-      camera: [0, 1.233 - 1.6 + HUMAN_HEIGHT, -9.327],
+      camera: [0, -0.367 + HUMAN_HEIGHT, -9.327],
       target: [0, HUMAN_HEIGHT, 0],
     },
     'studio': {
-      camera: [0, 1.233 - 1.6 + HUMAN_HEIGHT, -9.327],
+      camera: [0, -0.367 + HUMAN_HEIGHT, -9.327],
       target: [0, HUMAN_HEIGHT, 0],
     },
   },
@@ -144,30 +145,30 @@ export const NAV_CAM_POSITION = {
   inMain: {
     outside: false,
     'pod': {
-      camera: [-0.006, 1.593 - 1.6 + HUMAN_HEIGHT, 0.049],
+      camera: [-0.006, -0.007 + HUMAN_HEIGHT, 0.049],
       target: [0, HUMAN_HEIGHT, 0],
     },
     'office': {
-      camera: [-0.006, 1.593 - 1.6 + HUMAN_HEIGHT, 0.049],
+      camera: [-0.006, -0.007 + HUMAN_HEIGHT, 0.049],
       target: [0, HUMAN_HEIGHT, 0],
     },
     'studio': {
-      camera: [-0.006, 1.593 - 1.6 + HUMAN_HEIGHT, 0.049],
+      camera: [-0.006, -0.007 + HUMAN_HEIGHT, 0.049],
       target: [0, HUMAN_HEIGHT, 0],
     },
   },
   inExtraDoor: {
     outside: false,
     'pod': {
-      camera: [0, 0 + HUMAN_HEIGHT, 0.005],
+      camera: [0, HUMAN_HEIGHT, 0.005],
       target: [0, HUMAN_HEIGHT, 0],
     },
     'office': {
-      camera: [0, 0 + HUMAN_HEIGHT, 0.005],
+      camera: [0, HUMAN_HEIGHT, 0.005],
       target: [0, HUMAN_HEIGHT, 0],
     },
     'studio': {
-      camera: [0, 0 + HUMAN_HEIGHT, 0.005],
+      camera: [0, HUMAN_HEIGHT, 0.005],
       target: [0, HUMAN_HEIGHT, 0],
     },
   },
