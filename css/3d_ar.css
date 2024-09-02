@@ -938,6 +938,7 @@ body, html {
 
 .menu__footer_delivery_info {
   margin-bottom: 6px;
+  position: relative;
 }
 
 .menu__footer_delivery_info .wrapper {
@@ -956,7 +957,8 @@ body, html {
   width: 16px;
   height: 16px;
   margin-left: 2px;
-  cursor: pointer;
+  /* cursor: pointer; */
+  cursor: help;
 }
 
 .delivery_info_caption {
@@ -1582,6 +1584,61 @@ textarea[name="ar_order_comment"] {
 .option.disabled .component_price {
   color: var(--marevo-color-disabled, #B9B9B9);
 }
+
+/* -------------------- */
+
+.ar_total_amount__container {
+  position: relative;
+}
+
+.popup__info {
+  display: flex;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: calc(100% + 60px);
+  padding: 30px;
+  background-color: var(--marevo-color-bgrd-menu, #fff);
+  border: 1px solid var(--marevo-color-popup-border, #ECECEF);
+  border-radius: 20px;
+  left: 0;
+  top: 0;
+  transform: translateY(calc(-100% - 20px));
+  z-index: 1;
+}
+
+.popup__info.hidden {
+  display: none;
+}
+
+.popup__info_close {
+  content: var(--marevo-ui-icon_popup_close);
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+}
+
+.popup__info_content {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--marevo-color-text-black, #000);
+}
+
+
+.popup__info_date {
+}
+.popup__info_content_date {
+}
+
+.popup__info_tax {
+}
+.popup__info_content_tax {
+}
+
 
 /* ################  MOBILE ################ */
 
@@ -2346,7 +2403,9 @@ textarea[name="ar_order_comment"] {
 
   /*!------------------------------------*/
 
-
+  .annotation-text {
+    display: none;
+  }
 }
 
 @media (max-width: 449px) {

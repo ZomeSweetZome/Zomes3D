@@ -1567,6 +1567,7 @@ function CheckChanges(houseId = '') {
 
   // setOptionsResult();
   calculatePrice();
+  calculateAndSetEstimateDate();
   // getOrderList();
 }
 //! ************************************************
@@ -2903,6 +2904,64 @@ async function PrepareUI() {
     furnitureRadioBtnsHandlers();
     notificationHandler();
   });
+
+  // Date and Tax popups
+  jQuery(document).ready(function () {
+    $('.menu__footer_delivery_info .menu__footer__info_icon').on('click', function () {
+      $('.popup__info_date').toggleClass('hidden');
+    });
+
+    $('.menu__footer_payment_info .menu__footer__info_icon').on('click', function () {
+      $('.popup__info_tax').toggleClass('hidden');
+    });
+
+    $('.popup__info_close').on('click', function () {
+      $('.popup__info').addClass('hidden');
+    });
+  });
+}
+
+function calculateAndSetEstimateDate() {
+  const estimateDate = getData(dataPrice, 'estimateDate', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`);
+  const leadTimeWeeks = getData(dataPrice, 'leadTimeWeeks', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`);
+  const dateText = getDateOrAddThreeWeeks(estimateDate, leadTimeWeeks, currentLanguage);
+  $('#delivery_info_date').text(dateText);
+  $('.popup__info_content_date').html(`Ships ${dateText}. Estimated delivery time is ${leadTimeWeeks} weeks from the date of purchase.`);
+}
+
+function getDateOrAddThreeWeeks(dateStr, leadTimeWeeks = 3, lang = 'EN') {
+  const monthNames = {
+    EN: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+    FR: ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"],
+    ES: ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"]
+  };
+
+  const formatDate = (date, language) => {
+    const month = monthNames[language][date.getMonth()];
+    const day = date.getDate();
+    const year = date.getFullYear();
+
+    if (language === 'EN') {
+      return `${month} ${day}, ${year}`;
+    } else if (language === 'FR' || language === 'ES') {
+      return `${day} ${month} ${year}`;
+    }
+  };
+
+  let [month, day, year] = dateStr.split('/');
+
+  if (year.length === 2) {
+    year = (year >= '80' ? '19' : '20') + year;
+  }
+
+  let inputDate = new Date(year, month - 1, day);
+  let currentDate = new Date();
+  let threeWeeksLater = new Date();
+  threeWeeksLater.setDate(currentDate.getDate() + leadTimeWeeks * 7);
+
+  let resultDate = (inputDate > threeWeeksLater) ? inputDate : threeWeeksLater;
+
+  return formatDate(resultDate, lang);
 }
 
 // *****   MENU-INFO   *****
