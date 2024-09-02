@@ -4060,7 +4060,7 @@ function getHouseDimensions() {
 
   return [diameter, height];
 }
-округление ряазмеров кратно 0,5
+
 function removeDimensions() {
   dimensionObjects.forEach(obj => {
     scene.remove(obj);
