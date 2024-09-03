@@ -1874,6 +1874,7 @@ function getOrderList() {
 
 function formatPrice(price, currency) {
   if (!price 
+    && SharedParameterList[1].value[2] != 1 // custom windows
     && SharedParameterList[4].value[3] != 1 // extra door
     && SharedParameterList[4].value[5] != 1 // smart glass
   ) { 
@@ -3257,8 +3258,10 @@ function notificationHandler() {
 function summaryBtnsHandler() {
   $('#ar_button_order').on('click', function () {
     //! TODO take two pictures of the model
+
     collectSummary();
     openSummary();
+    $('.summary__popup-overlay').scrollTop(0);
   });
 
   $('#modifyConfiguration').on('click', function () {
@@ -3295,9 +3298,15 @@ function collectSummary() {
     const groupId = group.attr('id');
     const groupTitle = group.find('.ar_filter_caption').text();
     const filterOptions = group.find('.ar_filter_options');
+    
+    let classes = `details__group details__${filterOptions.attr('class').split(' ')[1]}`
+    
+    if (groupId === 'group-1') { // Windows group
+      classes = classes + ' details__type_select';
+    }
 
     const detailsGroup = $('<div>', {
-      class: `details__group details__${filterOptions.attr('class').split(' ')[1]}`,
+      class: classes,
       id: `details__${groupId}`
     });
 

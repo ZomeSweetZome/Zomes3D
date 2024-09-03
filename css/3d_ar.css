@@ -197,7 +197,7 @@ body, html {
   height: 100%;
 }
 
-#external-link .external-link__logo {
+.external-link__logo {
   display: inline-block;
   text-align: center;
   content: var(--marevo-ui-icon_arrow_up45);
@@ -1717,6 +1717,8 @@ textarea[name="ar_order_comment"] {
   display: flex;
   flex-direction: column;
   min-width: 100%;
+
+  margin-bottom: 30px;
 }
 
 .details__group {
@@ -1769,16 +1771,192 @@ textarea[name="ar_order_comment"] {
   display: none;
 }
 
+.summary__link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  align-self: flex-start;
+  color: var(--marevo-color-text-black, #000);
+  text-decoration: none;
+  font-family: "Inter", sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  cursor: pointer;
+  padding-bottom: 9px;
+  border-bottom: 0.5px solid #000;
+  margin-bottom: 50px;
+}
 
+.summary__link .external-link__logo {
+  width: 26px;
+  height: 26px;
+  margin-left: 0px;
+}
 
+.shipping_rates, 
+.estimated_delivery_time {
+  font-size: 18px;
+  color: var(--marevo-color-text-black, #000);
+  font-weight: 500;
+  margin-bottom: 30px;
+}
 
+#shipping_rates_title,
+#estimated_delivery_title {
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
 
+#shipping_rates_text,
+#estimated_delivery_text {
+  margin-bottom: 30px;
+}
 
+#shipping_rates_america,
+#shipping_rates_europe {
+  font-weight: 700;
+  margin-bottom: 20px;
+}
 
+.shipping_rates ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  margin-bottom: 20px;
+}
 
+.shipping_rates li {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-top: 1px solid #000;
+  margin-bottom: 14px;
+}
 
-.summary__popup-content form .full-width {
-  flex: 1 1 100%;
+.estimated_delivery_time {
+  margin-bottom: 20px;
+}
+
+.summary__form-title {
+  align-self: flex-start;
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 30px;
+}
+
+.summary__popup-content form {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+  column-gap: 30px;
+}
+
+.summary__form-item {
+  display: flex;
+  text-align: center;
+  align-items: center;
+  width: 100%;
+  height: 56px;
+  padding: 0 20px;
+  border-radius: 50px;
+  border: 1px solid var(--marevo-color-text-black, #000);
+  margin-bottom: 30px;
+}
+
+.summary__form-item_name,
+.summary__form-item_phone,
+.summary__form-item_address,
+.summary__form-item_city,
+.summary__form-item_country,
+.summary__form-item_zipcode {
+  width: calc(50% - 15px);
+}
+
+.summary__form-item_inquiries {
+  min-height: 120px;
+  margin-bottom: 50px;
+}
+
+.summary__form-item label {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--marevo-color-text-gray, #000);
+  margin-right: 20px;
+}
+
+.summary__form-item_inquiries textarea {
+  width: 80%;
+  height: 80%;
+  border: none;
+  outline: none;
+  resize: none;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--marevo-color-text-black, #000);
+}
+
+.summary__form-item input {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--marevo-color-text-black, #000);
+  border: none;
+  outline: none;
+}
+
+.summary__form-item_checkbox {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--marevo-color-text-gray, #000);
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.form__footer_container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  text-align: center;
+  align-items: center;
+  width: 100%;
+  margin: 50px 0;
+}
+
+.form__footer_container .summary__link {
+  margin: auto 0;
+}
+
+.form__footer_container button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  align-self: flex-start;
+  cursor: pointer;
+  width: max(50%, 440px);
+  height: 56px;
+  border-radius: 50px;
+  font-size: 18px;
+  font-weight: 500;
+  background-color: var(--marevo-color-text-black, #000);
+  color: var(--marevo-color-text-white, #fff);
+  border: none;
+  margin-right: 12px;
+}
+
+.form__footer_container button:disabled {
+  background-color: var(--marevo-color-text-gray, #000);
+  color: var(--marevo-color-text-white, #fff);
+  cursor: default;
+}
+
+.form_button__logo {
+  content: var(--marevo-ui-icon_btn_download_right_w);
+  width: 26px;
+  height: 26px;
 }
 
 /* ################  MOBILE ################ */
