@@ -1786,19 +1786,56 @@ function calculatePrice() {
     optionPrice = convertPriceToNumber(getData(dataPrice, activeOptions[i], `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
     if (activeOptions[i] === 'option_1-2') { // custom windows
       const windowsQty = Object.values(customWindows).reduce((total, array) => total + array.length, 0);
-      const windowsPrice = optionPrice * windowsQty;
-      $(`.${activeOptions[i]} .component_price`).html(formatPrice(windowsPrice, currentCurrencySign));
-      totalAmount += windowsPrice;
+      const windowsCustomPrice = optionPrice * windowsQty;
+      $(`.${activeOptions[i]} .component_price`).html(formatPrice(windowsCustomPrice, currentCurrencySign));
+      totalAmount += windowsCustomPrice;
     } else if (activeOptions[i] === 'option_4-5') { // smart windows
-      continue;
+      let windowsSmartPrice = 0;
+
+      if(activeOptions.includes('option_1-2')) { // custom windows
+        const windowsQty = Object.values(customWindows).reduce((total, array) => total + array.length, 0);
+        windowsSmartPrice = optionPrice * windowsQty;
+        $(`.${activeOptions[i]} .component_price`).html(formatPrice(windowsSmartPrice, currentCurrencySign));
+        totalAmount += windowsSmartPrice;
+      } else if(!activeOptions.includes('option_1-2')) { // NOT custom windows
+        if(activeOptions.includes('option_1-1')) { // viewport
+          const windowsQty = 4;
+          windowsSmartPrice = windowsSmartPrice + optionPrice * windowsQty;
+          $(`.${activeOptions[i]} .component_price`).html(formatPrice(windowsSmartPrice, currentCurrencySign));
+          totalAmount += windowsSmartPrice;
+        }
+
+        if(activeOptions.includes('option_1-0')) { // strip
+          let windowsQty = 4;
+          if(activeOptions.includes('option_0-0') || activeOptions.includes('option_0-1')) { // pod or office
+            windowsQty = 4;
+          }
+
+          if(activeOptions.includes('option_0-2')) { // studio
+            windowsQty = 5;
+          }
+
+        windowsSmartPrice = windowsSmartPrice + optionPrice * windowsQty;
+          $(`.${activeOptions[i]} .component_price`).html(formatPrice(windowsSmartPrice, currentCurrencySign));
+          totalAmount += windowsSmartPrice;
+        }
+      }
     } else {
       $(`.${activeOptions[i]} .component_price`).html(formatPrice(optionPrice, currentCurrencySign));
       totalAmount += optionPrice;
     }
   }
 
-  totalAmount = totalAmount.toFixed(0);
+  if (!activeOptions.includes('option_0-2')) { // the hous is not a studio
+    $(`.option_4-3 .component_price`).html(`${getData(mainData, 'ui_component_not_allowed', currentLanguage)}`);
+  }
 
+  if (!activeOptions.includes('option_4-5')) { // smart windows is not active
+    const price = convertPriceToNumber(getData(dataPrice, 'option_4-5', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
+    $(`.option_4-5 .component_price`).html(`${formatPrice(price, currentCurrencySign)} ${getData(mainData, 'ui_per_window', currentLanguage)}`);
+  }
+
+  totalAmount = totalAmount.toFixed(0);
   totalAmountElement.innerText = formatPrice(totalAmount, currentCurrencySign);
 }
 
@@ -1834,61 +1871,34 @@ function getOrderList() {
   return orderList;
 }
 
-// function formatPrice(price, currency) {
-//   if (!price) { return ''; }
-//   if (!currency) { currency = '' }
-
-//   let result, firstSeparator, secondSeparator;
-//   const priceString = price + '';
-
-//   switch (currency) {
-//     case 'грн':
-//       firstSeparator = ' ';
-//       secondSeparator = ',';
-//       break;
-//     case '$':
-//       firstSeparator = ' ';
-//       secondSeparator = '.';
-//       break;
-//     case '€':
-//       firstSeparator = ' ';
-//       secondSeparator = ',';
-//       break;
-
-//     default:
-//       firstSeparator = '.';
-//       secondSeparator = ',';
-//       currency = '';
-//       break;
-//   }
-
-//   const parts = priceString.split('.');
-//   const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, firstSeparator);
-//   let decimalPart = parts[1] && parts[1].replace('.', secondSeparator);
-
-//   if (decimalPart && decimalPart.length === 1) {
-//     decimalPart += '0';
-//   }
-
-//   if (currency === 'грн') {
-//     result = (decimalPart)
-//       ? `${integerPart}${secondSeparator}${decimalPart} ${currency}`
-//       : `${integerPart}${secondSeparator}00 ${currency}`;
-//   } else {
-//     result = (decimalPart)
-//       ? `${currency} ${integerPart}${secondSeparator}${decimalPart}`
-//       : `${currency} ${integerPart}${secondSeparator}00`;
-//   }
-
-//   return result;
-// }
-
 function formatPrice(price, currency) {
-  if (!price) { return ''; }
+  if (!price 
+    && SharedParameterList[4].value[3] != 1 // extra door
+    && SharedParameterList[4].value[5] != 1 // smart glass
+  ) { 
+    return getData(mainData, 'ui_component_price_included', currentLanguage);
+  }
+
+  // if (!price 
+  //   && SharedParameterList[4].value[5] != 1 // extra door
+  // ) { 
+  //   price = convertPriceToNumber(getData(dataPrice, 'option_4-5', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
+  //   return `${formatPrice(price, currentCurrencySign)} ${getData(mainData, 'ui_per_window', currentLanguage)}`;
+  // }
+
+  if (!price 
+    && SharedParameterList[4].value[5] != 1 // smart glass
+  ) { 
+    // price = convertPriceToNumber(getData(dataPrice, 'option_4-5', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
+    // return `${formatPrice(price, currentCurrencySign)} ${getData(mainData, 'ui_per_window', currentLanguage)}`;
+  }
+
+  if (!price) { price = '' }
+  
   if (!currency) { currency = '' }
 
   let result, firstSeparator;
-  const priceString = Math.floor(price).toString(); // Округляем цену до целого числа
+  const priceString = Math.floor(price).toString();
 
   switch (currency) {
     case 'грн':
@@ -1906,7 +1916,6 @@ function formatPrice(price, currency) {
       break;
   }
 
-  // Форматируем целую часть числа с разделителем тысяч
   const integerPart = priceString.replace(/\B(?=(\d{3})+(?!\d))/g, firstSeparator);
 
   if (currency === 'грн') {
@@ -1925,9 +1934,8 @@ function SendProductInfo(element) {
   const resultString = getOrderList();
   console.log(resultString);
 
-  //! TODO (the code below is not corrected. It was just taken from the TBT code)
   // if(element.classList.contains('tbl-price-btn')){
-  //     element.classList.add('load')
+  //   element.classList.add('load')
   // }
   // createProduct()
 
@@ -3329,15 +3337,21 @@ function collectSummary() {
         class: `details__item ${optionClasses.join(' ')}`
       });
       
+      const textContainer = $('<div>', {
+        class: 'details__item_text_container'
+      });
+
       $('<div>', {
         class: 'details__item_title',
         text: optionTitle
-      }).appendTo(detailsItem);
-      
+      }).appendTo(textContainer);
+
       $('<div>', {
         class: 'details__item_not_included',
         text: getData(mainData, 'ui_summary_not_included', currentLanguage),
-      }).appendTo(detailsItem);
+      }).appendTo(textContainer);
+
+      textContainer.appendTo(detailsItem);
 
       $('<div>', {
         class: 'details__item_price',

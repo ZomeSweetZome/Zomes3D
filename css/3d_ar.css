@@ -1752,13 +1752,21 @@ textarea[name="ar_order_comment"] {
   color: var(--marevo-color-text-black, #000);
 }
 
+.details__item_text_container {
+  display: flex;
+  flex-direction: row;
+}
 
 .details__type_select .details__option {
   display: none;
 }
 
-.details__type_select .details__option.details__active {
+.details__option.details__active {
   display: flex;
+}
+
+.details__option.details__active .details__item_not_included {
+  display: none;
 }
 
 
