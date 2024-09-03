@@ -2939,6 +2939,7 @@ async function PrepareUI() {
     furnitureBtnHandler();
     furnitureRadioBtnsHandlers();
     notificationHandler();
+    orderBtnHandler();
   });
 
   // Date and Tax popups
@@ -3268,6 +3269,10 @@ function notificationHandler() {
   });
 }
 
+function orderBtnHandler() {
+  // $()
+}
+
 // eslint-disable-next-line no-unused-vars
 function getScrollbarWidth() {
   const outer = $('<div>').css({ visibility: 'hidden', width: 100, overflow: 'scroll' }).appendTo('body');
@@ -3325,7 +3330,7 @@ $(document).on('click', '#title_list__item_3', function () { // exterior group
 });
 
 $(document).on('click', '.option.option_4-3', function () { // extra door
-  if (currentHouse == '2') {
+  if (currentHouse == '2' && $('.option.option_4-3').hasClass('active')) {
     if (isCameraInside) {
       flyCameraTo('inExtraDoor', 'inside');
     } else {
@@ -3335,10 +3340,12 @@ $(document).on('click', '.option.option_4-3', function () { // extra door
 });
 
 $(document).on('click', '.option.option_4-1', function () { // in-build desk
-  if (isCameraInside) {
-    flyCameraTo('inBuildInDesk', 'inside');
-  } else {
-    flyCameraTo('inBuildInDesk', 'inside');
+  if ($('.option.option_4-1').hasClass('active')) {
+    if (isCameraInside) {
+      flyCameraTo('inBuildInDesk', 'inside');
+    } else {
+      flyCameraTo('inBuildInDesk', 'inside');
+    }
   }
 });
 
