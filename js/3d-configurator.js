@@ -1569,6 +1569,7 @@ function CheckChanges(houseId = '') {
   // setOptionsResult();
   calculatePrice();
   calculateAndSetEstimateDate();
+  collectSummary();
   // getOrderList();
 }
 //! ************************************************
@@ -1879,22 +1880,7 @@ function formatPrice(price, currency) {
     return getData(mainData, 'ui_component_price_included', currentLanguage);
   }
 
-  // if (!price 
-  //   && SharedParameterList[4].value[5] != 1 // extra door
-  // ) { 
-  //   price = convertPriceToNumber(getData(dataPrice, 'option_4-5', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
-  //   return `${formatPrice(price, currentCurrencySign)} ${getData(mainData, 'ui_per_window', currentLanguage)}`;
-  // }
-
-  if (!price 
-    && SharedParameterList[4].value[5] != 1 // smart glass
-  ) { 
-    // price = convertPriceToNumber(getData(dataPrice, 'option_4-5', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
-    // return `${formatPrice(price, currentCurrencySign)} ${getData(mainData, 'ui_per_window', currentLanguage)}`;
-  }
-
   if (!price) { price = '' }
-  
   if (!currency) { currency = '' }
 
   let result, firstSeparator;
@@ -2876,12 +2862,6 @@ async function PrepareUI() {
     }
 
     currentCurrency = $('.currency-picker select').val() || DEFAULT_CURRENCY;
-
-    $('.currency-picker select').on('change', function () {
-      currentCurrency = $(this).val();
-      currentCurrencySign = CURRENCY_SIGN[currentCurrency] || CURRENCY_SIGN['USD'];
-      calculatePrice();
-    });
   });
 
   jQuery(document).ready(function () {
@@ -2913,7 +2893,10 @@ async function PrepareUI() {
 
     $('.currency-picker select').on('change', function () {
       currentCurrency = $(this).val();
+      currentCurrencySign = CURRENCY_SIGN[currentCurrency] || CURRENCY_SIGN['USD'];
+
       console.log("🚀 ~ currentCurrency:", currentCurrency);
+
       let valueForURL;
       switch (currentCurrency) {
         case 'USD':
