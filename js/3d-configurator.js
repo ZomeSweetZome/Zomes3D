@@ -2867,12 +2867,6 @@ async function PrepareUI() {
       infoSharingInput[0].value = GetURLWithParameters();
     }
 
-    const btnBuy = $('#ar_button_order');
-
-    btnBuy.on('click', function () {
-      SendProductInfo();
-    });
-
     currentCurrency = $('.currency-picker select').val() || DEFAULT_CURRENCY;
 
     $('.currency-picker select').on('change', function () {
@@ -2939,7 +2933,7 @@ async function PrepareUI() {
     furnitureBtnHandler();
     furnitureRadioBtnsHandlers();
     notificationHandler();
-    orderBtnHandler();
+    summaryBtnsHandler();
   });
 
   // Date and Tax popups
@@ -3269,9 +3263,85 @@ function notificationHandler() {
   });
 }
 
-function orderBtnHandler() {
-  // $()
+function summaryBtnsHandler() {
+  $('#ar_button_order').on('click', function () {
+    //! TODO take two pictures of the model
+    collectSummary();
+    openSummary();
+  });
+
+  $('#modifyConfiguration').on('click', function () {
+    closeSummary();
+  });
+
+  $('#backToConfiguration').on('click', function () {
+    closeSummary();
+  });
 }
+
+function getPdfBtnHandler() {
+  $('#getPDF').on('click', function () {
+    //! TODO generate PDF file
+
+    closeSummary();
+  });
+}
+
+function openSummary() {
+  $('.summary__popup-overlay').addClass('active');
+}
+
+function closeSummary() {
+  $('.summary__popup-overlay').removeClass('active');
+}
+
+function collectSummary() {
+  const detailsContainer = $('.summary__popup-content .details');
+  detailsContainer.empty();
+
+  $('.ar_filter_group').each(function() {
+    const group = $(this);
+    const groupId = group.attr('id');
+    const groupTitle = group.find('.ar_filter_caption').text();
+    const filterOptions = group.find('.ar_filter_options');
+
+    const detailsGroup = $('<div>', {
+      class: `details__group details__${filterOptions.attr('class').split(' ')[1]}`,
+      id: `details__${groupId}`
+    });
+
+    $('<div>', {
+      class: 'details__group_title',
+      text: groupTitle
+    }).appendTo(detailsGroup);
+
+    filterOptions.find('.option').each(function() {
+      const option = $(this);
+      const optionClasses = option.attr('class').split(' ').map(cls => `details__${cls}`);
+      const optionTitle = option.find('.component_title').text();
+      const optionPrice = option.find('.component_price').text();
+
+      const detailsItem = $('<div>', {
+        class: `details__item ${optionClasses.join(' ')}`
+      });
+
+      $('<div>', {
+        class: 'details__item_title',
+        text: optionTitle
+      }).appendTo(detailsItem);
+
+      $('<div>', {
+        class: 'details__item_price',
+        text: optionPrice
+      }).appendTo(detailsItem);
+
+      detailsItem.appendTo(detailsGroup);
+    });
+
+    detailsGroup.appendTo(detailsContainer);
+  });
+}
+
 
 // eslint-disable-next-line no-unused-vars
 function getScrollbarWidth() {
