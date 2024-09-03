@@ -46,7 +46,34 @@ export async function createMenu(mainData) {
         { '#menu_info_tab_specs': 'ui_menu_info_tab_specs' },
         { '#canvas_notification': 'ui_canvas_notification' },
         { '#canvas_notification_limit': 'ui_canvas_notification_limit' },
+        // ----------
+        { '.summary__popup-title': 'ui_summary_title' },
+        { '.details__item_not_included': 'ui_summary_not_included' },
+        { '#modify_configuration_txt': 'ui_summary_modify_conf' },
+        { '#shipping_rates_title': 'ui_summary_shipping_rates_title' },
+        { '#shipping_rates_text': 'ui_summary_shipping_rates_text' },
+        { '#shipping_rates_america': 'ui_summary_shipping_rates_america' },
+        { '#shipping_rates_europe': 'ui_summary_shipping_rates_europe' },
+        { '#estimated_delivery_title': 'ui_summary_estimated_delivery_title' },
+        { '#estimated_delivery_text': 'ui_summary_estimated_delivery_text' },
+        { '#summary_form_title': 'ui_summary_form_title' },
+        { '#summary_form_label_name': 'ui_summary_form_label_name' },
+        { '#summary_form_label_phone': 'ui_summary_form_label_phone' },
+        { '#summary_form_label_email': 'ui_summary_form_label_email' },
+        { '#summary_form_label_address': 'ui_summary_form_label_address' },
+        { '#summary_form_label_city': 'ui_summary_form_label_city' },
+        { '#summary_form_label_country': 'ui_summary_form_label_country' },
+        { '#summary_form_label_zipcode': 'ui_summary_form_label_zipcode' },
+        { '#summary_form_label_inquiries': 'ui_summary_form_label_questions' },
+        { '#summary_form_checkbox_allow': 'ui_summary_form_checkbox_allow' },
+        { '#summary_form_checkbox_signme': 'ui_summary_form_checkbox_signme' },
+        { '#summary_back_to_conf': 'ui_summary_back_to_conf' },
+        { '#summary_btn_text': 'ui_summary_btn_text' },
+        // { '#pdf_personal_details': 'ui_pdf_personal_details' },
+        // { '#pdf_your_configuration': 'ui_pdf_your_configuration' },
+        // { '#pdf_total': 'ui_pdf_total' },
       );
+
 
       const groupsContainer = $('#ar_filter');
       const summaryList = $('.ar_summary .ar_summary_list');

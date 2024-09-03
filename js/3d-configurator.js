@@ -3280,7 +3280,7 @@ function summaryBtnsHandler() {
 }
 
 function getPdfBtnHandler() {
-  $('#getPDF').on('click', function () {
+  $('#summary_btn_text').on('click', function () {
     //! TODO generate PDF file
 
     closeSummary();
@@ -3319,15 +3319,24 @@ function collectSummary() {
       const option = $(this);
       const optionClasses = option.attr('class').split(' ').map(cls => `details__${cls}`);
       const optionTitle = option.find('.component_title').text();
-      const optionPrice = option.find('.component_price').text();
+      let optionPrice = option.find('.component_price').text();
+
+      if (!optionClasses.includes('details__active')) {
+        optionPrice = `${currentCurrencySign} 0`;
+      }
 
       const detailsItem = $('<div>', {
         class: `details__item ${optionClasses.join(' ')}`
       });
-
+      
       $('<div>', {
         class: 'details__item_title',
         text: optionTitle
+      }).appendTo(detailsItem);
+      
+      $('<div>', {
+        class: 'details__item_not_included',
+        text: getData(mainData, 'ui_summary_not_included', currentLanguage),
       }).appendTo(detailsItem);
 
       $('<div>', {
@@ -3341,7 +3350,6 @@ function collectSummary() {
     detailsGroup.appendTo(detailsContainer);
   });
 }
-
 
 // eslint-disable-next-line no-unused-vars
 function getScrollbarWidth() {

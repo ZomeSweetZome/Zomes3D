@@ -321,38 +321,29 @@
         <div class="popup-overlay"></div>
       </div>
 
-      <!-- SUMMARY and FORM -->
-      <!-- active -->
+      <!-- summary before pdf -->
       <div class="summary__popup-overlay ">
         <div class="summary__popup-content">
-          <!-- !TODO  <img src="path_to_image" alt="Zome Model"> -->
-          <div class="details">
-            
-            <!-- <div class="details__group details__type_checkbox" id="details__group-4">
-              <div class="details__group_title"></div>
-              <div class="details__item details__option_4-0 details__active">
-                <div class="details__item_name"></div>
-                <div class="details__item_price"></div>
-              </div>
-            
-              <div class="details__item details__option_4-1 details__disabled">
-                <div class="details__item_title"></div>
-                <div class="details__item_price"></div>
-              </div>
-            </div> -->
+          <div class="summary__popup-title">Your Zome looks amazing!</div>
 
+          <div class="summary__images_container">
+            <!-- !TODO  <img src="path_to_image" alt="Zome Model"> -->
+            <!-- !TODO  <img src="path_to_image" alt="Zome Model"> -->
+            <!-- !TODO  <img src="path_to_image" alt="Zome Model"> -->
+             pictures will be here
           </div>
+
+          <div class="details"></div>
           
           <div id="modifyConfiguration">
             <span id="modify_configuration_txt">MODIFY CONFIGURATION</span>
             <div class="external-link__logo"></div>
           </div>
 
-          <div class="shipping-rates">
-            <h2>Shipping Rates</h2>
-            <p>Your dome needs 1 pallet(s). Check your region for the costs of the shipping:</p>
-            
-            <p><strong>North & South America:</strong> For shipping quotes to North and South America, Australia and New Zealand please contact us directly. We will check the cost for your customization individually.</p>
+          <div class="shipping_rates">
+            <div id="shipping_rates_title">Shipping Rates</div>
+            <div id="shipping_rates_text">Your dome needs 1 pallet(s). Check your region for the costs of the shipping:</div>
+            <div id="shipping_rates_america">North & South America: For shipping quotes to North and South America, Australia and New Zealand please contact us directly. We will check the cost for your customization individually.</div>
 
             <ul>
               <li>USA Northeast - $0</li>
@@ -362,7 +353,7 @@
               <li>USA Northeast - $0</li>
             </ul>
             
-            <p><strong>Europe:</strong> For shipping quotes to Europe please contact us directly. We will check the cost for your customization individually.</p>
+            <div id="shipping_rates_europe">Europe: For shipping quotes to Europe please contact us directly. We will check the cost for your customization individually.</div>
             
             <ul>
               <li>England - $0</li>
@@ -375,30 +366,76 @@
             </ul>
           </div>
           
-          <div class="estimated-delivery-time">
-            <h2>Estimated Delivery Time</h2>
-            <p>Production and delivery time depend on the FDomes customization and quantity. Please contact our Sales Team for more details and current lead times.</p>
+          <div class="estimated_delivery_time">
+            <div id="estimated_delivery_title">Estimated Delivery Time</div>
+            <div id="estimated_delivery_text">Production and delivery time depend on the FDomes customization and quantity. Please contact our Sales Team for more details and current lead times.</div>
           </div>
 
+          <div id="summary_form_title">Estimated Delivery Time</div>
+
           <form id="popupForm">
-            <input type="text" name="name" id="name" placeholder="First & last name" required>
-            <input type="tel" name="phone" id="phone" placeholder="Telephone" required>
-            <input type="email" name="email" id="email" placeholder="Email address" required>
-            <input type="text" name="address" id="address" placeholder="Address" required>
-            <input type="text" name="city" id="city" placeholder="City" required>
-            <input type="text" name="country" id="country" placeholder="Country" required>
-            <input type="text" name="zipcode" id="zipcode" placeholder="Zipcode" required>
-            <textarea name="inquiries" id="inquiries" placeholder="Any questions or inquiries?" class="full-width"></textarea>
-            <label class="full-width"><input type="checkbox" id="fdExpert" name="fdExpert"> Allow FDomes Expert to get in touch with me about my Zome</label>
-            <label class="full-width"><input type="checkbox" id="newsletter" name="newsletter"> Sign me up for monthly email updates and special deals (only 1x email per month)</label>
+            <div class="summary__form-item summary__form-item_name">
+              <label for="form_name" id="summary_form_label_name"></label>
+              <input type="text" name="name" id="form_name" placeholder="First & last name" required>
+            </div>
+
+            <div class="summary__form-item summary__form-item_phone">
+              <label for="form_phone" id="summary_form_label_phone"></label>
+              <input type="tel" name="phone" id="form_phone" placeholder="Telephone" required>
+            </div>
+
+            <div class="summary__form-item summary__form-item_email">
+              <label for="form_email" id="summary_form_label_email"></label>
+              <input type="email" name="email" id="form_email" placeholder="Email address" required>
+            </div>
+
+            <div class="summary__form-item summary__form-item_address">
+              <label for="form_address" id="summary_form_label_address"></label>
+              <input type="text" name="address" id="form_address" placeholder="Address" required>
+            </div>
+
+            <div class="summary__form-item summary__form-item_city">
+              <label for="form_city" id="summary_form_label_city"></label>
+              <input type="text" name="city" id="form_city" placeholder="City" required>
+            </div>
+
+            <div class="summary__form-item summary__form-item_country">
+              <label for="form_country" id="summary_form_label_country"></label>
+              <input type="text" name="country" id="form_country" placeholder="Country" required>
+            </div>
+
+            <div class="summary__form-item summary__form-item_zipcode">
+              <label for="form_zipcode" id="summary_form_label_zipcode"></label>
+              <input type="text" name="zipcode" id="form_zipcode" placeholder="Zipcode" required>
+            </div>
+
+            <div class="summary__form-item summary__form-item_inquiries">
+              <label for="form_inquiries" id="summary_form_label_inquiries"></label>
+              <textarea name="inquiries" id="form_inquiries" placeholder="Any questions or inquiries?"
+                class="full-width"></textarea>
+            </div>
+
+            <div class="summary__form-item summary__form-item_checkbox">
+              <input type="checkbox" id="fdExpert" name="fdExpert">
+              <label for="fdExpert" class="full-width" id="summary_form_checkbox_allow">
+                Allow FDomes Expert to get in touch with me about my Zome
+              </label>
+            </div>
+
+            <div class="summary__form-item summary__form-item_checkbox">
+              <input type="checkbox" id="newsletter" name="newsletter">
+              <label for="newsletter" class="full-width" id="summary_form_checkbox_signme">
+                Sign me up for monthly email updates and special deals (only 1x email per month)
+              </label>
+            </div>
 
             <div class="form__footer_container">
               <div id="backToConfiguration">
-                <span id="back_to_configuration_txt">BACK TO CONFIGURATION</span>
+                <span id="summary_back_to_conf">BACK TO CONFIGURATION</span>
                 <div class="external-link__logo"></div>
               </div>
-
-              <button type="submit" id="getPDF" disabled>Mail PDF</button>
+        
+              <button type="submit" id="summary_btn_text" disabled>Mail PDF</button>
             </div>
           </form>
         </div>
