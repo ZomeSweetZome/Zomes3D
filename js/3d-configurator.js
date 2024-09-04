@@ -165,6 +165,9 @@ let cameraFar = 11;
 let imageSources = [];
 // let button_ar_share_download;
 
+let pdfContentData = [];
+let currentAmountString = '';
+
 // CUSTOM SELECT
 jQuery(document).ready(function () {
   $('.custom-select').select2({
@@ -1851,6 +1854,8 @@ function calculatePrice() {
 
   totalAmount = totalAmount.toFixed(0);
   totalAmountElement.innerText = formatPrice(totalAmount, currentCurrencySign);
+
+  currentAmountString = formatPrice(totalAmount, currentCurrencySign);
 }
 
 function convertPriceToNumber(priceString) {
@@ -1886,7 +1891,8 @@ function getOrderList() {
 }
 
 function formatPrice(price, currency) {
-  if (!price
+  if (
+    !price
     && SharedParameterList[1].value[2] != 1 // custom windows
     && SharedParameterList[4].value[3] != 1 // extra door
     && SharedParameterList[4].value[5] != 1 // smart glass
@@ -3294,7 +3300,7 @@ function summaryBtnsHandler() {
     $('.summary__popup-overlay').scrollTop(0);
 
     //! TEMP
-    generatePDF(currentHouse, mainData, currentLanguage, imageSources);
+    generatePDF(currentHouse, mainData, currentLanguage, imageSources, pdfContentData);
   });
 
   $('#modifyConfiguration').on('click', function () {
@@ -3329,6 +3335,10 @@ function closeSummary() {
 }
 
 function collectSummary() {
+  console.log("🚀 ~ collectSummary ~ customWindows:", customWindows);
+
+  pdfContentData.length = 0;
+
   const detailsContainer = $('.summary__popup-content .details');
   detailsContainer.empty();
 
@@ -3344,15 +3354,24 @@ function collectSummary() {
       classes = classes + ' details__type_select';
     }
 
+    classes = classes + ' details__type_select';
+    
+    const detailsGroupId = `details__${groupId}`;
+
     const detailsGroup = $('<div>', {
       class: classes,
-      id: `details__${groupId}`
+      id: detailsGroupId
     });
 
     $('<div>', {
       class: 'details__group_title',
       text: groupTitle
     }).appendTo(detailsGroup);
+
+    pdfContentData.push(
+      { text: groupTitle, style: 'subtitle', margin: [0, 0, 0, 0], },
+      { canvas: [ { type: 'line', x1: 0, y1: 0, x2: 535, y2: 0, lineWidth: 0.5 }], margin: [0, 6, 0, 6], },
+    );
 
     filterOptions.find('.option').each(function () {
       const option = $(this);
@@ -3388,20 +3407,71 @@ function collectSummary() {
         class: 'details__item_price',
         text: optionPrice
       }).appendTo(detailsItem);
-
+      
       detailsItem.appendTo(detailsGroup);
+
+
+
+      if (optionClasses.includes('details__active')) {
+        const windowsCode = (optionClasses.includes('details__option_1-2')) ? formatCustomWindows(customWindows) : '';
+
+        pdfContentData.push(
+          { columns: [
+            { text: optionTitle + windowsCode, style: 'tableText', width: '70%', margin: [0, 0, 0, 0], },
+            { text: '', width: '*', margin: [0, 0, 0, 0] },
+            { text: optionPrice, style: 'tableText', margin: [0, 0, 0, 0], alignment: 'right', },
+          ]},
+        );
+      }
+      console.log("🚀 ~ detailsGroupId:", detailsGroupId);
+      if (!optionClasses.includes('details__active') && detailsGroupId === 'details__group-4') { // ADD-ONs
+        pdfContentData.push(
+          { columns: [
+            { text: optionTitle + getData(mainData, 'ui_summary_not_included', currentLanguage),  width: '70%', style: 'tableText', margin: [0, 0, 0, 0], },
+            { text: '', width: '*', margin: [0, 0, 0, 0] },
+            { text: optionPrice, style: 'tableText', margin: [0, 0, 0, 0], alignment: 'right', },
+          ]},
+        );
+      }
     });
 
     detailsGroup.appendTo(detailsContainer);
+
+    pdfContentData.push(
+      { text: '', width: '*', margin: [0, 0, 0, 10] },
+    );
   });
+
+  pdfContentData.push(
+    { canvas: [ { type: 'line', x1: 0, y1: 0, x2: 535, y2: 0, lineWidth: 1 }], margin: [0, 10, 0, 6], },
+    { columns: [
+      { text: getData(mainData, 'ui_pdf_total', currentLanguage), width: '70%', style: 'tableTitle', margin: [0, 0, 0, 0], },
+      { text: '', width: '*', margin: [0, 0, 0, 0] },
+      { text: currentAmountString, style: 'tableTitle', margin: [0, 0, 0, 0], alignment: 'right', },
+    ]},
+  );
 }
 
-// eslint-disable-next-line no-unused-vars
-function getScrollbarWidth() {
-  const outer = $('<div>').css({ visibility: 'hidden', width: 100, overflow: 'scroll' }).appendTo('body');
-  const widthWithScroll = $('<div>').css({ width: '100%' }).appendTo(outer).outerWidth();
-  outer.remove();
-  return 100 - widthWithScroll;
+function formatCustomWindows(customWindowsObj) {
+  const parts = [];
+
+  for (const key in customWindowsObj) {
+    if (Object.prototype.hasOwnProperty.call(customWindowsObj, key)) {
+      const array = customWindowsObj[key];
+      
+      if (array.length > 0) {
+        const count = array.length;
+        const upperKey = key.toUpperCase();
+        parts.push(`${count}X${upperKey}`);
+      }
+    }
+  }
+
+  if (parts.length === 0) {
+    return '';
+  }
+
+  return ` (${parts.join(' + ')})`;
 }
 
 function summaryItemVisibility(groupId, value) {
@@ -4264,6 +4334,8 @@ const cameraImageViews_Global = [
 ];
 
 function CreateImageList() {
+  imageSources.length = 0;
+
   if (summary_images == null) {
     summary_images = document.querySelector("div.summary__images_container");
   }
