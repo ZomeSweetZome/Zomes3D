@@ -225,16 +225,16 @@ export function generatePDF(
 
     const headerContent = {
       columns: [
-        { image: logoImage, width: 60, margin: [30, 30, 0, 0]},
-
-        { image: phoneIconImage, width: 14, margin: [0, 53, 0, 0]},
-        { text: uiPdfPhone, fontSize: 10, margin: [10, 53, 10, 0], alignment: 'right' },
+        { image: logoImage, width: 60, margin: [30, 30, 0, 0] },
+        { text: '', width: '*', margin: [0, 30, 0, 0] },
+        { image: phoneIconImage, width: 14, margin: [0, 43, 0, 0] },
+        { text: uiPdfPhone, width: 'auto', fontSize: 10, margin: [6, 43, 16, 0] },
         
-        { image: websiteIconImage, width: 14, margin: [0, 53, 0, 0]},
-        { text: uiPdfWeb, link:`https://${uiPdfWeb}`, fontSize: 10, margin: [10, mainMargins[1] + 23, 10, 0], alignment: 'right' },
+        { image: websiteIconImage, width: 14, margin: [0, 43, 0, 0] },
+        { text: uiPdfWeb, width: 'auto', fontSize: 10, margin: [6, 43, 16, 0] },
         
-        { image: emailIconImage, width: 14, margin: [0, 53, 0, 0]},
-        { text: uiPdfEmail, link: `mailto:${uiPdfEmail}`, fontSize: 10, margin: [10, mainMargins[1] + 23 , 10, 0], alignment: 'right' }
+        { image: emailIconImage, width: 14, margin: [0, 43, 0, 0] },
+        { text: uiPdfEmail, link: `mailto:${uiPdfEmail}`, width: 'auto', fontSize: 10, margin: [6, 43, 30, 0] }
       ]
     };
 
