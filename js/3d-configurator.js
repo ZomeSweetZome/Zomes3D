@@ -50,6 +50,10 @@ import {
 } from './3d-scene.js';
 
 import {
+  generatePDF,
+} from './pdf-maker.js';
+
+import {
   createMenu,
   loadAndParseCSV,
   getData,
@@ -3262,6 +3266,9 @@ function summaryBtnsHandler() {
     collectSummary();
     openSummary();
     $('.summary__popup-overlay').scrollTop(0);
+
+    //! TEMP
+    generatePDF(currentHouse, mainData, currentLanguage);
   });
 
   $('#modifyConfiguration').on('click', function () {
@@ -3276,7 +3283,7 @@ function summaryBtnsHandler() {
 function getPdfBtnHandler() {
   $('#summary_btn_text').on('click', function () {
     //! TODO generate PDF file
-
+    // generatePDF();
     closeSummary();
   });
 }

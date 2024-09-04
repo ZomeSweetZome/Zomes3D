@@ -21,9 +21,8 @@
   <div id="marevo_app">
     <div id="main-header">
       <div id="identity">
-        <a target="_blank" href="https://zomes.com/">
-        </a>
-        </div>
+        <a target="_blank" href="https://zomes.com/"></a>
+      </div>
 
       <div class="header_blocks">
         <div id="social-media" class="top-frame-panel">
@@ -483,7 +482,8 @@
                 <div class="external-link__logo"></div>
               </div>
         
-              <button type="submit" id="summary_btn_text" disabled>
+              <!-- <button type="submit" id="summary_btn_text" disabled> -->
+              <button type="submit" id="summary_btn_text" >
                 Mail PDF
                 <div class="form_button__logo"></div>
               </button>
@@ -504,11 +504,16 @@
 <script src="https://cdn.jsdelivr.net/npm/three@0.147/examples/js/loaders/GLTFLoader.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.146/examples/js/controls/OrbitControls.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.146/examples/js/loaders/RGBELoader.js"></script>
+<!-- pdf -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script src="./src/pdf/fonts/vfs_fonts.js"></script>
 
 <script type="module" src="./js/settings.js"></script>
 <script type="module" src="./js/3d-configurator.js"></script>
 <script type="module" src="./js/3d-scene.js"></script>
 <script type="module" src="./js/ui-controller.js"></script>
+<script type="module" src="./js/pdf-maker.js"></script>
 <!-- MAREVO MODEL VIEWER -->
 <script type="module" src="./js/model-viewer_2_2_0/dist/model-viewer.marevo.min.js"></script>
 
