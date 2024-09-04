@@ -301,7 +301,7 @@ export function create3DScene(properties = scenePropertiesDefault, startFunction
     
     if (controls.enabled) { controls.update(); }
     
-    updateAnnotations(camera, scene);
+    updateAnnotations(camera, scene, controls);
 
     updateMeshRotationToCameraY(camera, scene, 'man');
     
@@ -315,7 +315,7 @@ export function create3DScene(properties = scenePropertiesDefault, startFunction
   }
 
   window.addEventListener('resize', () => {
-    updateAnnotations(camera, scene);
+    updateAnnotations(camera, scene, controls);
   });
 
   function resizeRendererToDisplaySize(renderer) {

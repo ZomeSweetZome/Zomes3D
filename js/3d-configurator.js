@@ -4125,7 +4125,7 @@ function parseCoordinates(str) {
   return numbers;
 }
 
-export function updateAnnotations(camera, scene) {
+export function updateAnnotations(camera, scene, controls) {
   if (!annotations) return;
 
   annotations.forEach(annotation => {
@@ -4140,24 +4140,36 @@ export function updateAnnotations(camera, scene) {
       top: `${y}px`
     });
 
-    const raycasterAnotation = new THREE.Raycaster();
-    raycasterAnotation.setFromCamera(screenPosition, camera);
+    if (!controls.enableZoom) { // camer is inside
+      const cameraToAnnotation = annotation.position.clone().sub(camera.position).normalize();
+      const angle = cameraToAnnotation.dot(camera.getWorldDirection(new THREE.Vector3()));
+      const isVisible = angle > 0;
 
-    let isBehindModel = false;
-
-    scene.traverse((object) => {
-      if (object.isMesh) {
-        const intersects = raycasterAnotation.intersectObject(object, true);
-        if (intersects.length > 0 && intersects[0].distance < annotation.position.distanceTo(camera.position)) {
-          isBehindModel = true;
-        }
+      if (isVisible) {
+        $(annotation.element).css('opacity', 1);
+      } else {
+        $(annotation.element).css('opacity', 0);
       }
-    });
+    } else { // camera is outside
+      const raycaster = new THREE.Raycaster();
+      raycaster.ray.origin.copy(camera.position);
+      raycaster.ray.direction.copy(annotation.position.clone().sub(camera.position).normalize());
 
-    if (isBehindModel) {
-      $(annotation.element).css('opacity', 0.1);
-    } else {
-      $(annotation.element).css('opacity', 1);
+      let isBehindModel = false;
+      scene.traverse((object) => {
+        if (object.isMesh) {
+          const intersects = raycaster.intersectObject(object, true);
+          if (intersects.length > 0 && intersects[0].distance < annotation.position.distanceTo(camera.position)) {
+            isBehindModel = true;
+          }
+        }
+      });
+
+      if (isBehindModel) {
+        $(annotation.element).css('opacity', 0.1);
+      } else {
+        $(annotation.element).css('opacity', 1);
+      }
     }
 
     const $annotationText = $(annotation.element).find('.annotation-text');
@@ -4175,6 +4187,7 @@ export function updateAnnotations(camera, scene) {
     });
   });
 }
+
 
 //#endregion
 
