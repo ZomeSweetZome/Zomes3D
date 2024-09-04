@@ -5,23 +5,23 @@
 
 import { getData } from './ui-controller.js';
 
-function getBase64Image(url) {
-  const img = new Image();
-  img.src = url;
-  const canvas = document.createElement("canvas");
-  canvas.width = img.width;
-  canvas.height = img.height;
-  const ctx = canvas.getContext("2d");
-  ctx.drawImage(img, 0, 0);
-  return canvas.toDataURL("image/jpeg").replace(/^data:image\/(jpeg|png);base64,/, "");
-}
-
-export function generatePDF(currentHouse, data, language, userName = '', userEmail = '', userPhone = '', opt = 'open') {
-  console.log("🚀 ~ generatePDF ~ language:", language);
- 
+export function generatePDF(
+  currentHouse, data, language, imageSources,
+  userName = 'Name Surname',
+  address = 'Address',
+  zipcode = 'Zipcode',
+  city = 'City',
+  country = 'Country',
+  phone = 'Phone',
+  email = 'Email',
+  opt = 'open'
+) {
+  const colorTextBlack = '#101011';
+  const colorLineBlack = '#000000';
   const colorBackground = '#ffffff';
-  const colorBlackText = '#101011';
-  const colorBlackLine = '#000000';
+
+  const mainMargins = [30, 90, 30, 30];
+  const contentWidth = 595 - mainMargins[0] - mainMargins[2];
 
   const imageUrls = [
     './src/pdf/images/logo_zomes.png',
@@ -33,15 +33,12 @@ export function generatePDF(currentHouse, data, language, userName = '', userEma
   switch (currentHouse) {
     case '0':
       imageUrls.push('./src/pdf/images/scheme_pod.jpg');
-      console.log("🚀 ~ generatePDF ~ scheme_pod.jpg");
       break;
-      case '1':
-        imageUrls.push('./src/pdf/images/scheme_office.jpg');
-        console.log("🚀 ~ generatePDF ~ scheme_office.jpg");
-        break;
-        case '2':
-          imageUrls.push('./src/pdf/images/scheme_studio.jpg');
-          console.log("🚀 ~ generatePDF ~ scheme_studio.jpg");
+    case '1':
+      imageUrls.push('./src/pdf/images/scheme_office.jpg');
+      break;
+    case '2':
+      imageUrls.push('./src/pdf/images/scheme_studio.jpg');
       break;
     default:
       break;
@@ -92,19 +89,19 @@ export function generatePDF(currentHouse, data, language, userName = '', userEma
   //   result.push([
   //     {
   //       text: optionTitle,
-  //       style: 'tableType',
+  //       style: 'tableText',
   //     },
   //     {
   //       text: optionValue,
-  //       style: 'tableOption',
+  //       style: 'tableText',
   //     },
   //     {
   //       text: price,
-  //         style: 'tableOption',
+  //         style: 'tableText',
   //       alignment: 'center',
   //     },
   //   ]);
-  
+
   //   return result;
   // }, []);
 
@@ -151,7 +148,7 @@ export function generatePDF(currentHouse, data, language, userName = '', userEma
   //     optionValue = getData(scandiData, UI_LIST[ind].pdfText[UI_LIST[ind].currentValue], language);
   //     price = amountWithCurrencySign(currency, option.elementPrice[0]);
   //   }
-    
+
   //   if (option.pdfTitle === kitchen) {
   //     const ind = +option.cardId + 1;
   //     const value1 = getData(scandiData, UI_LIST[ind].pdfText[UI_LIST[ind].currentValue], language);
@@ -171,26 +168,22 @@ export function generatePDF(currentHouse, data, language, userName = '', userEma
   //   result.push([
   //     {
   //       text: optionTitle,
-  //       style: 'tableType',
+  //       style: 'tableText',
   //     },
   //     {
   //       text: optionValue,
-  //       style: 'tableOption',
+  //       style: 'tableText',
   //     },
   //     {
   //       text: price,
-  //       style: 'tableOption',
+  //       style: 'tableText',
   //     alignment: 'center',
   //     },
   //   ]);
-  
+
   //   return result;
   // }, []);
 
-  //! TODO two generated model shots
-  //! imageUrls.push(`shot1`);
-  //! imageUrls.push(`shot2`);
-  
   const promises = imageUrls.map(async imageUrl => {
     const response = await fetch(imageUrl);
     const blob = await response.blob();
@@ -212,21 +205,16 @@ export function generatePDF(currentHouse, data, language, userName = '', userEma
     schemeImage,
     // shotImage1,
     // shotImage2,
-  ]) => { 
-    const schemeWidth = 550; 
-    const schemePosX = 20;
-    const schemePosY = 100;
-    const shot1Width = 200;
-    const shot1PosX = 20;
-    const shot1PosY = 400;
-    const shot2Width = 200;
-    const shot2PosX = 300;
-    const shot2PosY = 400;
+    // shotImage3,
+  ]) => {
+    const schemeWidth = contentWidth;
+    const schemePosX = 0;
+    const schemePosY = 0;
 
-    const imagesStack = [
-      { image: schemeImage, width: schemeWidth, absolutePosition: { x: schemePosX, y: schemePosY } },
-      // { image: shotImage1, width: shot1Width, absolutePosition: { x: shot1PosX, y: shot1PosY } },
-      // { image: shotImage2, width: shot2Width, absolutePosition: { x: shot2PosX, y: shot2PosY } },
+    const shotsPoses = [
+      { w: 178, x: 0, y: 0 },
+      { w: 178, x: 178, y: 0 },
+      { w: 178, x: 356, y: 0 },
     ];
 
     const uiPdfWeb = getData(data, "ui_pdf_web", language);
@@ -235,79 +223,73 @@ export function generatePDF(currentHouse, data, language, userName = '', userEma
     const uiPdfPersonalDetails = getData(data, "ui_pdf_personal_details", language);
     const uiPdfYourConfiguration = getData(data, "ui_pdf_your_configuration", language);
 
-    const headerContent = function() {
-      return [
-        {
-          margin: [0, 0, 0, 51],
-          table: {
-            widths: ['30%', "*", 14,'auto', 14,'auto', 14,'auto', 26],
-            body: [
-              [
-                { image: logoImage, width: 90, height: 25, margin: [26, 13, 0, 13] },
-                { text: "" },
-                { image: websiteIconImage, width: 11, height: 11, margin: [0, 20, 0, 20], alignment: "right"},
-                { text: uiPdfWeb, style: 'contacts', color: colorBlackText, margin: [0, 20, 0, 0], alignment: "left"},
-                { image: phoneIconImage, width: 11, height: 11, margin: [0, 20, 0, 20], alignment: "right" },
-                { text: '+' + uiPdfPhone, style: 'contacts', color: colorBlackText, margin: [0, 20, 0, 0], alignment: "left"},
-                { image: emailIconImage, width: 11, height: 11, margin: [0, 20, 0, 20], alignment: "right" },
-                { text: uiPdfEmail, style: 'contacts', color: colorBlackText, margin: [0, 20, 0, 0], alignment: "left"},
-                { text: "" },
-              ],
-            ]
-          },
-          layout: {
-            paddingLeft: function(i, node) { return 0; },
-            paddingRight: function(i, node) { return 0; },
-            paddingTop: function(i, node) { return 0; },
-            paddingBottom: function(i, node) { return 0; },
-            hLineWidth: function (i, node) { return 2 },
-            vLineWidth: function (i, node) { return 2 },
-            // hLineColor: function (i, node) { return colorBlackLine; },
-            // vLineColor: function (i, node) { return colorBlackLine; },
-          },
-          // fillColor: colorBackground,
-        }
+    const headerContent = {
+      columns: [
+        { image: logoImage, width: 60, margin: [30, 30, 0, 0]},
+
+        { image: phoneIconImage, width: 14, margin: [0, 53, 0, 0]},
+        { text: uiPdfPhone, fontSize: 10, margin: [10, 53, 10, 0], alignment: 'right' },
+        
+        { image: websiteIconImage, width: 14, margin: [0, 53, 0, 0]},
+        { text: uiPdfWeb, link:`https://${uiPdfWeb}`, fontSize: 10, margin: [10, mainMargins[1] + 23, 10, 0], alignment: 'right' },
+        
+        { image: emailIconImage, width: 14, margin: [0, 53, 0, 0]},
+        { text: uiPdfEmail, link: `mailto:${uiPdfEmail}`, fontSize: 10, margin: [10, mainMargins[1] + 23 , 10, 0], alignment: 'right' }
       ]
     };
 
     const pdfContent = [
+      { image: schemeImage, width: schemeWidth, margin: [0, 0, 0, 20] },
+      { image: imageSources[0], width: shotsPoses[0].w, relativePosition: { x: shotsPoses[0].x, y: shotsPoses[0].y } },
+      { image: imageSources[1], width: shotsPoses[1].w, relativePosition: { x: shotsPoses[1].x, y: shotsPoses[1].y } },
+      { image: imageSources[2], width: shotsPoses[2].w, relativePosition: { x: shotsPoses[2].x, y: shotsPoses[2].y } },
+
       {
-        stack: imagesStack,
-      },
-      { text: uiPdfPersonalDetails, 
+        text: uiPdfPersonalDetails,
         style: 'subtitle',
-        margin: [10, 5, 0, 12]
-      },
-      //! TODO below
-      { text: 'Name Surname',
-        style: 'title',
-        margin: [10, 20, 0, 1],
-      },
-      { text: 'Address',
-        style: 'title',
-        margin: [10, 20, 0, 1],
-      },
-      { text: 'zipcode City',
-        style: 'title',
-        margin: [10, 20, 0, 1],
-      },
-      { text: 'Country',
-        style: 'title',
-        margin: [10, 20, 0, 1],
-      },
-      { text: 'phone',
-        style: 'title',
-        margin: [10, 20, 0, 1],
-      },
-      { text: 'email',
-        style: 'title',
-        margin: [10, 20, 0, 1],
+        margin: [0, shotsPoses[2].w + 20, 0, 0],
       },
 
-      
+      {
+        canvas: [
+          {
+            type: 'line',
+            x1: 0, y1: 0, x2: contentWidth, y2: 0,
+            lineWidth: 0.5
+          }
+        ],
+        margin: [0, 6, 0, 6],
+      },
+
+      {
+        text: userName,
+        style: 'tableText',
+      },
+      {
+        text: address,
+        style: 'tableText',
+      },
+      {
+        text: `${zipcode} ${city}`,
+        style: 'tableText',
+      },
+      {
+        text: country,
+        style: 'tableText',
+      },
+      {
+        text: phone,
+        style: 'tableText',
+      },
+      {
+        text: email,
+        style: 'tableText',
+      },
+
       // ******************    PAGE 2    ***********************
 
-      { text: uiPdfYourConfiguration, 
+      {
+        text: uiPdfYourConfiguration,
         style: 'title',
         margin: [10, 5, 0, 4],
         pageBreak: "before"
@@ -360,7 +342,7 @@ export function generatePDF(currentHouse, data, language, userName = '', userEma
       //       //   paddingTop: function(i, node) { 
       //       //     return (i === 0 || i === node.table.body.length) ? 4 : 2; 
       //       //   },
-			// 	    //   paddingBottom: function(i, node) { 
+      // 	    //   paddingBottom: function(i, node) { 
       //       //     return (i === 0 || i === node.table.body.length) ? 4 : 2; 
       //       //   },
       //       // }
@@ -426,7 +408,7 @@ export function generatePDF(currentHouse, data, language, userName = '', userEma
       //       //   paddingTop: function(i, node) { 
       //       //     return (i === 0 || i === node.table.body.length) ? 4 : 2; 
       //       //   },
-			// 	    //   paddingBottom: function(i, node) { 
+      // 	    //   paddingBottom: function(i, node) { 
       //       //     return (i === 0 || i === node.table.body.length) ? 4 : 2; 
       //       //   },
       //       // }
@@ -487,7 +469,7 @@ export function generatePDF(currentHouse, data, language, userName = '', userEma
       //       //   paddingTop: function(i, node) { 
       //       //     return (i === 0 || i === node.table.body.length) ? 4 : 2; 
       //       //   },
-			// 	    //   paddingBottom: function(i, node) { 
+      // 	    //   paddingBottom: function(i, node) { 
       //       //     return (i === 0 || i === node.table.body.length) ? 4 : 2; 
       //       //   },
       //       // }
@@ -498,36 +480,36 @@ export function generatePDF(currentHouse, data, language, userName = '', userEma
     ];
 
     const pdfDefinition = {
-      pageMargins: [20, 66, 20, 0],
+      pageMargins: mainMargins,
       header: headerContent,
       content: pdfContent,
       styles: {
         contacts: { fontSize: 10, bold: false, font: 'SourceSansPro' },
+        subtitle: { fontSize: 14, bold: true, font: 'SourceSansPro' },
         title: { fontSize: 20, bold: true, font: 'SourceSansPro' },
         tableTitle: { fontSize: 14, bold: true, font: 'SourceSansPro' },
-        tableType: { fontSize: 14, bold: false, font: 'SourceSansPro' },
-        tableOption: { fontSize: 14, bold: false, font: 'SourceSansPro' },
+        tableText: { fontSize: 14, bold: false, font: 'SourceSansPro' },
         cost: { fontSize: 14, bold: false, font: 'SourceSansPro' },
         amount: { fontSize: 14, bold: true, font: 'SourceSansPro' },
       },
       defaultStyle: { font: 'SourceSansPro' },
     };
-    
+
     switch (opt) {
       case 'open':
         pdfMake.createPdf(pdfDefinition).open();
         break;
-      
+
       case 'download':
         pdfMake.createPdf(pdfDefinition).download("Zome_configuration.pdf");
         break;
-      
+
       default:
         break;
     }
   })
-  .catch(error => {
-    console.error("Image loading error:", error);
-  });
+    .catch(error => {
+      console.error("Image loading error:", error);
+    });
 }
 

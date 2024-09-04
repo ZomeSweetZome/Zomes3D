@@ -162,6 +162,7 @@ let summary_images;
 let share_RenderImageSize = { x: 1024, y: 1024 };
 let share_RenderImages = [];
 let cameraFar = 11;
+let imageSources = [];
 // let button_ar_share_download;
 
 // CUSTOM SELECT
@@ -3293,7 +3294,7 @@ function summaryBtnsHandler() {
     $('.summary__popup-overlay').scrollTop(0);
 
     //! TEMP
-    // generatePDF(currentHouse, mainData, currentLanguage);
+    generatePDF(currentHouse, mainData, currentLanguage, imageSources);
   });
 
   $('#modifyConfiguration').on('click', function () {
@@ -4310,6 +4311,7 @@ function CreateImage(view) {
   img.src = renderer.domElement.toDataURL();
   img.alt = view.alt;
 
+  imageSources.push(img.src);
   share_RenderImages.push(img);
 
   view.cameraObject.visible = false;
