@@ -44,6 +44,7 @@ import {
   loadModel,
   controls,
   camera,
+  renderer,
   floor,
   smoothCameraTransition,
   envMap,
@@ -155,6 +156,13 @@ let modelFurniture;
 let isFirstStart = true;
 let justClicked = false;
 let isCameraInside = false;
+
+// Capture Camera Image
+let summary_images;
+let share_RenderImageSize = { x: 1024, y: 1024 };
+let share_RenderImages = [];
+let cameraFar = 11;
+// let button_ar_share_download;
 
 // CUSTOM SELECT
 jQuery(document).ready(function () {
@@ -1797,30 +1805,30 @@ function calculatePrice() {
     } else if (activeOptions[i] === 'option_4-5') { // smart windows
       let windowsSmartPrice = 0;
 
-      if(activeOptions.includes('option_1-2')) { // custom windows
+      if (activeOptions.includes('option_1-2')) { // custom windows
         const windowsQty = Object.values(customWindows).reduce((total, array) => total + array.length, 0);
         windowsSmartPrice = optionPrice * windowsQty;
         $(`.${activeOptions[i]} .component_price`).html(formatPrice(windowsSmartPrice, currentCurrencySign));
         totalAmount += windowsSmartPrice;
-      } else if(!activeOptions.includes('option_1-2')) { // NOT custom windows
-        if(activeOptions.includes('option_1-1')) { // viewport
+      } else if (!activeOptions.includes('option_1-2')) { // NOT custom windows
+        if (activeOptions.includes('option_1-1')) { // viewport
           const windowsQty = 4;
           windowsSmartPrice = windowsSmartPrice + optionPrice * windowsQty;
           $(`.${activeOptions[i]} .component_price`).html(formatPrice(windowsSmartPrice, currentCurrencySign));
           totalAmount += windowsSmartPrice;
         }
 
-        if(activeOptions.includes('option_1-0')) { // strip
+        if (activeOptions.includes('option_1-0')) { // strip
           let windowsQty = 4;
-          if(activeOptions.includes('option_0-0') || activeOptions.includes('option_0-1')) { // pod or office
+          if (activeOptions.includes('option_0-0') || activeOptions.includes('option_0-1')) { // pod or office
             windowsQty = 4;
           }
 
-          if(activeOptions.includes('option_0-2')) { // studio
+          if (activeOptions.includes('option_0-2')) { // studio
             windowsQty = 5;
           }
 
-        windowsSmartPrice = windowsSmartPrice + optionPrice * windowsQty;
+          windowsSmartPrice = windowsSmartPrice + optionPrice * windowsQty;
           $(`.${activeOptions[i]} .component_price`).html(formatPrice(windowsSmartPrice, currentCurrencySign));
           totalAmount += windowsSmartPrice;
         }
@@ -1877,11 +1885,11 @@ function getOrderList() {
 }
 
 function formatPrice(price, currency) {
-  if (!price 
+  if (!price
     && SharedParameterList[1].value[2] != 1 // custom windows
     && SharedParameterList[4].value[3] != 1 // extra door
     && SharedParameterList[4].value[5] != 1 // smart glass
-  ) { 
+  ) {
     return getData(mainData, 'ui_component_price_included', currentLanguage);
   }
 
@@ -3261,14 +3269,31 @@ function notificationHandler() {
 
 function summaryBtnsHandler() {
   $('#ar_button_order').on('click', function () {
-    //! TODO take two pictures of the model
+    switch (currentHouse) {
+      case '0': // pod
+        cameraFar = 7;
+        break;
+      case '1': // office
+        cameraFar = 8;
+        break;
+      case '2': // studio
+        cameraFar = 9;
+        break;
+      default:
+        break;
+    }
 
+    cameraImageViews_Global[0].position = new THREE.Vector3(0, 2, cameraFar);
+    cameraImageViews_Global[1].position = new THREE.Vector3(cameraFar, 2, 0);
+    cameraImageViews_Global[2].position = new THREE.Vector3(0, 2 + cameraFar, 0);
+
+    CreateImageList();
     collectSummary();
     openSummary();
     $('.summary__popup-overlay').scrollTop(0);
 
     //! TEMP
-    generatePDF(currentHouse, mainData, currentLanguage);
+    // generatePDF(currentHouse, mainData, currentLanguage);
   });
 
   $('#modifyConfiguration').on('click', function () {
@@ -3276,6 +3301,10 @@ function summaryBtnsHandler() {
   });
 
   $('#backToConfiguration').on('click', function () {
+    closeSummary();
+  });
+
+  $('.summary__popup-overlay .popup-close').on('click', function () {
     closeSummary();
   });
 }
@@ -3290,24 +3319,26 @@ function getPdfBtnHandler() {
 
 function openSummary() {
   $('.summary__popup-overlay').addClass('active');
+  $(`.summary__scheme_${DATA_HOUSE_NAME[currentHouse]}`).addClass('active');
 }
 
 function closeSummary() {
   $('.summary__popup-overlay').removeClass('active');
+  $('.summary__scheme').removeClass('active');
 }
 
 function collectSummary() {
   const detailsContainer = $('.summary__popup-content .details');
   detailsContainer.empty();
 
-  $('.ar_filter_group').each(function() {
+  $('.ar_filter_group').each(function () {
     const group = $(this);
     const groupId = group.attr('id');
     const groupTitle = group.find('.ar_filter_caption').text();
     const filterOptions = group.find('.ar_filter_options');
-    
+
     let classes = `details__group details__${filterOptions.attr('class').split(' ')[1]}`
-    
+
     if (groupId === 'group-1') { // Windows group
       classes = classes + ' details__type_select';
     }
@@ -3322,7 +3353,7 @@ function collectSummary() {
       text: groupTitle
     }).appendTo(detailsGroup);
 
-    filterOptions.find('.option').each(function() {
+    filterOptions.find('.option').each(function () {
       const option = $(this);
       const optionClasses = option.attr('class').split(' ').map(cls => `details__${cls}`);
       const optionTitle = option.find('.component_title').text();
@@ -3335,7 +3366,7 @@ function collectSummary() {
       const detailsItem = $('<div>', {
         class: `details__item ${optionClasses.join(' ')}`
       });
-      
+
       const textContainer = $('<div>', {
         class: 'details__item_text_container'
       });
@@ -3514,7 +3545,7 @@ function onChangePosition(houseId, pos, callback = () => { }, duration = 750, is
       const env = envMap;
       // const env = null;
       insideCameraSettings(fov);
-      callback_env = () => { 
+      callback_env = () => {
         scene.background = env;
         setMaterialProperty('glass', 0);
       };
@@ -4202,5 +4233,99 @@ function removeDimensions() {
   });
   dimensionObjects = [];
 }
+
+//#endregion
+
+//#region CAPTURE CAMERA IMAGE
+
+const cameraImageViews_Global = [
+  {
+    id: "view_1.png",
+    alt: "view_1",
+    cameraObject: new THREE.PerspectiveCamera(50, canvas.width / canvas.height, 0.01, 1000),
+    position: new THREE.Vector3(0, 2, 10),
+    rotation: new THREE.Vector3(0, 0, 0)
+  },
+  {
+    id: "view_2.png",
+    alt: "view_2",
+    cameraObject: new THREE.PerspectiveCamera(50, canvas.width / canvas.height, 0.01, 1000),
+    position: new THREE.Vector3(10, 2, 0),
+    rotation: new THREE.Vector3(0, Math.PI / 2, 0)
+  },
+  {
+    id: "view_3.png",
+    alt: "view_3",
+    cameraObject: new THREE.PerspectiveCamera(50, canvas.width / canvas.height, 0.01, 1000),
+    position: new THREE.Vector3(0, 2 + 10, 0),
+    rotation: new THREE.Vector3(-Math.PI / 2, 0, 0)
+  },
+];
+
+function CreateImageList() {
+  if (summary_images == null) {
+    summary_images = document.querySelector("div.summary__images_container");
+  }
+
+  // if(button_ar_share_download == null) { 
+  //   button_ar_share_download = document.querySelector("#ar_share_download");
+  //   button_ar_share_download.addEventListener("click", DownloadRenderImage);
+  // }
+
+  if (summary_images == null) { return; }
+
+  share_RenderImages = [];
+
+  while (summary_images.firstChild) {
+    summary_images.removeChild(summary_images.lastChild);
+  }
+
+  for (let index = 0; index < cameraImageViews_Global.length; index++) {
+    const element = cameraImageViews_Global[index];
+    element.cameraObject.visible = true;
+    element.cameraObject.aspect = camera.aspect;
+    element.cameraObject.updateProjectionMatrix();
+    element.cameraObject.position.set(element.position.x, element.position.y, element.position.z);
+    element.cameraObject.rotation.set(element.rotation.x, element.rotation.y, element.rotation.z);
+    TakeImage(element, "summary__images_image");
+  }
+}
+
+function TakeImage(view, img_class) {
+  var img_div = document.createElement("div");
+  img_div.classList.add(img_class);
+  var img = CreateImage(view);
+  img_div.appendChild(img);
+  summary_images.appendChild(img_div);
+}
+
+function CreateImage(view) {
+  var img = new Image();
+
+  renderer.setSize(share_RenderImageSize.x, share_RenderImageSize.y, false);
+  view.cameraObject.aspect = share_RenderImageSize.x / share_RenderImageSize.y;
+  view.cameraObject.updateProjectionMatrix();
+  renderer.render(scene, view.cameraObject);
+
+  img.src = renderer.domElement.toDataURL();
+  img.alt = view.alt;
+
+  share_RenderImages.push(img);
+
+  view.cameraObject.visible = false;
+  return img;
+}
+
+// function DownloadRenderImage(){
+//   if(share_RenderImages == null) { return; }
+//   if(share_RenderImages.length == 0) { return; }
+
+//   var a = document.createElement('a');
+//   a.href = share_RenderImages[0].src;
+//   a.download = share_RenderImages[0].alt;
+//   document.body.appendChild(a);
+//   a.click();
+//   document.body.removeChild(a);
+// }
 
 //#endregion

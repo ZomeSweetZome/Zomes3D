@@ -52,6 +52,10 @@
   --marevo-ui-icon_email : url(../src/ar-ui-icons/icon_email.svg);
   --marevo-ui-icon_facebook : url(../src/ar-ui-icons/icon_facebook.svg);
 
+  --marevo-scheme_pod : url(../src/pdf/images/scheme_pod.jpg);
+  --marevo-scheme_office : url(../src/pdf/images/scheme_office.jpg);
+  --marevo-scheme_studio : url(../src/pdf/images/scheme_studio.jpg);
+
   --marevo-header-height: 100px;
   --marevo-header-height-mobile: 60px;
   --marevo-menu-max-width: 500px;
@@ -1677,6 +1681,11 @@ textarea[name="ar_order_comment"] {
   display: none;
 }
 
+.summary__popup-overlay .popup-close {
+  right: 20px;
+  top: 20px;
+}
+
 .summary__popup-overlay.active {
   display: flex;
 }
@@ -1699,18 +1708,50 @@ textarea[name="ar_order_comment"] {
   margin-bottom: 30px;
 }
 
-.summary__images_container {
-  display: flex;
+.summary__scheme {
+  display: none;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 20px;
+  width: 100%;
+}
+
+.summary__scheme.active {
+  display: flex;
+}
+
+.summary__scheme_pod {
+  content: var(--marevo-scheme_pod);
+}
+
+.summary__scheme_office {
+  content: var(--marevo-scheme_office);
+}
+
+.summary__scheme_studio {
+  content: var(--marevo-scheme_studio);
+}
+
+.summary__images_container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
   width: 100%;
   margin-bottom: 30px;
+  /* border: 1px solid red; */
+}
 
-  min-height: 820px;
-  border: 1px solid red;
-  color: red;
+.summary__images_image {
+  width: 300px;
+  height: 300px;
+  margin: 0;
+}
+
+.summary__images_image img {
+  width: 100%;
+  object-fit: cover;
+
+  /* border: 2px solid blue; */
 }
 
 .details {
