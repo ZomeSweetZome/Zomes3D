@@ -3973,11 +3973,17 @@ function showAnnotations() {
       const coordsString = getData(dataAnnotations, item[idIndex], 'COORDS');
       const [x, y, z] = parseCoordinates(coordsString);
 
+      let textLongContent = getData(dataAnnotations, item[idIndex], `LONG_${currentLanguage.toUpperCase()}`)
+      
+      if (textLongContent[0] === '"' && textLongContent[textLongContent.length - 1] === '"') {
+        textLongContent = textLongContent.slice(1, -1);
+      }
+
       annotations.push({
         id: item[idIndex],
         position: new THREE.Vector3(x, y + MODEL_CENTER_POSITION, z),
         text: getData(dataAnnotations, item[idIndex], `SHORT_${currentLanguage.toUpperCase()}`),
-        textLong: getData(dataAnnotations, item[idIndex], `LONG_${currentLanguage.toUpperCase()}`),
+        textLong: textLongContent,
       });
     }
   });
