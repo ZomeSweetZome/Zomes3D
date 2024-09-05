@@ -43,9 +43,6 @@ export const CURRENCY_SIGN = {
   2: 'UAH',
 };
 
-// Zomes_3D_data_v_001_test
-// const MAIN_LINK_PART = 'https://docs.google.com/spreadsheets/d/1wlPf19JZoBj4w6Aqb5-CEuwxaI0ZeFvuLd73mk3gvcg/export?format=csv&gid=';
-
 // Zomes_3D_data_LIVE
 const MAIN_LINK_PART = 'https://docs.google.com/spreadsheets/d/1hU0H-7k5TqUaMsO5IgSG8SCk64Vf73_uzAKGlmT5HyI/export?format=csv&gid=';
 

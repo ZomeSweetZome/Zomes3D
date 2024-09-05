@@ -3778,7 +3778,6 @@ function addStripAndViewportWindowsToCustomWindowsObject(strip, viewport) {
   
     Object.keys(windowData).forEach(key => {
       if (customWindows[key]) {
-        // customWindows[key] = windowData[key];
         customWindows[key].push(...windowData[key]);
       }
     });
@@ -3786,8 +3785,6 @@ function addStripAndViewportWindowsToCustomWindowsObject(strip, viewport) {
     SharedParameterList[7].value = convertObjectToArray(customWindows);
     WriteURLParameters();
   }
-
-  console.log("🚀 ~ CheckChanges ~ customWindows 2:", customWindows);
 }
 
 
@@ -4095,9 +4092,9 @@ let dimensionObjects = [];
 const crossLineLength = 0.2;
 const textOffsetHorizontal = 0.15;
 const textOffsetVertical = 0.6;
-const manOffset = 0.6;
+const manOffset = 0.9;
 const lineOffset = 0.3;
-const lineColor = '0xececef';
+const lineColor = '#ececef';
 const manColor = '#ececef';
 
 function createHorizontalDimensionLine(start, end, label, scene) {
@@ -4191,6 +4188,7 @@ function createDimensions(diameter, height) {
   createVerticalDimensionLine(startHeight, endHeight, `H = ${Math.round((height - heightFoundation) * 3.28084 / 0.5) * 0.5} ft`, scene);
 
   setMaterialColor('man', manColor);
+  setMaterialColor('man.001', manColor);
   setMeshPosition(modelHouse, 'man', -diameter / 2 - lineOffset - manOffset, - heightFoundation, 0);
 }
 
