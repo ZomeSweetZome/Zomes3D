@@ -6,6 +6,7 @@ import { DEFAULT_LANGUAGE, IS_PRICE_SIMPLE } from './settings.js';
 let currentLanguage;
 
 export let uiMultiLanguages = [];
+let uiPlaceholdersMultiLanguages = [];
 
 export async function createMenu(mainData) {
   return new Promise((resolve) => {
@@ -21,6 +22,7 @@ export async function createMenu(mainData) {
       $('.language-picker select').on('change', function () {
         currentLanguage = $(this).val();
         updateUIlanguages(mainData);
+        updatePlaceholderslanguages(mainData);
       });
 
       uiMultiLanguages.push(
@@ -71,6 +73,16 @@ export async function createMenu(mainData) {
         { '#summary_btn_text': 'ui_summary_btn_text' },
       );
 
+      uiPlaceholdersMultiLanguages.push(
+        { '#form_name': 'ui_summary_form_label_name' },
+        { '#form_phone': 'ui_summary_form_label_phone' },
+        { '#form_email': 'ui_summary_form_label_email' },
+        { '#form_address': 'ui_summary_form_label_address' },
+        { '#form_city': 'ui_summary_form_label_city' },
+        { '#form_country': 'ui_summary_form_label_country' },
+        { '#form_zipcode': 'ui_summary_form_label_zipcode' },
+        { '#form_inquiries': 'ui_summary_form_label_questions' },
+      );
 
       const groupsContainer = $('#ar_filter');
       const summaryList = $('.ar_summary .ar_summary_list');
@@ -257,6 +269,7 @@ export async function createMenu(mainData) {
       }
 
       updateUIlanguages(mainData);
+      updatePlaceholderslanguages(mainData);
       setEventListenersForMenuItems();
 
       $('.ar_button_back').on('click', function () {
@@ -308,6 +321,26 @@ export function updateUIlanguages(dataArr, uiDataArr = uiMultiLanguages, langKey
       }
       
       $(key).html(contentText);
+    }
+  }
+}
+
+function updatePlaceholderslanguages(dataArr, uiDataArr = uiPlaceholdersMultiLanguages, langKey = currentLanguage) {
+  for (let i = 0; i < uiDataArr.length; i++) {
+    for (let key in uiDataArr[i]) {
+      let contentText = getData(dataArr, uiDataArr[i][key], langKey);
+      
+      if (!contentText) continue;
+
+      if (contentText !== '' && contentText?.toLowerCase() !== 'null') {
+        if (contentText[0] === '"' && contentText[contentText.length - 1] === '"') {
+          contentText = contentText.slice(1, -1);
+        }
+      } else {
+        contentText = '';
+      }
+      
+      $(key).attr('placeholder', contentText);
     }
   }
 }

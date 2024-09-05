@@ -8,7 +8,6 @@
   --marevo-color-disabled: #b9b9b9;
   --marevo-color-popup-border: #ececef;
   --marevo-color-bgrd-menu: #ffffff;
-  /* --marevo-color-bgrd-menu: #f7b6b6; */
   --marevo-color-bgrd-canvas: #fff;
   
   --marevo-ui-icon_go_inside : url(../src/ar-ui-icons/icon_go_inside.svg);
@@ -1896,6 +1895,11 @@ textarea[name="ar_order_comment"] {
   column-gap: 30px;
 }
 
+.summary__popup-content form input::placeholder,
+.summary__popup-content form textarea::placeholder {
+  font-size: 0;
+}
+
 .summary__form-item {
   display: flex;
   text-align: center;
@@ -1927,6 +1931,7 @@ textarea[name="ar_order_comment"] {
   font-weight: 500;
   color: var(--marevo-color-text-gray, #000);
   margin-right: 20px;
+  text-align: left;
 }
 
 .summary__form-item_inquiries textarea {
@@ -1946,14 +1951,33 @@ textarea[name="ar_order_comment"] {
   color: var(--marevo-color-text-black, #000);
   border: none;
   outline: none;
+  width: 100%;
 }
 
-.summary__form-item_checkbox {
-  font-size: 18px;
-  font-weight: 500;
-  color: var(--marevo-color-text-gray, #000);
+.summary__form-item_checkbox input[type="checkbox"] {
+  display: none;
+}
+
+.summary__form-item_checkbox label {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
   margin-bottom: 20px;
-  width: 100%;
+}
+
+.summary__form-item_checkbox label::before {
+  content: '';
+  display: inline-block;
+  min-width: 24px;
+  min-height: 24px;
+  background: var(--marevo-ui-icon_checkbox_off) no-repeat center center;
+  background-size: contain;
+  margin-right: 9px;
+}
+
+.summary__form-item_checkbox input[type="checkbox"]:checked + label::before {
+  background: var(--marevo-ui-icon_checkbox_on) no-repeat center center;
+  background-size: contain;
 }
 
 .form__footer_container {
@@ -1985,20 +2009,22 @@ textarea[name="ar_order_comment"] {
   background-color: var(--marevo-color-text-black, #000);
   color: var(--marevo-color-text-white, #fff);
   border: none;
-  margin-right: 12px;
 }
 
 .form__footer_container button:disabled {
   background-color: var(--marevo-color-text-gray, #000);
   color: var(--marevo-color-text-white, #fff);
   cursor: default;
+
 }
 
-.form_button__logo {
+.form__footer_container button::after {
   content: var(--marevo-ui-icon_btn_download_right_w);
   width: 26px;
   height: 26px;
+  margin-left: 12px;
 }
+
 
 /* ################  MOBILE ################ */
 
@@ -2762,10 +2788,122 @@ textarea[name="ar_order_comment"] {
 
 
   /*!------------------------------------*/
-
+  
   .annotation-text {
     display: none;
   }
+
+  /*!------------------------------------*/
+
+  .summary__popup-overlay {
+    top: var(--marevo-header-height-mobile, 100px);
+    height: calc(100% - var(--marevo-header-height-mobile, 100px));
+  }
+
+  .summary__popup-overlay * {
+    font-size: 14px;
+  }
+  
+  .details {
+    margin-bottom: 20px;
+  }
+
+  .details__group {
+    margin-bottom: 10px;
+  }
+
+  .summary__link {
+    padding-bottom: 4px;
+    margin-bottom: 20px;
+  }
+
+  #shipping_rates_title,
+  #estimated_delivery_title {
+    margin-bottom: 10px;
+  }
+
+  #shipping_rates_text,
+  #estimated_delivery_text {
+    margin-bottom: 20px;
+  }
+
+  .shipping_rates ul {
+    margin-bottom: 20px;
+  }
+
+  .shipping_rates {
+    margin-bottom: 0;
+  }
+
+  .estimated_delivery_time {
+    margin-bottom: 0px;
+  }
+
+  .summary__popup-content form label {
+    display: none;
+  }
+
+  .summary__popup-content form .summary__form-item_checkbox label {
+    display: flex;
+  }
+
+  .summary__popup-content form input::placeholder,
+  .summary__popup-content form textarea::placeholder {
+    font-size: 12px;
+    color: var(--marevo-color-text-gray, #000000);
+  }
+
+  .summary__form-item {
+    height: 35px;
+    padding: 0 20px;
+  }
+
+  .summary__form-item_inquiries textarea {
+    width: 100%;
+  }
+
+  .summary__form-item_inquiries {
+    min-height: 80px;
+    margin-bottom: 20px;
+  }
+
+  .form__footer_container {
+    flex-direction: column;
+    margin-top: 0;
+  }
+
+  .form__footer_container .summary__link {
+    margin-bottom: 30px;
+  }
+
+  .form__footer_container button {
+    width: 100%;
+    height: 35px;
+  }
+
+
+  .summary__form-item_checkbox {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .summary__form-item_checkbox label {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+  
+  .summary__form-item_checkbox label::before {
+    content: '';
+    display: inline-block;
+    margin-right: 10px;
+  }
+  
+  .summary__form-item_checkbox input[type="checkbox"]:checked + label::before {
+  }
+
 }
 
 @media (max-width: 449px) {

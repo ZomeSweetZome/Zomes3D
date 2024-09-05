@@ -2406,6 +2406,10 @@ async function ImportScene(newScene) {
 //#region URL PARAMETERS
 
 function EmptyURLParams() {
+
+  //! TODO console.log("🚀🚀POPUP🚀🚀");
+  //! TODO SharedParameterList[0].value = 0 or 1 or 2;
+
   setDefaultValuesForGroups();
   ParseAllGroups();
 }
