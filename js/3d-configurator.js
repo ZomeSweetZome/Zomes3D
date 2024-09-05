@@ -61,9 +61,6 @@ import {
   updateUIlanguages,
 } from './ui-controller.js';
 
-const DEBUG_MODE_FUNC_STARTS = false;
-const DEBUG_MODE_VALUES = false;
-
 // state variables
 let currentLanguage = DEFAULT_LANGUAGE;
 let currentCurrency = DEFAULT_CURRENCY;
@@ -83,16 +80,6 @@ let isAirconditionOn = false;
 let isSmartGlassOn = false;
 
 let [houseDiameter, houseHeight] = [0, 0];
-
-const optionsWithoutTabs = [
-  'option_2-0', // Interior - Magnesium Oxide Panels
-  'option_2-2', // Interior - Sound Panels
-  'option_3-0', // Exterior - Dark Grey
-  'option_3-1', // Exterior - White
-  'option_4-0', // Add-ons - Extreme Weather package
-  'option_4-1', // Add-ons - In-build desk
-  'option_4-3', // Add-ons - Extra door
-];
 
 let uiMenuInfoLanguages = [
   { '#menu_info_title': '' },
@@ -117,7 +104,6 @@ let customWindows = {
   e: [],
   f: [],
   g: [],
-  // h: [],
 };
 
 export let dataAnnotations = [];
@@ -163,7 +149,6 @@ let share_RenderImageSize = { x: 1024, y: 1024 };
 let share_RenderImages = [];
 let cameraFar = 11;
 let imageSources = [];
-// let button_ar_share_download;
 
 let pdfContentData = [];
 let currentAmountString = '';
@@ -235,7 +220,7 @@ let SharedParameterList = [
     applyURLActionReturn: false
   },
   { // [5] language
-    id: 'lang', // [6]
+    id: 'lang',
     groupIds: null,
     splitValue: 'O',
     type: 'string',
@@ -254,7 +239,7 @@ let SharedParameterList = [
     applyURLAction: null,
     applyURLActionReturn: false
   },
-  { // [7] customWindows //! TODO: ADD CUSTOM WINDOWS TO URL
+  { // [7] customWindows
     id: 'customWindows',
     groupIds: null,
     splitValue: 'a',
@@ -278,8 +263,6 @@ let SharedParameterList = [
 
 // zomeModel
 SharedParameterList[0].groupOptionAction = function () {
-  (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
-
   if (justClicked) {
     currentHouse = this.value;
     changeModel(this.value);
@@ -288,18 +271,15 @@ SharedParameterList[0].groupOptionAction = function () {
 
 // windows
 SharedParameterList[1].groupOptionAction = function () {
-  (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
-
   if (isFirstStart || justClicked) {
-
+    // do something if needed
   }
 }
 
 // interior
 SharedParameterList[2].groupOptionAction = function () {
-  (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
-
   if (isFirstStart || justClicked) {
+    // do something if needed
   }
 
   setObjectTexture(TEXTURES.interior.materialNames, TEXTURES.interior[this.value]);
@@ -307,9 +287,8 @@ SharedParameterList[2].groupOptionAction = function () {
 
 // exterior
 SharedParameterList[3].groupOptionAction = function () {
-  (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
-
   if (isFirstStart || justClicked) {
+    // do something if needed
   }
 
   setObjectTexture(TEXTURES.exterior.materialNames, TEXTURES.exterior[this.value]);
@@ -317,8 +296,6 @@ SharedParameterList[3].groupOptionAction = function () {
 
 // addons
 SharedParameterList[4].groupOptionAction = function () {
-  (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
-
   if (isFirstStart || justClicked) {
     if (this.value[2] == '1') { // foundation kit
       floor.position.y = MODEL_CENTER_POSITION - FOUNDATION_HEIGHT;
@@ -356,8 +333,6 @@ SharedParameterList[4].groupOptionAction = function () {
 
 // language
 SharedParameterList[5].groupOptionAction = function () {
-  (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
-
   if (isFirstStart || justClicked) {
     let language = 'EN';
     switch (this.value) {
@@ -381,8 +356,6 @@ SharedParameterList[5].groupOptionAction = function () {
 
 // currency
 SharedParameterList[6].groupOptionAction = function () {
-  (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
-
   if (isFirstStart || justClicked) {
     let currency = 'EN';
     switch (this.value) {
@@ -403,8 +376,6 @@ SharedParameterList[6].groupOptionAction = function () {
 
 // customWindows
 SharedParameterList[7].groupOptionAction = function () {
-  (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
-
   if (isFirstStart || justClicked) {
     if (this.value.length > 0) {
       restoreCustomWindows();
@@ -414,14 +385,6 @@ SharedParameterList[7].groupOptionAction = function () {
 
 // qr
 SharedParameterList[8].groupOptionAction = function () {
-  (DEBUG_MODE_VALUES) && console.log('🚀 ~ groupOptionAction: ', this.id, this.value);
-}
-
-// eslint-disable-next-line no-unused-vars
-function consoleLogSharedParameterListValues(txt = '') {
-  SharedParameterList.forEach(item => {
-    console.log(`🚀🚀 ~ SharedParameterList ${txt}: `, item.id, item.value);
-  });
 }
 
 //#endregion
@@ -554,8 +517,6 @@ async function prepareDataFiles() {
 //#region INITIALIZATION
 
 function InitializationGroups(callback) {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ InitializationGroups ~ ');
-
   mainGroups = [];
 
   let groups = ar_filter.querySelectorAll(':scope > div.ar_filter_group');
@@ -722,21 +683,16 @@ function InitializationGroups(callback) {
     mainGroups.push(newGroup);
   }
 
-  (DEBUG_MODE_VALUES) && console.log('🚀 mainGroups 🚀:', mainGroups);
   if (callback != null) callback();
 }
 
 //! *****************   START   ********************
 async function Start() {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ Start ~ ');
-
   await createMenu(mainData);
   PrepareUI();
   create3DScene(sceneProperties, () => InitializationGroups(startCallback));
 
   function startCallback() {
-    (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ startCallback ~ ');
-
     if (loaded) return;
     loaded = true;
 
@@ -745,8 +701,6 @@ async function Start() {
 }
 
 async function StartSettings() {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ StartSettings ~ ');
-
   // get all options
   document.querySelectorAll('.option').forEach(option => {
     const groupId = option.getAttribute('data-group_id');
@@ -792,8 +746,6 @@ async function StartSettings() {
 
   $('#js-loader').addClass('invisible');
   $('.summary.entry-summary').removeClass('hidden');
-  // modelHouse?.scale.set(0, 0, 0);
-  // setVisibility(modelHouse, true);
   animateScale(modelHouse, 500);
 
   isFirstStart = false;
@@ -805,8 +757,6 @@ function applyAdditionalSharedParameters(id) {
 }
 
 function setDefaultValuesForGroups() {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ setDefaultValuesForGroups ~ ');
-
   for (let i = 0; i < SharedParameterList.length; i++) {
     const element = SharedParameterList[i];
     if (!element.groupIds) { continue; }
@@ -849,8 +799,6 @@ function setDefaultValuesForGroups() {
 //#region MAIN ACTIONS
 
 function SetActionForGroups() {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ SetActionForGroups ~ ');
-
   mainGroups.forEach(target => {
     switch (target.type) {
       case 'select':
@@ -997,8 +945,6 @@ function SetActionForGroups() {
 }
 
 function ParseAllGroups() {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ ParseAllGroups ~ ');
-
   mainGroups.forEach(target => {
     if (!target.group.element.classList.contains('disabled')) {
       switch (target.type) {
@@ -1056,8 +1002,6 @@ function SetGroupActionForSharedParameters(targetID, value, callback, parse = fa
 }
 
 function SetGroupActionForSharedParametersCheckboxArray(targetID, array, callback, parse = false, lastClicked = '0') {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ SetGroupActionForSharedParametersCheckboxArray ~ ');
-
   if (array == undefined || array == null) { return; }
 
   for (let i = 0; i < SharedParameterList.length; i++) {
@@ -1092,8 +1036,6 @@ function SetGroupActionForSharedParametersCheckboxArray(targetID, array, callbac
 }
 
 function applyAllConditionsActiveRadios() {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ applyAllConditions ~ ');
-
   mainGroups.forEach(target => {
     if (!target.group.element.classList.contains('disabled')) {
       for (let i = 0; i < target.group.options.length; i++) {
@@ -1203,8 +1145,6 @@ function splitString(input) {
 }
 
 function applyAllConditionsUncheckedCHeckboxes() {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ applyAllConditions ~ ');
-
   mainGroups.forEach(target => {
     if (!target.group.element.classList.contains('disabled')) {
       for (let i = 0; i < target.group.options.length; i++) {
@@ -1233,8 +1173,6 @@ function applyAllConditionsUncheckedCHeckboxes() {
               if (!parentGroup) { continue; }
               const compId = targetName.split('-')[1];
               const group = parentGroup.group;
-
-              // if (!group.element.classList.contains('disabled')) {
               const option = group.options.find(element => element.component_id == compId);
 
               if (condObj[targetName] == 'on') {
@@ -1260,7 +1198,6 @@ function applyAllConditionsUncheckedCHeckboxes() {
                 option.element.classList.remove('active');
                 option.element.classList.add('invisible');
               }
-              // }
             }
 
             else if (targetName.includes('mesh')) {
@@ -1368,8 +1305,6 @@ function setOptionsResult() {
 }
 
 function applyActiveGroupOptionAction() {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ applyActiveGroupOptionAction ~ ');
-
   for (let i = 0; i < SharedParameterList.length; i++) {
     for (let j = 0; j < SharedParameterList[i].groupIds?.length; j++) {
       const parentGroup = mainGroups.find(element => element.id == SharedParameterList[i].groupIds[j]);
@@ -1387,8 +1322,6 @@ function applyActiveGroupOptionAction() {
 }
 
 function setActiveSelectOption(groupId, optionId) {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ setActiveSelectOption ~ groupId, optionId: ', groupId, optionId);
-
   // updating active option WITHOUT clicking on it
   if (!optionId) return;
   if (Array.isArray(optionId)) return;
@@ -1430,8 +1363,6 @@ function setActiveSelectOption(groupId, optionId) {
 
 // eslint-disable-next-line no-unused-vars
 function clickActiveOption(groupId) { // if !groupId will scan every groupId
-  (DEBUG_MODE_FUNC_STARTS) && console.log("🚀 ~ UpdateActiveOption ~ ");
-
   const checkOption = (option) => !option.element.classList.contains('disabled') &&
     !option.element.classList.contains('disabled_always') &&
     option.element.classList.contains('active');
@@ -1463,8 +1394,6 @@ function clickActiveOption(groupId) { // if !groupId will scan every groupId
 
 // eslint-disable-next-line no-unused-vars
 function assignOptionsInRelatedGroups(groupIDs) {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ assignOptionsInRelatedGroups ~ ');
-
   let activeComponentId = '0';
 
   for (let i = 0; i < groupIDs.length; i++) {
@@ -1549,7 +1478,6 @@ function clickOption(groupId, optionId) {
 
 //! ************************************************
 function CheckChanges(houseId = '') {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ CheckChanges ~ ');
   console.log("🚀 ~ CheckChanges ~ HouseId:", houseId);
 
   updateStateVars();
@@ -1558,8 +1486,6 @@ function CheckChanges(houseId = '') {
   applyAllConditionsActiveRadios();
   applyAllConditionsUncheckedCHeckboxes();
   additionalConditions();
-
-  // setStripAndViewportForDoubleDoorsStudio();
 
   if (currentHouse == '2' && isExtraDoorOn) {
     console.log("🚀 ~ CheckChanges ~ customWindows:", customWindows);
@@ -1574,10 +1500,6 @@ function CheckChanges(houseId = '') {
     restoreCustomWindows();
   }
 
-  // setSskylights();
-
-  // assignOptionsInRelatedGroups(SharedParameterList[4].groupIds);
-
   applyActiveGroupOptionAction();
 
   updateStateVars();
@@ -1586,7 +1508,6 @@ function CheckChanges(houseId = '') {
   calculatePrice();
   calculateAndSetEstimateDate();
   collectSummary();
-  // getOrderList();
 }
 //! ************************************************
 //#endregion
@@ -1606,7 +1527,6 @@ async function changeModel(modelId) {
   }
 
   resetCanvasButtons();
-  console.log("🚀 ~ changeModel ~ IMPORTED_MODELS 1:", IMPORTED_MODELS, modelId, parseInt(parseInt(modelId) + 3));
 
   IMPORTED_MODELS[0] && await disposeModel(IMPORTED_MODELS[0]);
   IMPORTED_MODELS[1] && await disposeModel(IMPORTED_MODELS[1]);
@@ -1625,12 +1545,10 @@ async function changeModel(modelId) {
   disableModelCastingShadows(modelFurniture);
   disableModelReceivingShadows(modelFurniture);
 
-  console.log("🚀 ~ changeModel ~ IMPORTED_MODELS 2:", IMPORTED_MODELS);
-
   $('.summary_container').css('pointer-events', '');
   $('.product-type-3dmodel').css('cursor', '');
 
-  (isWindowCustomOn) && resetWindowsToStandard();
+  (isWindowCustomOn) && $('.option_1-2').trigger('click');
   resetCustomWindowsObject();
   CheckChanges(modelId);
 
@@ -1667,12 +1585,6 @@ function setAllPanelsOn() {
   const allWindowMeshes = getGroupNamesList(modelHouse, 'window');
   setVisibility(modelHouse, true, allPanelMeshes);
   setVisibility(modelHouse, false, allWindowMeshes);
-}
-
-function resetWindowsToStandard() {
-  $('.option_1-2').trigger('click');
-  $('.option_1-1').trigger('click');
-  resetCustomWindowsObject();
 }
 
 function preloadTextures() {
@@ -1781,7 +1693,7 @@ function calculatePrice() {
       price = convertPriceToNumber(getData(dataPrice, option, `${DATA_HOUSE_NAME[1]}_${currentCurrency}`));
     } else if (option === 'option_0-2') { // studio
       price = convertPriceToNumber(getData(dataPrice, option, `${DATA_HOUSE_NAME[2]}_${currentCurrency}`));
-    } else if (option === 'option_1-2') {
+    } else if (option === 'option_1-2') { // custom windows
       price = convertPriceToNumber(getData(dataPrice, option, `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
       $(`.${option} .component_price`).html(
         `${formatPrice(price, currentCurrencySign)} ${getData(mainData, 'ui_per_window', currentLanguage)}`
@@ -1792,7 +1704,7 @@ function calculatePrice() {
       price = convertPriceToNumber(getData(dataPrice, option, `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
     }
 
-    if ((option !== 'option_1-2')) {
+    if ((option !== 'option_1-2')) { // NOT custom windows
       $(`.${option} .component_price`).html(formatPrice(price, currentCurrencySign));
     }
   });
@@ -2012,8 +1924,6 @@ function GetGroup(name, model = modelHouse) {
 
 // eslint-disable-next-line no-unused-vars
 function GetMaterial(name, model = modelHouse) {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ GetMaterial ~ ');
-
   var material = null;
   model.traverse((o) => {
     if (o.isMaterial) {
@@ -2059,8 +1969,6 @@ function setMaterialProperty(materialName, value, property = 'metalness') {
 
 // eslint-disable-next-line no-unused-vars
 function ChangeMaterialTilling(materialName, x, y) {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ ChangeMaterialTilling ~ ');
-
   var materialObject = GetMaterialFromScene(materialName);
 
   if (materialObject == null) { return; }
@@ -2088,8 +1996,6 @@ function ChangeMaterialTilling(materialName, x, y) {
 
 // eslint-disable-next-line no-unused-vars
 function ChangeMaterialOffset(materialName, x, y) {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ ChangeMaterialOffset ~ ');
-
   var materialObject = GetMaterialFromScene(materialName);
 
   if (materialObject == null) { return; }
@@ -2136,8 +2042,6 @@ function getMeshesWithMaterial(model, materialName) {
 }
 
 function setVisibility(model, value, meshArray = []) {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ setVisibility ~ ');
-
   if (model) {
     if (value == undefined && value == null) {
       return;
@@ -2159,8 +2063,6 @@ function setVisibility(model, value, meshArray = []) {
 }
 
 function setMaterialColor(materialName, color) {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ setMaterialColor ~ ');
-
   const materialObject = GetMaterialFromScene(materialName);
   if (materialObject == null) { return; }
   materialObject.color.set(color);
@@ -2312,8 +2214,6 @@ function setObjectTexture(materialNames, textureValue, tilingValue = 1, model = 
 
 // eslint-disable-next-line no-unused-vars
 function getMeshDimensions(object) {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ getMeshDimensions ~ ');
-
   const boundingBox = new THREE.Box3();
   boundingBox.setFromObject(object);
   const size = new THREE.Vector3();
@@ -2344,8 +2244,6 @@ function setMeshPosition(model, meshName, x = 0, y = 0, z = 0) {
 
 // eslint-disable-next-line no-unused-vars
 function getMaterialsList(parent) {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ getMaterialsList ~ ');
-
   const materialsSet = new Set();
 
   parent.traverse((o) => {
@@ -2359,8 +2257,6 @@ function getMaterialsList(parent) {
 
 // eslint-disable-next-line no-unused-vars
 function getMeshNamesList(parent) {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ getMeshNamesList ~ ');
-
   const names = [];
   parent.traverse((o) => {
     if (o.name) {
@@ -2412,8 +2308,6 @@ function disableModelReceivingShadows(model) {
 //#region CLIPBOARD
 
 const copyToClipboard = (infoSharingInput) => {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ copyToClipboard ~ ');
-
   var aux = document.createElement('input');
   aux.setAttribute('value', infoSharingInput.value);
   document.body.appendChild(aux);
@@ -2516,15 +2410,11 @@ async function ImportScene(newScene) {
 //#region URL PARAMETERS
 
 function EmptyURLParams() {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ EmptyURLParams ~ ');
-
   setDefaultValuesForGroups();
   ParseAllGroups();
 }
 
 function GetParameterSplitString(array) {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ GetParameterSplitString ~ ');
-
   if (array.length == 0) { return; }
 
   var params = [];
@@ -2535,7 +2425,6 @@ function GetParameterSplitString(array) {
 }
 
 function GetSharedArrayValues(arrayValue, type) {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ GetSharedArrayValues ~ ');
   var output = [];
 
   if (arrayValue == undefined || arrayValue == null) { return output; }
@@ -2560,8 +2449,6 @@ function GetSharedArrayValues(arrayValue, type) {
 }
 
 function ReadURLParameters(callback) {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ ReadURLParameters ~ ');
-
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const entries = urlParams.entries();
@@ -2631,8 +2518,6 @@ function ReadURLParameters(callback) {
 }
 
 async function ApplyURLParameters() {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ ApplyURLParameters ~ ');
-
   if (paramsLoaded) {
     return;
   }
@@ -2720,8 +2605,6 @@ async function ApplyURLParameters() {
 }
 
 function WriteURLParameters() {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ WriteURLParameters ~ ');
-
   if (!paramsLoaded) { return; }
   qrScaned = 0;
 
@@ -2735,8 +2618,6 @@ function WriteURLParameters() {
 }
 
 function GetParametersString() {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ GetParametersString ~ ');
-
   parametersValue = '';
 
   for (let index = 0; index < SharedParameterList.length; index++) {
@@ -2769,8 +2650,6 @@ function GetParametersString() {
 }
 
 function GetURLWithParameters() {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ GetURLWithParameters ~ ');
-
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const entries = urlParams.entries();
@@ -2801,8 +2680,6 @@ function GetURLWithParameters() {
 
 // eslint-disable-next-line no-unused-vars
 function delay(time) {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ delay ~ ');
-
   return new Promise(resolve => setTimeout(resolve, time));
 }
 
@@ -2811,8 +2688,6 @@ function delay(time) {
 //#region UI FUNCTIONS
 
 async function PrepareUI() {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ PrepareUI ~ ');
-
   // *****   POP-UPs   *****
   jQuery(document).ready(function ($) {
     const BtnsAR = $('.button_ar_qr');
@@ -3031,16 +2906,6 @@ function getDateOrAddThreeWeeks(dateStr, leadTimeWeeks = 3, lang = 'EN') {
 function menuInfoBtnHandler(opt) {
   $(opt.element).find('.image-info').on('click', function (event) {
     event.stopPropagation();
-
-    // hiding ar_menu_info__tabs buttons for specific options
-    const optionValue = $(this).data('option');
-    console.log("🚀 ~ optionValue:", optionValue);
-
-    // if (optionsWithoutTabs.includes(optionValue)) {
-    //   $('.ar_menu_info__tabs').hide();
-    // } else {
-    //   $('.ar_menu_info__tabs').show();
-    // }
 
     // title
     const infoTitle = getData(mainData, $(this).attr('data-option'), currentLanguage);
@@ -3269,8 +3134,6 @@ function notificationHandler() {
         $('#canvas_notification').addClass('hidden');
       }, 2500);
     }
-
-    // resetCanvasButtons();
   });
 }
 
@@ -3319,7 +3182,7 @@ function summaryBtnsHandler() {
 function getPdfBtnHandler() {
   $('#summary_btn_text').on('click', function () {
     //! TODO generate PDF file
-    // generatePDF();
+    // generatePDF(currentHouse, mainData, currentLanguage, imageSources, pdfContentData);
     closeSummary();
   });
 }
@@ -3573,8 +3436,6 @@ function waitFor(conditionFunction) {
 }
 
 export function promiseDelay(time, callback) {
-  (DEBUG_MODE_FUNC_STARTS) && console.log('🚀 ~ promiseDelay ~ ');
-
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve('resolved');
@@ -4040,7 +3901,6 @@ function ConvertMorphValue(inputval, srcStart, srcEnd, destStart = 0, destEnd = 
 
 // eslint-disable-next-line no-unused-vars
 function animateMorph(morphName, valueStart, valueEnd, callback = () => { }, timeInterval = 200, steps = 5) {
-  (DEBUG_MODE_VALUES) && console.log("🚀 ~ animateMorph ~ ");
   const stepDuration = timeInterval / steps;
   const stepValue = (valueEnd - valueStart) / steps;
   let currentValue = valueStart;
@@ -4357,11 +4217,6 @@ function CreateImageList() {
     summary_images = document.querySelector("div.summary__images_container");
   }
 
-  // if(button_ar_share_download == null) { 
-  //   button_ar_share_download = document.querySelector("#ar_share_download");
-  //   button_ar_share_download.addEventListener("click", DownloadRenderImage);
-  // }
-
   if (summary_images == null) { return; }
 
   share_RenderImages = [];
@@ -4406,17 +4261,5 @@ function CreateImage(view) {
   view.cameraObject.visible = false;
   return img;
 }
-
-// function DownloadRenderImage(){
-//   if(share_RenderImages == null) { return; }
-//   if(share_RenderImages.length == 0) { return; }
-
-//   var a = document.createElement('a');
-//   a.href = share_RenderImages[0].src;
-//   a.download = share_RenderImages[0].alt;
-//   document.body.appendChild(a);
-//   a.click();
-//   document.body.removeChild(a);
-// }
 
 //#endregion
