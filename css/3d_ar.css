@@ -1802,6 +1802,10 @@ textarea[name="ar_order_comment"] {
   display: none;
 }
 
+#details__group-4 .details__option {
+  display: flex;
+}
+
 .summary__link {
   display: flex;
   justify-content: center;
