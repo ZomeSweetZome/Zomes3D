@@ -69,9 +69,6 @@ export async function createMenu(mainData) {
         { '#summary_form_checkbox_signme': 'ui_summary_form_checkbox_signme' },
         { '#summary_back_to_conf': 'ui_summary_back_to_conf' },
         { '#summary_btn_text': 'ui_summary_btn_text' },
-        // { '#pdf_personal_details': 'ui_pdf_personal_details' },
-        // { '#pdf_your_configuration': 'ui_pdf_your_configuration' },
-        // { '#pdf_total': 'ui_pdf_total' },
       );
 
 
@@ -258,8 +255,6 @@ export async function createMenu(mainData) {
           }
         }
       }
-
-      // menuHider();
 
       updateUIlanguages(mainData);
       setEventListenersForMenuItems();

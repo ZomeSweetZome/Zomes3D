@@ -32,6 +32,7 @@ import {
   STUDIO_EXTRADOOR_SECTORS,
   FOUNDATION_HEIGHT,
   WINDOWS_LIMIT_IN_ROW,
+  VIEWPORT_AND_STRIP_SECTORS,
 } from './settings.js';
 
 import {
@@ -271,8 +272,10 @@ SharedParameterList[0].groupOptionAction = function () {
 
 // windows
 SharedParameterList[1].groupOptionAction = function () {
-  if (isFirstStart || justClicked) {
-    // do something if needed
+  if (justClicked) {
+    if(this.value[2] == '1') {
+      addStripAndViewportWindowsToCustomWindowsObject(this.value[0], this.value[1]);
+    }
   }
 }
 
@@ -722,8 +725,6 @@ async function StartSettings() {
   modelFurniture && scene.add(modelFurniture);
   disableModelCastingShadows(modelFurniture);
   disableModelReceivingShadows(modelFurniture);
-
-  console.log("🚀 ~ StartSettings ~ IMPORTED_MODELS 2:", IMPORTED_MODELS);
 
   // InitMorphModel(modelHouse);
 
@@ -1378,7 +1379,6 @@ function clickActiveOption(groupId) { // if !groupId will scan every groupId
     const parentGroup = mainGroups.find(element => element.id == groupId);
     if (!parentGroup) { return; }
     const group = parentGroup.group;
-    console.log("🚀🚀🚀🚀🚀 ~ clickActiveOption:", group);
 
     if (!group.element.classList.contains('disabled')) {
       clickActiveOption(group.options);
@@ -1477,9 +1477,7 @@ function clickOption(groupId, optionId) {
 }
 
 //! ************************************************
-function CheckChanges(houseId = '') {
-  console.log("🚀 ~ CheckChanges ~ HouseId:", houseId);
-
+function CheckChanges() {
   updateStateVars();
   setAllPanelsOn();
 
@@ -1488,9 +1486,7 @@ function CheckChanges(houseId = '') {
   additionalConditions();
 
   if (currentHouse == '2' && isExtraDoorOn) {
-    console.log("🚀 ~ CheckChanges ~ customWindows:", customWindows);
-    removeFromCustomWindows();
-    console.log("🚀 ~ CheckChanges ~ customWindows:", customWindows);
+    removeExtraDoorPanelsFromCustomWindows();
     SharedParameterList[7].value = convertObjectToArray(customWindows);
     WriteURLParameters();
     restoreCustomWindows();
@@ -1550,7 +1546,7 @@ async function changeModel(modelId) {
 
   (isWindowCustomOn) && $('.option_1-2').trigger('click');
   resetCustomWindowsObject();
-  CheckChanges(modelId);
+  CheckChanges();
 
   setVisibility(modelHouse, false, ['man']);
   onChangePosition(DATA_HOUSE_NAME[modelId], 'outMain', () => { }, 5);
@@ -1638,7 +1634,6 @@ function updateFurnitureSet() {
 }
 
 function annotationController(value) {
-  console.log("🚀 ~ annotationController ~ value:", value);
   if (value) {
     showAnnotations();
   } else {
@@ -1679,6 +1674,7 @@ function calculatePrice() {
       for (let j = 0; j < SharedParameterList[i].value.length; j++) {
         if (SharedParameterList[i].value[j] == '1') {
           optionId = `option_${i}-${j}`;
+          if ($(`.${optionId}`).hasClass('disabled')) { continue; }
           activeOptions.push(optionId);
         }
       }
@@ -2790,8 +2786,6 @@ async function PrepareUI() {
       currentCurrency = $(this).val();
       currentCurrencySign = CURRENCY_SIGN[currentCurrency] || CURRENCY_SIGN['USD'];
 
-      console.log("🚀 ~ currentCurrency:", currentCurrency);
-
       let valueForURL;
       switch (currentCurrency) {
         case 'USD':
@@ -3198,8 +3192,6 @@ function closeSummary() {
 }
 
 function collectSummary() {
-  console.log("🚀 ~ collectSummary ~ customWindows:", customWindows);
-
   pdfContentData.length = 0;
 
   const detailsContainer = $('.summary__popup-content .details');
@@ -3730,6 +3722,8 @@ function restoreCustomWindows() {
 
   if (!isWindowCustomOn) return;
 
+  resetCustomWindows();
+
   for (const [key, values] of Object.entries(customWindows)) {
     for (const value of values) {
       const { panelMeshName, windowMeshName } = findMeshByLetterAndNumber(modelHouse, key, value);
@@ -3739,21 +3733,63 @@ function restoreCustomWindows() {
   }
 }
 
-function removeFromCustomWindows() {
+function removeExtraDoorPanelsFromCustomWindows() {
   STUDIO_EXTRADOOR_SECTORS.forEach(section => {
     const letter = section[0].toLowerCase();
-    // const number = parseInt(section.slice(1), 10);
     const number = section[1];
 
     if (Object.prototype.hasOwnProperty.call(customWindows, letter)) {
       const index = customWindows[letter].indexOf(number);
-      console.log("🚀 ~ removeFromCustomWindows ~ index:", index);
       if (index !== -1) {
         customWindows[letter].splice(index, 1);
       }
     }
   });
 }
+
+function resetCustomWindows() {
+  const windowStripData = VIEWPORT_AND_STRIP_SECTORS[DATA_HOUSE_NAME[currentHouse]].strip;
+  const windowViewportData = VIEWPORT_AND_STRIP_SECTORS[DATA_HOUSE_NAME[currentHouse]].viewport;
+
+  resetWindowsMeshes(windowStripData);
+  resetWindowsMeshes(windowViewportData);
+
+  function resetWindowsMeshes(windowObj) {
+    for (const [key, values] of Object.entries(windowObj)) {
+      for (const value of values) {
+        const { panelMeshName, windowMeshName } = findMeshByLetterAndNumber(modelHouse, key, value);
+        (panelMeshName) && setVisibility(modelHouse, true, [panelMeshName]);
+        (windowMeshName) && setVisibility(modelHouse, false, [windowMeshName]);
+      }
+    }
+  }
+}
+
+function addStripAndViewportWindowsToCustomWindowsObject(strip, viewport) {
+  resetCustomWindowsObject();
+
+  (strip == '1') && assignCustomWindows(DATA_HOUSE_NAME[currentHouse], 'strip');
+  (viewport == '1') && assignCustomWindows(DATA_HOUSE_NAME[currentHouse], 'viewport');
+
+  function assignCustomWindows(house, windowType) {
+    const windowData = VIEWPORT_AND_STRIP_SECTORS[house][windowType];
+  
+    if (!windowData) return;
+  
+    Object.keys(windowData).forEach(key => {
+      if (customWindows[key]) {
+        // customWindows[key] = windowData[key];
+        customWindows[key].push(...windowData[key]);
+      }
+    });
+
+    SharedParameterList[7].value = convertObjectToArray(customWindows);
+    WriteURLParameters();
+  }
+
+  console.log("🚀 ~ CheckChanges ~ customWindows 2:", customWindows);
+}
+
 
 //#endregion
 
@@ -3922,8 +3958,6 @@ function animateMorph(morphName, valueStart, valueEnd, callback = () => { }, tim
 //#endregion
 
 //#region ANNOTATIONS
-
-console.log("🚀 ~ dataAnnotations:", dataAnnotations);
 
 const $canvasContainer = $('#ar_model_viewer');
 let annotations = [];
