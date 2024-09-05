@@ -3423,7 +3423,7 @@ function collectSummary() {
           ]},
         );
       }
-      console.log("🚀 ~ detailsGroupId:", detailsGroupId);
+
       if (!optionClasses.includes('details__active') && detailsGroupId === 'details__group-4') { // ADD-ONs
         pdfContentData.push(
           { columns: [
@@ -3519,6 +3519,10 @@ $(document).on('click', '#title_list__item_2', function () { // interior group
 });
 
 $(document).on('click', '#title_list__item_3', function () { // exterior group
+  flyCameraTo('outMain', 'outside');
+});
+
+$(document).on('click', '#group-2 .ar_button_back', function () { // exterior group
   flyCameraTo('outMain', 'outside');
 });
 
