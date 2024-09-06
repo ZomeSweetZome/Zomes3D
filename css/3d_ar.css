@@ -3089,17 +3089,17 @@ model-viewer {
 }
 
 .marevo_loader__logo {
-  width: 500px;
-  height: 500px;
-  background-image: url("../src/index/zomes_logo_loader_small.gif");
+  width: 242px;
+  height: 190px;
+  background-image: url("../src/index/zomes_logo_loader_2.gif");
   background-size: cover;
   margin-bottom: 20px;
 }
 
 .marevo_loader__logo_canvas {
-  width: 128px;
-  height: 128px;
-  margin-bottom: 15px;
+  width: 121px;
+  height: 95px;
+  margin-bottom: 25px;
 }
 
 .marevo_loader__title {
