@@ -712,6 +712,8 @@ async function StartSettings() {
     allOptions.push(optionString);
   });
 
+  blockBuyBtn();
+
   currentHouse = SharedParameterList[0].value || 0;
 
   await loadModel(MODEL_PATHS[currentHouse], 0);
@@ -747,7 +749,7 @@ async function StartSettings() {
 
   $('#js-loader').addClass('invisible');
   $('.summary.entry-summary').removeClass('hidden');
-  animateScale(modelHouse, 500);
+  animateScale(modelHouse, 500, () => { unBlockBuyBtn(); });
 
   isFirstStart = false;
 }
@@ -1511,6 +1513,7 @@ function CheckChanges() {
 //#region CUSTOM FUNCTIONS
 
 async function changeModel(modelId) {
+  blockBuyBtn();
   $('.summary_container').css('pointer-events', 'none');
   $('.product-type-3dmodel').css('cursor', 'progress');
 
@@ -1550,7 +1553,14 @@ async function changeModel(modelId) {
 
   setVisibility(modelHouse, false, ['man']);
   onChangePosition(DATA_HOUSE_NAME[modelId], 'outMain', () => { }, 5);
-  animateScale(modelHouse, 500);
+  animateScale(modelHouse, 500, () => { unBlockBuyBtn(); });
+}
+
+function blockBuyBtn() {
+  $('.ar_menu_footer_container .ar_buy-btn').addClass('disabled');
+}
+function unBlockBuyBtn() {
+  $('.ar_menu_footer_container .ar_buy-btn').removeClass('disabled');
 }
 
 function resetCanvasButtons() {

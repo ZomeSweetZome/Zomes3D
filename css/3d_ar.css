@@ -933,7 +933,13 @@ body, html {
   border-radius: 64px;
   background-color: var(--marevo-color-bgrd-btn-order, #333);
   cursor: pointer;
+  pointer-events: auto;
 }
+
+.ar_menu_footer_container .ar_buy-btn.disabled {
+  pointer-events: none;
+  cursor: wait;
+};
 
 .ar_buy-btn .ar_button_order__caption {
   font-size: 18px;
