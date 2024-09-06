@@ -1715,11 +1715,13 @@ function calculatePrice() {
       $(`.${activeOptions[i]} .component_price`).html(formatPrice(windowsCustomPrice, currentCurrencySign));
       totalAmount += windowsCustomPrice;
     } else if (activeOptions[i] === 'option_4-5') { // smart windows
-      let windowsSmartPrice = 0;
+      let windowsSmartPrice = (currentHouse == '2') ? optionPrice * 6 : optionPrice * 5;
+      $(`.${activeOptions[i]} .component_price`).html(formatPrice(windowsSmartPrice, currentCurrencySign));
+      totalAmount += windowsSmartPrice;
 
       if (activeOptions.includes('option_1-2')) { // custom windows
         const windowsQty = Object.values(customWindows).reduce((total, array) => total + array.length, 0);
-        windowsSmartPrice = optionPrice * windowsQty;
+        windowsSmartPrice = windowsSmartPrice + optionPrice * windowsQty;
         $(`.${activeOptions[i]} .component_price`).html(formatPrice(windowsSmartPrice, currentCurrencySign));
         totalAmount += windowsSmartPrice;
       } else if (!activeOptions.includes('option_1-2')) { // NOT custom windows
@@ -1729,17 +1731,8 @@ function calculatePrice() {
           $(`.${activeOptions[i]} .component_price`).html(formatPrice(windowsSmartPrice, currentCurrencySign));
           totalAmount += windowsSmartPrice;
         }
-
         if (activeOptions.includes('option_1-0')) { // strip
-          let windowsQty = 4;
-          if (activeOptions.includes('option_0-0') || activeOptions.includes('option_0-1')) { // pod or office
-            windowsQty = 4;
-          }
-
-          if (activeOptions.includes('option_0-2')) { // studio
-            windowsQty = 5;
-          }
-
+          let windowsQty = (currentHouse == '2') ? 5 : 4;
           windowsSmartPrice = windowsSmartPrice + optionPrice * windowsQty;
           $(`.${activeOptions[i]} .component_price`).html(formatPrice(windowsSmartPrice, currentCurrencySign));
           totalAmount += windowsSmartPrice;
