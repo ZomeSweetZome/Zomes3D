@@ -507,7 +507,7 @@ body, html {
 
 .title_list__container .title_list__item-text {
   font-size: 18px;
-  font-weight: bold;
+  /* font-weight: bold; */
   color: var(--marevo-color-text-black, #000);
   transition: all .1s;
 }
@@ -520,7 +520,8 @@ body, html {
 }
 
 .title_list__container .title_list__item:hover .title_list__item-text {
-  font-size: 20px;
+  font-size: 18px;
+  font-weight: bold;
 }
 
 .title_list__container .title_list__item:hover .title_list__item-arrow {
@@ -2237,7 +2238,7 @@ textarea[name="ar_order_comment"] {
 
   .title_list__container .title_list__item-text {
     font-size: 14px;
-    font-weight: 700;
+    /* font-weight: 700; */
   }
 
   .title_list__container .title_list__item-arrow {
