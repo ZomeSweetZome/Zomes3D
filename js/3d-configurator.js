@@ -4080,12 +4080,24 @@ export function updateAnnotations(camera, scene, controls) {
     }
 
     $(annotation.element).off('click').on('click', () => {
-      $annotationText.toggleClass('disabled');
-      $annotationTextLong.toggleClass('active');
+      if ($annotationText.hasClass('disabled') && $annotationTextLong.hasClass('active')){
+        $annotationText.removeClass('disabled');
+        $annotationTextLong.removeClass('active');
+      } else {
+        closeAllAnnotations();
+        $annotationText.addClass('disabled');
+        $annotationTextLong.addClass('active');
+      }
     });
   });
 }
 
+function closeAllAnnotations() {
+  annotations.forEach((annotation) => {
+    $(annotation.element).find('.annotation-text').removeClass('disabled');
+    $(annotation.element).find('.annotation-text.long').removeClass('active');
+  });
+}
 
 //#endregion
 
