@@ -1121,6 +1121,23 @@ body, html {
 
 /*!---------------*/
 
+.canvas_dimensions {
+  display: none;
+  position: absolute;
+  justify-content: center;
+  left: 0;
+  right: 0;
+  bottom: 20%;
+  z-index: 1;
+  font-size: 20px;
+}
+
+.canvas_dimensions.active {
+  display: flex;
+}
+
+/*!---------------*/
+
 .canvas_buttons__top {
   display: flex;
   position: absolute;
@@ -2558,8 +2575,16 @@ textarea[name="ar_order_comment"] {
     padding: 0 20px;
     bottom: 0;
   }
+  
+  /*!---------------*/
+
+  .canvas_dimensions {
+    bottom: 85px;
+    font-size: 12px;
+  }
 
   /*!---------------*/
+
 
   .ar_model_viewer .canvas_notification {
     font-size: 14px;

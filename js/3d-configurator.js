@@ -1650,8 +1650,37 @@ function dimensionsController(value) {
     removeDimensions();
   }
 
+  checkLanguageForDimensions();
+
+  if (value) {
+    $('.canvas_dimensions').addClass('active');
+  } else {
+    $('.canvas_dimensions').removeClass('active');
+  }
+
   setVisibility(modelHouse, value, ['man']);
 }
+
+function checkLanguageForDimensions() {
+  let ui_id = 'ui_dimensions_part_120';
+
+  switch (currentHouse) {
+    case '0':
+      ui_id = 'ui_dimensions_part_120';
+      break;
+    case '1':
+      ui_id = 'ui_dimensions_part_170';
+      break;
+    case '2':
+      ui_id = 'ui_dimensions_part_300';
+      break;
+    default:
+      break;
+  }
+
+  updateUIlanguages(mainData, [{ '.canvas_dimensions': ui_id }], currentLanguage);
+}
+
 
 //#endregion
 
@@ -3043,12 +3072,12 @@ function annotationsBtnHandler() {
     $(this).toggleClass('active');
 
     if ($(this).hasClass('active')) {
-      $('#button_dimensions').addClass('disabled');
+      if ($('#button_dimensions').hasClass('active')) {
+        $('#button_dimensions').trigger('click');
+      }
+
       annotationController(true);
     } else {
-      if (!$('#button_furniture').hasClass('active')) {
-        $('#button_dimensions').removeClass('disabled');
-      }
       annotationController(false);
     }
   });
@@ -3060,13 +3089,17 @@ function dimensionsBtnHandler() {
     $(this).toggleClass('active');
 
     if ($(this).hasClass('active')) {
-      $('#button_annotation').addClass('disabled');
-      $('#button_furniture').addClass('disabled');
+      if ($('#button_annotation').hasClass('active')) {
+        $('#button_annotation').trigger('click');
+      }
+      
+      if ($('#button_furniture').hasClass('active')) {
+        $('#button_furniture').trigger('click');
+      }
+
       dimensionsController(true);
       flyCameraTo('outDimensions', 'outside');
     } else {
-      $('#button_annotation').removeClass('disabled');
-      $('#button_furniture').removeClass('disabled');
       dimensionsController(false);
     }
   });
@@ -3078,14 +3111,15 @@ function furnitureBtnHandler() {
     $(this).toggleClass('active');
 
     if ($(this).hasClass('active')) {
-      $('#button_dimensions').addClass('disabled');
       !isCameraInside && $('#button_camera_inside').click();
+      
+      if ($('#button_dimensions').hasClass('active')) {
+        $('#button_dimensions').trigger('click');
+      }
+
       furnitureController(true);
       updateFurnitureSet();
     } else {
-      if (!$('#button_annotation').hasClass('active')) {
-        $('#button_dimensions').removeClass('disabled');
-      }
       furnitureController(false);
     }
 
@@ -3406,6 +3440,8 @@ $('.language-picker select').on('change', function () {
   updateUIlanguages(mainData, uiMenuInfoLanguages, currentLanguage);
   updateUIlanguages(mainData, uiMenuInfoDescLanguages, `DESC_${currentLanguage}`);
   updateUIlanguages(mainData, uiMenuInfoSpecsLanguages, `SPECS_${currentLanguage}`);
+
+  checkLanguageForDimensions();
 });
 
 // *******************
