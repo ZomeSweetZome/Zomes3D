@@ -33,6 +33,7 @@ import {
   FOUNDATION_HEIGHT,
   WINDOWS_LIMIT_IN_ROW,
   VIEWPORT_AND_STRIP_SECTORS,
+  HUMAN_HEIGHT,
 } from './settings.js';
 
 import {
@@ -148,7 +149,6 @@ let isCameraInside = false;
 let summary_images;
 let share_RenderImageSize = { x: 1024, y: 1024 };
 let share_RenderImages = [];
-let cameraFar = 11;
 let imageSources = [];
 
 let pdfContentData = [];
@@ -3164,31 +3164,13 @@ function notificationHandler() {
 
 function summaryBtnsHandler() {
   $('#ar_button_order').on('click', function () {
-    switch (currentHouse) {
-      case '0': // pod
-        cameraFar = 7;
-        break;
-      case '1': // office
-        cameraFar = 8;
-        break;
-      case '2': // studio
-        cameraFar = 9;
-        break;
-      default:
-        break;
-    }
-
-    cameraImageViews_Global[0].position = new THREE.Vector3(0, 2, cameraFar);
-    cameraImageViews_Global[1].position = new THREE.Vector3(cameraFar, 2, 0);
-    cameraImageViews_Global[2].position = new THREE.Vector3(0, 2 + cameraFar, 0);
-
     CreateImageList();
     collectSummary();
     openSummary();
     $('.summary__popup-overlay').scrollTop(0);
 
     //! TEMP
-    generatePDF(currentHouse, mainData, currentLanguage, imageSources, pdfContentData);
+    // generatePDF(currentHouse, mainData, currentLanguage, imageSources, pdfContentData);
   });
 
   $('#modifyConfiguration').on('click', function () {
@@ -3214,7 +3196,16 @@ function getPdfBtnHandler() {
 
 function openSummary() {
   $('.summary__popup-overlay').addClass('active');
+  
+  $(`.summary__scheme_pod`).removeClass('active');
+  $(`.summary__scheme_office`).removeClass('active');
+  $(`.summary__scheme_studio`).removeClass('active');
+  $(`.summary__scheme_dimensions_pod`).removeClass('active');
+  $(`.summary__scheme_dimensions_office`).removeClass('active');
+  $(`.summary__scheme_dimensions_studio`).removeClass('active');
+
   $(`.summary__scheme_${DATA_HOUSE_NAME[currentHouse]}`).addClass('active');
+  $(`.summary__scheme_dimensions_${DATA_HOUSE_NAME[currentHouse]}`).addClass('active');
 }
 
 function closeSummary() {
@@ -4074,7 +4065,7 @@ export function updateAnnotations(camera, scene, controls) {
       top: `${y}px`
     });
 
-    if (!controls.enableZoom) { // camer is inside
+    if (!controls.enableZoom) { // camera is inside
       const cameraToAnnotation = annotation.position.clone().sub(camera.position).normalize();
       const angle = cameraToAnnotation.dot(camera.getWorldDirection(new THREE.Vector3()));
       const isVisible = angle > 0;
@@ -4272,21 +4263,35 @@ function removeDimensions() {
 const cameraImageViews_Global = [
   {
     id: "view_1.png",
-    alt: "view_1",
+    alt: "view_front",
     cameraObject: new THREE.PerspectiveCamera(50, canvas.width / canvas.height, 0.01, 1000),
     position: new THREE.Vector3(0, 2, 10),
     rotation: new THREE.Vector3(0, 0, 0)
   },
   {
+    id: "view_4.png",
+    alt: "view_left",
+    cameraObject: new THREE.PerspectiveCamera(50, canvas.width / canvas.height, 0.01, 1000),
+    position: new THREE.Vector3(-10, 2, 0),
+    rotation: new THREE.Vector3(0, -Math.PI / 2, 0)
+  },
+  {
+    id: "view_5.png",
+    alt: "view_rear",
+    cameraObject: new THREE.PerspectiveCamera(50, canvas.width / canvas.height, 0.01, 1000),
+    position: new THREE.Vector3(0, 2, -10),
+    rotation: new THREE.Vector3(0, Math.PI, 0)
+  },
+  {
     id: "view_2.png",
-    alt: "view_2",
+    alt: "view_right",
     cameraObject: new THREE.PerspectiveCamera(50, canvas.width / canvas.height, 0.01, 1000),
     position: new THREE.Vector3(10, 2, 0),
     rotation: new THREE.Vector3(0, Math.PI / 2, 0)
   },
   {
     id: "view_3.png",
-    alt: "view_3",
+    alt: "view_top",
     cameraObject: new THREE.PerspectiveCamera(50, canvas.width / canvas.height, 0.01, 1000),
     position: new THREE.Vector3(0, 2 + 10, 0),
     rotation: new THREE.Vector3(-Math.PI / 2, 0, 0)
@@ -4294,6 +4299,45 @@ const cameraImageViews_Global = [
 ];
 
 function CreateImageList() {
+  let cameraFar = 11;
+  let topViewCorrection = 0;
+
+  switch (currentHouse) {
+    case '0': // pod
+      cameraFar = 8.3;
+      topViewCorrection = 0.5;
+      break;
+    case '1': // office
+      cameraFar = 8.7;
+      topViewCorrection = 0.8;
+      break;
+    case '2': // studio
+      cameraFar = 10.7;
+      topViewCorrection = 0.5;
+      break;
+    default:
+      break;
+  }
+
+  console.log("🚀 ~ CreateImageList ~ currentHouse:", currentHouse, cameraFar);
+
+  cameraImageViews_Global[0].position = new THREE.Vector3(0, HUMAN_HEIGHT, cameraFar); // front
+  cameraImageViews_Global[1].position = new THREE.Vector3(-cameraFar, HUMAN_HEIGHT, 0); // left
+  cameraImageViews_Global[2].position = new THREE.Vector3(0, HUMAN_HEIGHT, -cameraFar); // rear
+  cameraImageViews_Global[3].position = new THREE.Vector3(cameraFar, HUMAN_HEIGHT, 0); // right
+  cameraImageViews_Global[4].position = new THREE.Vector3(0, HUMAN_HEIGHT + cameraFar - topViewCorrection, 0); // top
+  
+  $('.summary__images_container').empty();
+  
+  $('.summary__images_container').append(
+    '<div class="summary__scheme_dimensions summary__scheme_dimensions_pod"></div>' +
+    '<div class="summary__scheme_dimensions summary__scheme_dimensions_office"></div>' +
+    '<div class="summary__scheme_dimensions summary__scheme_dimensions_studio"></div>' +
+    '<div class="summary__scheme summary__scheme_pod"></div>' +
+    '<div class="summary__scheme summary__scheme_office"></div>' +
+    '<div class="summary__scheme summary__scheme_studio"></div>'
+  );
+
   imageSources.length = 0;
 
   if (summary_images == null) {
@@ -4302,11 +4346,7 @@ function CreateImageList() {
 
   if (summary_images == null) { return; }
 
-  share_RenderImages = [];
-
-  while (summary_images.firstChild) {
-    summary_images.removeChild(summary_images.lastChild);
-  }
+  share_RenderImages.length = 0;
 
   for (let index = 0; index < cameraImageViews_Global.length; index++) {
     const element = cameraImageViews_Global[index];
@@ -4317,6 +4357,13 @@ function CreateImageList() {
     element.cameraObject.rotation.set(element.rotation.x, element.rotation.y, element.rotation.z);
     TakeImage(element, "summary__images_image");
   }
+
+  // $('.summary__images_container').append(
+  //   '<div class="summary__scheme_dimensions summary__scheme_dimensions_pod"></div>'
+  //   //  +
+  //   // '<div class="summary__scheme_dimensions summary__scheme_dimensions_office"></div>' +
+  //   // '<div class="summary__scheme_dimensions summary__scheme_dimensions_studio"></div>'
+  // );
 }
 
 function TakeImage(view, img_class) {
