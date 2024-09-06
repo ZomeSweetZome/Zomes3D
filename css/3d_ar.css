@@ -934,6 +934,7 @@ body, html {
   background-color: var(--marevo-color-bgrd-btn-order, #333);
   cursor: pointer;
   pointer-events: auto;
+  color: var(--marevo-color-text-white, #ffffff);
 }
 
 .ar_menu_footer_container .ar_buy-btn.disabled {
@@ -957,6 +958,7 @@ body, html {
   content: var(--marevo-ui-icon_btn_download_right_w);
   width: 24px;
   height: 24px;
+  margin-left: 12px;
 }
 
 .menu__footer_delivery_info,
