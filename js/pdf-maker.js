@@ -32,13 +32,16 @@ export function generatePDF(
 
   switch (currentHouse) {
     case '0':
-      imageUrls.push('./src/pdf/images/scheme_pod.jpg');
+      imageUrls.push('./src/pdf/images/sch_pod.png');
+      imageUrls.push('./src/pdf/images/dimensions_pod.png');
       break;
     case '1':
-      imageUrls.push('./src/pdf/images/scheme_office.jpg');
+      imageUrls.push('./src/pdf/images/sch_office.png');
+      imageUrls.push('./src/pdf/images/dimensions_office.png');
       break;
     case '2':
-      imageUrls.push('./src/pdf/images/scheme_studio.jpg');
+      imageUrls.push('./src/pdf/images/sch_studio.png');
+      imageUrls.push('./src/pdf/images/dimensions_studio.png');
       break;
     default:
       break;
@@ -72,13 +75,17 @@ export function generatePDF(
     phoneIconImage,
     emailIconImage,
     schemeImage,
+    dimensionsImage,
   ]) => {
-    const schemeWidth = contentWidth;
 
-    const shotsPoses = [
-      { w: 178, x: 0, y: 0 },
-      { w: 178, x: 178, y: 0 },
-      { w: 178, x: 356, y: 0 },
+    const picsPoses = [
+      { w: 218, x: 10, y: -34 },
+      { w: 218, x: 220, y: -34 },
+      { w: 218, x: 10, y: 115 },
+      { w: 218, x: 220, y: 115 },
+      { w: 230, x: 0, y: 300 },
+      { w: 220, x: 220, y: 270 },
+      { w: contentWidth, x: 0, y: 0 },
     ];
 
     const uiPdfWeb = getData(data, "ui_pdf_web", language);
@@ -93,10 +100,8 @@ export function generatePDF(
         { text: '', width: '*', margin: [0, 30, 0, 0] },
         { image: phoneIconImage, width: 14, margin: [0, 43, 0, 0] },
         { text: uiPdfPhone, width: 'auto', fontSize: 10, margin: [6, 43, 16, 0] },
-        
         { image: websiteIconImage, width: 14, margin: [0, 43, 0, 0] },
         { text: uiPdfWeb, width: 'auto', fontSize: 10, margin: [6, 43, 16, 0] },
-        
         { image: emailIconImage, width: 14, margin: [0, 43, 0, 0] },
         { text: uiPdfEmail, link: `mailto:${uiPdfEmail}`, width: 'auto', fontSize: 10, margin: [6, 43, 30, 0] }
       ]
@@ -104,14 +109,18 @@ export function generatePDF(
 
     const pdfContent = [
       // ******************    PAGE 1    ***********************
-      { image: schemeImage, width: schemeWidth, margin: [0, 0, 0, 20] },
-      { image: imageSources[0], width: shotsPoses[0].w, relativePosition: { x: shotsPoses[0].x, y: shotsPoses[0].y } },
-      { image: imageSources[1], width: shotsPoses[1].w, relativePosition: { x: shotsPoses[1].x, y: shotsPoses[1].y } },
-      { image: imageSources[2], width: shotsPoses[2].w, relativePosition: { x: shotsPoses[2].x, y: shotsPoses[2].y } },
+      { image: imageSources[0], width: picsPoses[0].w, relativePosition: { x: picsPoses[0].x, y: picsPoses[0].y } },
+      { image: imageSources[1], width: picsPoses[1].w, relativePosition: { x: picsPoses[1].x, y: picsPoses[1].y } },
+      { image: imageSources[2], width: picsPoses[2].w, relativePosition: { x: picsPoses[2].x, y: picsPoses[2].y } },
+      { image: imageSources[3], width: picsPoses[3].w, relativePosition: { x: picsPoses[3].x, y: picsPoses[3].y } },
+      { image: schemeImage,     width: picsPoses[4].w, relativePosition: { x: picsPoses[4].x, y: picsPoses[4].y } },
+      { image: imageSources[4], width: picsPoses[5].w, relativePosition: { x: picsPoses[5].x, y: picsPoses[5].y } },
+      { image: dimensionsImage, width: picsPoses[6].w, relativePosition: { x: picsPoses[6].x, y: picsPoses[6].y } },
+      
       {
         text: uiPdfPersonalDetails,
         style: 'subtitle',
-        margin: [0, shotsPoses[2].w + 20, 0, 0],
+        margin: [0, picsPoses[5].x +picsPoses[5].w + 90, 0, 0],
       },
       {
         canvas: [ { type: 'line', x1: 0, y1: 0, x2: contentWidth, y2: 0, lineWidth: 0.5 }],
