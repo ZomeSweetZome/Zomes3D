@@ -1208,6 +1208,10 @@ body, html {
   height: 18px;
 }
 
+.canvas_btn_top.hidden {
+  display: none;
+}
+
 .canvas_btn_annotation .canvas_btn__icon {
   content: var(--marevo-ui-icon_annotations_b);
 }

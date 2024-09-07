@@ -63,6 +63,11 @@ import {
   updateUIlanguages,
 } from './ui-controller.js';
 
+// Clipping model mode
+export let current3Dmodel = null;
+export let isLocalClippingOn = false;
+export let notClippingMaterials = [];
+
 // state variables
 let currentLanguage = DEFAULT_LANGUAGE;
 let currentCurrency = DEFAULT_CURRENCY;
@@ -2850,6 +2855,8 @@ async function PrepareUI() {
     furnitureRadioBtnsHandlers();
     notificationHandler();
     summaryBtnsHandler();
+
+    testBtnsHandler();
   });
 
   // Date and Tax popups
@@ -3073,6 +3080,46 @@ function cameraBtnHandlers() {
     });
 
     isCameraInside = false;
+  });
+}
+
+// *****   Annotation Btn   *****
+function testBtnsHandler() {
+  $('#button_test1').on('click', function () {
+    // if ($('#button_test2').hasClass('active')) {
+    //   $('#button_test2').trigger('click');
+    // }
+
+    // $(this).toggleClass('active');
+
+    // isLocalClippingOn = false;
+
+    // if ($(this).hasClass('active')) {
+    //   renderer.clippingPlanes = [];
+    //   const height = 2.5;
+    //   const clippingPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), height);
+    //   renderer.clippingPlanes = [clippingPlane];
+    // } else {
+    //   renderer.clippingPlanes = [];
+    // }
+  });
+
+  $('#button_test2').on('click', function () {
+    // if ($('#button_test1').hasClass('active')) {
+    //   $('#button_test1').trigger('click');
+    // }
+
+    // $(this).toggleClass('active');
+
+    // if ($(this).hasClass('active')) {
+    //   renderer.clippingPlanes = [];
+    //   // notClippingMaterials = ['floor'];
+    //   current3Dmodel = modelHouse;
+    //   isLocalClippingOn = true;
+    // } else {
+    //   isLocalClippingOn = false;
+    // }
+
   });
 }
 

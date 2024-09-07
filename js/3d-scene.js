@@ -22,7 +22,12 @@ const IMPORTED_MODELS_GLTF = [];
 export let isModelsLoaded = false;
 
 import { TONE_MAPPING_EXPOSURE, LIGHT_SCHEME, HUMAN_HEIGHT } from './settings.js';
-import { updateAnnotations } from './3d-configurator.js';
+import { 
+  updateAnnotations,
+  current3Dmodel,
+  isLocalClippingOn,
+  notClippingMaterials,
+ } from './3d-configurator.js';
 
 let externalProperties;
 
@@ -39,6 +44,9 @@ let startPosition = new THREE.Vector3(3.757, 1.801, 9.629);
 
 let dirLight;
 let dirLightIntencity;
+
+let clippingPlaneCam;
+let clippingPlaneTop;
 
 export function Get3DScene() {
   return scene;
@@ -73,6 +81,27 @@ export function create3DScene(properties = scenePropertiesDefault, startFunction
   renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = TONE_MAPPING_EXPOSURE;
+
+  
+  // ********************************************
+  //      Clipping Planes
+  // ********************************************
+  
+  renderer.localClippingEnabled = true;
+  clippingPlaneCam = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+  // renderer.clippingPlanes = [clippingPlaneCam];
+
+  // clippingPlaneTop = new THREE.Plane(new THREE.Vector3(0, -1, -1), 1.8);
+  // renderer.clippingPlanes = [clippingPlaneTop];
+  
+  function updateClippingPlane() {
+    const cameraDirection = new THREE.Vector3();
+    camera.getWorldDirection(cameraDirection);
+    clippingPlaneCam.normal.copy(cameraDirection);
+    
+    const clippingDistance = 5.0;
+    clippingPlaneCam.constant = -camera.position.dot(cameraDirection) - clippingDistance;
+  }
 
   // ********************************************
   //      Init CAMERA
@@ -298,7 +327,10 @@ export function create3DScene(properties = scenePropertiesDefault, startFunction
   // ********************************************
   function animate() {
     requestAnimationFrame(animate);
-    
+
+    isLocalClippingOn && updateClippingPlane();
+    isLocalClippingOn && applyClippingPlanesToModel(current3Dmodel, notClippingMaterials);
+
     if (controls.enabled) { controls.update(); }
     
     updateAnnotations(camera, scene, controls);
@@ -678,4 +710,25 @@ function updateMeshRotationToCameraY(camera, scene, meshName) {
     const angle = Math.atan2(direction.x, direction.z);
     man.rotation.set(0, angle, 0);
   }
+}
+
+function applyClippingPlanesToModel(model, materialExcept = [], clipIntersection = true) {
+  if (!model) { return; }
+  
+  if (!materialExcept) {
+    materialExcept = [];
+  }
+
+  model.traverse(object => {
+    if (object.isMesh) {
+      const materials = Array.isArray(object.material) ? object.material : [object.material];
+      materials.forEach(material => {
+        if (materialExcept.includes(material.name)) return;
+
+        material.clippingPlanes = [clippingPlaneCam];
+        material.clipIntersection = clipIntersection;
+        material.needsUpdate = true;
+      });
+    }
+  });
 }
