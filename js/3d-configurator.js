@@ -2872,6 +2872,10 @@ async function PrepareUI() {
     $('.popup__info_close').on('click', function () {
       $('.popup__info').addClass('hidden');
     });
+
+    $('.popup_tax__close_btn').on('click', function () {
+      $('.popup__info').addClass('hidden');
+    });
   });
 
   // Summary popup

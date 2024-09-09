@@ -1690,6 +1690,87 @@ textarea[name="ar_order_comment"] {
   color: var(--marevo-color-text-black, #000);
 }
 
+/*! ------------------ */
+
+.popup_tax__close {
+  right: 30px;
+  top: 30px;
+}
+
+.popup__info_tax {
+  text-align: start;
+  width: min(657px, calc(100vw - 40px));
+}
+
+.popup_tax__title {
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.popup_tax__text {
+  margin-bottom: 30px;
+}
+
+.popup_tax__form_title {
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.popup__info_tax form {
+  display: flex;
+  margin-bottom: 20px;
+  gap: 20px;
+}
+
+.popup_tax__result_container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.popup__info_tax form .summary__form-item {
+  width: 100%;
+  height: 48px;
+  margin-bottom: 0;
+}
+
+.popup__info_tax form .summary__form-item label {
+  font-size: 14px;
+}
+
+.popup__info_tax form .summary__form-item input {
+  font-size: 14px;
+  width: 100%;
+}
+
+.popup__info_tax form .summary__form-item_phone {
+  max-width: 220px;
+}
+
+.popup__info_tax form button {
+  align-self: flex-start;
+  width: auto;
+  height: 48px;
+  padding: 0 24px;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 500;
+  background-color: var(--marevo-color-text-black, #000);
+  color: var(--marevo-color-text-white, #fff);
+  border: none;
+  white-space: nowrap;
+}
+
+.popup__info_tax form button:disabled {
+  color: var(--marevo-color-text-white, #fff);
+  cursor: default;
+}
+
+.popup_tax__close_btn {
+  display: none;
+}
+
 /* ----------- summary before pdf ------------*/
 
 .summary__popup-overlay {
@@ -3068,7 +3149,6 @@ textarea[name="ar_order_comment"] {
   
   .summary__form-item_checkbox input[type="checkbox"]:checked + label::before {
   }
-
 }
 
 @media screen and (max-width: 767px) and (orientation: portrait) {
@@ -3116,6 +3196,90 @@ textarea[name="ar_order_comment"] {
 
   .popup-info-img img {
     object-fit: fill;
+  }
+
+  /*!---------------*/
+  .popup_tax__close {
+    display: none;
+  }
+  
+  .popup__info_tax {
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: start;
+    position: fixed;
+    height: calc(100vh - var(--marevo-header-height-mobile, 53px));
+    width: 100vw;
+    top: var(--marevo-header-height-mobile, 60px);
+    left: 0;
+    transform: none;
+    padding: 16px 20px 34px;
+    border: none;
+    border-radius: 0;
+  }
+  
+  .popup__info_content_tax {
+    overflow-y: auto;
+  }
+
+  .popup_tax__text {
+    font-size: 12px;
+  }
+  
+  .popup__info_tax form {
+    flex-direction: column;
+  }
+  
+  .popup_tax__result_container {
+    font-size: 12px;
+  }
+  
+  .popup__info_tax form .summary__form-item {
+    height: 35px;
+  }
+  
+  .popup__info_tax form .summary__form-item label {
+    display: none;
+  }
+  
+  .popup__info_tax form .summary__form-item input {
+    font-size: 12px;
+  }
+  
+  .popup__info_tax form .summary__form-item_phone {
+    max-width: none;
+  }
+  
+  .popup__info_tax form button {
+    align-self: flex-start;
+    width: 100%;
+    height: 35px;
+    padding: 0 24px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 500;
+    background-color: var(--marevo-color-text-black, #000);
+    color: var(--marevo-color-text-white, #fff);
+    border: none;
+    white-space: nowrap;
+  }
+  
+  .popup_tax__close_btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 35px;
+    padding: 0 24px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 500;
+    background-color: var(--marevo-color-text-white, #fff);
+    color: var(--marevo-color-text-black, #000);
+    border: 1px solid var(--marevo-color-text-black, #000);
+    white-space: nowrap;
+
+    margin-top: 32px;
   }
 }
 
