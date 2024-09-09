@@ -71,6 +71,18 @@ export async function createMenu(mainData) {
         { '#summary_form_checkbox_signme': 'ui_summary_form_checkbox_signme' },
         { '#summary_back_to_conf': 'ui_summary_back_to_conf' },
         { '#summary_btn_text': 'ui_summary_btn_text' },
+        // ----------
+        { '.popup_tax__title': 'ui_popup_tax_title' },
+        { '#popup_tax_form_title_1': 'ui_popup_tax_form_title_1' },
+        { '#popup_tax_form_title_2': 'ui_popup_tax_form_title_2' },
+        { '#popup_tax_calculate': 'ui_popup_tax_form_btn_1' },
+        { '#popup_tax_contuct_me': 'ui_popup_tax_form_btn_2' },
+        // ----------
+        //! { '.popup_tax__title': 'ui_popup_select_model_title' },
+        //! { '.popup_tax__title': 'ui_popup_select_model_btn_1' },
+        //! { '.popup_tax__title': 'ui_popup_select_model_btn_2' },
+        //! { '.popup_tax__title': 'ui_popup_select_model_btn_3' },
+
       );
 
       uiPlaceholdersMultiLanguages.push(
@@ -82,6 +94,10 @@ export async function createMenu(mainData) {
         { '#form_country': 'ui_summary_form_label_country' },
         { '#form_zipcode': 'ui_summary_form_label_zipcode' },
         { '#form_inquiries': 'ui_summary_form_label_questions' },
+        // ----------
+        { '#popup_tax_email': 'ui_popup_tax_label_email' },
+        { '#popup_tax_zipcode': 'ui_popup_tax_label_zipcode' },
+        { '#consult_form_phone': 'ui_popup_tax_label_phone' },
       );
 
       const groupsContainer = $('#ar_filter');
@@ -444,7 +460,13 @@ export function getData(data, text, desiredId, titleId = 'id') {
 
   for (let i = 1; i < data.length; i++) {
     if (data[i][0].toUpperCase() === text.toUpperCase()) {
-      return data[i][index];
+      let res = data[i][index];
+      
+      if (res[0] === '"' && res[res.length - 1] === '"') {
+        res = res.slice(1, -1);
+      }
+
+      return res;
     }
   }
 

@@ -1696,6 +1696,28 @@ function checkLanguageForDimensions() {
   updateUIlanguages(mainData, [{ '.canvas_dimensions': ui_id }], currentLanguage);
 }
 
+function setPopupTaxMainText() {
+  console.log("🚀 ~ currentLanguage, currentCurrencySign:", currentLanguage, currentCurrencySign);
+
+  const shippingPriceBaseNumber = convertPriceToNumber(getData(dataPrice, 'shipppingCostBase', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
+  const shippingPriceBaseString = formatPrice(shippingPriceBaseNumber, currentCurrencySign, true, false);
+  const shippingPricePerMileNumber = convertPriceToNumber(getData(dataPrice, 'shipppingCostMile', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
+  const shippingPricePerMileString = formatPrice(shippingPricePerMileNumber, currentCurrencySign, false, false);
+
+  let popupText = '';
+  popupText = popupText + getData(mainData, 'ui_popup_tax_text_1', currentLanguage);
+  popupText = popupText + ' ' + DATA_HOUSE_NAME[currentHouse] + ' ';
+  popupText = popupText + getData(mainData, 'ui_popup_tax_text_2', currentLanguage);
+  popupText = popupText + ' ' + shippingPriceBaseString + ' ';
+  popupText = popupText + getData(mainData, 'ui_popup_tax_text_3', currentLanguage);
+  popupText = popupText + ' ' + shippingPricePerMileString + ' ';
+  popupText = popupText + getData(mainData, 'ui_popup_tax_text_4', currentLanguage);
+  
+  console.log("🚀 ~ setPopupTaxMainText ~ popupText:", popupText);
+
+  $('.popup_tax__text').html(popupText);
+}
+
 
 //#endregion
 
@@ -1814,28 +1836,28 @@ function convertPriceToNumber(priceString) {
 }
 
 function getOrderList() {
-  let orderList = "ORDER" + '\n';
+  // let orderList = "ORDER" + '\n';
 
-  for (let i = 0; i < SharedParameterList.length; i++) {
-    if (DATA_CHECKING_PRICE[i]) {
-      const dataName = DATA_CHECKING_PRICE[i]?.name + ': ' +
-        DATA_CHECKING_PRICE[i]?.value[SharedParameterList[i].value];
+  // for (let i = 0; i < SharedParameterList.length; i++) {
+  //   if (DATA_CHECKING_PRICE[i]) {
+  //     const dataName = DATA_CHECKING_PRICE[i]?.name + ': ' +
+  //       DATA_CHECKING_PRICE[i]?.value[SharedParameterList[i].value];
 
-      if (SharedParameterList[i].groupIds) {
-        for (let k = 0; k < SharedParameterList[i].groupIds.length; k++) {
-          if (isGroupActive(SharedParameterList[i].groupIds[k])) {
-            orderList += dataName + '\n';
-            break;
-          }
-        }
-      }
-    }
-  }
-  orderList = orderList + 'Amount: ' + totalAmount;
-  return orderList;
+  //     if (SharedParameterList[i].groupIds) {
+  //       for (let k = 0; k < SharedParameterList[i].groupIds.length; k++) {
+  //         if (isGroupActive(SharedParameterList[i].groupIds[k])) {
+  //           orderList += dataName + '\n';
+  //           break;
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
+  // orderList = orderList + 'Amount: ' + totalAmount;
+  // return orderList;
 }
 
-function formatPrice(price, currency) {
+function formatPrice(price, currency, needToBeRounded = true, needToAddSpace = true) {
   if (
     !price
     && SharedParameterList[1].value[2] != 1 // custom windows
@@ -1849,7 +1871,9 @@ function formatPrice(price, currency) {
   if (!currency) { currency = '' }
 
   let result, firstSeparator;
-  const priceString = Math.floor(price).toString();
+  const priceString = (needToBeRounded) 
+    ? Math.floor(price).toString()
+    : price.toString();
 
   switch (currency) {
     case 'грн':
@@ -1872,7 +1896,9 @@ function formatPrice(price, currency) {
   if (currency === 'грн') {
     result = `${integerPart} ${currency}`;
   } else {
-    result = `${currency} ${integerPart}`;
+    result = (needToAddSpace) 
+      ? `${currency} ${integerPart}`
+      : `${currency}${integerPart}`;
   }
 
   return result;
@@ -2821,6 +2847,8 @@ async function PrepareUI() {
 
       updateUIlanguages(dataAnnotations, uiAnnotationsLanguages, `SHORT_${currentLanguage}`);
       updateUIlanguages(dataAnnotations, uiAnnotationsLongLanguages, `LONG_${currentLanguage}`);
+
+      setPopupTaxMainText();
     });
 
     $('.currency-picker select').on('change', function () {
@@ -2843,6 +2871,8 @@ async function PrepareUI() {
       SharedParameterList[6].value = valueForURL;
       CheckChanges();
       WriteURLParameters();
+
+      setPopupTaxMainText();
     });
   });
 
