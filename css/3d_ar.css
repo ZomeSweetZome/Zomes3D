@@ -51,6 +51,11 @@
   --marevo-ui-icon_email : url(../src/ar-ui-icons/icon_email.svg);
   --marevo-ui-icon_facebook : url(../src/ar-ui-icons/icon_facebook.svg);
 
+  --marevo-ui-btn_pod : url(../src/ar-ui-icons/btn_pod_men.png);
+  --marevo-ui-btn_office : url(../src/ar-ui-icons/btn_office.png);
+  --marevo-ui-btn_studio : url(../src/ar-ui-icons/btn_studio.png);
+  --marevo-ui-btn_men : url(../src/ar-ui-icons/men.png);
+
   --marevo-scheme_pod : url(../src/pdf/images/sch_pod.png);
   --marevo-scheme_office : url(../src/pdf/images/sch_office.png);
   --marevo-scheme_studio : url(../src/pdf/images/sch_studio.png);
@@ -1771,6 +1776,106 @@ textarea[name="ar_order_comment"] {
   display: none;
 }
 
+/*!-----------------------------*/
+
+.popup_select {
+  display: flex;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100vw;
+  height: calc(100svh - var(--marevo-header-height, 100px));
+  background-color: var(--marevo-color-bgrd-menu, #fff);
+  left: 0;
+  top: 0;
+  padding: 30px;
+  z-index: 99999;
+}
+
+.popup_select.hidden {
+  display: none;
+}
+
+.popup_select__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--marevo-color-text-black, #000);
+  border-radius: 20px;
+}
+
+.popup_select__title {
+  color: var(--marevo-color-text-black, #000);
+  font-size: 24px;
+  font-weight: 500;
+  margin-bottom: 40px;
+}
+
+.popup_select__list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.popup_select__item {
+  cursor: pointer;
+  position: relative;
+}
+
+#select_btn_pod .popup_select__item_picture {
+  background: var(--marevo-ui-btn_pod) no-repeat center;
+  background-size: contain;
+}
+
+#select_btn_office .popup_select__item_picture {
+  background: var(--marevo-ui-btn_office) no-repeat center;
+  background-size: contain;
+}
+
+#select_btn_studio .popup_select__item_picture {
+  background: var(--marevo-ui-btn_studio) no-repeat center;
+  background-size: contain;
+}
+
+.popup_select__item_picture {
+  width: 314px;
+  height: 200px;
+  margin-bottom: 40px;
+  transition: all 0.3s ease;
+  border-radius: 20px;
+  border: 1px solid var(--marevo-color-popup-border, #000);
+}
+
+.popup_select__item_button {
+  width: 163px;
+  height: 35px;
+  padding: 0 14px;
+  border-radius: 20px;
+  border: 1px solid var(--marevo-color-text-black, #000);
+  color: var(--marevo-color-text-black, #000);
+  background-color: var(--marevo-color-text-white, #fff);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+
+.popup_select__item:hover .popup_select__item_picture {
+  scale: 1.05;
+}
+
+.popup_select__item:hover .popup_select__item_button {
+  scale: 1.03;
+}
+
 /* ----------- summary before pdf ------------*/
 
 .summary__popup-overlay {
@@ -3280,6 +3385,32 @@ textarea[name="ar_order_comment"] {
     white-space: nowrap;
 
     margin-top: 32px;
+  }
+
+  /*!-----------------------------*/
+
+  .popup_select {
+    height: calc(100svh - var(--marevo-header-height-mobile, 53px));
+    padding: 20px;
+  }
+
+  .popup_select__content {
+    border: none;
+  }
+  .popup_select__title {
+    font-size: 20px;
+  }
+  .popup_select__list {
+  }
+  .popup_select__item {
+  }
+  .popup_select__item_picture {
+    width: 40vw;
+    height: 26vw;
+  }
+  .popup_select__item_button {
+    width: 150px;
+    padding: 0 6px;
   }
 }
 

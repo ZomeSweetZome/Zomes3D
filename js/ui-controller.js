@@ -78,10 +78,10 @@ export async function createMenu(mainData) {
         { '#popup_tax_calculate': 'ui_popup_tax_form_btn_1' },
         { '#popup_tax_contuct_me': 'ui_popup_tax_form_btn_2' },
         // ----------
-        //! { '.popup_tax__title': 'ui_popup_select_model_title' },
-        //! { '.popup_tax__title': 'ui_popup_select_model_btn_1' },
-        //! { '.popup_tax__title': 'ui_popup_select_model_btn_2' },
-        //! { '.popup_tax__title': 'ui_popup_select_model_btn_3' },
+        { '.popup_select__title': 'ui_popup_select_model_title' },
+        { '#select_btn_pod .popup_select__item_button': 'ui_popup_select_model_btn_1' },
+        { '#select_btn_office .popup_select__item_button': 'ui_popup_select_model_btn_2' },
+        { '#select_btn_studio .popup_select__item_button': 'ui_popup_select_model_btn_3' },
 
       );
 
