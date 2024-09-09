@@ -330,6 +330,7 @@ export function create3DScene(properties = scenePropertiesDefault, startFunction
 
     isLocalClippingOn && updateClippingPlane();
     isLocalClippingOn && applyClippingPlanesToModel(current3Dmodel, notClippingMaterials);
+    !isLocalClippingOn && removeClippingPlanesFromModel(current3Dmodel, notClippingMaterials);
 
     if (controls.enabled) { controls.update(); }
     
@@ -732,3 +733,25 @@ function applyClippingPlanesToModel(model, materialExcept = [], clipIntersection
     }
   });
 }
+
+export function removeClippingPlanesFromModel(model, materialExcept = []) {
+  if (!model) { return; }
+
+  if (!materialExcept) {
+    materialExcept = [];
+  }
+
+  model.traverse(object => {
+    if (object.isMesh) {
+      const materials = Array.isArray(object.material) ? object.material : [object.material];
+      materials.forEach(material => {
+        if (materialExcept.includes(material.name)) return;
+
+        material.clippingPlanes = null;
+        material.clipIntersection = false;
+        material.needsUpdate = true;
+      });
+    }
+  });
+}
+

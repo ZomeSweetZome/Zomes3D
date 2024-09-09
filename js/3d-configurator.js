@@ -158,6 +158,8 @@ let imageSources = [];
 
 let pdfContentData = [];
 let currentAmountString = '';
+let totalAmount = 0;
+let maximumLeadTimeWeeks = 0;
 
 // CUSTOM SELECT
 jQuery(document).ready(function () {
@@ -1723,10 +1725,11 @@ function setPopupTaxMainText() {
 
 //#region PRICE CALCULATION
 
-let totalAmount = 0;
+
 function calculatePrice() {
   const totalAmountElement = document.getElementById('ar_total_price');
   totalAmount = 0;
+  maximumLeadTimeWeeks = 0;
 
   let optionId = '';
   let activeOptions = [];
@@ -1748,6 +1751,7 @@ function calculatePrice() {
   }
 
   let price = 0;
+
   allOptions.forEach((option) => {
     if (option === 'option_0-0') { // pod
       price = convertPriceToNumber(getData(dataPrice, option, `${DATA_HOUSE_NAME[0]}_${currentCurrency}`));
@@ -1772,40 +1776,49 @@ function calculatePrice() {
   });
 
   let optionPrice = 0;
+  let optionLeadTime = 0;
 
   for (let i = 0; i < activeOptions.length; i++) {
     optionPrice = convertPriceToNumber(getData(dataPrice, activeOptions[i], `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
+    optionLeadTime = convertPriceToNumber(getData(dataPrice, activeOptions[i], `Lead_Time_${DATA_HOUSE_NAME[currentHouse]}`));
+
     if (activeOptions[i] === 'option_1-2') { // custom windows
       const windowsQty = Object.values(customWindows).reduce((total, array) => total + array.length, 0);
       const windowsCustomPrice = optionPrice * windowsQty;
       $(`.${activeOptions[i]} .component_price`).html(formatPrice(windowsCustomPrice, currentCurrencySign));
+      if (optionLeadTime > maximumLeadTimeWeeks) { maximumLeadTimeWeeks = optionLeadTime; }
       totalAmount += windowsCustomPrice;
     } else if (activeOptions[i] === 'option_4-5') { // smart windows
       let windowsSmartPrice = (currentHouse == '2') ? optionPrice * 6 : optionPrice * 5;
       $(`.${activeOptions[i]} .component_price`).html(formatPrice(windowsSmartPrice, currentCurrencySign));
+      if (optionLeadTime > maximumLeadTimeWeeks) { maximumLeadTimeWeeks = optionLeadTime; }
       totalAmount += windowsSmartPrice;
 
       if (activeOptions.includes('option_1-2')) { // custom windows
         const windowsQty = Object.values(customWindows).reduce((total, array) => total + array.length, 0);
         windowsSmartPrice = windowsSmartPrice + optionPrice * windowsQty;
         $(`.${activeOptions[i]} .component_price`).html(formatPrice(windowsSmartPrice, currentCurrencySign));
+        if (optionLeadTime > maximumLeadTimeWeeks) { maximumLeadTimeWeeks = optionLeadTime; }
         totalAmount += windowsSmartPrice;
       } else if (!activeOptions.includes('option_1-2')) { // NOT custom windows
         if (activeOptions.includes('option_1-1')) { // viewport
           const windowsQty = 4;
           windowsSmartPrice = windowsSmartPrice + optionPrice * windowsQty;
           $(`.${activeOptions[i]} .component_price`).html(formatPrice(windowsSmartPrice, currentCurrencySign));
+          if (optionLeadTime > maximumLeadTimeWeeks) { maximumLeadTimeWeeks = optionLeadTime; }
           totalAmount += windowsSmartPrice;
         }
         if (activeOptions.includes('option_1-0')) { // strip
           let windowsQty = (currentHouse == '2') ? 5 : 4;
           windowsSmartPrice = windowsSmartPrice + optionPrice * windowsQty;
           $(`.${activeOptions[i]} .component_price`).html(formatPrice(windowsSmartPrice, currentCurrencySign));
+          if (optionLeadTime > maximumLeadTimeWeeks) { maximumLeadTimeWeeks = optionLeadTime; }
           totalAmount += windowsSmartPrice;
         }
       }
     } else {
       $(`.${activeOptions[i]} .component_price`).html(formatPrice(optionPrice, currentCurrencySign));
+      if (optionLeadTime > maximumLeadTimeWeeks) { maximumLeadTimeWeeks = optionLeadTime; }
       totalAmount += optionPrice;
     }
   }
@@ -2469,10 +2482,8 @@ async function ImportScene(newScene) {
 //#region URL PARAMETERS
 
 function EmptyURLParams() {
-
-  //! TODO console.log("🚀🚀POPUP🚀🚀");
-  //! TODO SharedParameterList[0].value = 0 or 1 or 2;
-
+  $('.popup_select').removeClass('hidden');
+  $('#js-loader').addClass('invisible');
   setDefaultValuesForGroups();
   ParseAllGroups();
 }
@@ -2527,7 +2538,7 @@ function ReadURLParameters(callback) {
   if (!parseParams?.trim()) {
     paramsLoaded = true;
     EmptyURLParams();
-    if (callback != null) { callback(); }
+    // if (callback != null) { callback(); }
     return;
   }
 
@@ -2536,7 +2547,7 @@ function ReadURLParameters(callback) {
   if (paramArray.length == 0) {
     paramsLoaded = true;
     EmptyURLParams();
-    if (callback != null) { callback(); }
+    // if (callback != null) { callback(); }
     return;
   }
 
@@ -2886,6 +2897,8 @@ async function PrepareUI() {
     notificationHandler();
     summaryBtnsHandler();
 
+    modelSelectorHandler();
+
     testBtnsHandler();
   });
 
@@ -2932,13 +2945,12 @@ async function PrepareUI() {
 
 function calculateAndSetEstimateDate() {
   const estimateDate = getData(dataPrice, 'estimateDate', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`);
-  const leadTimeWeeks = getData(dataPrice, 'leadTimeWeeks', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`);
-  const dateText = getDateOrAddThreeWeeks(estimateDate, leadTimeWeeks, currentLanguage);
+  const dateText = addLeadTimeToNow(estimateDate, maximumLeadTimeWeeks, currentLanguage);
   $('#delivery_info_date').text(dateText);
-  $('.popup__info_content_date').html(`Ships ${dateText}. Estimated delivery time is ${leadTimeWeeks} weeks from the date of purchase.`);
+  $('.popup__info_content_date').html(`Ships ${dateText}. Estimated delivery time is ${maximumLeadTimeWeeks} weeks from the date of purchase.`);
 }
 
-function getDateOrAddThreeWeeks(dateStr, leadTimeWeeks = 3, lang = 'EN') {
+function addLeadTimeToNow(dateStr, leadTimeInWeeks = 3, lang = 'EN') {
   const monthNames = {
     EN: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
     FR: ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"],
@@ -2957,21 +2969,32 @@ function getDateOrAddThreeWeeks(dateStr, leadTimeWeeks = 3, lang = 'EN') {
     }
   };
 
-  let [month, day, year] = dateStr.split('/');
+  let inputDate;
+  if (!dateStr) {
+    inputDate = new Date();
+  } else {
+    let [month, day, year] = dateStr.split('/');
 
-  if (year.length === 2) {
-    year = (year >= '80' ? '19' : '20') + year;
+    if (year && year.length === 2) {
+      year = (year >= '80' ? '19' : '20') + year;
+    }
+
+    inputDate = new Date(year, month - 1, day);
+
+    if (isNaN(inputDate.getTime())) {
+      inputDate = new Date();
+    }
   }
 
-  let inputDate = new Date(year, month - 1, day);
   let currentDate = new Date();
   let threeWeeksLater = new Date();
-  threeWeeksLater.setDate(currentDate.getDate() + leadTimeWeeks * 7);
+  threeWeeksLater.setDate(currentDate.getDate() + leadTimeInWeeks * 7);
 
   let resultDate = (inputDate > threeWeeksLater) ? inputDate : threeWeeksLater;
 
   return formatDate(resultDate, lang);
 }
+
 
 // *****   MENU-INFO   *****
 function menuInfoBtnHandler(opt) {
@@ -3117,43 +3140,93 @@ function cameraBtnHandlers() {
   });
 }
 
-// *****   Annotation Btn   *****
+// *****   Model Selector Btns   *****
+function modelSelectorHandler() {
+  $('#select_btn_pod').on('click', function () {
+    $('.popup_select').addClass('hidden');
+    SharedParameterList[0].value = 0;
+    StartSettings();
+  });
+
+  $('#select_btn_office').on('click', function () {
+    $('.popup_select').addClass('hidden');
+    SharedParameterList[0].value = 1;
+    StartSettings();
+  });
+
+  $('#select_btn_studio').on('click', function () {
+    $('.popup_select').addClass('hidden');
+    SharedParameterList[0].value = 2;
+    StartSettings();
+  });
+}
+
+// *****   Test Btn   *****
 function testBtnsHandler() {
   $('#button_test1').on('click', function () {
-    // if ($('#button_test2').hasClass('active')) {
-    //   $('#button_test2').trigger('click');
-    // }
+    if ($('#button_test2').hasClass('active')) {
+      $('#button_test2').trigger('click');
+    }
 
-    // $(this).toggleClass('active');
+    $(this).toggleClass('active');
 
-    // isLocalClippingOn = false;
+    isLocalClippingOn = false;
 
-    // if ($(this).hasClass('active')) {
-    //   renderer.clippingPlanes = [];
-    //   const height = 2.5;
-    //   const clippingPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), height);
-    //   renderer.clippingPlanes = [clippingPlane];
-    // } else {
-    //   renderer.clippingPlanes = [];
-    // }
+    if ($(this).hasClass('active')) {
+      $('.canvas_btn_camera').addClass('disabled');
+      flyCameraTo('outXrays', 'outside', () => {
+        renderer.clippingPlanes = [];
+        let height;
+        let normal;
+        switch (currentHouse) {
+          case '0':
+            height = 2.0;
+            normal = new THREE.Vector3(0, -1, -0.7).normalize();
+            break;
+          case '1':
+            height = 2.4;
+            normal = new THREE.Vector3(0, -1, -0.7).normalize();
+            break;
+          case '2':
+            height = 3.0;
+            normal = new THREE.Vector3(0, -1, -0.7).normalize();
+            break;
+          default:
+            height = 3.0;
+            normal = new THREE.Vector3(0, -1, -0.7).normalize();
+            break;
+        }
+        
+        const clippingPlane = new THREE.Plane(normal, height);
+        renderer.clippingPlanes = [clippingPlane];
+      });
+    } else {
+      renderer.clippingPlanes = [];
+      $('.canvas_btn_camera').removeClass('disabled');
+    }
   });
 
   $('#button_test2').on('click', function () {
-    // if ($('#button_test1').hasClass('active')) {
-    //   $('#button_test1').trigger('click');
-    // }
+    if ($('#button_test1').hasClass('active')) {
+      $('#button_test1').trigger('click');
+    }
 
-    // $(this).toggleClass('active');
+    $(this).toggleClass('active');
 
-    // if ($(this).hasClass('active')) {
-    //   renderer.clippingPlanes = [];
-    //   // notClippingMaterials = ['floor'];
-    //   current3Dmodel = modelHouse;
-    //   isLocalClippingOn = true;
-    // } else {
-    //   isLocalClippingOn = false;
-    // }
-
+    if ($(this).hasClass('active')) {
+      $('.canvas_btn_camera').addClass('disabled');
+      flyCameraTo('outXrays', 'outside', () => {
+        renderer.clippingPlanes = [];
+        // notClippingMaterials = ['floor'];
+        current3Dmodel = modelHouse;
+        isLocalClippingOn = true;
+      });
+    } else {
+      flyCameraTo('outMain', 'outside', () => {
+        isLocalClippingOn = false;
+        $('.canvas_btn_camera').removeClass('disabled');
+      });
+    }
   });
 }
 
