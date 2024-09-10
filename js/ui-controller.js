@@ -73,10 +73,7 @@ export async function createMenu(mainData) {
         { '#summary_btn_text': 'ui_summary_btn_text' },
         // ----------
         { '.popup_tax__title': 'ui_popup_tax_title' },
-        { '#popup_tax_form_title_1': 'ui_popup_tax_form_title_1' },
-        { '#popup_tax_form_title_2': 'ui_popup_tax_form_title_2' },
-        { '#popup_tax_calculate': 'ui_popup_tax_form_btn_1' },
-        { '#popup_tax_contuct_me': 'ui_popup_tax_form_btn_2' },
+        { '#popup_tax_calculate': 'ui_popup_tax_form_btn' },
         // ----------
         { '.popup_select__title': 'ui_popup_select_model_title' },
         { '#select_btn_pod .popup_select__item_button': 'ui_popup_select_model_btn_1' },
@@ -97,7 +94,6 @@ export async function createMenu(mainData) {
         // ----------
         { '#popup_tax_email': 'ui_popup_tax_label_email' },
         { '#popup_tax_zipcode': 'ui_popup_tax_label_zipcode' },
-        { '#consult_form_phone': 'ui_popup_tax_label_phone' },
       );
 
       const groupsContainer = $('#ar_filter');

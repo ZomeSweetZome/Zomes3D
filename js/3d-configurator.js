@@ -1698,29 +1698,6 @@ function checkLanguageForDimensions() {
   updateUIlanguages(mainData, [{ '.canvas_dimensions': ui_id }], currentLanguage);
 }
 
-function setPopupTaxMainText() {
-  console.log("🚀 ~ currentLanguage, currentCurrencySign:", currentLanguage, currentCurrencySign);
-
-  const shippingPriceBaseNumber = convertPriceToNumber(getData(dataPrice, 'shipppingCostBase', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
-  const shippingPriceBaseString = formatPrice(shippingPriceBaseNumber, currentCurrencySign, true, false);
-  const shippingPricePerMileNumber = convertPriceToNumber(getData(dataPrice, 'shipppingCostMile', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
-  const shippingPricePerMileString = formatPrice(shippingPricePerMileNumber, currentCurrencySign, false, false);
-
-  let popupText = '';
-  popupText = popupText + getData(mainData, 'ui_popup_tax_text_1', currentLanguage);
-  popupText = popupText + ' ' + DATA_HOUSE_NAME[currentHouse] + ' ';
-  popupText = popupText + getData(mainData, 'ui_popup_tax_text_2', currentLanguage);
-  popupText = popupText + ' ' + shippingPriceBaseString + ' ';
-  popupText = popupText + getData(mainData, 'ui_popup_tax_text_3', currentLanguage);
-  popupText = popupText + ' ' + shippingPricePerMileString + ' ';
-  popupText = popupText + getData(mainData, 'ui_popup_tax_text_4', currentLanguage);
-  
-  console.log("🚀 ~ setPopupTaxMainText ~ popupText:", popupText);
-
-  $('.popup_tax__text').html(popupText);
-}
-
-
 //#endregion
 
 //#region PRICE CALCULATION
@@ -2858,8 +2835,6 @@ async function PrepareUI() {
 
       updateUIlanguages(dataAnnotations, uiAnnotationsLanguages, `SHORT_${currentLanguage}`);
       updateUIlanguages(dataAnnotations, uiAnnotationsLongLanguages, `LONG_${currentLanguage}`);
-
-      setPopupTaxMainText();
     });
 
     $('.currency-picker select').on('change', function () {
@@ -2882,8 +2857,6 @@ async function PrepareUI() {
       SharedParameterList[6].value = valueForURL;
       CheckChanges();
       WriteURLParameters();
-
-      setPopupTaxMainText();
     });
   });
 
