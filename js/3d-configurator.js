@@ -1870,7 +1870,7 @@ function getOrderList() {
   // return orderList;
 }
 
-function formatPrice(price, currency, needToBeRounded = true, needToAddSpace = true) {
+function formatPrice(price, currency, needToBeRounded = true, needToAddSpace = false) {
   if (
     !price
     && SharedParameterList[1].value[2] != 1 // custom windows
