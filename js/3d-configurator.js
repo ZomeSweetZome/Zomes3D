@@ -3084,6 +3084,7 @@ function menuInfoBtnHandler(opt) {
 
 // *****   Camera Btns   *****
 function cameraBtnHandlers() {
+
   $('#button_camera_inside').on('click', function (event) {
     event.stopPropagation();
     $(this).toggleClass('hidden');
@@ -3091,7 +3092,15 @@ function cameraBtnHandlers() {
 
     $('.canvas_btn_camera').addClass('disabled');
 
-    flyCameraTo('inMain', 'inside', () => {
+    // flyCameraTo('inMain', 'inside', () => {
+    //   $('.canvas_btn_camera').removeClass('disabled');
+    // });
+
+    flyCameraTo('outXrays', 'inside', () => {
+      renderer.clippingPlanes = [];
+      notClippingMaterials = ['floor'];
+      current3Dmodel = modelHouse;
+      isLocalClippingOn = true;
       $('.canvas_btn_camera').removeClass('disabled');
     });
 
@@ -3105,7 +3114,12 @@ function cameraBtnHandlers() {
 
     $('.canvas_btn_camera').addClass('disabled');
 
+    // flyCameraTo('outMain', 'outside', () => {
+    //   $('.canvas_btn_camera').removeClass('disabled');
+    // });
+
     flyCameraTo('outMain', 'outside', () => {
+      isLocalClippingOn = false;
       $('.canvas_btn_camera').removeClass('disabled');
     });
 
@@ -3136,71 +3150,71 @@ function modelSelectorHandler() {
 
 // *****   Test Btn   *****
 function testBtnsHandler() {
-  $('#button_test1').on('click', function () {
-    if ($('#button_test2').hasClass('active')) {
-      $('#button_test2').trigger('click');
-    }
+  // $('#button_test1').on('click', function () {
+  //   if ($('#button_test2').hasClass('active')) {
+  //     $('#button_test2').trigger('click');
+  //   }
 
-    $(this).toggleClass('active');
+  //   $(this).toggleClass('active');
 
-    isLocalClippingOn = false;
+  //   isLocalClippingOn = false;
 
-    if ($(this).hasClass('active')) {
-      $('.canvas_btn_camera').addClass('disabled');
-      flyCameraTo('outXrays', 'outside', () => {
-        renderer.clippingPlanes = [];
-        let height;
-        let normal;
-        switch (currentHouse) {
-          case '0':
-            height = 2.0;
-            normal = new THREE.Vector3(0, -1, -0.7).normalize();
-            break;
-          case '1':
-            height = 2.4;
-            normal = new THREE.Vector3(0, -1, -0.7).normalize();
-            break;
-          case '2':
-            height = 3.0;
-            normal = new THREE.Vector3(0, -1, -0.7).normalize();
-            break;
-          default:
-            height = 3.0;
-            normal = new THREE.Vector3(0, -1, -0.7).normalize();
-            break;
-        }
+  //   if ($(this).hasClass('active')) {
+  //     $('.canvas_btn_camera').addClass('disabled');
+  //     flyCameraTo('outXrays', 'outside', () => {
+  //       renderer.clippingPlanes = [];
+  //       let height;
+  //       let normal;
+  //       switch (currentHouse) {
+  //         case '0':
+  //           height = 2.0;
+  //           normal = new THREE.Vector3(0, -1, -0.7).normalize();
+  //           break;
+  //         case '1':
+  //           height = 2.4;
+  //           normal = new THREE.Vector3(0, -1, -0.7).normalize();
+  //           break;
+  //         case '2':
+  //           height = 3.0;
+  //           normal = new THREE.Vector3(0, -1, -0.7).normalize();
+  //           break;
+  //         default:
+  //           height = 3.0;
+  //           normal = new THREE.Vector3(0, -1, -0.7).normalize();
+  //           break;
+  //       }
         
-        const clippingPlane = new THREE.Plane(normal, height);
-        renderer.clippingPlanes = [clippingPlane];
-      });
-    } else {
-      renderer.clippingPlanes = [];
-      $('.canvas_btn_camera').removeClass('disabled');
-    }
-  });
+  //       const clippingPlane = new THREE.Plane(normal, height);
+  //       renderer.clippingPlanes = [clippingPlane];
+  //     });
+  //   } else {
+  //     renderer.clippingPlanes = [];
+  //     $('.canvas_btn_camera').removeClass('disabled');
+  //   }
+  // });
 
-  $('#button_test2').on('click', function () {
-    if ($('#button_test1').hasClass('active')) {
-      $('#button_test1').trigger('click');
-    }
+  // $('#button_test2').on('click', function () {
+  //   if ($('#button_test1').hasClass('active')) {
+  //     $('#button_test1').trigger('click');
+  //   }
 
-    $(this).toggleClass('active');
+  //   $(this).toggleClass('active');
 
-    if ($(this).hasClass('active')) {
-      $('.canvas_btn_camera').addClass('disabled');
-      flyCameraTo('outXrays', 'outside', () => {
-        renderer.clippingPlanes = [];
-        // notClippingMaterials = ['floor'];
-        current3Dmodel = modelHouse;
-        isLocalClippingOn = true;
-      });
-    } else {
-      flyCameraTo('outMain', 'outside', () => {
-        isLocalClippingOn = false;
-        $('.canvas_btn_camera').removeClass('disabled');
-      });
-    }
-  });
+  //   if ($(this).hasClass('active')) {
+  //     $('.canvas_btn_camera').addClass('disabled');
+  //     flyCameraTo('outXrays', 'outside', () => {
+  //       renderer.clippingPlanes = [];
+  //       // notClippingMaterials = ['floor'];
+  //       current3Dmodel = modelHouse;
+  //       isLocalClippingOn = true;
+  //     });
+  //   } else {
+  //     flyCameraTo('outMain', 'outside', () => {
+  //       isLocalClippingOn = false;
+  //       $('.canvas_btn_camera').removeClass('disabled');
+  //     });
+  //   }
+  // });
 }
 
 // *****   Annotation Btn   *****
@@ -3235,7 +3249,13 @@ function dimensionsBtnHandler() {
       }
 
       dimensionsController(true);
-      flyCameraTo('outDimensions', 'outside');
+
+      if (isCameraInside) { 
+        $('#button_camera_outside').click();
+        flyCameraTo('outDimensions', 'outside');
+      } else {
+        flyCameraTo('outDimensions', 'outside');
+      }
     } else {
       dimensionsController(false);
     }
@@ -3301,13 +3321,23 @@ function notificationHandler() {
 
 function summaryBtnsHandler() {
   $('#ar_button_order').on('click', function () {
-    CreateImageList();
-    collectSummary();
-    openSummary();
-    $('.summary__popup-overlay').scrollTop(0);
+    if (!isCameraInside) {
+      proceedSummaryAndPdf();
+    } else {
+      flyCameraTo('outMain', 'outside', () => {
+        proceedSummaryAndPdf();
+      });
+    }
 
-    //! TEMP
-    // generatePDF(currentHouse, mainData, currentLanguage, imageSources, pdfContentData);
+    function proceedSummaryAndPdf() {
+      CreateImageList();
+      collectSummary();
+      openSummary();
+      $('.summary__popup-overlay').scrollTop(0);
+  
+      //! TEMP
+      generatePDF(currentHouse, mainData, currentLanguage, imageSources, pdfContentData);
+    }
   });
 
   $('#modifyConfiguration').on('click', function () {
@@ -3529,35 +3559,42 @@ function infoPopup(infoPopupTitle, infoPopupDescription, infoPopupImage) {
 
 // Camera Flying
 $(document).on('click', '#title_list__item_2', function () { // interior group
-  flyCameraTo('inMain', 'inside');
+  // flyCameraTo('inMain', 'inside');
+  $('#button_camera_inside').click();
 });
 
 $(document).on('click', '#title_list__item_3', function () { // exterior group
-  flyCameraTo('outMain', 'outside');
+  // flyCameraTo('outMain', 'outside');
+  $('#button_camera_outside').click();
 });
 
 $(document).on('click', '#group-2 .ar_button_back', function () { // exterior group
-  flyCameraTo('outMain', 'outside');
+  // flyCameraTo('outMain', 'outside');
+  $('#button_camera_outside').click();
 });
 
 $(document).on('click', '.option.option_4-3', function () { // extra door
   if (currentHouse == '2' && $('.option.option_4-3').hasClass('active')) {
-    if (isCameraInside) {
-      flyCameraTo('inExtraDoor', 'inside');
-    } else {
+    if (!isCameraInside) {
       flyCameraTo('outExtraDoor', 'outside');
     }
   }
 });
 
-$(document).on('click', '.option.option_4-1', function () { // in-build desk
-  if ($('.option.option_4-1').hasClass('active')) {
-    if (isCameraInside) {
-      flyCameraTo('inBuildInDesk', 'inside');
-    } else {
-      flyCameraTo('inBuildInDesk', 'inside');
-    }
+$(document).on('click', '.option.option_1-2', function () { // custom windows
+  if (isCameraInside) {
+    $('#button_camera_outside').click();
   }
+});
+
+$(document).on('click', '.option.option_4-1', function () { // in-build desk
+  // if ($('.option.option_4-1').hasClass('active')) {
+    // if (isCameraInside) {
+    //   flyCameraTo('inBuildInDesk', 'inside');
+    // } else {
+    //   flyCameraTo('inBuildInDesk', 'inside');
+    // }
+  // }
 });
 
 // *******************
@@ -3664,7 +3701,7 @@ function onChangePosition(houseId, pos, callback = () => { }, duration = 750, is
     callback();
   }
 
-  function insideCameraSettings(fov = 80, envirMap = null) {
+  function insideCameraSettings(fov = 50, envirMap = null) {
     controls.enableZoom = false;
     targetControlMinDist = 0;
     targetCameraFOV = fov;
