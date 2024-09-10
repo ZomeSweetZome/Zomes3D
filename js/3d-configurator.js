@@ -72,7 +72,7 @@ export let notClippingMaterials = [];
 let currentLanguage = DEFAULT_LANGUAGE;
 let currentCurrency = DEFAULT_CURRENCY;
 let currentCurrencySign = CURRENCY_SIGN[currentCurrency] || CURRENCY_SIGN['USD'];
-let currentHouse = 0;
+let currentHouse = '0';
 let isWindowStripOn = false;
 let isWindowViewportOn = false;
 let isWindowCustomOn = false;
@@ -252,7 +252,7 @@ let SharedParameterList = [
     groupIds: null,
     splitValue: 'a',
     type: 'array-string',
-    value: [],
+    value: ['c', 'd', 'e', 'f', 'g'],
     groupOptionAction: null,
     applyURLAction: null,
     applyURLActionReturn: false
@@ -721,7 +721,7 @@ async function StartSettings() {
 
   blockBuyBtn();
 
-  currentHouse = SharedParameterList[0].value || 0;
+  currentHouse = SharedParameterList[0].value || '0';
 
   await loadModel(MODEL_PATHS[currentHouse], 0);
   await loadModel(MODEL_PATHS[parseInt(parseInt(currentHouse) + 3)], 1);
@@ -3330,6 +3330,7 @@ function summaryBtnsHandler() {
     }
 
     function proceedSummaryAndPdf() {
+      // WriteURLParameters();
       CreateImageList();
       collectSummary();
       openSummary();
@@ -4475,6 +4476,8 @@ const cameraImageViews_Global = [
 function CreateImageList() {
   let cameraFar = 11;
   let topViewCorrection = 0;
+
+  currentHouse = currentHouse + '';
 
   switch (currentHouse) {
     case '0': // pod

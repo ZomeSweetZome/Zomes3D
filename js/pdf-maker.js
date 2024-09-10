@@ -30,10 +30,13 @@ export function generatePDF(
     './src/pdf/images/icon_email.png',
   ];
 
+  currentHouse = currentHouse + '';
+
   switch (currentHouse) {
     case '0':
       imageUrls.push('./src/pdf/images/sch_pod.png');
       imageUrls.push('./src/pdf/images/dimensions_pod.png');
+      console.log("🚀 ~ currentHouse:", currentHouse);
       break;
     case '1':
       imageUrls.push('./src/pdf/images/sch_office.png');

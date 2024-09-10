@@ -1912,6 +1912,9 @@ textarea[name="ar_order_comment"] {
 .summary__popup-overlay .popup-close {
   right: 20px;
   top: 20px;
+
+  width: 32px;
+  height: 32px;
 }
 
 .summary__popup-overlay.active {
