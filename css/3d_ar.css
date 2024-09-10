@@ -51,7 +51,7 @@
   --marevo-ui-icon_email : url(../src/ar-ui-icons/icon_email.svg);
   --marevo-ui-icon_facebook : url(../src/ar-ui-icons/icon_facebook.svg);
 
-  --marevo-ui-btn_pod : url(../src/ar-ui-icons/btn_pod_men.png);
+  --marevo-ui-btn_pod : url(../src/ar-ui-icons/btn_pod.png);
   --marevo-ui-btn_office : url(../src/ar-ui-icons/btn_office.png);
   --marevo-ui-btn_studio : url(../src/ar-ui-icons/btn_studio.png);
   --marevo-ui-btn_men : url(../src/ar-ui-icons/men.png);
@@ -1806,6 +1806,7 @@ textarea[name="ar_order_comment"] {
   height: 100%;
   border: 1px solid var(--marevo-color-text-black, #000);
   border-radius: 20px;
+  padding-left: 70px;
 }
 
 .popup_select__title {
@@ -1843,13 +1844,24 @@ textarea[name="ar_order_comment"] {
   background-size: contain;
 }
 
+#select_btn_pod .popup_select__item_picture::before {
+  content: '';
+  background: var(--marevo-ui-btn_men) no-repeat center;
+  background-size: contain;
+  position: absolute;
+  top: 85px;
+  left: -35px;
+  width: 64.84px;
+  height: 94.54px;
+}
+
 .popup_select__item_picture {
-  width: 314px;
+  width: 310px;
   height: 200px;
   margin-bottom: 40px;
   transition: all 0.3s ease;
-  border-radius: 20px;
-  border: 1px solid var(--marevo-color-popup-border, #000);
+  /* border-radius: 20px; */
+  /* border: 1px solid var(--marevo-color-popup-border, #000); */
 }
 
 .popup_select__item_button {
@@ -1864,16 +1876,17 @@ textarea[name="ar_order_comment"] {
   font-weight: 500;
   white-space: nowrap;
   cursor: pointer;
-  transition: all 0.3s ease;
+  /* transition: all 0.3s ease; */
 }
 
 
 .popup_select__item:hover .popup_select__item_picture {
-  scale: 1.05;
+  scale: 1.07;
 }
 
 .popup_select__item:hover .popup_select__item_button {
-  scale: 1.03;
+  /* scale: 1.03; */
+  border: 2px solid var(--marevo-color-text-black, #000);
 }
 
 /* ----------- summary before pdf ------------*/
@@ -3396,21 +3409,42 @@ textarea[name="ar_order_comment"] {
 
   .popup_select__content {
     border: none;
+    padding-left: 0px;
   }
+
   .popup_select__title {
     font-size: 20px;
   }
+
   .popup_select__list {
   }
+
   .popup_select__item {
   }
+
   .popup_select__item_picture {
     width: 40vw;
     height: 26vw;
   }
+
   .popup_select__item_button {
     width: 150px;
     padding: 0 6px;
+  }
+
+  #select_btn_pod .popup_select__item_picture::before {
+    display: none;
+  }
+
+  #select_btn_studio .popup_select__item_picture::before {
+    content: '';
+    background: var(--marevo-ui-btn_men) no-repeat center;
+    background-size: contain;
+    position: absolute;
+    top: 11vw;
+    left: -6.5vw;
+    width: 8.37vw;
+    height: 12.2vw;
   }
 }
 
