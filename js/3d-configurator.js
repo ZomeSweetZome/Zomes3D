@@ -3131,19 +3131,19 @@ function cameraBtnHandlers() {
 function modelSelectorHandler() {
   $('#select_btn_pod').on('click', function () {
     $('.popup_select').addClass('hidden');
-    SharedParameterList[0].value = 0;
+    SharedParameterList[0].value = '0';
     StartSettings();
   });
 
   $('#select_btn_office').on('click', function () {
     $('.popup_select').addClass('hidden');
-    SharedParameterList[0].value = 1;
+    SharedParameterList[0].value = '1';
     StartSettings();
   });
 
   $('#select_btn_studio').on('click', function () {
     $('.popup_select').addClass('hidden');
-    SharedParameterList[0].value = 2;
+    SharedParameterList[0].value = '2';
     StartSettings();
   });
 }
@@ -4240,7 +4240,7 @@ export function updateAnnotations(camera, scene, controls) {
       top: `${y}px`
     });
 
-    if (!controls.enableZoom) { // camera is inside
+    if (!controls.enableZoom || isCameraInside) { // camera is inside
       const cameraToAnnotation = annotation.position.clone().sub(camera.position).normalize();
       const angle = cameraToAnnotation.dot(camera.getWorldDirection(new THREE.Vector3()));
       const isVisible = angle > 0;
@@ -4266,7 +4266,7 @@ export function updateAnnotations(camera, scene, controls) {
       });
 
       if (isBehindModel) {
-        $(annotation.element).css('opacity', 0.1);
+        $(annotation.element).css('opacity', 0.05);
       } else {
         $(annotation.element).css('opacity', 1);
       }
@@ -4394,6 +4394,8 @@ function createTextTexture(text) {
 }
 
 function createDimensions(diameter, height) {
+  console.log("🚀 ~ createDimensions ~ isFoundationKitOn:", isFoundationKitOn, SharedParameterList[4].value[2]);
+
   const heightFoundation = (isFoundationKitOn) ? FOUNDATION_HEIGHT : 0;
 
   const startDiameter = new THREE.Vector3(-diameter / 2, height + MODEL_CENTER_POSITION - heightFoundation + lineOffset, 0);
@@ -4402,7 +4404,7 @@ function createDimensions(diameter, height) {
 
   const startHeight = new THREE.Vector3(-diameter / 2 - lineOffset, 0 + MODEL_CENTER_POSITION - heightFoundation, 0);
   const endHeight = new THREE.Vector3(-diameter / 2 - lineOffset, height + MODEL_CENTER_POSITION - heightFoundation, 0);
-  createVerticalDimensionLine(startHeight, endHeight, `H = ${Math.round((height - heightFoundation) * 3.28084 / 0.5) * 0.5} ft`, scene);
+  createVerticalDimensionLine(startHeight, endHeight, `H = ${Math.round((height + heightFoundation) * 3.28084 / 0.5) * 0.5} ft`, scene);
 
   setMaterialColor('man', manColor);
   setMaterialColor('man.001', manColor);
