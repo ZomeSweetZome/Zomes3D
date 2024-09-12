@@ -330,7 +330,7 @@ export function create3DScene(properties = scenePropertiesDefault, startFunction
 
     isLocalClippingOn && updateClippingPlane();
     isLocalClippingOn && applyClippingPlanesToModel(current3Dmodel, notClippingMaterials);
-    !isLocalClippingOn && removeClippingPlanesFromModel(current3Dmodel, notClippingMaterials);
+    // !isLocalClippingOn && removeClippingPlanesFromModel(current3Dmodel, notClippingMaterials);
 
     if (controls.enabled) { controls.update(); }
     
