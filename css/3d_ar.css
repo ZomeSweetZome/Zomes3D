@@ -50,6 +50,11 @@
   --marevo-ui-icon_btn_download_right_w : url(../src/ar-ui-icons/icon_btn_download_right_w.svg);
   --marevo-ui-icon_email : url(../src/ar-ui-icons/icon_email.svg);
   --marevo-ui-icon_facebook : url(../src/ar-ui-icons/icon_facebook.svg);
+  
+  --marevo-ui-icon_calc_b : url(../src/ar-ui-icons/calc_b.svg);
+  --marevo-ui-icon_calc_w : url(../src/ar-ui-icons/calc_w.svg);
+  --marevo-ui-icon_floppy_b : url(../src/ar-ui-icons/floppy_b.svg);
+  --marevo-ui-icon_floppy_w : url(../src/ar-ui-icons/floppy_w.svg);
 
   --marevo-ui-btn_pod : url(../src/ar-ui-icons/btn_pod.png);
   --marevo-ui-btn_office : url(../src/ar-ui-icons/btn_office.png);
@@ -628,10 +633,6 @@ body, html {
   transition: box-shadow 0.3s ease;
 }
 
-.ar_menu_footer_container .ar_buy-btn:hover {
-  box-shadow: 2px 2px 8px 1px rgba(0, 0, 0, 0.4);
-}
-
 .ar_filter .ar_filter_group .ar_filter_options {
   display: flex;
   flex-direction: column;
@@ -917,6 +918,13 @@ body, html {
   z-index: 3;
 }
 
+.ar_button_order__wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
 .ar_menu_footer_container .ar_total_amount-price {
   display: flex;
   align-items: center;
@@ -936,13 +944,51 @@ body, html {
   text-align: center;
   width: 100%;
   height: 56px;
-
-  border-radius: 64px;
+  border: 1px solid var(--marevo-color-text-black, #000);
+  border-radius: 50px;
   background-color: var(--marevo-color-bgrd-btn-order, #333);
   cursor: pointer;
   pointer-events: auto;
   color: var(--marevo-color-text-white, #ffffff);
+  padding: 18px;
+
+  transition: all 0.3s ease;
 }
+
+.ar_menu_footer_container .ar_calc-btn {
+  width: 100%;
+  border-radius: 50px;
+  background-color: var(--marevo-color-text-white, #ffffff);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.ar_menu_footer_container .ar_buy-btn:hover {
+  background-color: var(--marevo-color-text-white, #ffffff);
+  border: 1px solid var(--marevo-color-text-black, #000);
+}
+
+.ar_menu_footer_container .ar_buy-btn:hover .ar_button_order__caption {
+  color: var(--marevo-color-text-black, #000);
+}
+
+.ar_menu_footer_container .ar_buy-btn:hover .ar_button_order__image {
+  content: var(--marevo-ui-icon_floppy_b);
+}
+
+.ar_menu_footer_container .ar_calc-btn:hover {
+  background-color: var(--marevo-color-text-black, #000);
+  border:  1px solid var(--marevo-color-text-white, #ffffff);
+}
+
+.ar_menu_footer_container .ar_calc-btn:hover .ar_button_order__caption {
+  color: var(--marevo-color-text-white, #ffffff);
+}
+
+.ar_menu_footer_container .ar_calc-btn:hover .ar_button_calculate__image {
+  content: var(--marevo-ui-icon_calc_w);
+}
+
 
 .ar_menu_footer_container .ar_buy-btn.disabled {
   pointer-events: none;
@@ -950,11 +996,21 @@ body, html {
 }
 
 .ar_buy-btn .ar_button_order__caption {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 500;
   text-align: center;
   margin-right: 12px;
   color: var(--marevo-color-text-white, #ffffff);
+  white-space: nowrap;
+}
+
+.ar_calc-btn .ar_button_order__caption {
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+  margin-right: 12px;
+  color: var(--marevo-color-text-black, #000);
+  white-space: nowrap;
 }
 
 .ar_button_order__caption_small {
@@ -962,11 +1018,18 @@ body, html {
   margin-right: 12px;
 }
 
+.ar_buy-btn .ar_button_calculate__image {
+  content: var(--marevo-ui-icon_calc_b);
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+}
+
 .ar_buy-btn .ar_button_order__image {
-  content: var(--marevo-ui-icon_btn_download_right_w);
-  width: 24px;
-  height: 24px;
-  margin-left: 12px;
+  content: var(--marevo-ui-icon_floppy_w);
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
 }
 
 .menu__footer_delivery_info,
@@ -1005,6 +1068,17 @@ body, html {
   margin-left: 2px;
   /* cursor: pointer; */
   cursor: help;
+}
+
+.menu__footer__calc_icon {
+  content: var(--marevo-ui-icon_calc_b);
+  width: 16px;
+  height: 16px;
+  margin-left: 2px;
+  /* cursor: pointer; */
+  cursor: help;
+
+  display: none;
 }
 
 .delivery_info_caption {
@@ -1724,16 +1798,7 @@ textarea[name="ar_order_comment"] {
 
 .popup__info_tax form {
   display: flex;
-  margin-bottom: 30px;
   gap: 20px;
-}
-
-.popup_tax__result_container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 10px;
-  border-top: 1px solid var(--marevo-color-text-black, #000);
 }
 
 .popup__info_tax form .summary__form-item {
@@ -2347,6 +2412,22 @@ textarea[name="ar_order_comment"] {
   .ar_filter .ar_filter_group .ar_filter_caption {
     margin-right: 0;
     margin-left: auto;
+  }
+
+  .ar_menu_footer_container .ar_buy-btn {
+    height: 40px;
+  }
+
+  .ar_buy-btn .ar_button_order__caption {
+    display: none;
+  }
+
+  .ar_buy-btn .ar_button_calculate__image {
+    margin-right: 0;
+  }
+  
+  .ar_buy-btn .ar_button_order__image {
+    margin-right: 0;
   }
 }
 
@@ -3069,25 +3150,32 @@ textarea[name="ar_order_comment"] {
   .delivery_info_caption {
     display: none;
   }
-
-  #payment_info_title {
-    display: none;
-  }
-
+  
   .ar_total_amount__container {
     display: flex;
     align-items: center;
+    flex-direction: column;
     gap: 6x;
   }
-
+  
   .ar_total_amount__container .ar_total_amount-price {
     font-size: 14px;
     margin: 0;
   }
-
+  
   .menu__footer__info_icon{ 
     width: 12px;
     height: 12px;
+    display: none;
+  }
+
+  #payment_info_title {
+    /* display: none; */
+  }
+
+  .menu__footer__calc_icon {
+    display: inline-block;
+    margin-right: 4px;
   }
 
   #delivery_info_title {
@@ -3106,9 +3194,9 @@ textarea[name="ar_order_comment"] {
   .menu__footer_payment_info {
     display: flex;
     align-items: center;
-
-    display: inline;
+    justify-content: center;
     margin: 0;
+    margin-bottom: 5px;
   }
 
   .menu_footer_amount__wrapper {
@@ -3134,8 +3222,8 @@ textarea[name="ar_order_comment"] {
     margin: 0;
     margin-left: 10px;
     height: 35px;
-    width: 75px;
-    padding: 0 15px;
+    width: 48px;
+    padding: 0;
     flex: 0 0 auto;
   }
 
@@ -3146,6 +3234,7 @@ textarea[name="ar_order_comment"] {
   .ar_menu_footer_container .ar_button_order__caption_small {
     display: inline;
     font-size: 14px;
+    display: none;
   }
 
   .ar_buy-btn .ar_button_order__caption {
@@ -3154,12 +3243,15 @@ textarea[name="ar_order_comment"] {
   }
 
   .ar_buy-btn .ar_button_order__image {
-    content: var(--marevo-ui-icon_btn_download_down_w);
-    width: 20px;
-    height: 20px;
-    margin-right: 4px;
+    content: var(--marevo-ui-icon_floppy_w);
+    width: 18px;
+    height: 18px;
+    margin: 0;
   }
 
+  #calculate_shipping_tax {
+    display: none;
+  }
 
   /*!------------------------------------*/
   
@@ -3280,7 +3372,7 @@ textarea[name="ar_order_comment"] {
   
   .popup__info_tax {
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: start;
     text-align: start;
     position: fixed;
     height: calc(100vh - var(--marevo-header-height-mobile, 53px));
@@ -3303,10 +3395,6 @@ textarea[name="ar_order_comment"] {
   
   .popup__info_tax form {
     flex-direction: column;
-  }
-  
-  .popup_tax__result_container {
-    font-size: 12px;
   }
   
   .popup__info_tax form .summary__form-item {
@@ -3337,6 +3425,7 @@ textarea[name="ar_order_comment"] {
     color: var(--marevo-color-text-white, #fff);
     border: none;
     white-space: nowrap;
+    margin-top: 10px;
   }
   
   .popup_tax__close_btn {

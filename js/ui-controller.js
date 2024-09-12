@@ -36,6 +36,7 @@ export async function createMenu(mainData) {
         { '#button_sleep .canvas_btn_text': 'ui_btn_radio_sleep' },
         { '#button_work .canvas_btn_text': 'ui_btn_radio_work' },
         { '#button_live .canvas_btn_text': 'ui_btn_radio_live' },
+        { '#ar_button_calculate__caption .ar_button_calculate__caption_large': 'ui_btn_calculate_tax' },
         { '#ar_button_order__caption .ar_button_order__caption_large': 'ui_btn_buy' },
         { '.popup-sharing-title': 'ui_popup-title-share' },
         { '#popup-qr-title-ui': 'ui_popup-title-qr' },

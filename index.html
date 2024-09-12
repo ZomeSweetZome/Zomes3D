@@ -116,8 +116,8 @@
                 <div id="ar_total_price" class="ar_total_amount-price">$0,00</div>
                 
                 <div class="menu__footer_payment_info">
+                  <span class="menu__footer__calc_icon"></span>
                   <span id="payment_info_title">+ TAX (if applicable) & shipping</span>
-                  <span class="menu__footer__info_icon"></span>
                 </div>
 
                 <div class="popup__info popup__info_tax hidden">
@@ -135,11 +135,6 @@
 
                       <button type="button" id="popup_tax_calculate" >Calculate</button>
                     </form>
-  
-                    <div class="popup_tax__result_container">
-                      <div class="popup_tax__location">USA Northeast</div>
-                      <div class="popup_tax__price">$ 1500</div>
-                    </div>
                   </div>
 
                   <div class="popup_tax__close_btn">Back</div>
@@ -149,13 +144,23 @@
               </div>
             </div>
               
-            <div id="ar_button_order" class="ar_buy-btn">
-              <div id="ar_button_order__caption" class="ar_button_order__caption">
-                <span class="ar_button_order__caption_large">Download a free PDF</span>
-                <span class="ar_button_order__caption_small">PDF</span>
-              </div>
+            <div class="ar_button_order__wrapper">
+              <div id="calculate_shipping_tax" class="ar_buy-btn ar_calc-btn">
+                <div class="ar_button_calculate__image"></div>
 
-              <div class="ar_button_order__image"></div>
+                <div id="ar_button_calculate__caption" class="ar_button_order__caption">
+                  <span class="ar_button_calculate__caption_large">Calculate shipping & tax</span>
+                </div>
+              </div>
+  
+              <div id="ar_button_order" class="ar_buy-btn">
+                <div class="ar_button_order__image"></div>
+
+                <div id="ar_button_order__caption" class="ar_button_order__caption">
+                  <span class="ar_button_order__caption_large">Download a free PDF</span>
+                  <span class="ar_button_order__caption_small">PDF</span>
+                </div>
+              </div>
             </div>
           </div>
 

@@ -2881,7 +2881,11 @@ async function PrepareUI() {
       $('.popup__info_date').toggleClass('hidden');
     });
 
-    $('.menu__footer_payment_info .menu__footer__info_icon').on('click', function () {
+    $('#calculate_shipping_tax').on('click', function () {
+      $('.popup__info_tax').toggleClass('hidden');
+    });
+
+    $('.menu__footer_payment_info .menu__footer__calc_icon').on('click', function () {
       $('.popup__info_tax').toggleClass('hidden');
     });
 
