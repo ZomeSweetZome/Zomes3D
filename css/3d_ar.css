@@ -1801,22 +1801,38 @@ textarea[name="ar_order_comment"] {
   gap: 20px;
 }
 
-.popup__info_tax form .summary__form-item {
+.popup__info_tax form .contact_form__form-item {
+  display: flex;
+  text-align: center;
+  align-items: center;
   width: 100%;
+  height: 56px;
+  padding: 0 20px;
+  border-radius: 50px;
+  border: 1px solid var(--marevo-color-text-black, #000);
   height: 48px;
   margin-bottom: 0;
+  
 }
 
-.popup__info_tax form .summary__form-item label {
+.popup__info_tax form .contact_form__form-item label {
   font-size: 14px;
+  font-weight: 500;
+  color: var(--marevo-color-text-gray, #000);
+  margin-right: 20px;
+  text-align: left;
 }
 
-.popup__info_tax form .summary__form-item input {
+.popup__info_tax form .contact_form__form-item input {
   font-size: 14px;
+  font-weight: 500;
+  color: var(--marevo-color-text-black, #000);
+  border: none;
+  outline: none;
   width: 100%;
 }
 
-.popup__info_tax form .summary__form-item_phone {
+.popup__info_tax form .contact_form__form-item_phone {
   max-width: 220px;
 }
 
@@ -2078,8 +2094,6 @@ textarea[name="ar_order_comment"] {
 .summary__images_image img {
   width: 100%;
   object-fit: cover;
-
-  /* border: 2px solid blue; */
 }
 
 .details {
@@ -2168,153 +2182,7 @@ textarea[name="ar_order_comment"] {
   margin-left: 0px;
 }
 
-.shipping_rates, 
-.estimated_delivery_time {
-  font-size: 18px;
-  color: var(--marevo-color-text-black, #000);
-  font-weight: 500;
-  margin-bottom: 30px;
-}
-
-#shipping_rates_title,
-#estimated_delivery_title {
-  font-weight: 700;
-  text-transform: uppercase;
-  margin-bottom: 20px;
-}
-
-#shipping_rates_text,
-#estimated_delivery_text {
-  margin-bottom: 30px;
-}
-
-#shipping_rates_america,
-#shipping_rates_europe {
-  font-weight: 700;
-  margin-bottom: 20px;
-}
-
-.shipping_rates ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  margin-bottom: 20px;
-}
-
-.shipping_rates li {
-  display: flex;
-  justify-content: space-between;
-  padding: 6px 0;
-  border-top: 1px solid #000;
-  margin-bottom: 14px;
-}
-
-.estimated_delivery_time {
-  margin-bottom: 20px;
-}
-
-.summary__form-title {
-  align-self: flex-start;
-  font-size: 18px;
-  font-weight: 700;
-  text-transform: uppercase;
-  margin-bottom: 30px;
-}
-
-.summary__popup-content form {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  width: 100%;
-  column-gap: 30px;
-}
-
-.summary__popup-content form input::placeholder,
-.summary__popup-content form textarea::placeholder {
-  font-size: 0;
-}
-
-.summary__form-item {
-  display: flex;
-  text-align: center;
-  align-items: center;
-  width: 100%;
-  height: 56px;
-  padding: 0 20px;
-  border-radius: 50px;
-  border: 1px solid var(--marevo-color-text-black, #000);
-  margin-bottom: 30px;
-}
-
-.summary__form-item_name,
-.summary__form-item_phone,
-.summary__form-item_address,
-.summary__form-item_city,
-.summary__form-item_country,
-.summary__form-item_zipcode {
-  width: calc(50% - 15px);
-}
-
-.summary__form-item_inquiries {
-  min-height: 120px;
-  margin-bottom: 50px;
-}
-
-.summary__form-item label {
-  font-size: 18px;
-  font-weight: 500;
-  color: var(--marevo-color-text-gray, #000);
-  margin-right: 20px;
-  text-align: left;
-}
-
-.summary__form-item_inquiries textarea {
-  width: 80%;
-  height: 80%;
-  border: none;
-  outline: none;
-  resize: none;
-  font-size: 18px;
-  font-weight: 500;
-  color: var(--marevo-color-text-black, #000);
-}
-
-.summary__form-item input {
-  font-size: 18px;
-  font-weight: 500;
-  color: var(--marevo-color-text-black, #000);
-  border: none;
-  outline: none;
-  width: 100%;
-}
-
-.summary__form-item_checkbox input[type="checkbox"] {
-  display: none;
-}
-
-.summary__form-item_checkbox label {
-  display: inline-flex;
-  align-items: center;
-  cursor: pointer;
-  margin-bottom: 20px;
-}
-
-.summary__form-item_checkbox label::before {
-  content: '';
-  display: inline-block;
-  min-width: 24px;
-  min-height: 24px;
-  background: var(--marevo-ui-icon_checkbox_off) no-repeat center center;
-  background-size: contain;
-  margin-right: 9px;
-}
-
-.summary__form-item_checkbox input[type="checkbox"]:checked + label::before {
-  background: var(--marevo-ui-icon_checkbox_on) no-repeat center center;
-  background-size: contain;
-}
-
-.form__footer_container {
+.summary__footer_container {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -2324,11 +2192,11 @@ textarea[name="ar_order_comment"] {
   margin: 50px 0;
 }
 
-.form__footer_container .summary__link {
+.summary__footer_container .summary__link {
   margin: auto 0;
 }
 
-.form__footer_container button {
+.summary__footer_container button {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -2343,22 +2211,225 @@ textarea[name="ar_order_comment"] {
   background-color: var(--marevo-color-text-black, #000);
   color: var(--marevo-color-text-white, #fff);
   border: none;
+
+  margin-bottom: 30px;
 }
 
-.form__footer_container button:disabled {
+.summary__footer_container button:disabled {
   background-color: var(--marevo-color-text-gray, #000);
   color: var(--marevo-color-text-white, #fff);
   cursor: default;
 
 }
 
-.form__footer_container button::after {
+.summary__footer_container button::after {
   content: var(--marevo-ui-icon_btn_download_right_w);
   width: 26px;
   height: 26px;
   margin-left: 12px;
 }
 
+/* ----------- contact form ------------*/
+
+.contact_form__popup-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  overflow-y: auto;
+  display: none;
+}
+
+.contact_form__popup-overlay .popup-close {
+  right: 30px;
+  top: 30px;
+
+  width: 24px;
+  height: 24px;
+}
+
+.contact_form__popup-overlay.active {
+  display: flex;
+}
+
+.contact_form__popup-content {
+  position: absolute;
+  top: 40px;
+  display: flex;
+  flex-direction: row;
+  background-color: white;
+  width: 90%;
+  padding: 20px;
+  flex-wrap: wrap;
+  gap: 20px 30px;
+  border: 1px solid var(--marevo-color-popup-border, #000);
+  border-radius: 16px;
+}
+
+
+
+.contact_form__form-title {
+  align-self: flex-start;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 0px;
+  width: 100%;
+}
+
+.contact_form__form-content form {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+  column-gap: 30px;
+}
+
+.contact_form__form-content form input::placeholder,
+.contact_form__form-content form textarea::placeholder {
+  font-size: 0;
+}
+
+.contact_form__form-item {
+  display: flex;
+  text-align: center;
+  align-items: center;
+  width: 100%;
+  height: 56px;
+  padding: 0 20px;
+  border-radius: 50px;
+  border: 1px solid var(--marevo-color-text-black, #000);
+}
+
+.contact_form__form-item_name,
+.contact_form__form-item_phone,
+.contact_form__form-item_address,
+.contact_form__form-item_city,
+.contact_form__form-item_country,
+.contact_form__form-item_zipcode {
+  width: calc(50% - 15px);
+}
+
+.contact_form__form-item_inquiries {
+  min-height: 120px;
+  margin-bottom: 0px;
+}
+
+.contact_form__form-item label {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--marevo-color-text-gray, #000);
+  margin-right: 20px;
+  text-align: left;
+
+  display: none;
+}
+
+.contact_form__form-item_inquiries textarea {
+  width: 100%;
+  height: 75%;
+  border: none;
+  outline: none;
+  resize: none;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--marevo-color-text-black, #000);
+}
+
+.contact_form__form-item input {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--marevo-color-text-black, #000);
+  border: none;
+  outline: none;
+  width: 100%;
+}
+
+.contact_form__checkbox_wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.contact_form__form-item_checkbox {
+  display: flex;
+  align-items: start;
+  flex-direction: column;
+  width: 100%;
+}
+
+.contact_form__form-item_checkbox input[type="checkbox"] {
+  display: none;
+}
+
+.contact_form__form-item_checkbox label {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.contact_form__form-item_checkbox label::before {
+  content: '';
+  display: inline-block;
+  min-width: 24px;
+  min-height: 24px;
+  background: var(--marevo-ui-icon_checkbox_off) no-repeat center center;
+  background-size: contain;
+  margin-right: 9px;
+}
+
+.contact_form__form-item_checkbox input[type="checkbox"]:checked + label::before {
+  background: var(--marevo-ui-icon_checkbox_on) no-repeat center center;
+  background-size: contain;
+}
+
+.contact_form__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  height: 56px;
+  border: 1px solid var(--marevo-color-text-black, #000);
+  border-radius: 50px;
+  background-color: var(--marevo-color-bgrd-btn-order, #333);
+  cursor: pointer;
+  pointer-events: auto;
+  color: var(--marevo-color-text-white, #ffffff);
+  padding: 18px;
+
+  transition: all 0.3s ease;
+}
+
+.contact_form__button:hover {
+  background-color: var(--marevo-color-text-white, #ffffff);
+  border: 1px solid var(--marevo-color-text-black, #000);
+  color: var(--marevo-color-text-black, #000);
+}
+
+.contact_form__button:hover .ar_button_order__caption {
+  color: var(--marevo-color-text-black, #000);
+}
+
+.contact_form__button .ar_button_order__image {
+  content: var(--marevo-ui-icon_floppy_w);
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+}
+
+.ar_buy-btn.contact_form__button:hover .ar_button_order__image {
+  content: var(--marevo-ui-icon_floppy_b);
+}
+
+.contact_form__close_btn {
+  display: none;
+}
 
 /* ################  MOBILE ################ */
 
@@ -2422,12 +2493,20 @@ textarea[name="ar_order_comment"] {
     display: none;
   }
 
+  .contact_form__button .ar_button_order__caption {
+    display: flex;
+  }
+
   .ar_buy-btn .ar_button_calculate__image {
     margin-right: 0;
   }
   
   .ar_buy-btn .ar_button_order__image {
     margin-right: 0;
+  }
+
+  .contact_form__button .ar_button_order__image {
+    margin-right: 8px;
   }
 }
 
@@ -2502,6 +2581,26 @@ textarea[name="ar_order_comment"] {
   .summary__popup-overlay {
     top: var(--marevo-header-height-mobile, 100px);
     height: calc(100% - var(--marevo-header-height-mobile, 100px));
+  }
+
+  .contact_form__popup-overlay {
+    position: fixed;
+    top: var(--marevo-header-height-mobile, 100px);
+    height: calc(100% - var(--marevo-header-height-mobile, 100px));
+    background-color: white;
+  }
+
+  .contact_form__popup-content {
+    top: 0px;
+    display: flex;
+    flex-direction: row;
+    background-color: rgb(204, 144, 144);
+    width: 100%;
+    padding: 20px;
+    flex-wrap: wrap;
+    gap: 20px 30px;
+    border: none;
+    border-radius: 0;
   }
   
   .product-type-3dmodel {
@@ -3249,6 +3348,10 @@ textarea[name="ar_order_comment"] {
     margin: 0;
   }
 
+  .contact_form__button .ar_button_order__image {
+    margin-right: 8px;
+  }
+
   #calculate_shipping_tax {
     display: none;
   }
@@ -3265,6 +3368,10 @@ textarea[name="ar_order_comment"] {
     font-size: 14px;
   }
   
+  .contact_form__popup-overlay * {
+    font-size: 14px;
+  }
+  
   .details {
     margin-bottom: 20px;
   }
@@ -3278,91 +3385,114 @@ textarea[name="ar_order_comment"] {
     margin-bottom: 20px;
   }
 
-  #shipping_rates_title,
-  #estimated_delivery_title {
-    margin-bottom: 10px;
+  .contact_form__popup-content {
+    gap: 20px 16px;
+    padding-top: 0;
   }
 
-  #shipping_rates_text,
-  #estimated_delivery_text {
-    margin-bottom: 20px;
+  .contact_form__form-item_name,
+  .contact_form__form-item_phone,
+  .contact_form__form-item_address,
+  .contact_form__form-item_city,
+  .contact_form__form-item_country,
+  .contact_form__form-item_zipcode {
+    width: calc(50% - 8px);
   }
 
-  .shipping_rates ul {
-    margin-bottom: 20px;
-  }
-
-  .shipping_rates {
-    margin-bottom: 0;
-  }
-
-  .estimated_delivery_time {
-    margin-bottom: 0px;
-  }
-
-  .summary__popup-content form label {
+  .contact_form__popup-content form label {
     display: none;
   }
 
-  .summary__popup-content form .summary__form-item_checkbox label {
+  .contact_form__popup-content form .contact_form__form-item_checkbox label {
     display: flex;
   }
 
-  .summary__popup-content form input::placeholder,
-  .summary__popup-content form textarea::placeholder {
+  .contact_form__popup-content form input::placeholder,
+  .contact_form__popup-content form textarea::placeholder {
     font-size: 12px;
     color: var(--marevo-color-text-gray, #000000);
   }
 
-  .summary__form-item {
+  .contact_form__form-item {
     height: 35px;
     padding: 0 20px;
   }
 
-  .summary__form-item_inquiries textarea {
+  .contact_form__form-item_inquiries textarea {
     width: 100%;
   }
 
-  .summary__form-item_inquiries {
+  .contact_form__form-item_inquiries {
     min-height: 80px;
-    margin-bottom: 20px;
+    margin-bottom: 0px;
   }
 
-  .form__footer_container {
+  .summary__footer_container {
     flex-direction: column;
     margin-top: 0;
   }
 
-  .form__footer_container .summary__link {
+  .summary__footer_container .summary__link {
     margin-bottom: 30px;
   }
 
-  .form__footer_container button {
+  .summary__footer_container button {
     width: 100%;
     height: 35px;
   }
 
-
-  .summary__form-item_checkbox {
+  /* .popup_tax__close_btn { */
+  .contact_form__close_btn {
     display: flex;
+    justify-content: center;
     align-items: center;
+    width: 100%;
+    height: 42px;
+    padding: 0 24px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 500;
+    background-color: var(--marevo-color-text-white, #fff);
+    color: var(--marevo-color-text-black, #000);
+    border: 1px solid var(--marevo-color-text-black, #000);
+    white-space: nowrap;
+  }
+
+  .contact_form__form-item input,
+  .contact_form__form-item textarea {
+    font-size: 12px;
+  }
+
+  
+
+  .contact_form__form-item_checkbox {
+    display: flex;
     flex-direction: column;
   }
 
-  .summary__form-item_checkbox label {
+  .contact_form__form-item_checkbox label {
     display: inline-flex;
     align-items: center;
     cursor: pointer;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
   }
   
-  .summary__form-item_checkbox label::before {
+  .contact_form__form-item_checkbox label::before {
     content: '';
     display: inline-block;
     margin-right: 10px;
   }
   
-  .summary__form-item_checkbox input[type="checkbox"]:checked + label::before {
+  .contact_form__form-item_checkbox input[type="checkbox"]:checked + label::before {
+  }
+
+  .contact_form__button {
+    height: 42px;
+    margin-bottom: 0px;
+  }
+
+  .contact_form__popup-overlay .popup-close {
+    display: none;
   }
 
   /*!---------------*/
@@ -3397,19 +3527,19 @@ textarea[name="ar_order_comment"] {
     flex-direction: column;
   }
   
-  .popup__info_tax form .summary__form-item {
+  .popup__info_tax form .contact_form__form-item {
     height: 35px;
   }
   
-  .popup__info_tax form .summary__form-item label {
+  .popup__info_tax form .contact_form__form-item label {
     display: none;
   }
   
-  .popup__info_tax form .summary__form-item input {
+  .popup__info_tax form .contact_form__form-item input {
     font-size: 12px;
   }
   
-  .popup__info_tax form .summary__form-item_phone {
+  .popup__info_tax form .contact_form__form-item_phone {
     max-width: none;
   }
   

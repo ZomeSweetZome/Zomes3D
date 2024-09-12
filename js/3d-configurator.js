@@ -2869,10 +2869,8 @@ async function PrepareUI() {
     furnitureRadioBtnsHandlers();
     notificationHandler();
     summaryBtnsHandler();
-
     modelSelectorHandler();
-
-    testBtnsHandler();
+    getPdfBtnHandler();
   });
 
   // Date and Tax popups
@@ -2898,9 +2896,8 @@ async function PrepareUI() {
     });
   });
 
-  // Summary popup
+  // Contact form popup
   jQuery(document).ready(function () {
-
     // form validation
     const $form = $('#popupForm');
     const $submitButton = $('#submitButton');
@@ -2912,11 +2909,19 @@ async function PrepareUI() {
 
     $form.on('submit', function (event) {
       event.preventDefault();
+
       if ($form[0].checkValidity()) {
         alert('Form submitted successfully!');
+
+        proceedSummaryAndPdf();
         // Here we can add the logic of sending the form to the server or other actions
       }
     });
+
+    //! TEMP
+    $submitButton.on('click', function () {
+      proceedSummaryAndPdf();
+    })
   });
 }
 
@@ -3152,75 +3157,6 @@ function modelSelectorHandler() {
   });
 }
 
-// *****   Test Btn   *****
-function testBtnsHandler() {
-  // $('#button_test1').on('click', function () {
-  //   if ($('#button_test2').hasClass('active')) {
-  //     $('#button_test2').trigger('click');
-  //   }
-
-  //   $(this).toggleClass('active');
-
-  //   isLocalClippingOn = false;
-
-  //   if ($(this).hasClass('active')) {
-  //     $('.canvas_btn_camera').addClass('disabled');
-  //     flyCameraTo('outXrays', 'outside', () => {
-  //       renderer.clippingPlanes = [];
-  //       let height;
-  //       let normal;
-  //       switch (currentHouse) {
-  //         case '0':
-  //           height = 2.0;
-  //           normal = new THREE.Vector3(0, -1, -0.7).normalize();
-  //           break;
-  //         case '1':
-  //           height = 2.4;
-  //           normal = new THREE.Vector3(0, -1, -0.7).normalize();
-  //           break;
-  //         case '2':
-  //           height = 3.0;
-  //           normal = new THREE.Vector3(0, -1, -0.7).normalize();
-  //           break;
-  //         default:
-  //           height = 3.0;
-  //           normal = new THREE.Vector3(0, -1, -0.7).normalize();
-  //           break;
-  //       }
-        
-  //       const clippingPlane = new THREE.Plane(normal, height);
-  //       renderer.clippingPlanes = [clippingPlane];
-  //     });
-  //   } else {
-  //     renderer.clippingPlanes = [];
-  //     $('.canvas_btn_camera').removeClass('disabled');
-  //   }
-  // });
-
-  // $('#button_test2').on('click', function () {
-  //   if ($('#button_test1').hasClass('active')) {
-  //     $('#button_test1').trigger('click');
-  //   }
-
-  //   $(this).toggleClass('active');
-
-  //   if ($(this).hasClass('active')) {
-  //     $('.canvas_btn_camera').addClass('disabled');
-  //     flyCameraTo('outXrays', 'outside', () => {
-  //       renderer.clippingPlanes = [];
-  //       // notClippingMaterials = ['floor'];
-  //       current3Dmodel = modelHouse;
-  //       isLocalClippingOn = true;
-  //     });
-  //   } else {
-  //     flyCameraTo('outMain', 'outside', () => {
-  //       isLocalClippingOn = false;
-  //       $('.canvas_btn_camera').removeClass('disabled');
-  //     });
-  //   }
-  // });
-}
-
 // *****   Annotation Btn   *****
 function annotationsBtnHandler() {
   $('#button_annotation').on('click', function () {
@@ -3326,27 +3262,14 @@ function notificationHandler() {
 function summaryBtnsHandler() {
   $('#ar_button_order').on('click', function () {
     if (!isCameraInside) {
-      proceedSummaryAndPdf();
+      openContactForm();
+      // proceedSummaryAndPdf();
     } else {
       flyCameraTo('outMain', 'outside', () => {
-        proceedSummaryAndPdf();
+        openContactForm();
+        // proceedSummaryAndPdf();
       });
     }
-
-    function proceedSummaryAndPdf() {
-      // WriteURLParameters();
-      CreateImageList();
-      collectSummary();
-      openSummary();
-      $('.summary__popup-overlay').scrollTop(0);
-  
-      //! TEMP
-      generatePDF(currentHouse, mainData, currentLanguage, imageSources, pdfContentData);
-    }
-  });
-
-  $('#modifyConfiguration').on('click', function () {
-    closeSummary();
   });
 
   $('#backToConfiguration').on('click', function () {
@@ -3356,12 +3279,26 @@ function summaryBtnsHandler() {
   $('.summary__popup-overlay .popup-close').on('click', function () {
     closeSummary();
   });
+
+  $('.contact_form__popup-overlay .popup-close').on('click', function () {
+    closeContactForm();
+  });
+
+  $('.contact_form__popup-overlay .contact_form__close_btn').on('click', function () {
+    closeContactForm();
+  });
+}
+
+function proceedSummaryAndPdf() {
+  CreateImageList();
+  collectSummary();
+  openSummary();
+  $('.summary__popup-overlay').scrollTop(0);
 }
 
 function getPdfBtnHandler() {
   $('#summary_btn_text').on('click', function () {
-    //! TODO generate PDF file
-    // generatePDF(currentHouse, mainData, currentLanguage, imageSources, pdfContentData);
+    generatePDF(currentHouse, mainData, currentLanguage, imageSources, pdfContentData);
     closeSummary();
   });
 }
@@ -3383,6 +3320,14 @@ function openSummary() {
 function closeSummary() {
   $('.summary__popup-overlay').removeClass('active');
   $('.summary__scheme').removeClass('active');
+}
+
+function openContactForm() {
+  $('.contact_form__popup-overlay').addClass('active');
+}
+
+function closeContactForm() {
+  $('.contact_form__popup-overlay').removeClass('active');
 }
 
 function collectSummary() {
