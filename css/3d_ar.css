@@ -55,6 +55,8 @@
   --marevo-ui-icon_calc_w : url(../src/ar-ui-icons/calc_w.svg);
   --marevo-ui-icon_floppy_b : url(../src/ar-ui-icons/floppy_b.svg);
   --marevo-ui-icon_floppy_w : url(../src/ar-ui-icons/floppy_w.svg);
+  --marevo-ui-icon_calendar_b : url(../src/ar-ui-icons/calendar_b.svg);
+  --marevo-ui-icon_calendar_w : url(../src/ar-ui-icons/calendar_w.svg);
 
   --marevo-ui-btn_pod : url(../src/ar-ui-icons/btn_pod.png);
   --marevo-ui-btn_office : url(../src/ar-ui-icons/btn_office.png);
@@ -990,6 +992,8 @@ body, html {
 }
 
 
+
+
 .ar_menu_footer_container .ar_buy-btn.disabled {
   pointer-events: none;
   cursor: wait;
@@ -1137,6 +1141,93 @@ body, html {
   transform: rotateX(0);
 }
 
+/* ------------- SUMMARY BUTTONS ------------- */
+
+.summary_buttons__wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 50px;
+  width: 100%;
+}
+
+.summary_buttons__wrapper .summary_btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  height: 56px;
+  border: 1px solid var(--marevo-color-text-black, #000);
+  border-radius: 50px;
+  cursor: pointer;
+  pointer-events: auto;
+  padding: 0 18px;
+
+  transition: all 0.3s ease;
+}
+
+.summary_buttons__wrapper .summary_btn_calendar {
+  margin-right: 40px;
+}
+
+.summary_buttons__wrapper .summary_btn_save {
+  background-color: var(--marevo-color-text-black, #000);
+}
+
+.summary_buttons__wrapper .summary_btn .summary_btn_calendar__image,
+.summary_buttons__wrapper .summary_btn .summary_btn_save__image {
+  width: 22px;
+  height: 22px;
+  margin-right: 12px;
+}
+
+.summary_buttons__wrapper .summary_btn .summary_btn__caption {
+  font-size: 18px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+.summary_buttons__wrapper .summary_btn .summary_btn_calendar__image {
+  content: var(--marevo-ui-icon_calendar_b);
+}
+
+.summary_buttons__wrapper .summary_btn .summary_btn_save__image {
+  content: var(--marevo-ui-icon_floppy_w);
+}
+
+.summary_buttons__wrapper .summary_btn #summary_btn_calendar__caption {
+  color: var(--marevo-color-text-black, #000);
+}
+
+.summary_buttons__wrapper .summary_btn #summary_btn_save__caption {
+  color: var(--marevo-color-text-white, #ffffff);
+}
+
+.summary_buttons__wrapper .summary_btn_calendar:hover {
+  background-color: var(--marevo-color-text-black, #000);
+}
+
+.summary_buttons__wrapper .summary_btn_save:hover {
+  background-color: var(--marevo-color-text-white, #ffffff);
+}
+
+.summary_buttons__wrapper .summary_btn_calendar:hover .summary_btn_calendar__image {
+  content: var(--marevo-ui-icon_calendar_w);
+}
+
+.summary_buttons__wrapper .summary_btn_save:hover .summary_btn_save__image {
+  content: var(--marevo-ui-icon_floppy_b);
+}
+
+.summary_buttons__wrapper .summary_btn_calendar:hover #summary_btn_calendar__caption {
+  color: var(--marevo-color-text-white, #ffffff);
+}
+
+.summary_buttons__wrapper .summary_btn_save:hover #summary_btn_save__caption {
+  color: var(--marevo-color-text-black, #000);
+}
 
 /*!------------------------------------*/
 
@@ -2102,7 +2193,9 @@ textarea[name="ar_order_comment"] {
   min-width: 100%;
 
   margin-top: 80px;
-  margin-bottom: 30px;
+  margin-bottom: 0px;
+
+  border-bottom: 1px solid #000;
 }
 
 .details__group {
@@ -2159,6 +2252,37 @@ textarea[name="ar_order_comment"] {
   display: flex;
 }
 
+.details__total {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  position: relative;
+  width: 100%;
+}
+
+.details__total_title,
+.details__total_price {
+  display: flex;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--marevo-color-text-black, #000);
+}
+
+.details__tax_info {
+  display: flex;
+  justify-content: end;
+  position: relative;
+  width: 100%;
+}
+
+.details__tax_amount,
+.details__tax_text {
+  display: flex;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--marevo-color-text-black, #000);
+}
+
 .summary__link {
   display: flex;
   justify-content: center;
@@ -2184,7 +2308,7 @@ textarea[name="ar_order_comment"] {
 
 .summary__footer_container {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
   text-align: center;
   align-items: center;
@@ -2194,6 +2318,7 @@ textarea[name="ar_order_comment"] {
 
 .summary__footer_container .summary__link {
   margin: auto 0;
+  margin-bottom: 50px;
 }
 
 .summary__footer_container button {
@@ -2237,7 +2362,9 @@ textarea[name="ar_order_comment"] {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: transparent;
+  /* background-color: transparent; */
+  background-color: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(1px);
   z-index: 1000;
   justify-content: center;
   align-items: center;
@@ -2263,8 +2390,8 @@ textarea[name="ar_order_comment"] {
   display: flex;
   flex-direction: row;
   background-color: white;
-  width: 90%;
-  padding: 20px;
+  width: min(880px, 90%);
+  padding: 20px 20px 40px;
   flex-wrap: wrap;
   gap: 20px 30px;
   border: 1px solid var(--marevo-color-popup-border, #000);
@@ -3371,6 +3498,11 @@ textarea[name="ar_order_comment"] {
   .contact_form__popup-overlay * {
     font-size: 14px;
   }
+
+  .summary__popup-overlay .popup-close {
+    width: 16px;
+    height: 16px;
+  }
   
   .details {
     margin-bottom: 20px;
@@ -3378,6 +3510,24 @@ textarea[name="ar_order_comment"] {
 
   .details__group {
     margin-bottom: 10px;
+  }
+
+  .details__total_title,
+  .details__total_price {
+    font-size: 14px;
+  }
+
+  .details__tax_info {
+    display: inline;
+    text-align: right;
+    position: relative;
+    width: max(30%, 120px);
+    margin-left: auto;
+  }
+
+  .details__tax_amount,
+  .details__tax_text {
+    display: inline;
   }
 
   .summary__link {
@@ -3433,15 +3583,34 @@ textarea[name="ar_order_comment"] {
   }
 
   .summary__footer_container .summary__link {
+    margin: 30px 0;
+  }
+
+  .summary_buttons__wrapper {
+    flex-direction: column;
+    margin-bottom: 50px;
+  }
+
+  .summary_buttons__wrapper .summary_btn {
+    height: 42px;
+  }
+
+  .summary_buttons__wrapper .summary_btn_calendar {
+    margin-right: 0;
     margin-bottom: 30px;
   }
 
-  .summary__footer_container button {
-    width: 100%;
-    height: 35px;
+  .summary_buttons__wrapper .summary_btn .summary_btn__caption {
+    font-size: 14px;
   }
 
-  /* .popup_tax__close_btn { */
+  .summary_buttons__wrapper .summary_btn .summary_btn_calendar__image,
+  .summary_buttons__wrapper .summary_btn .summary_btn_save__image {
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+  }
+
   .contact_form__close_btn {
     display: flex;
     justify-content: center;

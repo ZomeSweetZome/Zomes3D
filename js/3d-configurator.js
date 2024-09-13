@@ -158,6 +158,7 @@ let imageSources = [];
 
 let pdfContentData = [];
 let currentAmountString = '';
+let currentTaxAmountString = '';
 let totalAmount = 0;
 let maximumLeadTimeWeeks = 0;
 
@@ -1810,9 +1811,8 @@ function calculatePrice() {
   }
 
   totalAmount = totalAmount.toFixed(0);
-  totalAmountElement.innerText = formatPrice(totalAmount, currentCurrencySign);
-
   currentAmountString = formatPrice(totalAmount, currentCurrencySign);
+  totalAmountElement.innerText = currentAmountString;
 }
 
 function convertPriceToNumber(priceString) {
@@ -1862,7 +1862,7 @@ function formatPrice(price, currency, needToBeRounded = true, needToAddSpace = f
 
   let result, firstSeparator;
   const priceString = (needToBeRounded) 
-    ? Math.floor(price).toString()
+    ? Math.round(price).toString()
     : price.toString();
 
   switch (currency) {
@@ -1894,7 +1894,6 @@ function formatPrice(price, currency, needToBeRounded = true, needToAddSpace = f
   return result;
 }
 
-//! TODO
 const store_endpoint_link = '';
 // eslint-disable-next-line no-unused-vars
 function SendProductInfo(element) {
@@ -2912,7 +2911,7 @@ async function PrepareUI() {
 
       if ($form[0].checkValidity()) {
         alert('Form submitted successfully!');
-
+        closeContactForm();
         proceedSummaryAndPdf();
         // Here we can add the logic of sending the form to the server or other actions
       }
@@ -2920,6 +2919,7 @@ async function PrepareUI() {
 
     //! TEMP
     $submitButton.on('click', function () {
+      closeContactForm();
       proceedSummaryAndPdf();
     })
   });
@@ -3297,7 +3297,7 @@ function proceedSummaryAndPdf() {
 }
 
 function getPdfBtnHandler() {
-  $('#summary_btn_text').on('click', function () {
+  $('#summary_download_pdf_btn').on('click', function () {
     generatePDF(currentHouse, mainData, currentLanguage, imageSources, pdfContentData);
     closeSummary();
   });
@@ -3430,6 +3430,9 @@ function collectSummary() {
     });
 
     detailsGroup.appendTo(detailsContainer);
+
+    $('#details__total_price').html(currentAmountString);
+    $('#details__tax_amount').html(`+ ${currentTaxAmountString}&nbsp;`);
 
     pdfContentData.push(
       { text: '', width: '*', margin: [0, 0, 0, 10] },

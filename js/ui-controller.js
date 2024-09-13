@@ -66,7 +66,7 @@ export async function createMenu(mainData) {
         { '#summary_form_checkbox_allow': 'ui_summary_form_checkbox_allow' },
         { '#summary_form_checkbox_signme': 'ui_summary_form_checkbox_signme' },
         { '#summary_back_to_conf': 'ui_summary_back_to_conf' },
-        { '#summary_btn_text': 'ui_summary_btn_text' },
+        { '#summary_download_pdf_btn': 'ui_summary_download_pdf_btn' },
         { '#contact_form_btn_text .ar_button_order__caption_large': 'ui_btn_buy' },
         // ----------
         { '.popup_tax__title': 'ui_popup_tax_title' },
@@ -76,7 +76,11 @@ export async function createMenu(mainData) {
         { '#select_btn_pod .popup_select__item_button': 'ui_popup_select_model_btn_1' },
         { '#select_btn_office .popup_select__item_button': 'ui_popup_select_model_btn_2' },
         { '#select_btn_studio .popup_select__item_button': 'ui_popup_select_model_btn_3' },
-
+        // ----------
+        { '#details__total_title': 'ui_pdf_total' },
+        { '#summary_btn_calendar__caption': 'ui_summary_btn_book_text' },
+        { '#summary_btn_save__caption': 'ui_summary_btn_save_text' },
+        { '#details__tax_text': 'ui_summary_details__tax_text' },
       );
 
       uiPlaceholdersMultiLanguages.push(
