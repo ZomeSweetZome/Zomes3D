@@ -43,6 +43,9 @@ export const CURRENCY_SIGN = {
   2: 'UAH',
 };
 
+// Calendly URL
+export const CALENDLY_LINK = 'https://calendly.com/shereef-zomes/walkthrough';
+
 // Zomes_3D_data_LIVE
 const MAIN_LINK_PART = 'https://docs.google.com/spreadsheets/d/1hU0H-7k5TqUaMsO5IgSG8SCk64Vf73_uzAKGlmT5HyI/export?format=csv&gid=';
 

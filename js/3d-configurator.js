@@ -34,6 +34,7 @@ import {
   WINDOWS_LIMIT_IN_ROW,
   VIEWPORT_AND_STRIP_SECTORS,
   HUMAN_HEIGHT,
+  CALENDLY_LINK,
 } from './settings.js';
 
 import {
@@ -2870,6 +2871,7 @@ async function PrepareUI() {
     summaryBtnsHandler();
     modelSelectorHandler();
     getPdfBtnHandler();
+    bookTimeBtnHandler();
   });
 
   // Date and Tax popups
@@ -3299,7 +3301,12 @@ function proceedSummaryAndPdf() {
 function getPdfBtnHandler() {
   $('#summary_download_pdf_btn').on('click', function () {
     generatePDF(currentHouse, mainData, currentLanguage, imageSources, pdfContentData);
-    closeSummary();
+  });
+}
+
+function bookTimeBtnHandler() {
+  $('#summary_book_time_btn').on('click', function() {
+    window.open(CALENDLY_LINK, '_blank');
   });
 }
 

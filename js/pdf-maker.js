@@ -14,7 +14,7 @@ export function generatePDF(
   country = 'Country',
   phone = 'Phone',
   email = 'Email',
-  opt = 'open'
+  opt = 'all',
 ) {
   const colorTextBlack = '#101011';
   const colorLineBlack = '#000000';
@@ -172,6 +172,11 @@ export function generatePDF(
         break;
 
       case 'download':
+        pdfMake.createPdf(pdfDefinition).download("Zome_configuration.pdf");
+        break;
+
+      case 'all':
+        pdfMake.createPdf(pdfDefinition).open();
         pdfMake.createPdf(pdfDefinition).download("Zome_configuration.pdf");
         break;
 
