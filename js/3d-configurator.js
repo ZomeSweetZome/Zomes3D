@@ -3433,11 +3433,13 @@ function collectSummary() {
 
     $('#details__total_price').html(currentAmountString);
     $('#details__tax_amount').html(`+ ${currentTaxAmountString}&nbsp;`);
-
+    
     pdfContentData.push(
       { text: '', width: '*', margin: [0, 0, 0, 10] },
     );
   });
+  
+  const currentTaxAmountWithTextForPDF = `+ ${currentTaxAmountString} ${getData(mainData, 'ui_summary_details__tax_text', currentLanguage)}`;
 
   pdfContentData.push(
     { canvas: [ { type: 'line', x1: 0, y1: 0, x2: 535, y2: 0, lineWidth: 1 }], margin: [0, 10, 0, 6], },
@@ -3445,6 +3447,9 @@ function collectSummary() {
       { text: getData(mainData, 'ui_pdf_total', currentLanguage), width: '70%', style: 'tableTitle', margin: [0, 0, 0, 0], },
       { text: '', width: '*', margin: [0, 0, 0, 0] },
       { text: currentAmountString, style: 'tableTitle', margin: [0, 0, 0, 0], alignment: 'right', },
+    ]},
+    { columns: [
+      { text: currentTaxAmountWithTextForPDF, width: '100%', style: 'tableTitle', margin: [0, 6, 0, 0], alignment: 'right', },
     ]},
   );
 }
