@@ -44,7 +44,7 @@ export const CURRENCY_SIGN = {
 };
 
 // Calendly URL
-export const CALENDLY_LINK = 'https://calendly.com/shereef-zomes/walkthrough';
+export const CALENDLY_LINK = 'https://landing.zomes.com/book';
 
 // API keys
 export const ZIP_TAX_KEY = 'h7GYASShqs9NhTunIoRKWr8F';
