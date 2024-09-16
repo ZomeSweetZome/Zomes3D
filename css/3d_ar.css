@@ -53,6 +53,7 @@
   
   --marevo-ui-icon_calc_b : url(../src/ar-ui-icons/calc_b.svg);
   --marevo-ui-icon_calc_w : url(../src/ar-ui-icons/calc_w.svg);
+  --marevo-ui-icon_calc_g : url(../src/ar-ui-icons/calc_g.svg);
   --marevo-ui-icon_floppy_b : url(../src/ar-ui-icons/floppy_b.svg);
   --marevo-ui-icon_floppy_w : url(../src/ar-ui-icons/floppy_w.svg);
   --marevo-ui-icon_calendar_b : url(../src/ar-ui-icons/calendar_b.svg);
@@ -1937,17 +1938,26 @@ textarea[name="ar_order_comment"] {
   font-weight: 500;
   background-color: var(--marevo-color-text-black, #000);
   color: var(--marevo-color-text-white, #fff);
-  border: none;
+  border: 1px solid var(--marevo-color-text-black, #000);
   white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .popup__info_tax form button:disabled {
-  color: var(--marevo-color-text-white, #fff);
+  color: var(--marevo-color-text-gray, #777777);
+  background-color: var(--marevo-color-text-white, #fff);
+  border: 1px solid var(--marevo-color-text-gray, #777777);
   cursor: default;
 }
 
 .popup_tax__close_btn {
   display: none;
+}
+
+.popup__info_tax form button:hover {
+  background-color: var(--marevo-color-text-white, #fff);
+  color: var(--marevo-color-text-black, #000);
 }
 
 /*!-----------------------------*/

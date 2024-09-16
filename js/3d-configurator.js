@@ -1,5 +1,5 @@
 /* eslint-disable no-case-declarations */
-/* global THREE, jQuery, $ */
+/* global THREE, jQuery, $, google */
 
 // Created by Marevo (Pavlo Voronin)
 // Welcome to our custom script!
@@ -35,6 +35,9 @@ import {
   VIEWPORT_AND_STRIP_SECTORS,
   HUMAN_HEIGHT,
   CALENDLY_LINK,
+  ZIP_TAX_KEY,
+  DIST_MATRIX_KEY,
+  ORIGIN_ZIPCODE,
 } from './settings.js';
 
 import {
@@ -162,6 +165,12 @@ let currentAmountString = '';
 let currentTaxAmountString = '';
 let totalAmount = 0;
 let maximumLeadTimeWeeks = 0;
+
+let taxAmount = 0;
+let shippingAmount = 0;
+let stateSalesTax = 0;
+let shippingDistance = 0;
+let totalAmountShipTax = 0;
 
 // CUSTOM SELECT
 jQuery(document).ready(function () {
@@ -1814,6 +1823,7 @@ function calculatePrice() {
   totalAmount = totalAmount.toFixed(0);
   currentAmountString = formatPrice(totalAmount, currentCurrencySign);
   totalAmountElement.innerText = currentAmountString;
+  updateShippingTaxInfo();
 }
 
 function convertPriceToNumber(priceString) {
@@ -2872,6 +2882,8 @@ async function PrepareUI() {
     modelSelectorHandler();
     getPdfBtnHandler();
     bookTimeBtnHandler();
+
+    calculateTaxHandler();
   });
 
   // Date and Tax popups
@@ -2924,6 +2936,22 @@ async function PrepareUI() {
       closeContactForm();
       proceedSummaryAndPdf();
     })
+  });
+
+  function validateTaxForm() {
+    const email = $('#popup_tax_email').val();
+    const zipcode = $('#popup_tax_zipcode').val();
+    const emailIsValid = email.includes('@') && email.includes('.');
+    const zipcodeIsValid = zipcode.length >= 5;
+    return emailIsValid && zipcodeIsValid;
+  }
+
+  $('#popup_tax_email, #popup_tax_zipcode').on('input', function() {
+    if (validateTaxForm()) {
+      $('#popup_tax_calculate').prop('disabled', false);
+    } else {
+      $('#popup_tax_calculate').prop('disabled', true);
+    }
   });
 }
 
@@ -3310,6 +3338,82 @@ function bookTimeBtnHandler() {
   });
 }
 
+function calculateTaxHandler() {
+  $('#popup_tax_calculate').on('click', async function() {
+    $('#popup_tax_calculate').prop('disabled', true);
+
+    const userZipCode = $('#popup_tax_zipcode').val();
+    const email = $('#popup_tax_email').val();
+
+    // TODO save email and userZipCode in local storage
+
+    try {
+      // const taxRate = await getTaxRate(userZipCode);
+      const shippingDistance = await getDistance(userZipCode);
+      console.log("🚀 ~ $ ~ shippingDistance:", shippingDistance);
+    } catch (error) {
+      console.error('Error fetching distance:', error);
+    } finally {
+      $('#popup_tax_calculate').prop('disabled', false);
+    }
+  });
+}
+
+// async function getTaxRate(destinationZipCode) {
+//   return new Promise((resolve, reject) => {
+
+//   });
+// }
+
+async function getDistance(destinationZipCode) {
+  return new Promise((resolve, reject) => {
+    var api = new google.maps.DistanceMatrixService();
+    api.getDistanceMatrix({
+      origins: [ORIGIN_ZIPCODE],
+      destinations: [destinationZipCode + ''],
+      travelMode: 'DRIVING',
+      unitSystem: google.maps.UnitSystem.IMPERIAL,
+    }, 
+    function(response, status) {
+      if (status == 'OK') {
+        const element = response.rows[0].elements[0];
+        if (element.status === 'OK') {
+          const distance = element.distance.text;
+          resolve(extractDistance(distance));
+        } else {
+          console.log(`🚀 Could not find distance between ${ORIGIN_ZIPCODE} and ${destinationZipCode}`);
+          resolve(null);
+        }
+      } else {
+        console.log(`🚀 API request error: ${status}`);
+        reject(new Error(`API request failed with status: ${status}`));
+      }
+    });
+  });
+}
+
+
+function extractDistance(distanceStr) {
+  const numericValue = distanceStr.replace(/,/g, '').replace(' mi', '');
+  const distance = parseFloat(numericValue);
+  
+  return distance;
+}
+
+function updateShippingTaxInfo() {
+  const shipppingCostBase = convertPriceToNumber(getData(dataPrice, 'shipppingCostBase', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
+  const shipppingCostMile = convertPriceToNumber(getData(dataPrice, 'shipppingCostMile', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
+  
+  console.log("🚀 ~ shipppingCostBase, shipppingCostMile:", shipppingCostBase, shipppingCostMile);
+  console.log("🚀 ~ totalAmount, stateSalesTax, shippingDistance:", totalAmount, stateSalesTax, shippingDistance);
+  
+  totalAmountShipTax = totalAmount * stateSalesTax + shippingDistance * shipppingCostMile;
+  console.log("🚀 ~ totalAmountShipTax:", totalAmountShipTax);
+  
+  currentTaxAmountString = formatPrice(totalAmountShipTax, currentCurrencySign);
+  console.log("🚀 ~ totalAmountShipTax:", currentTaxAmountString);
+}
+
 function openSummary() {
   $('.summary__popup-overlay').addClass('active');
   
@@ -3440,6 +3544,7 @@ function collectSummary() {
 
     $('#details__total_price').html(currentAmountString);
     $('#details__tax_amount').html(`+ ${currentTaxAmountString}&nbsp;`);
+    // $('#payment_info_title').html(`+ ${currentTaxAmountString}&nbsp;`);
     
     pdfContentData.push(
       { text: '', width: '*', margin: [0, 0, 0, 10] },
