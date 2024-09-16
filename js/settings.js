@@ -58,6 +58,9 @@ export const DATAFILE_CSV_LINK_UI = MAIN_LINK_PART + '0';
 export const DATAFILE_CSV_LINK_PRICE = MAIN_LINK_PART + '1512053788';
 export const DATAFILE_CSV_LINK_ANNOTATIONS = MAIN_LINK_PART + '1110711170';
 
+// Sales Zipcode Table
+export const DATAFILE_CSV_LINK_SALES_ZIPCODE = 'https://docs.google.com/spreadsheets/d/1r2yclrOnu-h9EjJjuYAYK9NbmKgITAaKCjFZmTea1bY/export?format=csv&gid=1261074691';
+
 export const WINDOWS_LIMIT_IN_ROW = 4;
 
 export const DATA_HOUSE_NAME = {

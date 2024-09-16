@@ -440,12 +440,12 @@ export function getData(data, text, desiredId, titleId = 'id') {
   let titleIdInd = data[0]?.findIndex(
     (title) => title?.toUpperCase() === titleId?.toUpperCase(),
   );
-
+  
   if (titleIdInd === -1) {
     titleIdInd = 0;
   }
 
-  let index = data[titleIdInd]?.findIndex(
+  let index = data[0]?.findIndex(
     (title) => title?.toUpperCase() === desiredId?.toUpperCase(),
   );
 
@@ -456,7 +456,7 @@ export function getData(data, text, desiredId, titleId = 'id') {
   }
 
   for (let i = 1; i < data.length; i++) {
-    if (data[i][0].toUpperCase() === text.toUpperCase()) {
+    if (data[i][titleIdInd].toUpperCase() === text.toUpperCase()) {
       let res = data[i][index];
       
       if (res[0] === '"' && res[res.length - 1] === '"') {

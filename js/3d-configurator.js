@@ -15,6 +15,7 @@ import {
   DATAFILE_CSV_LINK_UI,
   DATAFILE_CSV_LINK_PRICE,
   DATAFILE_CSV_LINK_ANNOTATIONS,
+  DATAFILE_CSV_LINK_SALES_ZIPCODE,
   DEFAULT_LANGUAGE,
   DEFAULT_CURRENCY,
   CURRENCY_SIGN,
@@ -119,7 +120,8 @@ let customWindows = {
 
 export let dataAnnotations = [];
 let dataPrice = [];
-let mainData = [];
+let dataMain = [];
+let dataZiptax = [];
 let mainGroups = [];
 
 const sceneProperties = {
@@ -526,7 +528,8 @@ async function prepareDataFiles() {
   try {
     await loadAndParseCSV(DATAFILE_CSV_LINK_ANNOTATIONS, 'text', dataAnnotations);
     await loadAndParseCSV(DATAFILE_CSV_LINK_PRICE, 'text', dataPrice);
-    await loadAndParseCSV(DATAFILE_CSV_LINK_UI, 'text', mainData);
+    await loadAndParseCSV(DATAFILE_CSV_LINK_UI, 'text', dataMain);
+    await loadAndParseCSV(DATAFILE_CSV_LINK_SALES_ZIPCODE, 'text', dataZiptax);
     Start();
   } catch (error) {
     console.error("Error loading data files:", error);
@@ -709,7 +712,7 @@ function InitializationGroups(callback) {
 
 //! *****************   START   ********************
 async function Start() {
-  await createMenu(mainData);
+  await createMenu(dataMain);
   PrepareUI();
   create3DScene(sceneProperties, () => InitializationGroups(startCallback));
 
@@ -1706,7 +1709,7 @@ function checkLanguageForDimensions() {
       break;
   }
 
-  updateUIlanguages(mainData, [{ '.canvas_dimensions': ui_id }], currentLanguage);
+  updateUIlanguages(dataMain, [{ '.canvas_dimensions': ui_id }], currentLanguage);
 }
 
 //#endregion
@@ -1750,7 +1753,7 @@ function calculatePrice() {
     } else if (option === 'option_1-2') { // custom windows
       price = convertPriceToNumber(getData(dataPrice, option, `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
       $(`.${option} .component_price`).html(
-        `${formatPrice(price, currentCurrencySign)} ${getData(mainData, 'ui_per_window', currentLanguage)}`
+        `${formatPrice(price, currentCurrencySign)} ${getData(dataMain, 'ui_per_window', currentLanguage)}`
       );
     } else if (option === 'option_4-5') {
       price = '';
@@ -1812,12 +1815,12 @@ function calculatePrice() {
   }
 
   if (!activeOptions.includes('option_0-2')) { // the hous is not a studio
-    $(`.option_4-3 .component_price`).html(`${getData(mainData, 'ui_component_not_allowed', currentLanguage)}`);
+    $(`.option_4-3 .component_price`).html(`${getData(dataMain, 'ui_component_not_allowed', currentLanguage)}`);
   }
 
   if (!activeOptions.includes('option_4-5')) { // smart windows is not active
     const price = convertPriceToNumber(getData(dataPrice, 'option_4-5', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
-    $(`.option_4-5 .component_price`).html(`${formatPrice(price, currentCurrencySign)} ${getData(mainData, 'ui_per_window', currentLanguage)}`);
+    $(`.option_4-5 .component_price`).html(`${formatPrice(price, currentCurrencySign)} ${getData(dataMain, 'ui_per_window', currentLanguage)}`);
   }
 
   totalAmount = totalAmount.toFixed(0);
@@ -1865,7 +1868,7 @@ function formatPrice(price, currency, needToBeRounded = true, needToAddSpace = f
     && SharedParameterList[4].value[3] != 1 // extra door
     && SharedParameterList[4].value[5] != 1 // smart glass
   ) {
-    return getData(mainData, 'ui_component_price_included', currentLanguage);
+    return getData(dataMain, 'ui_component_price_included', currentLanguage);
   }
 
   if (!price) { price = '' }
@@ -3014,13 +3017,13 @@ function menuInfoBtnHandler(opt) {
     event.stopPropagation();
 
     // title
-    const infoTitle = getData(mainData, $(this).attr('data-option'), currentLanguage);
+    const infoTitle = getData(dataMain, $(this).attr('data-option'), currentLanguage);
     $('#menu_info_title').html(infoTitle);
 
     // description image
-    if (getData(mainData, $(this).attr('data-option'), `DESC_IMG`).toLowerCase() !== 'null' &&
-      getData(mainData, $(this).attr('data-option'), `DESC_IMG`) !== '') {
-      const imgLink = `./src/images/info/${getData(mainData, $(this).attr('data-option'), `DESC_IMG`)}`;
+    if (getData(dataMain, $(this).attr('data-option'), `DESC_IMG`).toLowerCase() !== 'null' &&
+      getData(dataMain, $(this).attr('data-option'), `DESC_IMG`) !== '') {
+      const imgLink = `./src/images/info/${getData(dataMain, $(this).attr('data-option'), `DESC_IMG`)}`;
       const descrImageHTML = `
         <div class="ar_menu_info_content__image">
           <img src="${imgLink}">
@@ -3037,7 +3040,7 @@ function menuInfoBtnHandler(opt) {
     }
 
     // description text
-    let descrText = getData(mainData, $(this).attr('data-option'), `DESC_${currentLanguage}`);
+    let descrText = getData(dataMain, $(this).attr('data-option'), `DESC_${currentLanguage}`);
 
 
     if (descrText !== '' && descrText.toLowerCase() !== 'null') {
@@ -3054,9 +3057,9 @@ function menuInfoBtnHandler(opt) {
     $('#menu_info_content_descr .ar_menu_info_content__text').html(descrText);
 
     // specs image
-    if (getData(mainData, $(this).attr('data-option'), `SPECS_IMG`).toLowerCase() !== 'null' &&
-      getData(mainData, $(this).attr('data-option'), `SPECS_IMG`) !== '') {
-      const imgLink = `./src/images/info/${getData(mainData, $(this).attr('data-option'), `SPECS_IMG`)}`;
+    if (getData(dataMain, $(this).attr('data-option'), `SPECS_IMG`).toLowerCase() !== 'null' &&
+      getData(dataMain, $(this).attr('data-option'), `SPECS_IMG`) !== '') {
+      const imgLink = `./src/images/info/${getData(dataMain, $(this).attr('data-option'), `SPECS_IMG`)}`;
       const specsImageHTML = `
         <div class="ar_menu_info_content__image">
           <img src="${imgLink}">
@@ -3073,7 +3076,7 @@ function menuInfoBtnHandler(opt) {
     }
 
     // specs text
-    let specsText = getData(mainData, $(this).attr('data-option'), `SPECS_${currentLanguage}`);
+    let specsText = getData(dataMain, $(this).attr('data-option'), `SPECS_${currentLanguage}`);
 
     if (specsText !== '' && specsText.toLowerCase() !== 'null') {
       if (specsText[0] === '"' && specsText[specsText.length - 1] === '"') {
@@ -3328,7 +3331,7 @@ function proceedSummaryAndPdf() {
 
 function getPdfBtnHandler() {
   $('#summary_download_pdf_btn').on('click', function () {
-    generatePDF(currentHouse, mainData, currentLanguage, imageSources, pdfContentData);
+    generatePDF(currentHouse, dataMain, currentLanguage, imageSources, pdfContentData);
   });
 }
 
@@ -3348,9 +3351,9 @@ function calculateTaxHandler() {
     // TODO save email and userZipCode in local storage
 
     try {
-      // const taxRate = await getTaxRate(userZipCode);
-      const shippingDistance = await getDistance(userZipCode);
-      console.log("🚀 ~ $ ~ shippingDistance:", shippingDistance);
+      stateSalesTax = +getTaxRate(userZipCode);
+      shippingDistance = await getDistance(userZipCode);
+      updateShippingTaxInfo();
     } catch (error) {
       console.error('Error fetching distance:', error);
     } finally {
@@ -3359,11 +3362,10 @@ function calculateTaxHandler() {
   });
 }
 
-// async function getTaxRate(destinationZipCode) {
-//   return new Promise((resolve, reject) => {
-
-//   });
-// }
+function getTaxRate(destinationZipCode) {
+  const taxRate = getData(dataZiptax, destinationZipCode + '', 'StateRate', 'ZipCode');
+  return taxRate;
+}
 
 async function getDistance(destinationZipCode) {
   return new Promise((resolve, reject) => {
@@ -3404,14 +3406,17 @@ function updateShippingTaxInfo() {
   const shipppingCostBase = convertPriceToNumber(getData(dataPrice, 'shipppingCostBase', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
   const shipppingCostMile = convertPriceToNumber(getData(dataPrice, 'shipppingCostMile', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
   
-  console.log("🚀 ~ shipppingCostBase, shipppingCostMile:", shipppingCostBase, shipppingCostMile);
-  console.log("🚀 ~ totalAmount, stateSalesTax, shippingDistance:", totalAmount, stateSalesTax, shippingDistance);
-  
   totalAmountShipTax = totalAmount * stateSalesTax + shippingDistance * shipppingCostMile;
-  console.log("🚀 ~ totalAmountShipTax:", totalAmountShipTax);
+
+  if (totalAmountShipTax) {
+    currentTaxAmountString = formatPrice(totalAmountShipTax + shipppingCostBase, currentCurrencySign);
+  }
   
-  currentTaxAmountString = formatPrice(totalAmountShipTax, currentCurrencySign);
-  console.log("🚀 ~ totalAmountShipTax:", currentTaxAmountString);
+  const text = getData(dataMain, 'ui_summary_details__tax_text', currentLanguage);
+  const amountText = (totalAmountShipTax) ? `${currentTaxAmountString}` : '';
+  $('#payment_info_title').html(`+ ${amountText}${text}`); 
+
+  // console.log("🚀 ~ shipppingCostBase, shipppingCostMile:", shipppingCostBase, shipppingCostMile);
 }
 
 function openSummary() {
@@ -3503,7 +3508,7 @@ function collectSummary() {
 
       $('<div>', {
         class: 'details__item_not_included',
-        text: getData(mainData, 'ui_summary_not_included', currentLanguage),
+        text: getData(dataMain, 'ui_summary_not_included', currentLanguage),
       }).appendTo(textContainer);
 
       textContainer.appendTo(detailsItem);
@@ -3532,7 +3537,7 @@ function collectSummary() {
       if (!optionClasses.includes('details__active') && detailsGroupId === 'details__group-4') { // ADD-ONs
         pdfContentData.push(
           { columns: [
-            { text: optionTitle + getData(mainData, 'ui_summary_not_included', currentLanguage),  width: '70%', style: 'tableText', margin: [0, 0, 0, 0], },
+            { text: optionTitle + getData(dataMain, 'ui_summary_not_included', currentLanguage),  width: '70%', style: 'tableText', margin: [0, 0, 0, 0], },
             { text: '', width: '*', margin: [0, 0, 0, 0] },
             { text: optionPrice, style: 'tableText', margin: [0, 0, 0, 0], alignment: 'right', },
           ]},
@@ -3544,19 +3549,18 @@ function collectSummary() {
 
     $('#details__total_price').html(currentAmountString);
     $('#details__tax_amount').html(`+ ${currentTaxAmountString}&nbsp;`);
-    // $('#payment_info_title').html(`+ ${currentTaxAmountString}&nbsp;`);
     
     pdfContentData.push(
       { text: '', width: '*', margin: [0, 0, 0, 10] },
     );
   });
   
-  const currentTaxAmountWithTextForPDF = `+ ${currentTaxAmountString} ${getData(mainData, 'ui_summary_details__tax_text', currentLanguage)}`;
+  const currentTaxAmountWithTextForPDF = `+ ${currentTaxAmountString} ${getData(dataMain, 'ui_summary_details__tax_text', currentLanguage)}`;
 
   pdfContentData.push(
     { canvas: [ { type: 'line', x1: 0, y1: 0, x2: 535, y2: 0, lineWidth: 1 }], margin: [0, 10, 0, 6], },
     { columns: [
-      { text: getData(mainData, 'ui_pdf_total', currentLanguage), width: '70%', style: 'tableTitle', margin: [0, 0, 0, 0], },
+      { text: getData(dataMain, 'ui_pdf_total', currentLanguage), width: '70%', style: 'tableTitle', margin: [0, 0, 0, 0], },
       { text: '', width: '*', margin: [0, 0, 0, 0] },
       { text: currentAmountString, style: 'tableTitle', margin: [0, 0, 0, 0], alignment: 'right', },
     ]},
@@ -3672,9 +3676,9 @@ $(document).on('click', '.option.option_4-1', function () { // in-build desk
 // dynamic change language for info menu
 $('.language-picker select').on('change', function () {
   currentLanguage = $(this).val();
-  updateUIlanguages(mainData, uiMenuInfoLanguages, currentLanguage);
-  updateUIlanguages(mainData, uiMenuInfoDescLanguages, `DESC_${currentLanguage}`);
-  updateUIlanguages(mainData, uiMenuInfoSpecsLanguages, `SPECS_${currentLanguage}`);
+  updateUIlanguages(dataMain, uiMenuInfoLanguages, currentLanguage);
+  updateUIlanguages(dataMain, uiMenuInfoDescLanguages, `DESC_${currentLanguage}`);
+  updateUIlanguages(dataMain, uiMenuInfoSpecsLanguages, `SPECS_${currentLanguage}`);
 
   checkLanguageForDimensions();
 });
