@@ -15,13 +15,121 @@
   <link rel="stylesheet" href="./css/3d_ar.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LPVPB8GH9P"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LPVPB8GH9P');
+</script>
+
+  <!-- Meta Pixel Code -->
+<script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '1173267410627022');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=1173267410627022&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Meta Pixel Code -->
+
+  <!-- Reddit Pixel -->
+<script>
+  !function(w,d){if(!w.rdt){var p=w.rdt=function(){p.sendEvent?p.sendEvent.apply(p,arguments):p.callQueue.push(arguments)};p.callQueue=[];var t=d.createElement("script");t.src="https://www.redditstatic.com/ads/pixel.js",t.async=!0;var s=d.getElementsByTagName("script")[0];s.parentNode.insertBefore(t,s)}}(window,document);rdt('init','a2_eisslh6zpvu8');rdt('track', 'PageVisit');
+  </script>
+  <!-- DO NOT MODIFY UNLESS TO REPLACE A USER IDENTIFIER -->
+  <!-- End Reddit Pixel -->
+
+  <!-- Customer.IO Analytics  |  START -->
+<script>
+  !(function () {
+    var analytics = (window.analytics = window.analytics || []);
+    if (!analytics.initialize)
+      if (analytics.invoked)
+        window.console &&
+          console.error &&
+          console.error('Snippet included twice.');
+      else {
+        analytics.invoked = !0;
+        analytics.methods = [
+          'trackSubmit',
+          'trackClick',
+          'trackLink',
+          'trackForm',
+          'pageview',
+          'identify',
+          'reset',
+          'group',
+          'track',
+          'ready',
+          'alias',
+          'debug',
+          'page',
+          'once',
+          'off',
+          'on',
+          'addSourceMiddleware',
+          'addIntegrationMiddleware',
+          'setAnonymousId',
+          'addDestinationMiddleware',
+        ];
+        analytics.factory = function (e) {
+          return function () {
+            var t = Array.prototype.slice.call(arguments);
+            t.unshift(e);
+            analytics.push(t);
+            return analytics;
+          };
+        };
+        for (var e = 0; e < analytics.methods.length; e++) {
+          var key = analytics.methods[e];
+          analytics[key] = analytics.factory(key);
+        }
+        analytics.load = function (key, e) {
+          var t = document.createElement('script');
+          t.type = 'text/javascript';
+          t.async = !0;
+          t.src =
+            'https://cdp.customer.io/v1/analytics-js/snippet/' +
+            key +
+            '/analytics.min.js';
+          var n = document.getElementsByTagName('script')[0];
+          n.parentNode.insertBefore(t, n);
+          analytics._writeKey = key;
+          analytics._loadOptions = e;
+        };
+        analytics.SNIPPET_VERSION = '4.15.3';
+        analytics.load('85c5fbe87ad0ec405f84', {
+          cookie: {
+            domain: '.zomes.com',
+          },
+          storage: {
+            stores: ['cookie', 'localStorage', 'memory'],
+          },
+        });
+        analytics.page();
+      }
+  })();
+</script>
+<!-- Customer.IO Analytics  |  END -->
 </head>
 
 <body>
   <div id="marevo_app">
     <div id="main-header">
       <div id="identity">
-        <a target="_blank" href="https://zomes.com/"></a>
+        <a target="_blank" href="https://landing.zomes.com/"></a>
       </div>
 
       <div class="header_blocks">
@@ -30,12 +138,12 @@
             <div class="vertical-align-wrapper">
               <div class="social-media__wrapper">
                 <a class="social-media-button social-media-button--mail" href="mailto:hello@zomes.com"></a>
-                <a class="social-media-button social-media-button--instagram" href="https://instagram.com/zomesweetzomes/"></a>
-                <a class="social-media-button social-media-button--tiktok" href="https://www.tiktok.com/@zomesweetzome?lang=en"></a>
-                <a class="social-media-button social-media-button--pinterest" href="https://www.pinterest.com/zomesweetzome/"></a>
-                <a class="social-media-button social-media-button--twitter" href="https://x.com/zomesweetzome"></a>
-                <a class="social-media-button social-media-button--facebook" href="https://www.facebook.com/zomesweetzome/"></a>
-                <a class="social-media-button social-media-button--youtube" href="https://www.youtube.com/channel/UCWuJ4fwV2KJ0mfQjUa5VXzQ"></a>
+                <a class="social-media-button social-media-button--instagram" href="https://instagram.com/zomesweetzomes/" target="_blank"></a>
+                <a class="social-media-button social-media-button--tiktok" href="https://www.tiktok.com/@zomesweetzome?lang=en" target="_blank"></a>
+                <a class="social-media-button social-media-button--pinterest" href="https://www.pinterest.com/zomesweetzome/" target="_blank"></a>
+                <a class="social-media-button social-media-button--twitter" href="https://x.com/zomesweetzome" target="_blank"></a>
+                <a class="social-media-button social-media-button--facebook" href="https://www.facebook.com/zomesweetzome/" target="_blank"></a>
+                <a class="social-media-button social-media-button--youtube" href="https://www.youtube.com/channel/UCWuJ4fwV2KJ0mfQjUa5VXzQ" target="_blank"></a>
               </div>
             </div>
           </div>
@@ -65,7 +173,7 @@
         </div>
 
         <div id="external-link" class="top-frame-panel top-frame-panel__external-link">
-          <a class="vertical-align-wrapper external-link__wrapper" target="_blank" href="https://zomes.com/">
+          <a class="vertical-align-wrapper external-link__wrapper" target="_blank" href="https://landing.zomes.com/">
             HOMEPAGE
             <div class="external-link__logo"></div>
           </a>
@@ -496,6 +604,7 @@
 
     </div>
   </div>
+  <!-- Currently set this customer.io OFF 
   <script type="text/javascript">
     (function() {
       var t = document.createElement('script'),
@@ -510,6 +619,7 @@
       s.parentNode.insertBefore(t, s);
     })();
   </script>
+  
   <script type="text/javascript">
     var _cio = _cio || [];
     (function() {
@@ -525,6 +635,7 @@
       s.parentNode.insertBefore(t, s);
     })();
   </script>
+-->
 </body>
 
 <!-- jQuery -->
