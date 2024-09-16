@@ -2896,6 +2896,12 @@ async function PrepareUI() {
     });
 
     $('#calculate_shipping_tax').on('click', function () {
+      const savedEmail = localStorage.getItem('userEmail');
+  
+      if (savedEmail) {
+        $('#popup_tax_email').val(savedEmail);
+      }
+
       $('.popup__info_tax').toggleClass('hidden');
     });
 
@@ -3348,7 +3354,7 @@ function calculateTaxHandler() {
     const userZipCode = $('#popup_tax_zipcode').val();
     const email = $('#popup_tax_email').val();
 
-    // TODO save email and userZipCode in local storage
+    localStorage.setItem('userEmail', email);
 
     try {
       stateSalesTax = +getTaxRate(userZipCode);
@@ -3439,6 +3445,17 @@ function closeSummary() {
 }
 
 function openContactForm() {
+  const savedEmail = localStorage.getItem('userEmail');
+  
+  if (savedEmail) {
+    $('#form_email').val(savedEmail);
+  }
+
+  $('#form_email').off('input').on('input', function() {
+    const currentEmail = $(this).val();
+    localStorage.setItem('userEmail', currentEmail);
+  });
+
   $('.contact_form__popup-overlay').addClass('active');
 }
 
