@@ -403,74 +403,6 @@
           <div id="canvas_notification" class="canvas_notification hidden">It is your Zome!</div>
           <div id="canvas_notification_limit" class="canvas_notification hidden">It is your Zome!</div>
 
-          <!-- contact form -->
-          <div class="contact_form__popup-overlay ">
-            <div class="contact_form__popup-content">
-              <div class="popup-close"></div>
-              <form id="popupForm"></form>
-                <div class="contact_form__form-title" id="summary_form_title">FILL IN DETAILS BELOW TO DOWNLOAD YOUR CONFIGURATION.</div>
-    
-                <div class="contact_form__form-item contact_form__form-item_name">
-                  <label for="form_name" id="summary_form_label_name"></label>
-                  <input type="text" name="name" id="form_name" placeholder="" required>
-                </div>
-    
-                <div class="contact_form__form-item contact_form__form-item_phone">
-                  <label for="form_phone" id="summary_form_label_phone"></label>
-                  <input type="tel" name="phone" id="form_phone" placeholder="" required>
-                </div>
-    
-                <div class="contact_form__form-item contact_form__form-item_email">
-                  <label for="form_email" id="summary_form_label_email"></label>
-                  <input type="email" name="email" id="form_email" placeholder="" required>
-                </div>
-    
-                <div class="contact_form__form-item contact_form__form-item_address">
-                  <label for="form_address" id="summary_form_label_address"></label>
-                  <input type="text" name="address" id="form_address" placeholder="" required>
-                </div>
-    
-                <div class="contact_form__form-item contact_form__form-item_city">
-                  <label for="form_city" id="summary_form_label_city"></label>
-                  <input type="text" name="city" id="form_city" placeholder="" required>
-                </div>
-    
-                <div class="contact_form__form-item contact_form__form-item_country">
-                  <label for="form_country" id="summary_form_label_country"></label>
-                  <input type="text" name="country" id="form_country" placeholder="" required>
-                </div>
-    
-                <div class="contact_form__form-item contact_form__form-item_zipcode">
-                  <label for="form_zipcode" id="summary_form_label_zipcode"></label>
-                  <input type="text" name="zipcode" id="form_zipcode" placeholder="" required>
-                </div>
-    
-                <div class="contact_form__form-item contact_form__form-item_inquiries">
-                  <label for="form_inquiries" id="summary_form_label_inquiries"></label>
-                  <textarea name="inquiries" id="form_inquiries" placeholder="" class="full-width"></textarea>
-                </div>
-    
-                <div class="contact_form__checkbox_wrapper">
-                  <div class="contact_form__form-item_checkbox">
-                    <input type="checkbox" id="newsletter" name="newsletter">
-                    <label for="newsletter" class="full-width" id="summary_form_checkbox_signme">
-                      Sign me up for monthly email updates and special deals (only 1x email per month)
-                    </label>
-                  </div>
-                </div>
-    
-                <button type="button" id="submitButton" class="ar_buy-btn contact_form__button">
-                  <div class="ar_button_order__image"></div>
-    
-                    <div id="ar_button_order__caption" class="ar_button_order__caption">
-                      <span class="ar_button_order__caption_large">Save my design</span>
-                    </div>
-                </button>
-
-                <div class="contact_form__close_btn">Back</div>
-              </form>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -539,7 +471,6 @@
           </div>
 
           <div class="details__tax_info">
-            <!-- <div id="details__tax_amount" class="details__tax_amount">+&nbsp;</div> -->
             <div id="details__tax_text" class="details__tax_text">shipping and sales tax for your region</div>
           </div>
 
@@ -569,6 +500,48 @@
 
           </div>
         </div>
+
+        <!-- contact form -->
+        <div class="contact_form__popup-overlay ">
+          <div class="contact_form__popup-content">
+            <div class="popup-close"></div>
+
+            <form id="popupForm">
+              <div class="contact_form__form-title" id="summary_form_title">FILL IN DETAILS BELOW TO DOWNLOAD YOUR CONFIGURATION.</div>
+  
+              <div class="contact_form__form-item contact_form__form-item_name">
+                <label for="form_name" id="summary_form_label_name"></label>
+                <input type="text" name="name" id="form_name" placeholder="" required>
+              </div>
+  
+              <div class="contact_form__form-item contact_form__form-item_email">
+                <label for="form_email" id="summary_form_label_email"></label>
+                <input type="email" name="email" id="form_email" placeholder="" required>
+              </div>
+ 
+              <div class="contact_form__checkbox_wrapper">
+                <div class="contact_form__form-item_checkbox">
+                  <input type="checkbox" id="newsletter" name="newsletter">
+                  <label for="newsletter" class="full-width" id="summary_form_checkbox_signme">
+                    Sign me up for monthly email updates and special deals (only 1x email per month)
+                  </label>
+                </div>
+              </div>
+  
+              <button type="submit" id="submitButton" class="ar_buy-btn contact_form__button" disabled>
+                <div class="ar_button_order__image"></div>
+                
+                <div id="ar_button_order__caption" class="ar_button_order__caption">
+                  <span class="ar_button_order__caption_large">Save my design</span>
+                </div>
+              </button>
+
+              <div class="contact_form__close_btn">Back</div>
+            </form>
+
+          </div>
+        </div>
+
       </div>
 
       <!-- model selection popup -->

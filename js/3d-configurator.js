@@ -2919,32 +2919,47 @@ async function PrepareUI() {
 
   // Contact form popup
   jQuery(document).ready(function () {
-    // form validation
     const $form = $('#popupForm');
     const $submitButton = $('#submitButton');
-
-    $form.on('input', function () {
-      const isFormValid = $form[0].checkValidity();
-      $submitButton.prop('disabled', !isFormValid);
+    const $nameInput = $('#form_name');
+    const $emailInput = $('#form_email');
+    
+    function validateForm() {
+      const isNameValid = $nameInput.val().trim() !== '';
+      const isEmailValid = $emailInput.val().trim() !== '' && $emailInput[0].checkValidity();
+      const isFormValid = isNameValid && isEmailValid;
+  
+      if (isFormValid) {
+        $submitButton.prop('disabled', false);
+      } else {
+        $submitButton.prop('disabled', true);
+      }
+    }
+  
+    $nameInput.on('input', () => {
+      const currentName = $(this).val();
+      localStorage.setItem('userName', currentName);
+      validateForm();
     });
-
+    $emailInput.on('input', () => {
+      const currentEmail = $(this).val();
+      localStorage.setItem('userEmail', currentEmail);
+      validateForm();
+    });
+  
     $form.on('submit', function (event) {
       event.preventDefault();
-
+  
+      console.log("🚀 ~ validateForm ~ isFormValid:", $form[0].checkValidity());
       if ($form[0].checkValidity()) {
-        alert('Form submitted successfully!');
         closeContactForm();
-        proceedSummaryAndPdf();
-        // Here we can add the logic of sending the form to the server or other actions
       }
     });
-
-    //! TEMP
-    $submitButton.on('click', function () {
-      closeContactForm();
-      proceedSummaryAndPdf();
-    })
+  
+    validateForm();
   });
+  
+  
 
   function validateTaxForm() {
     const email = $('#popup_tax_email').val();
@@ -3305,12 +3320,12 @@ function notificationHandler() {
 function summaryBtnsHandler() {
   $('#ar_button_order').on('click', function () {
     if (!isCameraInside) {
-      openContactForm();
-      // proceedSummaryAndPdf();
+      // openContactForm();
+      proceedSummaryAndPdf();
     } else {
       flyCameraTo('outMain', 'outside', () => {
-        openContactForm();
-        // proceedSummaryAndPdf();
+        // openContactForm();
+        proceedSummaryAndPdf();
       });
     }
   });
@@ -3324,10 +3339,12 @@ function summaryBtnsHandler() {
   });
 
   $('.contact_form__popup-overlay .popup-close').on('click', function () {
+    closeSummary();
     closeContactForm();
   });
 
   $('.contact_form__popup-overlay .contact_form__close_btn').on('click', function () {
+    closeSummary();
     closeContactForm();
   });
 }
@@ -3445,6 +3462,8 @@ function openSummary() {
 
   $(`.summary__scheme_${DATA_HOUSE_NAME[currentHouse]}`).addClass('active');
   $(`.summary__scheme_dimensions_${DATA_HOUSE_NAME[currentHouse]}`).addClass('active');
+
+  openContactForm();
 }
 
 function closeSummary() {
@@ -3453,16 +3472,16 @@ function closeSummary() {
 }
 
 function openContactForm() {
+  const savedName = localStorage.getItem('userName');
   const savedEmail = localStorage.getItem('userEmail');
   
+  if (savedName) {
+    $('#form_name').val(savedName);
+  }
+
   if (savedEmail) {
     $('#form_email').val(savedEmail);
   }
-
-  $('#form_email').off('input').on('input', function() {
-    const currentEmail = $(this).val();
-    localStorage.setItem('userEmail', currentEmail);
-  });
 
   $('.contact_form__popup-overlay').addClass('active');
 }
