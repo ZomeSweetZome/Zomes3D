@@ -3180,18 +3180,21 @@ function modelSelectorHandler() {
     $('.popup_select').addClass('hidden');
     SharedParameterList[0].value = '0';
     StartSettings();
+    $('#title_list__item_0').click();
   });
 
   $('#select_btn_office').on('click', function () {
     $('.popup_select').addClass('hidden');
     SharedParameterList[0].value = '1';
     StartSettings();
+    $('#title_list__item_0').click();
   });
 
   $('#select_btn_studio').on('click', function () {
     $('.popup_select').addClass('hidden');
     SharedParameterList[0].value = '2';
     StartSettings();
+    $('#title_list__item_0').click();
   });
 }
 
@@ -3575,7 +3578,7 @@ function collectSummary() {
   });
   
   $('#details__total_price').html(currentAmountString);
-  
+
   if (totalAmountShipTax) {
     const shipppingCostBase = convertPriceToNumber(getData(dataPrice, 'shipppingCostBase', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
     currentTaxAmountString = formatPrice(totalAmountShipTax + shipppingCostBase, currentCurrencySign);
