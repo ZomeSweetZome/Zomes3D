@@ -147,6 +147,36 @@ export const NAV_CAM_POSITION = {
       target: [0, HUMAN_HEIGHT, 0],
     },
   },
+  outWindowsStrip: {
+    outside: true,
+    'pod': {
+      camera: [0.327, 3.275 + HUMAN_HEIGHT, -8.735],
+      target: [0, HUMAN_HEIGHT, 0],
+    },
+    'office': {
+      camera: [1.205, 2.024 + HUMAN_HEIGHT, -9.032],
+      target: [0, HUMAN_HEIGHT, 0],
+    },
+    'studio': {
+      camera: [8.5, 1.956 + HUMAN_HEIGHT, -3.324],
+      target: [0, HUMAN_HEIGHT, 0],
+    },
+  },
+  outWindowsViewport: {
+    outside: true,
+    'pod': {
+      camera: [9.159, 1.686 + HUMAN_HEIGHT, -0.625],
+      target: [0, HUMAN_HEIGHT, 0],
+    },
+    'office': {
+      camera: [9.009, 1.821 + HUMAN_HEIGHT, -1.627],
+      target: [0, HUMAN_HEIGHT, 0],
+    },
+    'studio': {
+      camera: [7.596, 1.119 + HUMAN_HEIGHT, 5.308],
+      target: [0, HUMAN_HEIGHT, 0],
+    },
+  },
   // INSIDE
   inPrepare: {
     outside: false,

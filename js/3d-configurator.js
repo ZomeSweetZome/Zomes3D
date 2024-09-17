@@ -3667,7 +3667,8 @@ function infoPopup(infoPopupTitle, infoPopupDescription, infoPopupImage) {
   document.documentElement.classList.add('popup-open');
 }
 
-// Camera Flying
+// **** CAMERA FLYING ****
+
 $(document).on('click', '#title_list__item_2', function () { // interior group
   // flyCameraTo('inMain', 'inside');
   $('#button_camera_inside').click();
@@ -3681,6 +3682,18 @@ $(document).on('click', '#title_list__item_3', function () { // exterior group
 $(document).on('click', '#group-2 .ar_button_back', function () { // exterior group
   // flyCameraTo('outMain', 'outside');
   $('#button_camera_outside').click();
+});
+
+$(document).on('click', '.option.option_1-0', function () { // windows strip
+  if (!isCameraInside) {
+    flyCameraTo('outWindowsStrip', 'outside');
+  }
+});
+
+$(document).on('click', '.option.option_1-1', function () { // windows viewport
+  if (!isCameraInside) {
+    flyCameraTo('outWindowsViewport', 'outside');
+  }
 });
 
 $(document).on('click', '.option.option_4-3', function () { // extra door
