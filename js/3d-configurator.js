@@ -2966,8 +2966,10 @@ async function PrepareUI() {
 function calculateAndSetEstimateDate() {
   const estimateDate = getData(dataPrice, 'estimateDate', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`);
   const dateText = addLeadTimeToNow(estimateDate, maximumLeadTimeWeeks, currentLanguage);
+  const textPart1 = getData(dataMain, 'ui_date_popup_text_1', currentLanguage);
+  const textPart2 = getData(dataMain, 'ui_date_popup_text_2', currentLanguage);
   $('#delivery_info_date').text(dateText);
-  $('.popup__info_content_date').html(`Ships ${dateText}. Estimated delivery time is ${maximumLeadTimeWeeks} weeks from the date of purchase.`);
+  $('.popup__info_content_date').html(`Ships ${dateText}. ${textPart1} ${maximumLeadTimeWeeks} ${textPart2}`);
 }
 
 function addLeadTimeToNow(dateStr, leadTimeInWeeks = 3, lang = 'EN') {
