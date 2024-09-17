@@ -47,8 +47,6 @@ export const CURRENCY_SIGN = {
 export const CALENDLY_LINK = 'https://landing.zomes.com/book';
 
 // API keys
-export const ZIP_TAX_KEY = 'h7GYASShqs9NhTunIoRKWr8F';
-export const DIST_MATRIX_KEY = 'AIzaSyB2ju1Ji7skh3_u0M_7DLBjW8VXxWRarrk';
 export const ORIGIN_ZIPCODE = '94950';
 
 // Zomes_3D_data_LIVE

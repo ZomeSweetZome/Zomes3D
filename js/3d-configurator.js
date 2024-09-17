@@ -36,8 +36,6 @@ import {
   VIEWPORT_AND_STRIP_SECTORS,
   HUMAN_HEIGHT,
   CALENDLY_LINK,
-  ZIP_TAX_KEY,
-  DIST_MATRIX_KEY,
   ORIGIN_ZIPCODE,
 } from './settings.js';
 
@@ -173,6 +171,7 @@ let shippingAmount = 0;
 let stateSalesTax = 0;
 let shippingDistance = 0;
 let totalAmountShipTax = 0;
+let userZipCode = '';
 
 // CUSTOM SELECT
 jQuery(document).ready(function () {
@@ -3351,7 +3350,7 @@ function calculateTaxHandler() {
   $('#popup_tax_calculate').on('click', async function() {
     $('#popup_tax_calculate').prop('disabled', true);
 
-    const userZipCode = $('#popup_tax_zipcode').val();
+    userZipCode = $('#popup_tax_zipcode').val();
     const email = $('#popup_tax_email').val();
 
     localStorage.setItem('userEmail', email);
@@ -3364,6 +3363,8 @@ function calculateTaxHandler() {
       console.error('Error fetching distance:', error);
     } finally {
       $('#popup_tax_calculate').prop('disabled', false);
+      $('.popup__info').addClass('hidden');
+
     }
   });
 }
@@ -3418,7 +3419,9 @@ function updateShippingTaxInfo() {
     currentTaxAmountString = formatPrice(totalAmountShipTax + shipppingCostBase, currentCurrencySign);
   }
   
-  const text = getData(dataMain, 'ui_summary_details__tax_text', currentLanguage);
+  const text = (totalAmountShipTax) 
+    ? `${getData(dataMain, 'ui_summary_details__tax_text_short', currentLanguage)} ${userZipCode}`
+    : getData(dataMain, 'ui_summary_details__tax_text', currentLanguage);
   const amountText = (totalAmountShipTax) ? `${currentTaxAmountString}` : '';
   $('#payment_info_title').html(`+ ${amountText}${text}`); 
 
@@ -3564,15 +3567,26 @@ function collectSummary() {
 
     detailsGroup.appendTo(detailsContainer);
 
-    $('#details__total_price').html(currentAmountString);
-    $('#details__tax_amount').html(`+ ${currentTaxAmountString}&nbsp;`);
+    // $('#details__tax_amount').html(`+ ${currentTaxAmountString}&nbsp;`);
     
     pdfContentData.push(
       { text: '', width: '*', margin: [0, 0, 0, 10] },
     );
   });
   
-  const currentTaxAmountWithTextForPDF = `+ ${currentTaxAmountString} ${getData(dataMain, 'ui_summary_details__tax_text', currentLanguage)}`;
+  $('#details__total_price').html(currentAmountString);
+  
+  if (totalAmountShipTax) {
+    const shipppingCostBase = convertPriceToNumber(getData(dataPrice, 'shipppingCostBase', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
+    currentTaxAmountString = formatPrice(totalAmountShipTax + shipppingCostBase, currentCurrencySign);
+  }
+  const text = (totalAmountShipTax) 
+  ? `${getData(dataMain, 'ui_summary_details__tax_text_short', currentLanguage)} ${userZipCode}`
+  : getData(dataMain, 'ui_summary_details__tax_text', currentLanguage);
+  const amountText = (totalAmountShipTax) ? `${currentTaxAmountString}` : '';
+  
+  $('#details__tax_text').html(`+ ${amountText}${text}`);
+  // const currentTaxAmountWithTextForPDF = `+ ${currentTaxAmountString} ${getData(dataMain, 'ui_summary_details__tax_text', currentLanguage)}`;
 
   pdfContentData.push(
     { canvas: [ { type: 'line', x1: 0, y1: 0, x2: 535, y2: 0, lineWidth: 1 }], margin: [0, 10, 0, 6], },
@@ -3582,7 +3596,7 @@ function collectSummary() {
       { text: currentAmountString, style: 'tableTitle', margin: [0, 0, 0, 0], alignment: 'right', },
     ]},
     { columns: [
-      { text: currentTaxAmountWithTextForPDF, width: '100%', style: 'tableTitle', margin: [0, 6, 0, 0], alignment: 'right', },
+      { text: `+ ${amountText}${text}`, width: '100%', style: 'tableTitle', margin: [0, 6, 0, 0], alignment: 'right', },
     ]},
   );
 }
