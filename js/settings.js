@@ -43,8 +43,9 @@ export const CURRENCY_SIGN = {
   2: 'UAH',
 };
 
-// Calendly URL
+// External URLs
 export const CALENDLY_LINK = 'https://landing.zomes.com/book';
+export const BOOK_CONSULTATION_LINK = 'https://www.zomes.com/book';
 
 // API keys
 export const ORIGIN_ZIPCODE = '94950';

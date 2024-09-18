@@ -36,6 +36,7 @@ import {
   VIEWPORT_AND_STRIP_SECTORS,
   HUMAN_HEIGHT,
   CALENDLY_LINK,
+  BOOK_CONSULTATION_LINK,
   ORIGIN_ZIPCODE,
 } from './settings.js';
 
@@ -2884,7 +2885,7 @@ async function PrepareUI() {
     modelSelectorHandler();
     getPdfBtnHandler();
     bookTimeBtnHandler();
-
+    bookConsultationBtns();
     calculateTaxHandler();
   });
 
@@ -3368,7 +3369,15 @@ function getPdfBtnHandler() {
 
 function bookTimeBtnHandler() {
   $('#summary_book_time_btn').on('click', function() {
+    // window.open(CALENDLY_LINK, '_self'); // same browser window
     window.open(CALENDLY_LINK, '_blank');
+  });
+}
+
+function bookConsultationBtns() {
+  $('#ar_button_book_consult_1, #ar_button_book_consult_2').on('click', function() {
+    window.open(BOOK_CONSULTATION_LINK, '_self'); // same browser window
+    // window.open(BOOK_CONSULTATION_LINK, '_blank'); // new browser window
   });
 }
 
