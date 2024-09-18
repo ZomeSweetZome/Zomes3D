@@ -1,7 +1,7 @@
 'use strict';
 /* global jQuery, $ */
 
-import { DEFAULT_LANGUAGE, IS_PRICE_SIMPLE } from './settings.js';
+import { DEFAULT_LANGUAGE, IS_PRICE_SIMPLE, GROUP_ID_ORDER_FOR_NEXT_MENU_BTNS } from './settings.js';
 
 let currentLanguage;
 
@@ -45,6 +45,7 @@ export async function createMenu(mainData) {
         { '#delivery_info_caption': 'ui_delivery_info_caption' },
         { '#payment_info_title': 'ui_payment_info_title' },
         { '.ar_button_back__caption': 'ui_btn_back' },
+        { '.ar_button_next__caption': 'ui_btn_next' },
         { '.popup_tax__close_btn': 'ui_btn_back' },
         { '.contact_form__close_btn': 'ui_btn_back' },
         { '#menu_info_tab_descr': 'ui_menu_info_tab_descr' },
@@ -140,9 +141,15 @@ export async function createMenu(mainData) {
                 <div class="ar_button_back__image"></div>
                 <div class="ar_button_back__caption">${getData(mainData, 'ui_btn_back', currentLanguage)}</div>
               </div>
+
               <div class="ar_filter_number">${uiNumber}</div>
               <div class="ar_filter_caption">${getData(mainData, mainData[i][0], currentLanguage)}</div>
               <div class="ar_filter_selected_item" id="summary-item2-${groupId}"></div>
+
+              <div class="ar_button_next" id="ar_button_next_${groupId}">
+                <div class="ar_button_next__caption">${getData(mainData, 'ui_btn_next', currentLanguage)}</div>
+                <div class="ar_button_next__image"></div>
+              </div>
             </div>
             <div class="ar_filter_inputs ${optionTypeClass}"></div>
             <div class="ar_filter_options ${optionTypeClass}" data-default="${dataDefault}">
@@ -249,7 +256,24 @@ export async function createMenu(mainData) {
           );
 
           if (mainData[i + 1] && !mainData[i + 1][0].includes("option") ||
-            !mainData[i + 1] && mainData[i][0].includes("option")) {
+          !mainData[i + 1] && mainData[i][0].includes("option")) {
+            
+            const groupControlButtonsHTML = `
+              <div class="ar_group_control_buttons">
+                <div class="ar_button_back">
+                  <div class="ar_button_back__image"></div>
+                  <div class="ar_button_back__caption">Back</div>
+                </div>
+
+                <div class="ar_button_next" id="ar_button_next_${groupId}">
+                  <div class="ar_button_next__caption">Next</div>
+                  <div class="ar_button_next__image"></div>
+                </div>
+              </div>
+            `;
+
+            $(`#group-${groupId}`).append($(groupControlButtonsHTML));
+
             const optionsResultHTML = `
               <div class="ar_filter_options_result">
                 <div class="ar_filter_options_result_caption" id="result_caption_${groupId}">${getData(mainData, 'ui_ar_selected_caption', currentLanguage)}</div>
@@ -272,6 +296,7 @@ export async function createMenu(mainData) {
       updateUIlanguages(mainData);
       updatePlaceholderslanguages(mainData);
       setEventListenersForMenuItems();
+      setEventListenersForNextBtns();
 
       $('.ar_button_back').on('click', function () {
         $('.ar_filter').removeClass('active');
@@ -354,6 +379,24 @@ function setEventListenersForMenuItems() {
     $('.ar_filter .ar_filter_group').addClass('invisible');
     $(`#group-${identifier}`).removeClass('invisible');
     $('.ar_filter').addClass('active');
+  });
+}
+
+function setEventListenersForNextBtns() {
+  $('.ar_button_next').on('click', function () {
+    const itemId = $(this).attr('id');
+    const identifier = itemId.split('ar_button_next_')[1];
+
+    const nextIndex = GROUP_ID_ORDER_FOR_NEXT_MENU_BTNS.indexOf(identifier) + 1;
+    console.log("🚀 ~ identifier, nextIndex:", identifier, nextIndex);
+
+    // $('.ar_filter').removeClass('active');
+        $('.ar_menu_info_container').removeClass('active');
+
+        $('.ar_filter .ar_filter_group').addClass('invisible');
+        $(`#group-${GROUP_ID_ORDER_FOR_NEXT_MENU_BTNS[nextIndex]}`).removeClass('invisible');
+
+    // $('.ar_filter').addClass('active');
   });
 }
 

@@ -62,6 +62,10 @@ export const DATAFILE_CSV_LINK_SALES_ZIPCODE = 'https://docs.google.com/spreadsh
 
 export const WINDOWS_LIMIT_IN_ROW = 4;
 
+export const GROUP_ID_ORDER_FOR_NEXT_MENU_BTNS = [
+  '0', '1', '3', '2', '4',
+];
+
 export const DATA_HOUSE_NAME = {
   0: 'pod',
   1: 'office',
