@@ -110,15 +110,18 @@ export const NAV_CAM_POSITION = {
   outXrays: {
     outside: true,
     'pod': {
-      camera: [2.709, 3.279 + HUMAN_HEIGHT, 4.497],
+      // camera: [2.709, 3.279 + HUMAN_HEIGHT, 4.497],
+      camera: [-3.211, 3.201 + HUMAN_HEIGHT, 4.214],
       target: [0, HUMAN_HEIGHT, 0],
     },
     'office': {
-      camera: [2.233, 3.613 + HUMAN_HEIGHT, 4.941],
+      // camera: [2.233, 3.613 + HUMAN_HEIGHT, 4.941],
+      camera: [-4.737, 2.821 + HUMAN_HEIGHT, 3.472],
       target: [0, HUMAN_HEIGHT, 0],
     },
     'studio': {
-      camera: [1.337, 2.884 + HUMAN_HEIGHT, 6.482],
+      // camera: [1.337, 2.884 + HUMAN_HEIGHT, 6.482],
+      camera: [-6.888, 1.571 + HUMAN_HEIGHT, 1.487],
       target: [0, HUMAN_HEIGHT, 0],
     },
   },

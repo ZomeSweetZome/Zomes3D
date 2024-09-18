@@ -342,6 +342,8 @@ SharedParameterList[4].groupOptionAction = function () {
       isBuiltInDeskOn = false;
     }
 
+    checkBuiltInDeskState();
+
     if ($('#button_dimensions').hasClass('active')) {
       if (this.value[2] == '1') { // foundation kit
         isFoundationKitOn = true;
@@ -1636,16 +1638,19 @@ function furnitureController(value) {
 
 function updateFurnitureSet() {
   if ($('#button_sleep').hasClass('active')) {
+    setVisibility(modelFurniture, false, ['Pod-desk-top', 'office-desk-top', 'Studio-desk-top']);
     setVisibility(modelFurniture, false, ['work-back-door', 'work', 'live']);
     setVisibility(modelFurniture, true, ['sleep']);
   }
 
   if ($('#button_live').hasClass('active')) {
+    setVisibility(modelFurniture, false, ['Pod-desk-top', 'office-desk-top', 'Studio-desk-top']);
     setVisibility(modelFurniture, false, ['sleep', 'work', 'work-back-door']);
     setVisibility(modelFurniture, true, ['live']);
   }
 
   if ($('#button_work').hasClass('active')) {
+    setVisibility(modelFurniture, false, ['Pod-desk-top', 'office-desk-top', 'Studio-desk-top']);
     setVisibility(modelFurniture, false, ['sleep', 'live']);
 
     if (currentHouse == '2' && !isExtraDoorOn) {
@@ -3310,6 +3315,19 @@ function furnitureRadioBtnsHandlers() {
   });
 }
 
+function disableFurnitureBtn() {
+  if ($('#button_furniture').hasClass('active')) {
+    $('#button_furniture').trigger('click');
+  }
+
+  $('#button_furniture').addClass('disabled');
+
+}
+
+function enableFurnitureBtn() {
+  $('#button_furniture').removeClass('disabled');
+}
+
 function notificationHandler() {
   $('.option_1-2').on('click', function () {
     if (!$(this).hasClass('active')) {
@@ -3743,14 +3761,29 @@ $(document).on('click', '.option.option_1-2', function () { // custom windows
 });
 
 $(document).on('click', '.option.option_4-1', function () { // in-build desk
-  // if ($('.option.option_4-1').hasClass('active')) {
-    // if (isCameraInside) {
-    //   flyCameraTo('inBuildInDesk', 'inside');
-    // } else {
-    //   flyCameraTo('inBuildInDesk', 'inside');
-    // }
-  // }
+  checkBuiltInDeskState();
+
+  if ($('.option.option_4-1').hasClass('active')) {
+    if (!isCameraInside) {
+      $('#button_camera_inside').click();
+      // flyCameraTo('inBuildInDesk', 'inside');
+    } 
+  }
 });
+
+function checkBuiltInDeskState() {
+  if ($('.option.option_4-1').hasClass('active')) {
+    disableFurnitureBtn();
+    modelFurniture.visible = true;
+    setVisibility(modelFurniture, true, ['Pod-desk-top', 'office-desk-top', 'Studio-desk-top']);
+    setVisibility(modelFurniture, false, ['work-back-door', 'work', 'live', 'sleep']);
+  } else {
+    setVisibility(modelFurniture, false, ['work-back-door', 'work', 'live', 'sleep']);
+    setVisibility(modelFurniture, false, ['Pod-desk-top', 'office-desk-top', 'Studio-desk-top']);
+    modelFurniture.visible = false;
+    enableFurnitureBtn();
+  }
+}
 
 // *******************
 
