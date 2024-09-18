@@ -764,7 +764,7 @@ async function StartSettings() {
   SetActionForGroups();
   ApplyURLParameters();
 
-  CheckChanges();
+  // CheckChanges();
 
   applyAdditionalSharedParameters(7); // customWindows
 
@@ -772,7 +772,11 @@ async function StartSettings() {
 
   $('#js-loader').addClass('invisible');
   $('.summary.entry-summary').removeClass('hidden');
-  animateScale(modelHouse, 500, () => { unBlockBuyBtn(); });
+  animateScale(modelHouse, 500, () => { 
+    unBlockBuyBtn(); 
+    CheckChanges();
+    applyAdditionalSharedParameters(7); // customWindows
+  });
 
   isFirstStart = false;
 }
@@ -1525,6 +1529,8 @@ function CheckChanges() {
 
   updateStateVars();
 
+  checkBuiltInDeskState();
+
   // setOptionsResult();
   calculatePrice();
   calculateAndSetEstimateDate();
@@ -1572,11 +1578,13 @@ async function changeModel(modelId) {
 
   (isWindowCustomOn) && $('.option_1-2').trigger('click');
   resetCustomWindowsObject();
-  CheckChanges();
-
+  
   setVisibility(modelHouse, false, ['man']);
   onChangePosition(DATA_HOUSE_NAME[modelId], 'outMain', () => { }, 5);
-  animateScale(modelHouse, 500, () => { unBlockBuyBtn(); });
+  animateScale(modelHouse, 500, () => { 
+    unBlockBuyBtn(); 
+    CheckChanges();
+  });
 }
 
 function blockBuyBtn() {

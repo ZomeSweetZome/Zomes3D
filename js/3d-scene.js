@@ -559,7 +559,8 @@ export function animateScale(
   startScale = 0,
   endScale = 1,
   timingKeyword = 'ease-in',
-  callback = () => springScale(model)
+  // callback = () => springScale(model)
+  callback = () => {}
 ) {
   if (!model) { return; }
   
