@@ -11,7 +11,7 @@ const getAndSetConfig = function () {
   function handleConfigChange() {
     const currentConfig = getConfigFromURL();
     if (currentConfig !== lastConfig) {
-      setCookie('config', { config: currentConfig });
+      setCookie('userConfig', { config: currentConfig });
       lastConfig = currentConfig;
     }
   }
