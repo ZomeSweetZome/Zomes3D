@@ -146,8 +146,6 @@ export function generatePDF(
       },
 
       ...configurationData,
-
-      // ...shippingRateData, //! TODO
     ];
 
     const pdfDefinition = {

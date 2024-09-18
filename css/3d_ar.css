@@ -2432,7 +2432,7 @@ textarea[name="ar_order_comment"] {
 
 .contact_form__popup-content form input::placeholder,
 .contact_form__popup-content form textarea::placeholder {
-  font-size: 0;
+  /* font-size: 0; */
 }
 
 .contact_form__form-item {

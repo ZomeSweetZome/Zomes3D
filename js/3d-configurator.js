@@ -2926,7 +2926,7 @@ async function PrepareUI() {
     
     function validateForm() {
       const isNameValid = $nameInput.val().trim() !== '';
-      const isEmailValid = $emailInput.val().trim() !== '' && $emailInput[0].checkValidity();
+      const isEmailValid = validateEmail($emailInput.val().trim());
       const isFormValid = isNameValid && isEmailValid;
   
       if (isFormValid) {
@@ -2935,22 +2935,26 @@ async function PrepareUI() {
         $submitButton.prop('disabled', true);
       }
     }
+
+    function validateEmail(email) {
+      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      return emailPattern.test(email);
+    }
   
     $nameInput.on('input', () => {
-      const currentName = $(this).val();
-      localStorage.setItem('userName', currentName);
       validateForm();
     });
+
     $emailInput.on('input', () => {
-      const currentEmail = $(this).val();
-      localStorage.setItem('userEmail', currentEmail);
       validateForm();
     });
   
     $form.on('submit', function (event) {
       event.preventDefault();
-  
-      console.log("🚀 ~ validateForm ~ isFormValid:", $form[0].checkValidity());
+      
+      localStorage.setItem('userName', $nameInput.val());
+      localStorage.setItem('userEmail', $emailInput.val());
+      
       if ($form[0].checkValidity()) {
         closeContactForm();
       }
