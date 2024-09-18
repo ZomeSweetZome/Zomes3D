@@ -1,311 +1,464 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zomes 3D configurator</title>
+    <meta name="description" content="Marevo 3D Product Configurator." />
+    <meta name="author" content="Pavlo Voronin" />
+    <link rel="icon" href="./src/index/favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="./src/index/favicon.ico" type="image/png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="shortcut icon" href="" />
+    <link rel="stylesheet" href="./css/3d_ar.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+      rel="stylesheet"
+    />
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zomes 3D configurator</title>
-  <meta name="description" content="Marevo 3D Product Configurator." />
-  <meta name="author" content="Pavlo Voronin" />
-  <link rel="icon" href="./src/index/favicon.ico" type="image/x-icon">
-  <link rel="icon" href="./src/index/favicon.ico" type="image/png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="shortcut icon" href="" />
-  <link rel="stylesheet" href="./css/3d_ar.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
-  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-LPVPB8GH9P"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-LPVPB8GH9P');
-</script>
-
-  <!-- Meta Pixel Code -->
-<script>
-  !function(f,b,e,v,n,t,s)
-  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-  n.queue=[];t=b.createElement(e);t.async=!0;
-  t.src=v;s=b.getElementsByTagName(e)[0];
-  s.parentNode.insertBefore(t,s)}(window, document,'script',
-  'https://connect.facebook.net/en_US/fbevents.js');
-  fbq('init', '1173267410627022');
-  fbq('track', 'PageView');
-  </script>
-  <noscript><img height="1" width="1" style="display:none"
-  src="https://www.facebook.com/tr?id=1173267410627022&ev=PageView&noscript=1"
-  /></noscript>
-  <!-- End Meta Pixel Code -->
-
-  <!-- Reddit Pixel -->
-<script>
-  !function(w,d){if(!w.rdt){var p=w.rdt=function(){p.sendEvent?p.sendEvent.apply(p,arguments):p.callQueue.push(arguments)};p.callQueue=[];var t=d.createElement("script");t.src="https://www.redditstatic.com/ads/pixel.js",t.async=!0;var s=d.getElementsByTagName("script")[0];s.parentNode.insertBefore(t,s)}}(window,document);rdt('init','a2_eisslh6zpvu8');rdt('track', 'PageVisit');
-  </script>
-  <!-- DO NOT MODIFY UNLESS TO REPLACE A USER IDENTIFIER -->
-  <!-- End Reddit Pixel -->
-
-  <!-- Customer.IO Analytics  |  START -->
-<script>
-  !(function () {
-    var analytics = (window.analytics = window.analytics || []);
-    if (!analytics.initialize)
-      if (analytics.invoked)
-        window.console &&
-          console.error &&
-          console.error('Snippet included twice.');
-      else {
-        analytics.invoked = !0;
-        analytics.methods = [
-          'trackSubmit',
-          'trackClick',
-          'trackLink',
-          'trackForm',
-          'pageview',
-          'identify',
-          'reset',
-          'group',
-          'track',
-          'ready',
-          'alias',
-          'debug',
-          'page',
-          'once',
-          'off',
-          'on',
-          'addSourceMiddleware',
-          'addIntegrationMiddleware',
-          'setAnonymousId',
-          'addDestinationMiddleware',
-        ];
-        analytics.factory = function (e) {
-          return function () {
-            var t = Array.prototype.slice.call(arguments);
-            t.unshift(e);
-            analytics.push(t);
-            return analytics;
-          };
-        };
-        for (var e = 0; e < analytics.methods.length; e++) {
-          var key = analytics.methods[e];
-          analytics[key] = analytics.factory(key);
-        }
-        analytics.load = function (key, e) {
-          var t = document.createElement('script');
-          t.type = 'text/javascript';
-          t.async = !0;
-          t.src =
-            'https://cdp.customer.io/v1/analytics-js/snippet/' +
-            key +
-            '/analytics.min.js';
-          var n = document.getElementsByTagName('script')[0];
-          n.parentNode.insertBefore(t, n);
-          analytics._writeKey = key;
-          analytics._loadOptions = e;
-        };
-        analytics.SNIPPET_VERSION = '4.15.3';
-        analytics.load('85c5fbe87ad0ec405f84', {
-          cookie: {
-            domain: '.zomes.com',
-          },
-          storage: {
-            stores: ['cookie', 'localStorage', 'memory'],
-          },
-        });
-        analytics.page();
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-LPVPB8GH9P"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
       }
-  })();
-</script>
-<!-- Customer.IO Analytics  |  END -->
-</head>
+      gtag('js', new Date());
 
-<body>
-  <div id="marevo_app">
-    <div id="main-header">
-      <div id="identity">
-        <a href="https://landing.zomes.com/"></a>
+      gtag('config', 'G-LPVPB8GH9P');
+    </script>
+
+    <!-- Meta Pixel Code -->
+    <script>
+      !(function (f, b, e, v, n, t, s) {
+        if (f.fbq) return;
+        n = f.fbq = function () {
+          n.callMethod
+            ? n.callMethod.apply(n, arguments)
+            : n.queue.push(arguments);
+        };
+        if (!f._fbq) f._fbq = n;
+        n.push = n;
+        n.loaded = !0;
+        n.version = '2.0';
+        n.queue = [];
+        t = b.createElement(e);
+        t.async = !0;
+        t.src = v;
+        s = b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t, s);
+      })(
+        window,
+        document,
+        'script',
+        'https://connect.facebook.net/en_US/fbevents.js'
+      );
+      fbq('init', '1173267410627022');
+      fbq('track', 'PageView');
+    </script>
+    <noscript
+      ><img
+        height="1"
+        width="1"
+        style="display: none"
+        src="https://www.facebook.com/tr?id=1173267410627022&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+
+    <!-- Reddit Pixel -->
+    <script>
+      !(function (w, d) {
+        if (!w.rdt) {
+          var p = (w.rdt = function () {
+            p.sendEvent
+              ? p.sendEvent.apply(p, arguments)
+              : p.callQueue.push(arguments);
+          });
+          p.callQueue = [];
+          var t = d.createElement('script');
+          (t.src = 'https://www.redditstatic.com/ads/pixel.js'), (t.async = !0);
+          var s = d.getElementsByTagName('script')[0];
+          s.parentNode.insertBefore(t, s);
+        }
+      })(window, document);
+      rdt('init', 'a2_eisslh6zpvu8');
+      rdt('track', 'PageVisit');
+    </script>
+    <!-- DO NOT MODIFY UNLESS TO REPLACE A USER IDENTIFIER -->
+    <!-- End Reddit Pixel -->
+
+    <!-- Customer.IO Analytics  |  START -->
+    <script>
+      !(function () {
+        var analytics = (window.analytics = window.analytics || []);
+        if (!analytics.initialize)
+          if (analytics.invoked)
+            window.console &&
+              console.error &&
+              console.error('Snippet included twice.');
+          else {
+            analytics.invoked = !0;
+            analytics.methods = [
+              'trackSubmit',
+              'trackClick',
+              'trackLink',
+              'trackForm',
+              'pageview',
+              'identify',
+              'reset',
+              'group',
+              'track',
+              'ready',
+              'alias',
+              'debug',
+              'page',
+              'once',
+              'off',
+              'on',
+              'addSourceMiddleware',
+              'addIntegrationMiddleware',
+              'setAnonymousId',
+              'addDestinationMiddleware',
+            ];
+            analytics.factory = function (e) {
+              return function () {
+                var t = Array.prototype.slice.call(arguments);
+                t.unshift(e);
+                analytics.push(t);
+                return analytics;
+              };
+            };
+            for (var e = 0; e < analytics.methods.length; e++) {
+              var key = analytics.methods[e];
+              analytics[key] = analytics.factory(key);
+            }
+            analytics.load = function (key, e) {
+              var t = document.createElement('script');
+              t.type = 'text/javascript';
+              t.async = !0;
+              t.src =
+                'https://cdp.customer.io/v1/analytics-js/snippet/' +
+                key +
+                '/analytics.min.js';
+              var n = document.getElementsByTagName('script')[0];
+              n.parentNode.insertBefore(t, n);
+              analytics._writeKey = key;
+              analytics._loadOptions = e;
+            };
+            analytics.SNIPPET_VERSION = '4.15.3';
+            analytics.load('85c5fbe87ad0ec405f84', {
+              cookie: {
+                domain: '.zomes.com',
+              },
+              storage: {
+                stores: ['cookie', 'localStorage', 'memory'],
+              },
+            });
+            analytics.page();
+          }
+      })();
+    </script>
+    <!-- Customer.IO Analytics  |  END -->
+  </head>
+
+  <body>
+    <div id="marevo_app">
+      <div id="main-header">
+        <div id="identity">
+          <a href="https://landing.zomes.com/"></a>
+        </div>
+
+        <div class="header_blocks">
+          <div
+            id="social-media"
+            class="top-frame-panel top-frame-panel__social-media"
+          >
+            <div class="">
+              <div class="vertical-align-wrapper">
+                <div class="social-media__wrapper">
+                  <a
+                    class="social-media-button social-media-button--mail"
+                    href="mailto:hello@zomes.com"
+                  ></a>
+                  <a
+                    class="social-media-button social-media-button--instagram"
+                    href="https://instagram.com/zomesweetzomes/"
+                    target="_blank"
+                  ></a>
+                  <a
+                    class="social-media-button social-media-button--tiktok"
+                    href="https://www.tiktok.com/@zomesweetzome?lang=en"
+                    target="_blank"
+                  ></a>
+                  <a
+                    class="social-media-button social-media-button--pinterest"
+                    href="https://www.pinterest.com/zomesweetzome/"
+                    target="_blank"
+                  ></a>
+                  <a
+                    class="social-media-button social-media-button--twitter"
+                    href="https://x.com/zomesweetzome"
+                    target="_blank"
+                  ></a>
+                  <a
+                    class="social-media-button social-media-button--facebook"
+                    href="https://www.facebook.com/zomesweetzome/"
+                    target="_blank"
+                  ></a>
+                  <a
+                    class="social-media-button social-media-button--youtube"
+                    href="https://www.youtube.com/channel/UCWuJ4fwV2KJ0mfQjUa5VXzQ"
+                    target="_blank"
+                  ></a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="tools" class="top-frame-panel top-frame-panel__tools">
+            <div class="">
+              <div class="vertical-align-wrapper">
+                <div class="selectors__container">
+                  <div class="select-wrapper currency-picker">
+                    <select class="custom-select">
+                      <option value="USD">$</option>
+                      <option value="EUR">€</option>
+                    </select>
+                  </div>
+
+                  <div class="select-wrapper language-picker">
+                    <select class="custom-select">
+                      <option value="EN">EN</option>
+                      <option value="FR">FR</option>
+                      <option value="ES">ES</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            id="external-link"
+            class="top-frame-panel top-frame-panel__external-link"
+          >
+            <a
+              class="vertical-align-wrapper external-link__wrapper"
+              href="https://landing.zomes.com/"
+            >
+              HOMEPAGE
+              <div class="external-link__logo"></div>
+            </a>
+          </div>
+        </div>
       </div>
 
-      <div class="header_blocks">
-        <div id="social-media" class="top-frame-panel top-frame-panel__social-media">
-          <div class="">
-            <div class="vertical-align-wrapper">
-              <div class="social-media__wrapper">
-                <a class="social-media-button social-media-button--mail" href="mailto:hello@zomes.com"></a>
-                <a class="social-media-button social-media-button--instagram" href="https://instagram.com/zomesweetzomes/" target="_blank"></a>
-                <a class="social-media-button social-media-button--tiktok" href="https://www.tiktok.com/@zomesweetzome?lang=en" target="_blank"></a>
-                <a class="social-media-button social-media-button--pinterest" href="https://www.pinterest.com/zomesweetzome/" target="_blank"></a>
-                <a class="social-media-button social-media-button--twitter" href="https://x.com/zomesweetzome" target="_blank"></a>
-                <a class="social-media-button social-media-button--facebook" href="https://www.facebook.com/zomesweetzome/" target="_blank"></a>
-                <a class="social-media-button social-media-button--youtube" href="https://www.youtube.com/channel/UCWuJ4fwV2KJ0mfQjUa5VXzQ" target="_blank"></a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div id="tools" class="top-frame-panel top-frame-panel__tools">
-          <div class="">
-            <div class="vertical-align-wrapper">
-              <div class="selectors__container">
-                <div class="select-wrapper currency-picker">
-                  <select class="custom-select">
-                    <option value="USD">$</option>
-                    <option value="EUR">€</option>
-                  </select>
+      <div class="product-type-3dmodel">
+        <div class="ar_conf_container">
+          <div class="summary_container">
+            <div class="summary_wrapper">
+              <div class="summary entry-summary hidden">
+                <div class="title_list__container">
+                  <ul id="title_menu_list" class="title_list"></ul>
                 </div>
 
-                <div class="select-wrapper language-picker">
-                  <select class="custom-select">
-                    <option value="EN">EN</option>
-                    <option value="FR">FR</option>
-                    <option value="ES">ES</option>
-                  </select>
+                <div class="ar_filter" id="ar_filter">
+                  <div id="ar_filter_toggle" class="ar_filter_toggle"></div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        <div id="external-link" class="top-frame-panel top-frame-panel__external-link">
-          <a class="vertical-align-wrapper external-link__wrapper" href="https://landing.zomes.com/">
-            HOMEPAGE
-            <div class="external-link__logo"></div>
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <div class="product-type-3dmodel">
-      <div class="ar_conf_container">
-
-        <div class="summary_container">
-          <div class="summary_wrapper">
-            <div class="summary entry-summary hidden">
-              <div class="title_list__container">
-                <ul id="title_menu_list" class="title_list"></ul>
+            <div class="ar_menu_footer_container">
+              <div id="button_ar_qr_menu" class="button_ar_qr hidden">
+                <div class="button_ar_qr_menu__image"></div>
               </div>
 
-              <div class="ar_filter" id="ar_filter">
-                <div id="ar_filter_toggle" class="ar_filter_toggle"></div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="ar_menu_footer_container">
-            <div id="button_ar_qr_menu" class="button_ar_qr hidden">
-              <div class="button_ar_qr_menu__image"></div>
-            </div>
-
-            <div class="menu_footer_amount__wrapper">
-              <div class="menu__footer_delivery_info">
-                <span id="delivery_info_title">Estimated delivery time:</span>
-                <div class="wrapper">
-                  <span id="delivery_info_date">April 1, 2025</span>
-                  <span class="menu__footer__info_icon"></span>
-                </div>
-
-                <div class="popup__info popup__info_date hidden">
-                  <div class="popup__info_content popup__info_content_date">
-                    Ships March 1st, 2025. Estimated delivery time is 3 weeks from the date of purchase.
-                  </div>
-                  <div class="popup__info_close"></div>
-                </div>
-              </div>
-              
-              <div id="delivery_info_caption" class="delivery_info_caption"></div>
-
-              <div class="ar_total_amount__container">
-                <div id="ar_total_price" class="ar_total_amount-price">$0,00</div>
-                
-                <div class="menu__footer_payment_info">
-                  <span class="menu__footer__calc_icon"></span>
-                  <span id="payment_info_title">+ TAX (if applicable) & shipping</span>
-                </div>
-
-                <div class="popup__info popup__info_tax hidden">
-                  <div class="popup__info_content popup_tax popup__info_content_tax">
-                    <div class="popup_tax__title">Calculate sales tax for your region:</div>
-
-                    <form id="taxForm">
-                      <div class="contact_form__form-item contact_form__form-item_email">
-                        <input type="email" name="email" id="popup_tax_email" placeholder="Email" required>
-                      </div>
-
-                      <div class="contact_form__form-item contact_form__form-item_zipcode">
-                        <input type="text" name="zipcode" id="popup_tax_zipcode" placeholder="Zipcode" required>
-                      </div>
-
-                      <button disabled type="button" id="popup_tax_calculate" >Calculate</button>
-                    </form>
+              <div class="menu_footer_amount__wrapper">
+                <div class="menu__footer_delivery_info">
+                  <span id="delivery_info_title">Estimated delivery time:</span>
+                  <div class="wrapper">
+                    <span id="delivery_info_date">April 1, 2025</span>
+                    <span class="menu__footer__info_icon"></span>
                   </div>
 
-                  <div class="popup_tax__close_btn">Back</div>
+                  <div class="popup__info popup__info_date hidden">
+                    <div class="popup__info_content popup__info_content_date">
+                      Ships March 1st, 2025. Estimated delivery time is 3 weeks
+                      from the date of purchase.
+                    </div>
+                    <div class="popup__info_close"></div>
+                  </div>
+                </div>
 
-                  <div class="popup__info_close popup_tax__close"></div>
+                <div
+                  id="delivery_info_caption"
+                  class="delivery_info_caption"
+                ></div>
+
+                <div class="ar_total_amount__container">
+                  <div id="ar_total_price" class="ar_total_amount-price">
+                    $0,00
+                  </div>
+
+                  <div class="menu__footer_payment_info">
+                    <span class="menu__footer__calc_icon"></span>
+                    <span id="payment_info_title"
+                      >+ TAX (if applicable) & shipping</span
+                    >
+                  </div>
+
+                  <div class="popup__info popup__info_tax hidden">
+                    <div
+                      class="popup__info_content popup_tax popup__info_content_tax"
+                    >
+                      <div class="popup_tax__title">
+                        Calculate sales tax for your region:
+                      </div>
+
+                      <form id="taxForm">
+                        <div
+                          class="contact_form__form-item contact_form__form-item_email"
+                        >
+                          <input
+                            type="email"
+                            name="email"
+                            id="popup_tax_email"
+                            placeholder="Email"
+                            required
+                          />
+                        </div>
+
+                        <div
+                          class="contact_form__form-item contact_form__form-item_zipcode"
+                        >
+                          <input
+                            type="text"
+                            name="zipcode"
+                            id="popup_tax_zipcode"
+                            placeholder="Zipcode"
+                            required
+                          />
+                        </div>
+
+                        <button disabled type="button" id="popup_tax_calculate">
+                          Calculate
+                        </button>
+                      </form>
+                    </div>
+
+                    <div class="popup_tax__close_btn">Back</div>
+
+                    <div class="popup__info_close popup_tax__close"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="ar_button_order__wrapper">
+                <div id="calculate_shipping_tax" class="ar_buy-btn ar_calc-btn">
+                  <div class="ar_button_calculate__image"></div>
+
+                  <div
+                    id="ar_button_calculate__caption"
+                    class="ar_button_order__caption"
+                  >
+                    <span class="ar_button_calculate__caption_large"
+                      >Calculate shipping & tax</span
+                    >
+                  </div>
+                </div>
+
+                <div id="ar_button_order" class="ar_buy-btn">
+                  <div class="ar_button_order__image"></div>
+
+                  <div
+                    id="ar_button_order__caption"
+                    class="ar_button_order__caption"
+                  >
+                    <span class="ar_button_order__caption_large"
+                      >Save design</span
+                    >
+                    <span class="ar_button_order__caption_small">Save</span>
+                  </div>
                 </div>
               </div>
             </div>
-              
-            <div class="ar_button_order__wrapper">
-              <div id="calculate_shipping_tax" class="ar_buy-btn ar_calc-btn">
-                <div class="ar_button_calculate__image"></div>
 
-                <div id="ar_button_calculate__caption" class="ar_button_order__caption">
-                  <span class="ar_button_calculate__caption_large">Calculate shipping & tax</span>
+            <div class="ar_menu_info_container">
+              <div class="ar_menu_info__header">
+                <div id="menu_info_title" class="ar_menu_info__header_title">
+                  Info
+                </div>
+                <div
+                  id="menu_info__header_close"
+                  class="ar_menu_info__header_close"
+                ></div>
+              </div>
+
+              <div class="ar_menu_info__tabs">
+                <div id="menu_info_tab_descr" class="ar_menu_info_tab active">
+                  Description
+                </div>
+                <div id="menu_info_tab_specs" class="ar_menu_info_tab">
+                  Specs
                 </div>
               </div>
-  
-              <div id="ar_button_order" class="ar_buy-btn">
-                <div class="ar_button_order__image"></div>
 
-                <div id="ar_button_order__caption" class="ar_button_order__caption">
-                  <span class="ar_button_order__caption_large">Save design</span>
-                  <span class="ar_button_order__caption_small">Save</span>
+              <div class="ar_menu_info_content__container">
+                <div class="ar_menu_info_content__wrapper">
+                  <div
+                    id="menu_info_content_descr"
+                    class="ar_menu_info__content active"
+                  >
+                    <div class="ar_menu_info_content__text"></div>
+                  </div>
+
+                  <div
+                    id="menu_info_content_specs"
+                    class="ar_menu_info__content"
+                  >
+                    <div class="ar_menu_info_content__text">${specs}</div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="ar_menu_info_container">
-            <div class="ar_menu_info__header">
-              <div id="menu_info_title" class="ar_menu_info__header_title">Info</div>
-              <div id="menu_info__header_close" class="ar_menu_info__header_close"></div>
-            </div>
+          <div class="ar_model_viewer" id="ar_model_viewer">
+            <canvas
+              class="ar_model_view"
+              id="ar_model_view"
+              data-engine="three.js r146"
+              width="819"
+              height="819"
+              style="touch-action: none"
+            >
+            </canvas>
 
-            <div class="ar_menu_info__tabs">
-              <div id="menu_info_tab_descr" class="ar_menu_info_tab active">Description</div>
-              <div id="menu_info_tab_specs" class="ar_menu_info_tab">Specs</div>
-            </div>
-
-            <div class="ar_menu_info_content__container">
-              <div class="ar_menu_info_content__wrapper">
-                <div id="menu_info_content_descr" class="ar_menu_info__content active">
-                  <div class="ar_menu_info_content__text"></div>
+            <div class="loading" id="js-loader">
+              <div class="marevo_loader">
+                <div class="marevo_loader__logo"></div>
+                <div class="marevo_loader__title"></div>
+                <div class="marevo_loader__spinner">
+                  <div class="marevo_loader__circle circle1"></div>
+                  <div class="marevo_loader__circle circle2"></div>
+                  <div class="marevo_loader__circle circle3"></div>
+                  <div class="marevo_loader__circle circle4"></div>
+                  <div class="marevo_loader__circle circle5"></div>
                 </div>
-
-                <div id="menu_info_content_specs" class="ar_menu_info__content">
-                  <div class="ar_menu_info_content__text">${specs}</div>
-                </div>
+                <div class="marevo_loader__text">Loading...</div>
               </div>
             </div>
-          </div>
-        </div>
 
-        <div class="ar_model_viewer" id="ar_model_viewer">
-          <canvas class="ar_model_view" id="ar_model_view" data-engine="three.js r146" width="819" height="819"
-            style="touch-action: none;">
-          </canvas>
-
-          <div class="loading" id="js-loader">
-            <div class="marevo_loader">
-              <div class="marevo_loader__logo"></div>
-              <div class="marevo_loader__title"></div>
+            <div class="canvas_loading invisible" id="canvas-loader">
+              <div class="marevo_loader__logo marevo_loader__logo_canvas"></div>
               <div class="marevo_loader__spinner">
                 <div class="marevo_loader__circle circle1"></div>
                 <div class="marevo_loader__circle circle2"></div>
@@ -313,264 +466,386 @@
                 <div class="marevo_loader__circle circle4"></div>
                 <div class="marevo_loader__circle circle5"></div>
               </div>
-              <div class="marevo_loader__text">Loading...</div>
             </div>
-          </div>
 
-          <div class="canvas_loading invisible" id="canvas-loader">
-            <div class="marevo_loader__logo marevo_loader__logo_canvas"></div>
-            <div class="marevo_loader__spinner">
-              <div class="marevo_loader__circle circle1"></div>
-              <div class="marevo_loader__circle circle2"></div>
-              <div class="marevo_loader__circle circle3"></div>
-              <div class="marevo_loader__circle circle4"></div>
-              <div class="marevo_loader__circle circle5"></div>
-            </div>
-          </div>
-
-          <div class="canvas_buttons__wrapper">
-            <!-- hidden -->
-            <div class="canvas_buttons__top ">
-              <!-- active disabled -->
-              <div id="button_annotation" class="canvas_btn_top canvas_btn_annotation ">
-                <div class="canvas_btn_top__image">
-                  <div class="canvas_btn__icon"></div>
-                </div>
-                <div class="canvas_btn_text canvas_btn_annotation__text">ANNOTATIONS</div>
-              </div>
-              <!-- active disabled -->
-              <div id="button_dimensions" class="canvas_btn_top canvas_btn_dimensions ">
-                <div class="canvas_btn_top__image">
-                  <div class="canvas_btn__icon"></div>
-                </div>
-                <div class="canvas_btn_text canvas_btn_dimensions__text">DIMENSIONS</div>
-              </div>
-              <!-- active disabled -->
-              <div id="button_furniture" class="canvas_btn_top canvas_btn_furniture">
-                <div class="canvas_btn_top__image">
-                  <div class="canvas_btn__icon"></div>
-                </div>
-                <div class="canvas_btn_text canvas_btn_furniture__text">FURNITURE</div>
-              </div>
-  
+            <div class="canvas_buttons__wrapper">
               <!-- hidden -->
-              <div class="canvas_buttons__radio hidden">
+              <div class="canvas_buttons__top">
                 <!-- active disabled -->
-                <div id="button_sleep" class="canvas_btn_radio canvas_btn_sleep active">
-                  <div class="canvas_btn_radio__image"></div>
-                  <div class="canvas_btn_text canvas_btn_sleep__text">SLEEP</div>
+                <div
+                  id="button_annotation"
+                  class="canvas_btn_top canvas_btn_annotation"
+                >
+                  <div class="canvas_btn_top__image">
+                    <div class="canvas_btn__icon"></div>
+                  </div>
+                  <div class="canvas_btn_text canvas_btn_annotation__text">
+                    ANNOTATIONS
+                  </div>
                 </div>
                 <!-- active disabled -->
-                <div id="button_work" class="canvas_btn_radio canvas_btn_work">
-                  <div class="canvas_btn_radio__image"></div>
-                  <div class="canvas_btn_text canvas_btn_work__text">WORK</div>
+                <div
+                  id="button_dimensions"
+                  class="canvas_btn_top canvas_btn_dimensions"
+                >
+                  <div class="canvas_btn_top__image">
+                    <div class="canvas_btn__icon"></div>
+                  </div>
+                  <div class="canvas_btn_text canvas_btn_dimensions__text">
+                    DIMENSIONS
+                  </div>
                 </div>
                 <!-- active disabled -->
-                <div id="button_live" class="canvas_btn_radio canvas_btn_live ">
-                  <div class="canvas_btn_radio__image"></div>
-                  <div class="canvas_btn_text canvas_btn_live__text">LIVE</div>
+                <div
+                  id="button_furniture"
+                  class="canvas_btn_top canvas_btn_furniture"
+                >
+                  <div class="canvas_btn_top__image">
+                    <div class="canvas_btn__icon"></div>
+                  </div>
+                  <div class="canvas_btn_text canvas_btn_furniture__text">
+                    FURNITURE
+                  </div>
                 </div>
 
-                <div class="popup-close"></div>
-              </div>
-            </div>
-  
-            <div class="canvas_buttons__bottom">
-              <div id="button_camera_inside" class="canvas_btn canvas_btn_camera ">
-                <div class="canvas_btn__image"></div>
-                <div class="canvas_btn_text canvas_btn_camera__text">INSIDE</div>
-              </div>
-  
-              <div id="button_camera_outside" class="canvas_btn canvas_btn_camera hidden">
-                <div class="canvas_btn__image"></div>
-                <div class="canvas_btn_text canvas_btn_camera__text">OUTSIDE</div>
-              </div>
-  
-              <div id="button_share_url" class="canvas_btn canvas_btn_share">
-                <div class="canvas_btn__image"></div>
-                <div class="canvas_btn_text canvas_btn_share__text">SHARE</div>
-              </div>
-  
-              <div id="button_ar_qr" class="button_ar_qr canvas_btn canvas_btn_ar hidden">
-                <div class="canvas_btn__image"></div>
-                <div class="canvas_btn_text canvas_btn_ar__text">AR</div>
-              </div>
-            </div>
+                <!-- hidden -->
+                <div class="canvas_buttons__radio hidden">
+                  <!-- active disabled -->
+                  <div
+                    id="button_sleep"
+                    class="canvas_btn_radio canvas_btn_sleep active"
+                  >
+                    <div class="canvas_btn_radio__image"></div>
+                    <div class="canvas_btn_text canvas_btn_sleep__text">
+                      SLEEP
+                    </div>
+                  </div>
+                  <!-- active disabled -->
+                  <div
+                    id="button_work"
+                    class="canvas_btn_radio canvas_btn_work"
+                  >
+                    <div class="canvas_btn_radio__image"></div>
+                    <div class="canvas_btn_text canvas_btn_work__text">
+                      WORK
+                    </div>
+                  </div>
+                  <!-- active disabled -->
+                  <div
+                    id="button_live"
+                    class="canvas_btn_radio canvas_btn_live"
+                  >
+                    <div class="canvas_btn_radio__image"></div>
+                    <div class="canvas_btn_text canvas_btn_live__text">
+                      LIVE
+                    </div>
+                  </div>
 
-            <div class="canvas_dimensions "></div>
-          </div>
-
-          <div id="canvas_notification" class="canvas_notification hidden">It is your Zome!</div>
-          <div id="canvas_notification_limit" class="canvas_notification hidden">It is your Zome!</div>
-
-        </div>
-      </div>
-
-      <model-viewer id="marevo_model" ar ar-modes="webxr scene-viewer quick-look" ar-scale="fixed"
-        src="./src/models/empty_scene.glb" poster="" loading="eager" alt="Marevo_AR" shadow-intensity="1"
-        shadow-softness="1" environment-image="neutral" stage-light-intensity="1" camera-orbit="-30deg auto auto"
-        max-camera-orbit="auto 100deg auto" camera-controls exposure="1.0" auto-rotate>
-        <div id="ar-prompt">
-          <img src="https://modelviewer.dev/shared-assets/icons/hand.png">
-        </div>
-      </model-viewer>
-
-      <!-- POP-UP -->
-      <!-- add class 'active' to show it -->
-      <div class="popup">
-        <div class="popup-box">
-          <!-- add class 'active' to show it -->
-          <div id="popup-item-share" class="popup-item popup-item-share" data-info-window="sharing">
-            <div class="popup-sharing-title">SHARE CONFIGURATION</div>
-
-            <div class="popup-sharing-window">
-              <input id="info-sharing-input" type="text" value="">
-              <div class="popup-sharing-ico">
-                <div></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- add class 'active' to show it -->
-          <div id="popup-item-qr" class="popup-item popup-item-qr" data-info-window="qr">
-            <div id="popup-qr-title-ui" class="popup-qr-title">SCAN QR CODE</div>
-            <div id="popup-qr-text-ui" class="popup-qr-text"></div>
-            <div class="popup-qr-img">
-              <div id="qrcode"></div>
-            </div>
-          </div>
-
-          <!-- add class 'active' to show it -->
-          <div id="popup-item-info" class="popup-item popup-item-info" data-info-window="loupe">
-            <div class="popup-info">
-              <div id="popup-info-title-ui" class="popup-info-title">INFO</div>
-              <div id="popup-info-text-ui" class="popup-info-text"></div>
-              <div class="popup-info-img">
-                <img src="" alt="info">
-              </div>
-            </div>
-          </div>
-
-          <div class="popup-close"></div>
-        </div>
-
-        <div class="popup-overlay"></div>
-      </div>
-
-      <!-- summary before pdf -->
-      <div class="summary__popup-overlay ">
-        <div class="popup-close"></div>
-        <div class="summary__popup-content">
-          <div class="summary__popup-title">Your Zome looks amazing!</div>
-          <div class="summary__images_container"></div>
-          <div class="details"></div>
-
-          <div class="details__total">
-            <div id="details__total_title" class="details__total_title">TOTAL</div>
-            <div id="details__total_price" class="details__total_price">$22,950</div>
-          </div>
-
-          <div class="details__tax_info">
-            <div id="details__tax_text" class="details__tax_text">shipping and sales tax for your region</div>
-          </div>
-
-          <div class="summary__footer_container">
-            <div class="summary__link" id="backToConfiguration">
-              <div id="summary_back_to_conf">BACK TO CONFIGURATION</div>
-              <div class="external-link__logo"></div>
-            </div>
-      
-            <div class="summary_buttons__wrapper">
-              <div id="summary_book_time_btn" class="summary_btn summary_btn_calendar">
-                <div class="summary_btn_calendar__image"></div>
-
-                <div id="summary_btn_calendar__caption" class="summary_btn__caption">
-                  <span>Book time with us</span>
+                  <div class="popup-close"></div>
                 </div>
               </div>
-  
-              <div id="summary_download_pdf_btn" class="summary_btn summary_btn_save">
-                <div class="summary_btn_save__image"></div>
 
-                <div id="summary_btn_save__caption" class="summary_btn__caption">
-                  <span>Download PDF</span>
+              <div class="canvas_buttons__bottom">
+                <div
+                  id="button_camera_inside"
+                  class="canvas_btn canvas_btn_camera"
+                >
+                  <div class="canvas_btn__image"></div>
+                  <div class="canvas_btn_text canvas_btn_camera__text">
+                    INSIDE
+                  </div>
+                </div>
+
+                <div
+                  id="button_camera_outside"
+                  class="canvas_btn canvas_btn_camera hidden"
+                >
+                  <div class="canvas_btn__image"></div>
+                  <div class="canvas_btn_text canvas_btn_camera__text">
+                    OUTSIDE
+                  </div>
+                </div>
+
+                <div id="button_share_url" class="canvas_btn canvas_btn_share">
+                  <div class="canvas_btn__image"></div>
+                  <div class="canvas_btn_text canvas_btn_share__text">
+                    SHARE
+                  </div>
+                </div>
+
+                <div
+                  id="button_ar_qr"
+                  class="button_ar_qr canvas_btn canvas_btn_ar hidden"
+                >
+                  <div class="canvas_btn__image"></div>
+                  <div class="canvas_btn_text canvas_btn_ar__text">AR</div>
+                </div>
+              </div>
+
+              <div class="canvas_dimensions"></div>
+            </div>
+
+            <div id="canvas_notification" class="canvas_notification hidden">
+              It is your Zome!
+            </div>
+            <div
+              id="canvas_notification_limit"
+              class="canvas_notification hidden"
+            >
+              It is your Zome!
+            </div>
+          </div>
+        </div>
+
+        <model-viewer
+          id="marevo_model"
+          ar
+          ar-modes="webxr scene-viewer quick-look"
+          ar-scale="fixed"
+          src="./src/models/empty_scene.glb"
+          poster=""
+          loading="eager"
+          alt="Marevo_AR"
+          shadow-intensity="1"
+          shadow-softness="1"
+          environment-image="neutral"
+          stage-light-intensity="1"
+          camera-orbit="-30deg auto auto"
+          max-camera-orbit="auto 100deg auto"
+          camera-controls
+          exposure="1.0"
+          auto-rotate
+        >
+          <div id="ar-prompt">
+            <img src="https://modelviewer.dev/shared-assets/icons/hand.png" />
+          </div>
+        </model-viewer>
+
+        <!-- POP-UP -->
+        <!-- add class 'active' to show it -->
+        <div class="popup">
+          <div class="popup-box">
+            <!-- add class 'active' to show it -->
+            <div
+              id="popup-item-share"
+              class="popup-item popup-item-share"
+              data-info-window="sharing"
+            >
+              <div class="popup-sharing-title">SHARE CONFIGURATION</div>
+
+              <div class="popup-sharing-window">
+                <input id="info-sharing-input" type="text" value="" />
+                <div class="popup-sharing-ico">
+                  <div></div>
                 </div>
               </div>
             </div>
 
-          </div>
-        </div>
+            <!-- add class 'active' to show it -->
+            <div
+              id="popup-item-qr"
+              class="popup-item popup-item-qr"
+              data-info-window="qr"
+            >
+              <div id="popup-qr-title-ui" class="popup-qr-title">
+                SCAN QR CODE
+              </div>
+              <div id="popup-qr-text-ui" class="popup-qr-text"></div>
+              <div class="popup-qr-img">
+                <div id="qrcode"></div>
+              </div>
+            </div>
 
-        <!-- contact form -->
-        <div class="contact_form__popup-overlay ">
-          <div class="contact_form__popup-content">
+            <!-- add class 'active' to show it -->
+            <div
+              id="popup-item-info"
+              class="popup-item popup-item-info"
+              data-info-window="loupe"
+            >
+              <div class="popup-info">
+                <div id="popup-info-title-ui" class="popup-info-title">
+                  INFO
+                </div>
+                <div id="popup-info-text-ui" class="popup-info-text"></div>
+                <div class="popup-info-img">
+                  <img src="" alt="info" />
+                </div>
+              </div>
+            </div>
+
             <div class="popup-close"></div>
+          </div>
 
-            <form id="popupForm">
-              <div class="contact_form__form-title" id="summary_form_title">FILL IN DETAILS BELOW TO DOWNLOAD YOUR CONFIGURATION.</div>
-  
-              <div class="contact_form__form-item contact_form__form-item_name">
-                <label for="form_name" id="summary_form_label_name"></label>
-                <input type="text" name="name" id="form_name" placeholder="" required>
+          <div class="popup-overlay"></div>
+        </div>
+
+        <!-- summary before pdf -->
+        <div class="summary__popup-overlay">
+          <div class="popup-close"></div>
+          <div class="summary__popup-content">
+            <div class="summary__popup-title">Your Zome looks amazing!</div>
+            <div class="summary__images_container"></div>
+            <div class="details"></div>
+
+            <div class="details__total">
+              <div id="details__total_title" class="details__total_title">
+                TOTAL
               </div>
-  
-              <div class="contact_form__form-item contact_form__form-item_email">
-                <label for="form_email" id="summary_form_label_email"></label>
-                <input type="email" name="email" id="form_email" placeholder="" required>
+              <div id="details__total_price" class="details__total_price">
+                $22,950
               </div>
- 
-              <div class="contact_form__checkbox_wrapper">
-                <div class="contact_form__form-item_checkbox">
-                  <input type="checkbox" id="newsletter" name="newsletter">
-                  <label for="newsletter" class="full-width" id="summary_form_checkbox_signme">
-                    Sign me up for monthly email updates and special deals (only 1x email per month)
-                  </label>
+            </div>
+
+            <div class="details__tax_info">
+              <div id="details__tax_text" class="details__tax_text">
+                shipping and sales tax for your region
+              </div>
+            </div>
+
+            <div class="summary__footer_container">
+              <div class="summary__link" id="backToConfiguration">
+                <div id="summary_back_to_conf">BACK TO CONFIGURATION</div>
+                <div class="external-link__logo"></div>
+              </div>
+
+              <div class="summary_buttons__wrapper">
+                <div
+                  id="summary_book_time_btn"
+                  class="summary_btn summary_btn_calendar"
+                >
+                  <div class="summary_btn_calendar__image"></div>
+
+                  <div
+                    id="summary_btn_calendar__caption"
+                    class="summary_btn__caption"
+                  >
+                    <span>Book time with us</span>
+                  </div>
+                </div>
+
+                <div
+                  id="summary_download_pdf_btn"
+                  class="summary_btn summary_btn_save"
+                >
+                  <div class="summary_btn_save__image"></div>
+
+                  <div
+                    id="summary_btn_save__caption"
+                    class="summary_btn__caption"
+                  >
+                    <span>Download PDF</span>
+                  </div>
                 </div>
               </div>
-  
-              <button type="submit" id="submitButton" class="ar_buy-btn contact_form__button" disabled>
-                <div class="ar_button_order__image"></div>
-                
-                <div id="ar_button_order__caption" class="ar_button_order__caption">
-                  <span class="ar_button_order__caption_large">Save my design</span>
+            </div>
+          </div>
+
+          <!-- contact form -->
+          <div class="contact_form__popup-overlay">
+            <div class="contact_form__popup-content">
+              <div class="popup-close"></div>
+
+              <form id="popupForm">
+                <div class="contact_form__form-title" id="summary_form_title">
+                  FILL IN DETAILS BELOW TO DOWNLOAD YOUR CONFIGURATION.
                 </div>
-              </button>
 
-              <div class="contact_form__close_btn">Back</div>
-            </form>
+                <div
+                  class="contact_form__form-item contact_form__form-item_name"
+                >
+                  <label for="form_name" id="summary_form_label_name"></label>
+                  <input
+                    type="text"
+                    name="name"
+                    id="form_name"
+                    placeholder=""
+                    required
+                  />
+                </div>
 
+                <div
+                  class="contact_form__form-item contact_form__form-item_email"
+                >
+                  <label for="form_email" id="summary_form_label_email"></label>
+                  <input
+                    type="email"
+                    name="email"
+                    id="form_email"
+                    placeholder=""
+                    required
+                  />
+                </div>
+
+                <div class="contact_form__checkbox_wrapper">
+                  <div class="contact_form__form-item_checkbox">
+                    <input type="checkbox" id="newsletter" name="newsletter" />
+                    <label
+                      for="newsletter"
+                      class="full-width"
+                      id="summary_form_checkbox_signme"
+                    >
+                      Sign me up for monthly email updates and special deals
+                      (only 1x email per month)
+                    </label>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  id="submitButton"
+                  class="ar_buy-btn contact_form__button"
+                  disabled
+                >
+                  <div class="ar_button_order__image"></div>
+
+                  <div
+                    id="ar_button_order__caption"
+                    class="ar_button_order__caption"
+                  >
+                    <span class="ar_button_order__caption_large"
+                      >Save my design</span
+                    >
+                  </div>
+                </button>
+
+                <div class="contact_form__close_btn">Back</div>
+              </form>
+            </div>
           </div>
         </div>
 
-      </div>
+        <!-- model selection popup -->
+        <div class="popup_select hidden">
+          <div class="popup_select__content">
+            <div class="popup_select__title">Choose a model to configure</div>
 
-      <!-- model selection popup -->
-      <div class="popup_select hidden">
-        <div class="popup_select__content">
-          <div class="popup_select__title">Choose a model to configure</div>
+            <div class="popup_select__list">
+              <div id="select_btn_pod" class="popup_select__item">
+                <div class="popup_select__item_picture"></div>
+                <button class="popup_select__item_button">
+                  ZomePod 120 sqft
+                </button>
+              </div>
 
-          <div class="popup_select__list">
-            <div id="select_btn_pod" class="popup_select__item">
-              <div class="popup_select__item_picture"></div>
-              <button class="popup_select__item_button">ZomePod 120 sqft</button>
-            </div>
-            
-            <div id="select_btn_office" class="popup_select__item">
-              <div class="popup_select__item_picture"></div>
-              <button class="popup_select__item_button">ZomeOffice 170 sqft</button>
-            </div>
-            
-            <div id="select_btn_studio" class="popup_select__item">
-              <div class="popup_select__item_picture"></div>
-              <button class="popup_select__item_button">ZomeStudio 300 sqft</button>
+              <div id="select_btn_office" class="popup_select__item">
+                <div class="popup_select__item_picture"></div>
+                <button class="popup_select__item_button">
+                  ZomeOffice 170 sqft
+                </button>
+              </div>
+
+              <div id="select_btn_studio" class="popup_select__item">
+                <div class="popup_select__item_picture"></div>
+                <button class="popup_select__item_button">
+                  ZomeStudio 300 sqft
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-
     </div>
-  </div>
-  <!-- Currently set this customer.io OFF 
+    <!-- Currently set this customer.io OFF 
   <script type="text/javascript">
     (function() {
       var t = document.createElement('script'),
@@ -602,42 +877,100 @@
     })();
   </script>
 -->
-</body>
+  </body>
 
-<!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.2.min.js"
-  integrity="sha256-2krYZKh//PcchRtd+H+VyyQoZ/e3EcrkxhM8ycwASPA=" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<!-- Three.js -->
-<script defer src="https://cdn.jsdelivr.net/npm/three@0.146/build/three.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/three@0.147/examples/js/loaders/GLTFLoader.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/three@0.146/examples/js/controls/OrbitControls.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/three@0.146/examples/js/loaders/RGBELoader.js"></script>
-<!-- pdf -->
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-<script defer src="./src/pdf/fonts/vfs_fonts.js"></script>
+  <!-- jQuery -->
+  <script
+    src="https://code.jquery.com/jquery-3.6.2.min.js"
+    integrity="sha256-2krYZKh//PcchRtd+H+VyyQoZ/e3EcrkxhM8ycwASPA="
+    crossorigin="anonymous"
+  ></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <!-- Three.js -->
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/three@0.146/build/three.js"
+  ></script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/three@0.147/examples/js/loaders/GLTFLoader.js"
+  ></script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/three@0.146/examples/js/controls/OrbitControls.js"
+  ></script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/three@0.146/examples/js/loaders/RGBELoader.js"
+  ></script>
+  <!-- pdf -->
+  <script
+    defer
+    src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"
+  ></script>
+  <script
+    defer
+    src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"
+  ></script>
+  <script defer src="./src/pdf/fonts/vfs_fonts.js"></script>
 
-<script type="module" src="./js/settings.js"></script>
-<script type="module" src="./js/3d-configurator.js"></script>
-<script type="module" src="./js/3d-scene.js"></script>
-<script type="module" src="./js/ui-controller.js"></script>
-<script type="module" src="./js/pdf-maker.js"></script>
-<!-- MAREVO MODEL VIEWER -->
-<script type="module" src="./js/model-viewer_2_2_0/dist/model-viewer.marevo.min.js"></script>
+  <script type="module" src="./js/settings.js"></script>
+  <script type="module" src="./js/3d-configurator.js"></script>
+  <script type="module" src="./js/3d-scene.js"></script>
+  <script type="module" src="./js/ui-controller.js"></script>
+  <script type="module" src="./js/pdf-maker.js"></script>
+  <!-- MAREVO MODEL VIEWER -->
+  <script
+    type="module"
+    src="./js/model-viewer_2_2_0/dist/model-viewer.marevo.min.js"
+  ></script>
+  <!-- Mustuf JS -->
+  <script type="module" src="./js/mustuf/script.js"></script>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB2ju1Ji7skh3_u0M_7DLBjW8VXxWRarrk&libraries=places"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB2ju1Ji7skh3_u0M_7DLBjW8VXxWRarrk&libraries=places"></script>
 
-<!-- interocom -->
-<script>
-  window.intercomSettings = {
-  api_base: "https://api-iam.intercom.io",
-  app_id: "gkmn1khj",
-  };
-</script>
-  
-<script>
-  // We pre-filled your app ID in the widget URL: 'https://widget.intercom.io/widget/gkmn1khj'
-  (function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update',w.intercomSettings);}else{var d=document;var i=function(){i.c(arguments);};i.q=[];i.c=function(args){i.q.push(args);};w.Intercom=i;var l=function(){var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://widget.intercom.io/widget/gkmn1khj';var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);};if(document.readyState==='complete'){l();}else if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})();
-</script>
+  <!-- interocom -->
+  <script>
+    window.intercomSettings = {
+      api_base: 'https://api-iam.intercom.io',
+      app_id: 'gkmn1khj',
+    };
+  </script>
+
+  <script>
+    // We pre-filled your app ID in the widget URL: 'https://widget.intercom.io/widget/gkmn1khj'
+    (function () {
+      var w = window;
+      var ic = w.Intercom;
+      if (typeof ic === 'function') {
+        ic('reattach_activator');
+        ic('update', w.intercomSettings);
+      } else {
+        var d = document;
+        var i = function () {
+          i.c(arguments);
+        };
+        i.q = [];
+        i.c = function (args) {
+          i.q.push(args);
+        };
+        w.Intercom = i;
+        var l = function () {
+          var s = d.createElement('script');
+          s.type = 'text/javascript';
+          s.async = true;
+          s.src = 'https://widget.intercom.io/widget/gkmn1khj';
+          var x = d.getElementsByTagName('script')[0];
+          x.parentNode.insertBefore(s, x);
+        };
+        if (document.readyState === 'complete') {
+          l();
+        } else if (w.attachEvent) {
+          w.attachEvent('onload', l);
+        } else {
+          w.addEventListener('load', l, false);
+        }
+      }
+    })();
+  </script>
 </html>
