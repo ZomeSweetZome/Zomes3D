@@ -11,5 +11,5 @@ getAndSetConfig();
 const saveMyDesignForm = document.querySelector('#popupForm');
 saveMyDesignForm.addEventListener('submit', (e) => {
   e.preventDefault();
-  setCookie('user-info', getFormData());
+  setCookie('userProfile', getFormData(saveMyDesignForm));
 });
