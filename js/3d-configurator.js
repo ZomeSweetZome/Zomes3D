@@ -153,7 +153,7 @@ let modelFurniture;
 
 let isFirstStart = true;
 let justClicked = false;
-let isCameraInside = false;
+export let isCameraInside = false;
 
 // Capture Camera Image
 let summary_images;
@@ -3186,12 +3186,7 @@ function cameraBtnHandlers() {
     event.stopPropagation();
     $(this).toggleClass('hidden');
     $('#button_camera_outside').toggleClass('hidden');
-
     $('.canvas_btn_camera').addClass('disabled');
-
-    // flyCameraTo('inMain', 'inside', () => {
-    //   $('.canvas_btn_camera').removeClass('disabled');
-    // });
 
     flyCameraTo('outXrays', 'inside', () => {
       renderer.clippingPlanes = [];
@@ -3743,17 +3738,14 @@ function infoPopup(infoPopupTitle, infoPopupDescription, infoPopupImage) {
 // **** CAMERA FLYING ****
 
 $(document).on('click', '#title_list__item_2', function () { // interior group
-  // flyCameraTo('inMain', 'inside');
   $('#button_camera_inside').click();
 });
 
 $(document).on('click', '#title_list__item_3', function () { // exterior group
-  // flyCameraTo('outMain', 'outside');
   $('#button_camera_outside').click();
 });
 
 $(document).on('click', '#group-2 .ar_button_back', function () { // exterior group
-  // flyCameraTo('outMain', 'outside');
   $('#button_camera_outside').click();
 });
 
@@ -3937,7 +3929,7 @@ function onChangePosition(houseId, pos, callback = () => { }, duration = 750, is
   }
 }
 
-function flyCameraTo(namePosition, inOrOut, callback = () => { }, duration = 750) {
+export function flyCameraTo(namePosition, inOrOut, callback = () => { }, duration = 750) {
   if (inOrOut === 'inside') {
     $('#button_camera_inside').addClass('hidden');
     $('#button_camera_outside').removeClass('hidden');

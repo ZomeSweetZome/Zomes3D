@@ -1,7 +1,13 @@
 'use strict';
 /* global jQuery, $ */
 
-import { DEFAULT_LANGUAGE, IS_PRICE_SIMPLE, GROUP_ID_ORDER_FOR_NEXT_MENU_BTNS } from './settings.js';
+import { 
+  DEFAULT_LANGUAGE,
+  IS_PRICE_SIMPLE,
+  GROUP_ID_ORDER_FOR_NEXT_MENU_BTNS,
+} from './settings.js';
+
+import { isCameraInside } from './3d-configurator.js';
 
 let currentLanguage;
 
@@ -380,17 +386,17 @@ function setEventListenersForNextBtns() {
   $('.ar_button_next').on('click', function () {
     const itemId = $(this).attr('id');
     const identifier = itemId.split('ar_button_next_')[1];
-
     const nextIndex = GROUP_ID_ORDER_FOR_NEXT_MENU_BTNS.indexOf(identifier) + 1;
-    console.log("🚀 ~ identifier, nextIndex:", identifier, nextIndex);
+    $('.ar_menu_info_container').removeClass('active');
+    $('.ar_filter .ar_filter_group').addClass('invisible');
+    $(`#group-${GROUP_ID_ORDER_FOR_NEXT_MENU_BTNS[nextIndex]}`).removeClass('invisible');
 
-    // $('.ar_filter').removeClass('active');
-        $('.ar_menu_info_container').removeClass('active');
-
-        $('.ar_filter .ar_filter_group').addClass('invisible');
-        $(`#group-${GROUP_ID_ORDER_FOR_NEXT_MENU_BTNS[nextIndex]}`).removeClass('invisible');
-
-    // $('.ar_filter').addClass('active');
+    if (nextIndex === 3) {
+      $('#button_camera_inside').click();
+    }
+    if (nextIndex === 4 && isCameraInside) {
+      $('#button_camera_outside').click();
+    }
   });
 }
 
