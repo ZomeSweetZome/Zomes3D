@@ -2934,26 +2934,26 @@ async function PrepareUI() {
   // Contact form popup
   jQuery(document).ready(function () {
     const $form = $('#popupForm');
-    const $submitButton = $('#submitButton');
+    // const $submitButton = $('#submitButton');
     const $nameInput = $('#form_name');
     const $emailInput = $('#form_email');
     
-    function validateForm() {
-      const isNameValid = $nameInput.val().trim() !== '';
-      const isEmailValid = validateEmail($emailInput.val().trim());
-      const isFormValid = isNameValid && isEmailValid;
+    // function validateForm() {
+    //   const isNameValid = $nameInput.val().trim() !== '';
+    //   const isEmailValid = validateEmail($emailInput.val().trim());
+    //   const isFormValid = isNameValid && isEmailValid;
   
-      if (isFormValid) {
-        $submitButton.prop('disabled', false);
-      } else {
-        $submitButton.prop('disabled', true);
-      }
-    }
+    //   if (isFormValid) {
+    //     $submitButton.prop('disabled', false);
+    //   } else {
+    //     $submitButton.prop('disabled', true);
+    //   }
+    // }
 
-    function validateEmail(email) {
-      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-      return emailPattern.test(email);
-    }
+    // function validateEmail(email) {
+    //   const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    //   return emailPattern.test(email);
+    // }
   
     $nameInput.on('input', () => {
       validateForm();
@@ -2977,8 +2977,6 @@ async function PrepareUI() {
     validateForm();
   });
   
-  
-
   function validateTaxForm() {
     const email = $('#popup_tax_email').val();
     const zipcode = $('#popup_tax_zipcode').val();
@@ -2994,6 +2992,23 @@ async function PrepareUI() {
       $('#popup_tax_calculate').prop('disabled', true);
     }
   });
+}
+
+function validateForm() {
+  const isNameValid = $('#form_name').val().trim() !== '';
+  const isEmailValid = validateEmail($('#form_email').val().trim());
+  const isFormValid = isNameValid && isEmailValid;
+
+  if (isFormValid) {
+    $('#submitButton').prop('disabled', false);
+  } else {
+    $('#submitButton').prop('disabled', true);
+  }
+}
+
+function validateEmail(email) {
+  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  return emailPattern.test(email);
 }
 
 function calculateAndSetEstimateDate() {
@@ -3351,11 +3366,9 @@ function notificationHandler() {
 function summaryBtnsHandler() {
   $('#ar_button_order').on('click', function () {
     if (!isCameraInside) {
-      // openContactForm();
       proceedSummaryAndPdf();
     } else {
       flyCameraTo('outMain', 'outside', () => {
-        // openContactForm();
         proceedSummaryAndPdf();
       });
     }
@@ -3521,6 +3534,8 @@ function openContactForm() {
   if (savedEmail) {
     $('#form_email').val(savedEmail);
   }
+
+  validateForm();
 
   $('.contact_form__popup-overlay').addClass('active');
 }

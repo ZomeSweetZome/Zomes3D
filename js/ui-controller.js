@@ -11,12 +11,6 @@ let uiPlaceholdersMultiLanguages = [];
 export async function createMenu(mainData) {
   return new Promise((resolve) => {
     jQuery(document).ready(function ($) {
-
-      let firstObj = { name: 'Hello' };
-      let secondObj = firstObj;
-      firstObj = { name: 'Bye' };
-      console.log(secondObj.name);
-
       currentLanguage = $('.language-picker select').val() || DEFAULT_LANGUAGE;
 
       $('.language-picker select').on('change', function () {
