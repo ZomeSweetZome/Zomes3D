@@ -77,6 +77,7 @@ export async function createMenu(mainData) {
         { '#summary_btn_save__caption': 'ui_summary_btn_save_text' },
         { '#details__tax_text': 'ui_summary_details__tax_text' },
         // ----------
+        { '.popup__info_timeline_title': 'ui_timeline_title' },
         { '#today_title': 'ui_timeline_today_title' },
         { '#today_subtitle': 'ui_timeline_today_subtitle' },
         { '#today_text': 'ui_timeline_today_text' },

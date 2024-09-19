@@ -61,6 +61,7 @@
   --marevo-ui-icon_calendar_w : url(../src/ar-ui-icons/calendar_w.svg);
   --marevo-ui-icon_wallet_b : url(../src/ar-ui-icons/wallet_b.svg);
   --marevo-ui-icon_wallet_w : url(../src/ar-ui-icons/wallet_w.svg);
+  --marevo-ui-icon_timeline_point : url(../src/ar-ui-icons/timeline_point.svg);
 
   --marevo-ui-btn_pod : url(../src/ar-ui-icons/btn_pod.png);
   --marevo-ui-btn_office : url(../src/ar-ui-icons/btn_office.png);
@@ -1201,6 +1202,7 @@ body, html {
 
 .menu__footer_production_timeline {
   display: flex;
+  position: relative;
   align-items: center;
   color: var(--marevo-color-text-black, #000000);
   font-size: 14px;
@@ -1955,7 +1957,7 @@ textarea[name="ar_order_comment"] {
   background-color: var(--marevo-color-bgrd-menu, #fff);
   border: 1px solid var(--marevo-color-popup-border, #ECECEF);
   border-radius: 20px;
-  left: 0;
+  left: 50%;
   top: 0;
   transform: translateY(calc(-100% - 20px));
   z-index: 1;
@@ -2709,6 +2711,105 @@ textarea[name="ar_order_comment"] {
 .contact_form__close_btn {
   display: none;
 }
+
+/* --------------------------- */
+
+/* .popup__info_timeline {
+  width: min(510px, 100%);
+}
+
+.popup__info_timeline_title {
+  font-size: 14px;
+  font-weight: 700;
+  text-align: left;
+
+  display: none;
+}
+
+.timeline__container {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+}
+
+.timeline__item {
+  display: flex;
+  position: relative;
+  width: 100%;
+}
+
+.timeline__item_title {
+  display: flex;
+  position: relative;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--marevo-color-text-black, #000);
+  min-width: min(147px, 29%);
+}
+
+.timeline__item_content {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  align-items: start;
+  padding: 0 0 25px 47px;
+  border-left: 1px solid var(--marevo-color-text-gray, #7d7d7d);
+}
+
+.timeline__item_content::before {
+  content: '';
+  background-image: var(--marevo-ui-icon_timeline_point);
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: 15px;
+  height: 15px;
+  position: absolute;
+  left: -8px;
+  top: 0;
+}
+
+.timeline__item:last-child .timeline__item_content {
+  border-left: none;
+}
+
+.timeline__item_subtitle {
+  font-size: 14px;
+  font-weight: 700;
+  text-align: left;
+  color: var(--marevo-color-text-black, #000);
+  margin-bottom: 4px;
+}
+
+.timeline__item_text {
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+  color: var(--marevo-color-text-gray, #7d7d7d);
+} */
+
+.timeline__buttons_container {
+}
+.timeline__buttons__wrapper {
+}
+.timeline__button {
+}
+.timeline__button_pay_deposit {
+}
+.timeline__button_image {
+}
+.timeline__button_image_wallet {
+}
+.summary_btn__caption {
+}
+.timeline__button_book_consult {
+}
+.timeline__button_image_calendar {
+}
+.popup__info_close {
+}
+
 
 /* ################  MOBILE ################ */
 
@@ -3992,6 +4093,11 @@ textarea[name="ar_order_comment"] {
     margin-top: 32px;
   }
 
+  /* ------------------ */
+
+  .popup__info_timeline_title {
+    display: flex;
+  }
 }
 
 @media screen and (max-width: 767px) and (orientation: portrait) {
