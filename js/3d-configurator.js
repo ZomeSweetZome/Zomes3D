@@ -174,6 +174,8 @@ let shippingDistance = 0;
 let totalAmountShipTax = 0;
 let userZipCode = '';
 
+const baseColorForRowA = '#aaaaaa';
+
 // CUSTOM SELECT
 jQuery(document).ready(function () {
   $('.custom-select').select2({
@@ -769,6 +771,8 @@ async function StartSettings() {
   applyAdditionalSharedParameters(7); // customWindows
 
   setVisibility(modelHouse, false, ['man']);
+  setObjectTexture(TEXTURES.interiorBase.materialNames, TEXTURES.interiorBase.white);
+  setMaterialColor(TEXTURES.interiorBase.materialNames[0], baseColorForRowA);
 
   $('#js-loader').addClass('invisible');
   $('.summary.entry-summary').removeClass('hidden');
@@ -1566,6 +1570,9 @@ async function changeModel(modelId) {
   modelHouse = IMPORTED_MODELS[0];
   modelHouse?.scale.set(0, 0, 0);
   modelHouse && scene.add(modelHouse);
+
+  setObjectTexture(TEXTURES.interiorBase.materialNames, TEXTURES.interiorBase.white);
+  setMaterialColor(TEXTURES.interiorBase.materialNames[0], baseColorForRowA);
 
   modelFurniture = IMPORTED_MODELS[1];
   modelFurniture.visible = false;

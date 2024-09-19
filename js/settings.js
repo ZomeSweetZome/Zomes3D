@@ -302,6 +302,14 @@ export const TEXTURES = {
       roughness: './src/textures/Soundproofing_Roughness.jpg',
     },
   },
+  interiorBase: {
+    materialNames: ['wall-outer.001'],
+    white: { // white
+      map: './src/textures/EQUITONE_white_Base_Color.jpg',
+      normal: './src/textures/EQUITONE_Normal_OpenGL.jpg',
+      roughness: './src/textures/EQUITONE_Roughness.jpg',
+    },
+  },
   exterior: {
     materialNames: ['wall-outer'],
     '0': { // grey
