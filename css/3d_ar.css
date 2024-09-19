@@ -1161,7 +1161,7 @@ body, html {
 }
 
 .menu__footer_delivery_info {
-  margin-bottom: 6px;
+  margin-bottom: 20px;
   position: relative;
 }
 
@@ -1173,7 +1173,7 @@ body, html {
 }
 
 .menu__footer_payment_info {
-  margin-bottom: 30px;
+  margin-bottom: 6px;
 }
 
 .menu__footer__info_icon {
@@ -1202,6 +1202,8 @@ body, html {
   font-weight: 500;
   width: 100%;
   margin-bottom: 20px;
+
+  display: none;
 }
 
 #delivery_info_title {
@@ -3208,10 +3210,6 @@ textarea[name="ar_order_comment"] {
     display: none;
   }
 
-  .menu__footer_payment_info {
-    margin-bottom: 20px;
-  }
-
   .ar_menu_footer_container .ar_total_amount-price {
     font-size: 14px;
     font-weight: 700;
@@ -3635,6 +3633,7 @@ textarea[name="ar_order_comment"] {
   .menu__footer_delivery_info {
     display: flex;
     justify-content: center;
+    margin-bottom: 0;
   }
 
   .menu__footer_payment_info {
@@ -3642,7 +3641,7 @@ textarea[name="ar_order_comment"] {
     align-items: center;
     justify-content: center;
     margin: 0;
-    margin-bottom: 5px;
+    margin-bottom: 0;
   }
 
   .menu_footer_amount__wrapper {
