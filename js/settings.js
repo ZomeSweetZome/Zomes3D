@@ -66,6 +66,10 @@ export const GROUP_ID_ORDER_FOR_NEXT_MENU_BTNS = [
   '0', '1', '3', '2', '4',
 ];
 
+export const OPTIONS_ID_ORDER_FOR_ADDONS = [
+  '2', '1', '5', '0', '4', '3',
+];
+
 export const DATA_HOUSE_NAME = {
   0: 'pod',
   1: 'office',

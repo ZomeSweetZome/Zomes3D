@@ -38,6 +38,7 @@ import {
   CALENDLY_LINK,
   BOOK_CONSULTATION_LINK,
   ORIGIN_ZIPCODE,
+  OPTIONS_ID_ORDER_FOR_ADDONS,
 } from './settings.js';
 
 import {
@@ -321,17 +322,53 @@ SharedParameterList[3].groupOptionAction = function () {
 
 // addons
 SharedParameterList[4].groupOptionAction = function () {
+  // if (isFirstStart || justClicked) {
+  //   if (this.value[2] == '1') { // foundation kit
+  //     floor.position.y = MODEL_CENTER_POSITION - FOUNDATION_HEIGHT;
+  //   } else {
+  //     floor.position.y = MODEL_CENTER_POSITION;
+  //   }
+
+  //   if (currentHouse == '2') {
+  //     if (this.value[3] == '1') { // extra door
+  //       isExtraDoorOn = true;
+  //     } else if (this.value[3] == '0') {
+  //       isExtraDoorOn = false;
+  //     }
+
+  //     updateFurnitureSet();
+  //   }
+
+  //   if (this.value[1] == '1') { // in-build desk
+  //     isBuiltInDeskOn = true;
+  //   } else if (this.value[1] == '0') {
+  //     isBuiltInDeskOn = false;
+  //   }
+
+  //   checkBuiltInDeskState();
+
+  //   if ($('#button_dimensions').hasClass('active')) {
+  //     if (this.value[2] == '1') { // foundation kit
+  //       isFoundationKitOn = true;
+  //     } else {
+  //       isFoundationKitOn = false;
+  //     }
+
+  //     dimensionsController(true);
+  //   }
+  // }
+
   if (isFirstStart || justClicked) {
-    if (this.value[2] == '1') { // foundation kit
+    if (this.value[0] == '1') { // foundation kit
       floor.position.y = MODEL_CENTER_POSITION - FOUNDATION_HEIGHT;
     } else {
       floor.position.y = MODEL_CENTER_POSITION;
     }
 
     if (currentHouse == '2') {
-      if (this.value[3] == '1') { // extra door
+      if (this.value[5] == '1') { // extra door
         isExtraDoorOn = true;
-      } else if (this.value[3] == '0') {
+      } else if (this.value[5] == '0') {
         isExtraDoorOn = false;
       }
 
@@ -347,7 +384,7 @@ SharedParameterList[4].groupOptionAction = function () {
     checkBuiltInDeskState();
 
     if ($('#button_dimensions').hasClass('active')) {
-      if (this.value[2] == '1') { // foundation kit
+      if (this.value[0] == '1') { // foundation kit
         isFoundationKitOn = true;
       } else {
         isFoundationKitOn = false;
@@ -753,8 +790,6 @@ async function StartSettings() {
   disableModelCastingShadows(modelFurniture);
   disableModelReceivingShadows(modelFurniture);
 
-  // InitMorphModel(modelHouse);
-
   preloadTextures();
 
   if (!isUrlEmpty) {
@@ -765,8 +800,6 @@ async function StartSettings() {
   PrepareAR();
   SetActionForGroups();
   ApplyURLParameters();
-
-  // CheckChanges();
 
   applyAdditionalSharedParameters(7); // customWindows
 
@@ -1274,13 +1307,19 @@ function updateStateVars() {
   isWindowCustomOn = (SharedParameterList[1].value[2] == '1') ? true : false;
   currentInteriorOption = SharedParameterList[2].value;
   currentExteriorOption = SharedParameterList[3].value;
-  isExtrimeWeatherPackOn = (SharedParameterList[4].value[0] == '1') ? true : false;
+  // isExtrimeWeatherPackOn = (SharedParameterList[4].value[0] == '1') ? true : false;
+  // isBuiltInDeskOn = (SharedParameterList[4].value[1] == '1') ? true : false;
+  // isFoundationKitOn = (SharedParameterList[4].value[2] == '1') ? true : false;
+  // isExtraDoorOn = (SharedParameterList[4].value[3] == '1') ? true : false;
+  // isHeatCoolUnitOn = (SharedParameterList[4].value[3] == '1') ? true : false;
+  // isAirconditionOn = (SharedParameterList[4].value[3] == '1') ? true : false;
+  // isSmartGlassOn = (SharedParameterList[4].value[3] == '1') ? true : false;
+  isFoundationKitOn = (SharedParameterList[4].value[0] == '1') ? true : false;
   isBuiltInDeskOn = (SharedParameterList[4].value[1] == '1') ? true : false;
-  isFoundationKitOn = (SharedParameterList[4].value[2] == '1') ? true : false;
-  isExtraDoorOn = (SharedParameterList[4].value[3] == '1') ? true : false;
-  isHeatCoolUnitOn = (SharedParameterList[4].value[3] == '1') ? true : false;
-  isAirconditionOn = (SharedParameterList[4].value[3] == '1') ? true : false;
-  isSmartGlassOn = (SharedParameterList[4].value[3] == '1') ? true : false;
+  isSmartGlassOn = (SharedParameterList[4].value[2] == '1') ? true : false;
+  isExtrimeWeatherPackOn = (SharedParameterList[4].value[3] == '1') ? true : false;
+  isAirconditionOn = (SharedParameterList[4].value[4] == '1') ? true : false;
+  isExtraDoorOn = (SharedParameterList[4].value[5] == '1') ? true : false;
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -1535,7 +1574,6 @@ function CheckChanges() {
 
   checkBuiltInDeskState();
 
-  // setOptionsResult();
   calculatePrice();
   calculateAndSetEstimateDate();
   collectSummary();
@@ -1745,6 +1783,8 @@ function calculatePrice() {
   let optionId = '';
   let activeOptions = [];
 
+
+
   // get active options array
   for (let i = 0; i < SharedParameterList.length - 4; i++) {
     if (SharedParameterList[i].type === 'string') {
@@ -1753,14 +1793,15 @@ function calculatePrice() {
     } else if (SharedParameterList[i].type === 'array-string') {
       for (let j = 0; j < SharedParameterList[i].value.length; j++) {
         if (SharedParameterList[i].value[j] == '1') {
-          optionId = `option_${i}-${j}`;
+          // optionId = `option_${i}-${j}`;
+          optionId = `option_${i}-${OPTIONS_ID_ORDER_FOR_ADDONS[j]}`;
           if ($(`.${optionId}`).hasClass('disabled')) { continue; }
           activeOptions.push(optionId);
         }
       }
     }
   }
-
+  
   let price = 0;
 
   allOptions.forEach((option) => {
@@ -1885,8 +1926,10 @@ function formatPrice(price, currency, needToBeRounded = true, needToAddSpace = f
   if (
     !price
     && SharedParameterList[1].value[2] != 1 // custom windows
-    && SharedParameterList[4].value[3] != 1 // extra door
-    && SharedParameterList[4].value[5] != 1 // smart glass
+    // && SharedParameterList[4].value[3] != 1 // extra door
+    && SharedParameterList[4].value[5] != 1 // extra door
+    // && SharedParameterList[4].value[5] != 1 // smart glass
+    && SharedParameterList[4].value[2] != 1 // smart glass
   ) {
     return getData(dataMain, 'ui_component_price_included', currentLanguage);
   }
@@ -4603,8 +4646,6 @@ function createTextTexture(text) {
 }
 
 function createDimensions(diameter, height) {
-  console.log("🚀 ~ createDimensions ~ isFoundationKitOn:", isFoundationKitOn, SharedParameterList[4].value[2]);
-
   const heightFoundation = (isFoundationKitOn) ? FOUNDATION_HEIGHT : 0;
 
   const startDiameter = new THREE.Vector3(-diameter / 2, height + MODEL_CENTER_POSITION - heightFoundation + lineOffset, 0);
