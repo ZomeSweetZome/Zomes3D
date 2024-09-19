@@ -76,6 +76,18 @@ export async function createMenu(mainData) {
         { '#summary_btn_calendar__caption': 'ui_summary_btn_book_text' },
         { '#summary_btn_save__caption': 'ui_summary_btn_save_text' },
         { '#details__tax_text': 'ui_summary_details__tax_text' },
+        // ----------
+        { '#today_title': 'ui_timeline_today_title' },
+        { '#today_subtitle': 'ui_timeline_today_subtitle' },
+        { '#today_text': 'ui_timeline_today_text' },
+        { '#prepayment_subtitle': 'ui_timeline_prepayment_subtitle' },
+        { '#prepayment_text': 'ui_timeline_prepayment_text' },
+        { '#ship_day_subtitle': 'ui_timeline_ship_day_subtitle' },
+        { '#ship_day_text': 'ui_timeline_ship_day_text' },
+        { '#delivery_subtitle': 'ui_timeline_delivery_subtitle' },
+        { '#delivery_text': 'ui_timeline_delivery_text' },
+        { '#timeline_btn_deposit': 'ui_ar_pay_deposit' },
+        { '#timeline_btn_bookconsult': 'ui_ar_book_consult' },
       );
 
       uiPlaceholdersMultiLanguages.push(

@@ -2954,6 +2954,10 @@ async function PrepareUI() {
 
   // Date and Tax popups
   jQuery(document).ready(function () {
+    $('.menu__footer_production_timeline .menu__footer__info_icon').on('click', function () {
+      $('.popup__info_timeline').toggleClass('hidden');
+    });
+
     $('.menu__footer_delivery_info .menu__footer__info_icon').on('click', function () {
       $('.popup__info_date').toggleClass('hidden');
     });
@@ -3068,6 +3072,9 @@ function calculateAndSetEstimateDate() {
   const textPart2 = getData(dataMain, 'ui_date_popup_text_2', currentLanguage);
   $('#delivery_info_date').text(dateText);
   $('.popup__info_content_date').html(`Ships ${dateText}. ${textPart1} ${maximumLeadTimeWeeks} ${textPart2}`);
+  
+  console.log("🚀 ~ calculateAndSetEstimateDate ~ estimateDate:", estimateDate);
+  console.log("🚀 ~ calculateAndSetEstimateDate ~ dateText:", dateText);
 }
 
 function addLeadTimeToNow(dateStr, leadTimeInWeeks = 3, lang = 'EN') {

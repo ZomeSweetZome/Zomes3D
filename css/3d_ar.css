@@ -59,6 +59,8 @@
   --marevo-ui-icon_floppy_g : url(../src/ar-ui-icons/floppy_g.svg);
   --marevo-ui-icon_calendar_b : url(../src/ar-ui-icons/calendar_b.svg);
   --marevo-ui-icon_calendar_w : url(../src/ar-ui-icons/calendar_w.svg);
+  --marevo-ui-icon_wallet_b : url(../src/ar-ui-icons/wallet_b.svg);
+  --marevo-ui-icon_wallet_w : url(../src/ar-ui-icons/wallet_w.svg);
 
   --marevo-ui-btn_pod : url(../src/ar-ui-icons/btn_pod.png);
   --marevo-ui-btn_office : url(../src/ar-ui-icons/btn_office.png);
@@ -359,7 +361,7 @@ body, html {
   box-sizing: border-box;
   /* font-family: "Satoshi", sans-serif; */
   font-family: "Inter", sans-serif;
-  font-weight: normal;
+  /* font-weight: normal; */
 }
 
 .product-type-3dmodel b {
@@ -1034,7 +1036,8 @@ body, html {
   background-color: var(--marevo-color-text-white, #ffffff);
   cursor: pointer;
   pointer-events: auto;
-  padding: 18px;
+  /* padding: 18px; */
+  padding: 15px;
   transition: all 0.3s ease;
 }
 
@@ -1196,15 +1199,19 @@ body, html {
   display: none;
 }
 
-.delivery_info_caption {
-  color: var(--marevo-color-text-gray, #7d7d7d);
+.menu__footer_production_timeline {
+  display: flex;
+  align-items: center;
+  color: var(--marevo-color-text-black, #000000);
   font-size: 14px;
   font-weight: 500;
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 6px;
 
-  display: none;
+  /* display: none; */
 }
+
+
 
 #delivery_info_title {
   margin-right: 6px;
@@ -3121,9 +3128,11 @@ textarea[name="ar_order_comment"] {
     height: 20px;
   }
 
-  .delivery_info_caption {
-    display: none;
+  .menu__footer_production_timeline {
+    font-size: 10px;
+    /* display: none; */
   }
+
   .ar_menu_footer_container .ar_total_amount-price {
     font-size: 14px;
     font-weight: 700;
@@ -3206,7 +3215,7 @@ textarea[name="ar_order_comment"] {
     height: 20px;
   }
 
-  .delivery_info_caption {
+  .menu__footer_production_timeline {
     display: none;
   }
 
@@ -3591,7 +3600,7 @@ textarea[name="ar_order_comment"] {
     height: 18px;
   }
 
-  .delivery_info_caption {
+  .menu__footer_production_timeline {
     display: none;
   }
   
