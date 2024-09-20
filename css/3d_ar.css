@@ -765,6 +765,7 @@ body, html {
   pointer-events: all;
 }
 
+
 /*!------------------------------------*/
 
 
@@ -1130,7 +1131,7 @@ body, html {
 }
 
 .ar_book-btn .ar_book-btn__image {
-  content: var(--marevo-ui-icon_floppy_w);
+  content: var(--marevo-ui-icon_calendar_w);
   width: 18px;
   height: 18px;
   margin-right: 8px;
@@ -1147,7 +1148,7 @@ body, html {
 }
 
 .ar_book-btn:hover .ar_book-btn__image {
-  content: var(--marevo-ui-icon_floppy_b);
+  content: var(--marevo-ui-icon_calendar_b);
 }
 
 
@@ -1934,6 +1935,8 @@ textarea[name="ar_order_comment"] {
 .option .component_price {
   margin-left: auto;
   margin-right: 12px;
+  padding-left: 20px;
+  text-align: end;
 }
 
 .option.disabled .component_price {
@@ -2714,8 +2717,17 @@ textarea[name="ar_order_comment"] {
 
 /* --------------------------- */
 
-/* .popup__info_timeline {
-  width: min(510px, 100%);
+.popup__info_timeline {
+  /* width: min(510px, 100%); */
+  /* max-width: 510px; */
+  width: 510px;
+  transform: translateY(calc(-100% + 50px));
+}
+
+.popup__info_timeline_content {
+  max-height: calc(100dvh - 230px - var(--marevo-header-height, 100px));
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .popup__info_timeline_title {
@@ -2731,6 +2743,7 @@ textarea[name="ar_order_comment"] {
   flex-direction: column;
   position: relative;
   width: 100%;
+  margin-bottom: 20px;
 }
 
 .timeline__item {
@@ -2754,7 +2767,7 @@ textarea[name="ar_order_comment"] {
   position: relative;
   flex-direction: column;
   align-items: start;
-  padding: 0 0 25px 47px;
+  padding: 0 0 27px 47px;
   border-left: 1px solid var(--marevo-color-text-gray, #7d7d7d);
 }
 
@@ -2771,6 +2784,7 @@ textarea[name="ar_order_comment"] {
 }
 
 .timeline__item:last-child .timeline__item_content {
+  padding-bottom: 0;
   border-left: none;
 }
 
@@ -2787,29 +2801,88 @@ textarea[name="ar_order_comment"] {
   font-weight: 500;
   text-align: left;
   color: var(--marevo-color-text-gray, #7d7d7d);
-} */
+}
 
 .timeline__buttons_container {
-}
-.timeline__buttons__wrapper {
-}
-.timeline__button {
-}
-.timeline__button_pay_deposit {
-}
-.timeline__button_image {
-}
-.timeline__button_image_wallet {
-}
-.summary_btn__caption {
-}
-.timeline__button_book_consult {
-}
-.timeline__button_image_calendar {
-}
-.popup__info_close {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  gap: 16px;
+  flex-wrap: wrap;
+  flex: 1 1 auto;
 }
 
+.timeline__buttons_container .timeline__button {
+  display: flex;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  /* width: 100%; */
+  flex: 1 1 auto;
+  height: 48px;
+  border: 1px solid var(--marevo-color-text-black, #000000);
+  border-radius:50px;
+  padding: 0 16px;
+  white-space: nowrap;
+  cursor: pointer;
+
+  transition: all 0.3s ease;
+}
+
+.timeline__button_pay_deposit {
+  color: var(--marevo-color-text-black, #000);
+  background-color: var(--marevo-color-text-white, #ffffff);
+}
+
+.timeline__button_pay_deposit:hover {
+  background-color: var(--marevo-color-text-black, #000);
+  color: var(--marevo-color-text-white, #ffffff);
+}
+
+.timeline__button_book_consult {
+  background-color: var(--marevo-color-text-black, #000);
+  color: var(--marevo-color-text-white, #ffffff);
+}
+
+.timeline__button_book_consult:hover {
+  color: var(--marevo-color-text-black, #000);
+  background-color: var(--marevo-color-text-white, #ffffff);
+}
+
+.timeline__button_image {
+  margin-right: 8px;
+  width: 22px;
+  height: 22px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  transition: all 0.3s ease;
+}
+
+.timeline__button_image_wallet {
+  background-image: var(--marevo-ui-icon_wallet_b);
+}
+
+.timeline__button_image_calendar {
+  background-image: var(--marevo-ui-icon_calendar_w);
+}
+
+.timeline__button_pay_deposit:hover .timeline__button_image_wallet {
+  background-image: var(--marevo-ui-icon_wallet_w);
+}
+
+.timeline__button_book_consult:hover .timeline__button_image_calendar {
+  background-image: var(--marevo-ui-icon_calendar_b);
+}
+
+/* ----------------------- */
+
+#menu_item_info-4_3 {
+  visibility: hidden;
+}
 
 /* ################  MOBILE ################ */
 

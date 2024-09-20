@@ -1875,7 +1875,7 @@ function calculatePrice() {
     }
   }
 
-  if (!activeOptions.includes('option_0-2')) { // the hous is not a studio
+  if (!activeOptions.includes('option_0-2')) { // the house is not a studio
     $(`.option_4-3 .component_price`).html(`${getData(dataMain, 'ui_component_not_allowed', currentLanguage)}`);
   }
 
@@ -3232,7 +3232,6 @@ function menuInfoBtnHandler(opt) {
 
     // show menu info
     $('.ar_menu_info_container').addClass('active');
-
   });
 }
 
