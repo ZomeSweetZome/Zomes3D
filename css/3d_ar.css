@@ -153,7 +153,7 @@ body, html {
 /* HEADER */
 
 #marevo_app #main-header {
-  position: absolute;
+  position: fixed;
   left: 0;
   top: 0;
   width: 100%;
@@ -165,7 +165,8 @@ body, html {
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--marevo-color-popup-border, #ECECEF);
-
+  background-color: white;
+  z-index: 99999;
   user-select: none;
 }
 
@@ -916,7 +917,7 @@ body, html {
   justify-content: center;
   text-align: center;
   min-width: 150px;
-  height: 56px;
+  height: 48px;
   padding: 0 28px;
   margin-right: 10px;
   background-color: var(--marevo-color-bgrd-btn, #fff);
@@ -1998,6 +1999,7 @@ textarea[name="ar_order_comment"] {
 .popup__info_tax {
   text-align: start;
   width: min(657px, calc(100vw - 40px));
+  z-index: 99999;
 }
 
 .popup_tax__title {
@@ -2071,9 +2073,9 @@ textarea[name="ar_order_comment"] {
 }
 
 .popup__info_tax form button:disabled {
-  color: var(--marevo-color-text-gray, #777777);
+  color: var(--marevo-color-disabled, #B9B9B9);
   background-color: var(--marevo-color-text-white, #fff);
-  border: 1px solid var(--marevo-color-text-gray, #777777);
+  border: 1px solid var(--marevo-color-disabled, #B9B9B9);
   cursor: default;
 }
 
@@ -2081,10 +2083,11 @@ textarea[name="ar_order_comment"] {
   display: none;
 }
 
-.popup__info_tax form button:hover {
+.popup__info_tax form button:not(:disabled):hover {
   background-color: var(--marevo-color-text-white, #fff);
   color: var(--marevo-color-text-black, #000);
 }
+
 
 /*!-----------------------------*/
 
@@ -2175,7 +2178,7 @@ textarea[name="ar_order_comment"] {
 }
 
 .popup_select__item_button {
-  width: 163px;
+  width: 180px;
   height: 35px;
   padding: 0 14px;
   border-radius: 20px;
@@ -2494,14 +2497,14 @@ textarea[name="ar_order_comment"] {
 
 .contact_form__popup-overlay {
   position: fixed;
-  /* top: 0; */
-  top: var(--marevo-header-height, 100px);
+  top: 0;
+  /* top: var(--marevo-header-height, 100px); */
   left: 0;
   width: 100%;
   height: 100%;
   /* background-color: transparent; */
   background-color: rgba(0, 0, 0, 0.05);
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(3px);
   z-index: 1000;
   justify-content: center;
   align-items: center;
@@ -2609,7 +2612,7 @@ textarea[name="ar_order_comment"] {
 }
 
 .contact_form__form-item input {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 500;
   color: var(--marevo-color-text-black, #000);
   border: none;
@@ -2638,7 +2641,7 @@ textarea[name="ar_order_comment"] {
   display: inline-flex;
   align-items: center;
   cursor: pointer;
-
+  font-size: 16px;
   margin-bottom: 30px;
 }
 
@@ -2777,7 +2780,7 @@ textarea[name="ar_order_comment"] {
   color: var(--marevo-color-text-black, #000);
   min-width: min(147px, 29%);
   max-width: 29%;
-  padding-right: 14px;
+  padding-right: 20px;
 }
 
 .timeline__item_content {
@@ -3471,12 +3474,17 @@ textarea[name="ar_order_comment"] {
 
   .popup__info_timeline {
     height: calc(100svh - var(--marevo-header-height, 100px));
+    height: 100dvh;
     padding: 30px;
     padding-right: 15px;
     border-left: none;
     border-right: none;
     z-index: 8;
     transform: translateX(-100%);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
   }
   
   .popup__info_timeline.active {
@@ -3719,6 +3727,10 @@ textarea[name="ar_order_comment"] {
     height: 20px;
   }
 
+  .timeline__buttons_container {
+    margin-bottom: 40px;
+  }
+
   /*!---------------*/
   
   .canvas_buttons__bottom {
@@ -3918,6 +3930,7 @@ textarea[name="ar_order_comment"] {
     width: 18px;
     height: 18px;
     margin: 0;
+    align-self: center;
   }
 
   .ar_menu_footer_container .ar_buy-btn:hover {
@@ -4011,6 +4024,7 @@ textarea[name="ar_order_comment"] {
   .contact_form__popup-content form .contact_form__form-item_checkbox label {
     display: flex;
     margin-bottom: 20px;
+    font-size: 14px;
   }
 
   .contact_form__popup-content form input::placeholder,
@@ -4020,7 +4034,7 @@ textarea[name="ar_order_comment"] {
   }
 
   .contact_form__form-item {
-    height: 35px;
+    height: 42px;
     padding: 0 20px;
   }
 
@@ -4136,7 +4150,8 @@ textarea[name="ar_order_comment"] {
     justify-content: start;
     text-align: start;
     position: fixed;
-    height: calc(100vh - var(--marevo-header-height-mobile, 53px));
+    /* height: calc(100svh - var(--marevo-header-height-mobile, 53px)); */
+    height: 100dvh;
     width: 100vw;
     top: var(--marevo-header-height-mobile, 60px);
     left: 0;
@@ -4144,6 +4159,7 @@ textarea[name="ar_order_comment"] {
     padding: 16px 20px 34px;
     border: none;
     border-radius: 0;
+    overflow: hidden;
   }
   
   .popup__info_content_tax {
@@ -4159,7 +4175,7 @@ textarea[name="ar_order_comment"] {
   }
   
   .popup__info_tax form .contact_form__form-item {
-    height: 35px;
+    height: 42px;
   }
   
   .popup__info_tax form .contact_form__form-item label {
@@ -4177,7 +4193,7 @@ textarea[name="ar_order_comment"] {
   .popup__info_tax form button {
     align-self: flex-start;
     width: 100%;
-    height: 35px;
+    height: 42px;
     padding: 0 24px;
     border-radius: 50px;
     font-size: 14px;
@@ -4194,7 +4210,7 @@ textarea[name="ar_order_comment"] {
     justify-content: center;
     align-items: center;
     width: 100%;
-    height: 35px;
+    height: 42px;
     padding: 0 24px;
     border-radius: 50px;
     font-size: 14px;
@@ -4211,6 +4227,7 @@ textarea[name="ar_order_comment"] {
 @media screen and (max-width: 767px) and (orientation: portrait) {
   .ar_menu_info_container {
     height: calc(100svh - var(--marevo-header-height-mobile, 53px) - 70px);
+    height: 100dvh;
   }
 
   .popup__info_timeline {
@@ -4287,7 +4304,7 @@ textarea[name="ar_order_comment"] {
   }
 
   .popup_select__item_button {
-    width: 150px;
+    width: 154px;
     padding: 0 6px;
   }
 
@@ -4448,7 +4465,7 @@ model-viewer {
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 30;
+  z-index: 999999;
   background-color: #FFFFFF;
 }
 
