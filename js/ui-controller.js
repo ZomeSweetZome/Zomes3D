@@ -42,7 +42,6 @@ export async function createMenu(mainData) {
         { '#popup-qr-title-ui': 'ui_popup-title-qr' },
         { '#popup-qr-text-ui': 'ui_popup-text-qr' },
         { '#delivery_info_title': 'ui_delivery_info_title' },
-        { '#delivery_info_caption': 'ui_delivery_info_caption' },
         { '#payment_info_title': 'ui_payment_info_title' },
         { '.ar_button_back__caption': 'ui_btn_back' },
         { '.ar_button_next__caption': 'ui_btn_next' },
