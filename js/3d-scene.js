@@ -431,7 +431,7 @@ export async function disposeModel(model) {
 }
 
 export async function loadModel(modelPath, i = 1, retryCount = 999, retryDelay = 1000) {
-  console.log("🚀 ~ loadModel ~ model:", modelPath);
+  // console.log("🚀 ~ loadModel ~ model:", modelPath);
   if (!modelPath) { return; }
 
   const {

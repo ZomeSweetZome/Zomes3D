@@ -53,6 +53,8 @@ export async function createMenu(mainData) {
         { '#canvas_notification': 'ui_canvas_notification' },
         { '#canvas_notification_limit': 'ui_canvas_notification_limit' },
         { '#ar_book-btn__caption': 'ui_ar_book-btn__caption' },
+        { '#ar_button_book_consult_1 .ar_book-btn__caption': 'ui_ar_book-btn__caption' },
+        { '#ar_button_book_consult_2 .ar_book-btn__caption': 'ui_ar_book-btn__caption' },
         // ----------
         { '.summary__popup-title': 'ui_summary_title' },
         { '.details__item_not_included': 'ui_summary_not_included' },
@@ -79,9 +81,7 @@ export async function createMenu(mainData) {
         // ----------
         { '.popup__info_timeline_title': 'ui_timeline_title' },
         { '#today_title': 'ui_timeline_today_title' },
-        { '#today_subtitle': 'ui_timeline_today_subtitle' },
         { '#today_text': 'ui_timeline_today_text' },
-        { '#prepayment_subtitle': 'ui_timeline_prepayment_subtitle' },
         { '#prepayment_text': 'ui_timeline_prepayment_text' },
         { '#ship_day_subtitle': 'ui_timeline_ship_day_subtitle' },
         { '#ship_day_text': 'ui_timeline_ship_day_text' },

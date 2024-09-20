@@ -37,6 +37,7 @@ import {
   HUMAN_HEIGHT,
   CALENDLY_LINK,
   BOOK_CONSULTATION_LINK,
+  PAY_DEPOSITE_LINK,
   ORIGIN_ZIPCODE,
   OPTIONS_ID_ORDER_FOR_ADDONS,
 } from './settings.js';
@@ -1575,7 +1576,7 @@ function CheckChanges() {
   checkBuiltInDeskState();
 
   calculatePrice();
-  calculateAndSetEstimateDate();
+  calculateAndSetEstimateDates();
   collectSummary();
 }
 //! ************************************************
@@ -1899,6 +1900,7 @@ function convertPriceToNumber(priceString) {
 
   return priceNumber;
 }
+
 
 function getOrderList() {
   // let orderList = "ORDER" + '\n';
@@ -2948,16 +2950,12 @@ async function PrepareUI() {
     modelSelectorHandler();
     getPdfBtnHandler();
     bookTimeBtnHandler();
-    bookConsultationBtns();
+    bookConsultationAndDepositBtns();
     calculateTaxHandler();
   });
 
   // Date and Tax popups
   jQuery(document).ready(function () {
-    $('.menu__footer_production_timeline .menu__footer__info_icon').on('click', function () {
-      $('.popup__info_timeline').toggleClass('hidden');
-    });
-
     $('.menu__footer_delivery_info .menu__footer__info_icon').on('click', function () {
       $('.popup__info_date').toggleClass('hidden');
     });
@@ -3065,19 +3063,31 @@ function validateEmail(email) {
   return emailPattern.test(email);
 }
 
-function calculateAndSetEstimateDate() {
-  const estimateDate = getData(dataPrice, 'estimateDate', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`);
-  const dateText = addLeadTimeToNow(estimateDate, maximumLeadTimeWeeks, currentLanguage);
+function calculateAndSetEstimateDates() {
+  const estimateDate = getData(dataPrice, 'shipDate', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`);
+  const shipDateString = getDatedStrings(estimateDate, maximumLeadTimeWeeks, currentLanguage).shipDateString;
+  const prepaymentDateString = getDatedStrings(estimateDate, maximumLeadTimeWeeks, currentLanguage).prepaymentDateString;
+  const deliveryDateString = getDatedStrings(estimateDate, maximumLeadTimeWeeks, currentLanguage).deliveryDateString;
   const textPart1 = getData(dataMain, 'ui_date_popup_text_1', currentLanguage);
   const textPart2 = getData(dataMain, 'ui_date_popup_text_2', currentLanguage);
-  $('#delivery_info_date').text(dateText);
-  $('.popup__info_content_date').html(`Ships ${dateText}. ${textPart1} ${maximumLeadTimeWeeks} ${textPart2}`);
+  $('#delivery_info_date').text(shipDateString);
+  $('.popup__info_content_date').html(`Ships ${shipDateString}. ${textPart1} ${maximumLeadTimeWeeks} ${textPart2}`);
   
-  console.log("🚀 ~ calculateAndSetEstimateDate ~ estimateDate:", estimateDate);
-  console.log("🚀 ~ calculateAndSetEstimateDate ~ dateText:", dateText);
+  $('#prepayment_title').text(prepaymentDateString);
+  $('#ship_day_title').text(shipDateString);
+  $('#delivery_title').text(deliveryDateString);
+
+  const depositTextString = getData(dataMain, 'ui_timeline_today_subtitle', currentLanguage);
+  const depositAmount = convertPriceToNumber(getData(dataPrice, 'depositAmount', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
+  const depositAmountString = formatPrice(depositAmount, currentCurrencySign);
+  const prepaynemtTextString = getData(dataMain, 'ui_timeline_prepayment_subtitle', currentLanguage);
+  const prepaynemtAmountString = formatPrice(totalAmount / 2, currentCurrencySign);
+
+  $('#today_subtitle').text(`${depositAmountString} ${depositTextString}`);
+  $('#prepayment_subtitle').text(`${prepaynemtTextString} (${prepaynemtAmountString})`);
 }
 
-function addLeadTimeToNow(dateStr, leadTimeInWeeks = 3, lang = 'EN') {
+function getDatedStrings(dateStr, leadTimeInWeeks = 3, lang = 'EN', prepaymentDateWeeks = -4, deliveryDateWeeks = 2) {
   const monthNames = {
     EN: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
     FR: ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"],
@@ -3097,6 +3107,7 @@ function addLeadTimeToNow(dateStr, leadTimeInWeeks = 3, lang = 'EN') {
   };
 
   let inputDate;
+
   if (!dateStr) {
     inputDate = new Date();
   } else {
@@ -3114,12 +3125,21 @@ function addLeadTimeToNow(dateStr, leadTimeInWeeks = 3, lang = 'EN') {
   }
 
   let currentDate = new Date();
-  let threeWeeksLater = new Date();
-  threeWeeksLater.setDate(currentDate.getDate() + leadTimeInWeeks * 7);
+  let newDate = new Date();
+  newDate.setDate(currentDate.getDate() + leadTimeInWeeks * 7);
 
-  let resultDate = (inputDate > threeWeeksLater) ? inputDate : threeWeeksLater;
+  const resultDate = (inputDate > newDate) ? inputDate : newDate;
+  const shipDateString = formatDate(resultDate, lang);
 
-  return formatDate(resultDate, lang);
+  let prepaymentDate = new Date(resultDate);
+  let deliveryDate = new Date(resultDate);
+
+  prepaymentDate.setDate(resultDate.getDate() + prepaymentDateWeeks * 7);
+  deliveryDate.setDate(resultDate.getDate() + deliveryDateWeeks * 7);
+  const prepaymentDateString = formatDate(prepaymentDate, lang);
+  const deliveryDateString = formatDate(deliveryDate, lang);
+
+  return {shipDateString, prepaymentDateString, deliveryDateString};
 }
 
 
@@ -3464,8 +3484,21 @@ function bookTimeBtnHandler() {
   });
 }
 
-function bookConsultationBtns() {
+function bookConsultationAndDepositBtns() {
   $('#ar_button_book_consult_1, #ar_button_book_consult_2').on('click', function() {
+    $('.popup__info_timeline').toggleClass('active');
+  });
+
+  $('#popup__info_timeline_close').on('click', function() {
+    $('.popup__info_timeline').removeClass('active');
+  });
+
+  $('#timeline_btn_pay_deposit').on('click', function() {
+    window.open(PAY_DEPOSITE_LINK, '_self'); // same browser window
+    // window.open(PAY_DEPOSITE_LINK, '_blank'); // new browser window
+  });
+
+  $('#timeline_btn_book_consult').on('click', function() {
     window.open(BOOK_CONSULTATION_LINK, '_self'); // same browser window
     // window.open(BOOK_CONSULTATION_LINK, '_blank'); // new browser window
   });

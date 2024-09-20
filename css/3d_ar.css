@@ -48,6 +48,7 @@
   --marevo-ui-icon_arrow_up45 : url(../src/ar-ui-icons/icon_arrow_up45.svg);
   --marevo-ui-icon_btn_download_down_w : url(../src/ar-ui-icons/icon_btn_download_down_w.svg);
   --marevo-ui-icon_btn_download_right_w : url(../src/ar-ui-icons/icon_btn_download_right_w.svg);
+  --marevo-ui-icon_btn_download_right_b : url(../src/ar-ui-icons/icon_btn_download_right_b.svg);
   --marevo-ui-icon_email : url(../src/ar-ui-icons/icon_email.svg);
   --marevo-ui-icon_facebook : url(../src/ar-ui-icons/icon_facebook.svg);
   
@@ -1131,10 +1132,10 @@ body, html {
 }
 
 .ar_book-btn .ar_book-btn__image {
-  content: var(--marevo-ui-icon_calendar_w);
+  content: var(--marevo-ui-icon_btn_download_right_w);
   width: 18px;
   height: 18px;
-  margin-right: 8px;
+  margin-left: 8px;
 }
 
 .ar_book-btn .ar_book-btn__caption {
@@ -1148,7 +1149,7 @@ body, html {
 }
 
 .ar_book-btn:hover .ar_book-btn__image {
-  content: var(--marevo-ui-icon_calendar_b);
+  content: var(--marevo-ui-icon_btn_download_right_b);
 }
 
 
@@ -2718,24 +2719,39 @@ textarea[name="ar_order_comment"] {
 /* --------------------------- */
 
 .popup__info_timeline {
-  /* width: min(510px, 100%); */
-  /* max-width: 510px; */
-  width: 510px;
-  transform: translateY(calc(-100% + 50px));
+  display: flex;
+  position: absolute;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 30px;
+  padding-right: 15px;
+  background-color: var(--marevo-color-bgrd-menu, #fff);
+  /* overflow-y: auto; */
+  border-left: 1px solid var(--marevo-color-popup-border, #ECECEF);
+  border-right: 1px solid var(--marevo-color-popup-border, #ECECEF);
+  z-index: 2;
+  transform: translateX(0);
+  transition: transform .3s ease;
+}
+
+.popup__info_timeline.active {
+  transform: translateX(100%);
+}
+
+.popup__info_timeline .ar_menu_info__header {
+  padding-right: 15px;
 }
 
 .popup__info_timeline_content {
-  max-height: calc(100dvh - 230px - var(--marevo-header-height, 100px));
   overflow-x: hidden;
   overflow-y: auto;
+  padding-right: 15px;
 }
 
 .popup__info_timeline_title {
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 700;
-  text-align: left;
-
-  display: none;
 }
 
 .timeline__container {
@@ -2760,6 +2776,8 @@ textarea[name="ar_order_comment"] {
   font-weight: 700;
   color: var(--marevo-color-text-black, #000);
   min-width: min(147px, 29%);
+  max-width: 29%;
+  padding-right: 14px;
 }
 
 .timeline__item_content {
@@ -3129,6 +3147,10 @@ textarea[name="ar_order_comment"] {
     padding: 20px;
   }
 
+  .popup__info_timeline {
+    padding: 20px;
+  }
+
   .ar_menu_info__tabs {
     width: 100%;
     margin-bottom: 30px;
@@ -3159,11 +3181,16 @@ textarea[name="ar_order_comment"] {
     font-size: 14px;
   }
 
+  
   .ar_menu_info__header_close {
     width: 20px;
     height: 20px;
   }
-
+  
+  .popup__info_timeline_title {
+    font-size: 14px;
+  }
+  
   /*! -----------------------------*/
 
   .title_list__container .title_list {
@@ -3430,7 +3457,7 @@ textarea[name="ar_order_comment"] {
   }
 
   .ar_menu_info_container {
-    height: calc(100svh - var(--marevo-header-height, 100px) - 78px);
+    height: calc(100svh - var(--marevo-header-height, 100px) - 70px);
     padding: 30px;
     border-left: none;
     border-right: none;
@@ -3439,6 +3466,20 @@ textarea[name="ar_order_comment"] {
   }
   
   .ar_menu_info_container.active {
+    transform: translateX(0);
+  }
+
+  .popup__info_timeline {
+    height: calc(100svh - var(--marevo-header-height, 100px));
+    padding: 30px;
+    padding-right: 15px;
+    border-left: none;
+    border-right: none;
+    z-index: 8;
+    transform: translateX(-100%);
+  }
+  
+  .popup__info_timeline.active {
     transform: translateX(0);
   }
 
@@ -4165,17 +4206,15 @@ textarea[name="ar_order_comment"] {
 
     margin-top: 32px;
   }
-
-  /* ------------------ */
-
-  .popup__info_timeline_title {
-    display: flex;
-  }
 }
 
 @media screen and (max-width: 767px) and (orientation: portrait) {
   .ar_menu_info_container {
-    height: calc(100svh - var(--marevo-header-height-mobile, 53px) - 78px);
+    height: calc(100svh - var(--marevo-header-height-mobile, 53px) - 70px);
+  }
+
+  .popup__info_timeline {
+    height: calc(100svh - var(--marevo-header-height-mobile, 53px));
   }
 
   .ar_conf_container {
