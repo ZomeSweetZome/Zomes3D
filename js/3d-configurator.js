@@ -3512,13 +3512,13 @@ function bookTimeBtnHandler() {
 }
 
 function bookConsultationAndDepositBtns() {
-  $('#ar_button_book_consult_1, #ar_button_book_consult_2').on('click', function() {
-    $('.popup__info_timeline').toggleClass('active');
-  });
+  // $('#ar_button_book_consult_1, #ar_button_book_consult_2').on('click', function() {
+  //   $('.popup__info_timeline').toggleClass('active');
+  // });
 
-  $('#popup__info_timeline_close').on('click', function() {
-    $('.popup__info_timeline').removeClass('active');
-  });
+  // $('#popup__info_timeline_close').on('click', function() {
+  //   $('.popup__info_timeline').removeClass('active');
+  // });
 
   $('#timeline_btn_pay_deposit').on('click', function() {
     // window.open(PAY_DEPOSITE_LINK, '_self'); // same browser window

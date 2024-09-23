@@ -52,8 +52,8 @@ export async function createMenu(mainData) {
         { '#canvas_notification': 'ui_canvas_notification' },
         { '#canvas_notification_limit': 'ui_canvas_notification_limit' },
         { '#ar_book-btn__caption': 'ui_ar_book-btn__caption' },
-        { '#ar_button_book_consult_1 .ar_book-btn__caption': 'ui_ar_book-btn__caption' },
-        { '#ar_button_book_consult_2 .ar_book-btn__caption': 'ui_ar_book-btn__caption' },
+        // { '#ar_button_book_consult_1 .ar_book-btn__caption': 'ui_ar_book-btn__caption' },
+        // { '#ar_button_book_consult_2 .ar_book-btn__caption': 'ui_ar_book-btn__caption' },
         // ----------
         { '.summary__popup-title': 'ui_summary_title' },
         { '.details__item_not_included': 'ui_summary_not_included' },

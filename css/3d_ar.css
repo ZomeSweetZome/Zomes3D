@@ -1168,7 +1168,6 @@ body, html {
 }
 
 .menu__footer_delivery_info {
-  margin-bottom: 20px;
   position: relative;
 }
 
@@ -3872,7 +3871,6 @@ textarea[name="ar_order_comment"] {
   .menu__footer_delivery_info {
     display: flex;
     justify-content: center;
-    margin-bottom: 0;
   }
 
   .menu__footer_payment_info {
