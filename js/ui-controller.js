@@ -37,7 +37,7 @@ export async function createMenu(mainData) {
         { '#button_work .canvas_btn_text': 'ui_btn_radio_work' },
         { '#button_live .canvas_btn_text': 'ui_btn_radio_live' },
         { '#ar_button_calculate__caption .ar_button_calculate__caption_large': 'ui_btn_calculate_tax' },
-        { '#ar_button_order__caption .ar_button_order__caption_large': 'ui_btn_buy' },
+        // { '#ar_button_order__caption .ar_button_order__caption_large': 'ui_btn_buy' },
         { '.popup-sharing-title': 'ui_popup-title-share' },
         { '#popup-qr-title-ui': 'ui_popup-title-qr' },
         { '#popup-qr-text-ui': 'ui_popup-text-qr' },
@@ -397,16 +397,19 @@ function setEventListenersForNextBtns() {
   $('.ar_button_next').on('click', function () {
     const itemId = $(this).attr('id');
     const identifier = itemId.split('ar_button_next_')[1];
-    const nextIndex = GROUP_ID_ORDER_FOR_NEXT_MENU_BTNS.indexOf(identifier) + 1;
-    $('.ar_menu_info_container').removeClass('active');
-    $('.ar_filter .ar_filter_group').addClass('invisible');
-    $(`#group-${GROUP_ID_ORDER_FOR_NEXT_MENU_BTNS[nextIndex]}`).removeClass('invisible');
 
-    if (nextIndex === 3) {
-      $('#button_camera_inside').click();
-    }
-    if (nextIndex === 4 && isCameraInside) {
-      $('#button_camera_outside').click();
+    if (identifier !== '4') {
+      const nextIndex = GROUP_ID_ORDER_FOR_NEXT_MENU_BTNS.indexOf(identifier) + 1;
+      $('.ar_menu_info_container').removeClass('active');
+      $('.ar_filter .ar_filter_group').addClass('invisible');
+      $(`#group-${GROUP_ID_ORDER_FOR_NEXT_MENU_BTNS[nextIndex]}`).removeClass('invisible');
+  
+      if (nextIndex === 3) {
+        $('#button_camera_inside').click();
+      }
+      if (nextIndex === 4 && isCameraInside) {
+        $('#button_camera_outside').click();
+      }
     }
   });
 }

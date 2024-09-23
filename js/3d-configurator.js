@@ -2093,7 +2093,7 @@ function setMaterialProperty(materialName, value, property = 'metalness') {
   }
 
   materialObject[property] = value;
-  console.log(`${property} for material ${materialName} was set up to ${value}`);
+  // console.log(`${property} for material ${materialName} was set up to ${value}`);
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -3462,7 +3462,7 @@ function notificationHandler() {
 }
 
 function summaryBtnsHandler() {
-  $('#ar_button_order').on('click', function () {
+  $(document).on('click', '#ar_button_next_4', function () {
     if (!isCameraInside) {
       proceedSummaryAndPdf();
     } else {

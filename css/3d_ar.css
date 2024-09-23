@@ -851,7 +851,7 @@ body, html {
 }
 
 
-#group-4 .ar_button_next {
+/* #group-4 .ar_button_next {
   display: none;
 }
 
@@ -862,7 +862,7 @@ body, html {
 #group-4 .ar_filter_caption::after {
   content: '';
   width: 80px;
-}
+} */
 
 /*!------------------------------------*/
 
