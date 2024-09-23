@@ -36,7 +36,7 @@ import {
   VIEWPORT_AND_STRIP_SECTORS,
   HUMAN_HEIGHT,
   CALENDLY_LINK,
-  BOOK_CONSULTATION_LINK,
+  // BOOK_CONSULTATION_LINK,
   PAY_DEPOSITE_LINK,
   ORIGIN_ZIPCODE,
   OPTIONS_ID_ORDER_FOR_ADDONS,
@@ -3013,7 +3013,7 @@ async function PrepareUI() {
 
       localStorage.setItem('userName', $nameInput.val());
       localStorage.setItem('userEmail', $emailInput.val());
-      localStorage.setItem('userZipcode', $emailInput.val());
+      localStorage.setItem('userZipcode', $zipcodeInput.val());
 
       try {
         stateSalesTax = +getTaxRate(userZipcode);
@@ -3462,7 +3462,7 @@ function notificationHandler() {
 }
 
 function summaryBtnsHandler() {
-  $(document).on('click', '#ar_button_next_4', function () {
+  $(document).on('click', '#ar_button_order, #ar_button_next_4', function () {
     if (!isCameraInside) {
       proceedSummaryAndPdf();
     } else {
@@ -3525,10 +3525,10 @@ function bookConsultationAndDepositBtns() {
     window.open(PAY_DEPOSITE_LINK, '_blank'); // new browser window
   });
 
-  $('#timeline_btn_book_consult').on('click', function() {
-    // window.open(BOOK_CONSULTATION_LINK, '_self'); // same browser window
-    window.open(BOOK_CONSULTATION_LINK, '_blank'); // new browser window
-  });
+  // $('#timeline_btn_book_consult').on('click', function() {
+  //   // window.open(BOOK_CONSULTATION_LINK, '_self'); // same browser window
+  //   window.open(BOOK_CONSULTATION_LINK, '_blank'); // new browser window
+  // });
 }
 
 
@@ -3637,6 +3637,7 @@ function closeSummary() {
 function openContactForm() {
   const savedName = localStorage.getItem('userName');
   const savedEmail = localStorage.getItem('userEmail');
+  const savedZipcode = localStorage.getItem('userZipcode');
   
   if (savedName) {
     $('#form_name').val(savedName);
@@ -3644,6 +3645,10 @@ function openContactForm() {
 
   if (savedEmail) {
     $('#form_email').val(savedEmail);
+  }
+
+  if (savedZipcode) {
+    $('#form_zipcode').val(savedZipcode);
   }
 
   validateForm();

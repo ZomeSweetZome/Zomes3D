@@ -58,6 +58,8 @@
   --marevo-ui-icon_floppy_b : url(../src/ar-ui-icons/floppy_b.svg);
   --marevo-ui-icon_floppy_w : url(../src/ar-ui-icons/floppy_w.svg);
   --marevo-ui-icon_floppy_g : url(../src/ar-ui-icons/floppy_g.svg);
+  --marevo-ui-icon_download_b : url(../src/ar-ui-icons/download_b.svg);
+  --marevo-ui-icon_download_w : url(../src/ar-ui-icons/download_w.svg);
   --marevo-ui-icon_calendar_b : url(../src/ar-ui-icons/calendar_b.svg);
   --marevo-ui-icon_calendar_w : url(../src/ar-ui-icons/calendar_w.svg);
   --marevo-ui-icon_wallet_b : url(../src/ar-ui-icons/wallet_b.svg);
@@ -1037,7 +1039,8 @@ body, html {
   height: 48px;
   border-radius: 50px;
   border: 1px solid var(--marevo-color-text-black, #000);
-  background-color: var(--marevo-color-text-white, #ffffff);
+  /* background-color: var(--marevo-color-text-white, #ffffff); */
+  background-color: var(--marevo-color-text-black, #000);
   cursor: pointer;
   pointer-events: auto;
   /* padding: 18px; */
@@ -1046,20 +1049,23 @@ body, html {
 }
 
 .ar_menu_footer_container .ar_buy-btn:hover {
-  background-color: var(--marevo-color-text-black, #000);
-  border: 1px solid var(--marevo-color-text-white, #ffffff);
+  /* background-color: var(--marevo-color-text-black, #000); */
+  background-color: var(--marevo-color-text-white, #ffffff);
 }
 
-.ar_menu_footer_container .ar_buy-btn:hover .ar_button_order__caption {
+.ar_menu_footer_container .ar_buy-btn .ar_button_order__caption {
   color: var(--marevo-color-text-white, #ffffff);
+  /* color: var(--marevo-color-text-black, #000); */
 }
 
 .ar_menu_footer_container .ar_buy-btn:hover .ar_button_order__image {
-  content: var(--marevo-ui-icon_floppy_w);
+  /* content: var(--marevo-ui-icon_floppy_w); */
+  content: var(--marevo-ui-icon_floppy_b);
 }
 
 .ar_menu_footer_container .ar_buy-btn:hover .ar_button_order__caption {
-  color: var(--marevo-color-text-white, #ffffff);
+  /* color: var(--marevo-color-text-white, #ffffff); */
+  color: var(--marevo-color-text-black, #000);
 }
 
 .ar_menu_footer_container .ar_calc-btn:hover .ar_button_calculate__image {
@@ -1104,7 +1110,8 @@ body, html {
 }
 
 .ar_buy-btn .ar_button_order__image {
-  content: var(--marevo-ui-icon_floppy_b);
+  /* content: var(--marevo-ui-icon_floppy_b); */
+  content: var(--marevo-ui-icon_floppy_w);
   width: 20px;
   height: 20px;
   margin-right: 8px;
@@ -1168,6 +1175,7 @@ body, html {
 }
 
 .menu__footer_delivery_info {
+  margin-bottom: 20px;
   position: relative;
 }
 
@@ -1270,9 +1278,10 @@ body, html {
 .summary_buttons__wrapper {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   margin-bottom: 50px;
   width: 100%;
+  gap: 20px;
 }
 
 .summary_buttons__wrapper .summary_btn {
@@ -1283,7 +1292,6 @@ body, html {
   width: 100%;
   height: 56px;
   border: 1px solid var(--marevo-color-text-black, #000);
-  background-color: var(--marevo-color-text-black, #000);
   border-radius: 50px;
   cursor: pointer;
   pointer-events: auto;
@@ -1293,7 +1301,8 @@ body, html {
 }
 
 .summary_buttons__wrapper .summary_btn_save {
-  margin-right: 40px;
+  width: 117px;
+  /* margin-right: 40px; */
 }
 
 .summary_buttons__wrapper .summary_btn_save {
@@ -1311,19 +1320,18 @@ body, html {
   font-size: 18px;
   font-weight: 500;
   white-space: nowrap;
-  transition: all 0.3s ease;
 }
 
 .summary_buttons__wrapper .summary_btn .summary_btn_calendar__image {
-  content: var(--marevo-ui-icon_calendar_w);
+  content: var(--marevo-ui-icon_calendar_b);
 }
 
 .summary_buttons__wrapper .summary_btn .summary_btn_save__image {
-  content: var(--marevo-ui-icon_floppy_b);
+  content: var(--marevo-ui-icon_download_b);
 }
 
 .summary_buttons__wrapper .summary_btn #summary_btn_calendar__caption {
-  color: var(--marevo-color-text-white, #ffffff);
+  color: var(--marevo-color-text-black, #000);
 }
 
 .summary_buttons__wrapper .summary_btn #summary_btn_save__caption {
@@ -1331,7 +1339,7 @@ body, html {
 }
 
 .summary_buttons__wrapper .summary_btn_calendar:hover {
-  background-color: var(--marevo-color-text-white, #ffffff);
+  background-color: var(--marevo-color-text-black, #000);
 }
 
 .summary_buttons__wrapper .summary_btn_save:hover {
@@ -1339,15 +1347,15 @@ body, html {
 }
 
 .summary_buttons__wrapper .summary_btn_calendar:hover .summary_btn_calendar__image {
-  content: var(--marevo-ui-icon_calendar_b);
+  content: var(--marevo-ui-icon_calendar_w);
 }
 
 .summary_buttons__wrapper .summary_btn_save:hover .summary_btn_save__image {
-  content: var(--marevo-ui-icon_floppy_w);
+  content: var(--marevo-ui-icon_download_w);
 }
 
 .summary_buttons__wrapper .summary_btn_calendar:hover #summary_btn_calendar__caption {
-  color: var(--marevo-color-text-black, #000);
+  color: var(--marevo-color-text-white, #ffffff);
 }
 
 .summary_buttons__wrapper .summary_btn_save:hover #summary_btn_save__caption {
@@ -2857,13 +2865,13 @@ textarea[name="ar_order_comment"] {
 }
 
 .timeline__button_pay_deposit {
-  color: var(--marevo-color-text-black, #000);
-  background-color: var(--marevo-color-text-white, #ffffff);
+  color: var(--marevo-color-text-white, #ffffff);
+  background-color: var(--marevo-color-text-black, #000);
 }
 
 .timeline__button_pay_deposit:hover {
-  background-color: var(--marevo-color-text-black, #000);
-  color: var(--marevo-color-text-white, #ffffff);
+  background-color: var(--marevo-color-text-white, #ffffff);
+  color: var(--marevo-color-text-black, #000);
 }
 
 .timeline__button_book_consult {
@@ -2886,7 +2894,7 @@ textarea[name="ar_order_comment"] {
 }
 
 .timeline__button_image_wallet {
-  background-image: var(--marevo-ui-icon_wallet_b);
+  background-image: var(--marevo-ui-icon_wallet_w);
 }
 
 .timeline__button_image_calendar {
@@ -2894,11 +2902,66 @@ textarea[name="ar_order_comment"] {
 }
 
 .timeline__button_pay_deposit:hover .timeline__button_image_wallet {
-  background-image: var(--marevo-ui-icon_wallet_w);
+  background-image: var(--marevo-ui-icon_wallet_b);
 }
 
 .timeline__button_book_consult:hover .timeline__button_image_calendar {
   background-image: var(--marevo-ui-icon_calendar_b);
+}
+
+/* ----------------------- */
+
+.tumbler-wrapper {
+  box-sizing: border-box;
+  margin-left: auto;
+  width: 51px;
+  height: 30px;
+  background-color: var(--color-dark, black);
+  border: darken(#aae2f1, 40);
+  border: 1px solid var(--colors-secondary);
+  border-radius: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 6px;
+  cursor: pointer;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+
+  display: none;
+}
+
+.tumbler-wrapper.active {
+  display: flex;
+}
+
+.tumbler-wrapper img {
+  width: 15px;
+  height: 15px;
+}
+
+.tumbler {
+  position: absolute;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background-color: #fff;
+  transition: transform .5s, background-color .5s;
+  /* will-change: transform; */
+}
+
+#tumbler-icon-sun {
+  /* content: url('../src/ar-ui-icons/icon_sun.png'); */
+
+}
+
+#tumbler-icon-moon {
+  /* content: url('../src/ar-ui-icons/icon_moon.png'); */
+}
+
+.tumbler.smart-mode {
+  transform: translateX(calc(100% - 2px));
 }
 
 /* ----------------------- */
@@ -3871,6 +3934,7 @@ textarea[name="ar_order_comment"] {
   .menu__footer_delivery_info {
     display: flex;
     justify-content: center;
+    margin-bottom: 0;
   }
 
   .menu__footer_payment_info {
@@ -4060,6 +4124,7 @@ textarea[name="ar_order_comment"] {
   .summary_buttons__wrapper {
     flex-direction: column;
     margin-bottom: 50px;
+    gap: 30px;
   }
 
   .summary_buttons__wrapper .summary_btn {
@@ -4067,8 +4132,7 @@ textarea[name="ar_order_comment"] {
   }
 
   .summary_buttons__wrapper .summary_btn_save {
-    margin-right: 0;
-    margin-bottom: 30px;
+    width: 100%;
   }
 
   .summary_buttons__wrapper .summary_btn .summary_btn__caption {

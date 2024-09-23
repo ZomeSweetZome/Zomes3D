@@ -46,7 +46,7 @@ export const CURRENCY_SIGN = {
 // External URLs
 export const CALENDLY_LINK = 'https://landing.zomes.com/book';
 export const PAY_DEPOSITE_LINK = 'http://landing.zomes.com/deposit';
-export const BOOK_CONSULTATION_LINK = 'https://www.zomes.com/book';
+// export const BOOK_CONSULTATION_LINK = 'https://www.zomes.com/book';
 
 // API keys
 export const ORIGIN_ZIPCODE = '94950';
