@@ -312,6 +312,7 @@ export async function createMenu(mainData) {
       $('.ar_button_back').on('click', function () {
         $('.ar_filter').removeClass('active');
         $('.ar_menu_info_container').removeClass('active');
+        $('.summary_wrapper').scrollTop(0);
       });
 
       $('.ar_menu_info__header_close').on('click', function () {
