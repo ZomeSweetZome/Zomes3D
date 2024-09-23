@@ -3065,9 +3065,10 @@ function validateEmail(email) {
 
 function calculateAndSetEstimateDates() {
   const estimateDate = getData(dataPrice, 'shipDate', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`);
-  const shipDateString = getDatedStrings(estimateDate, maximumLeadTimeWeeks, currentLanguage).shipDateString;
-  const prepaymentDateString = getDatedStrings(estimateDate, maximumLeadTimeWeeks, currentLanguage).prepaymentDateString;
-  const deliveryDateString = getDatedStrings(estimateDate, maximumLeadTimeWeeks, currentLanguage).deliveryDateString;
+  const shipDateString = getDatesStrings(estimateDate, maximumLeadTimeWeeks, currentLanguage).shipDateString;
+  const prepaymentDateString = getDatesStrings(estimateDate, maximumLeadTimeWeeks, currentLanguage).prepaymentDateString;
+  const deliveryDateString = getDatesStrings(estimateDate, maximumLeadTimeWeeks, currentLanguage).deliveryDateString;
+  console.log("🚀 ~ calculateAndSetEstimateDates ~ estimateDate:", estimateDate)
   const textPart1 = getData(dataMain, 'ui_date_popup_text_1', currentLanguage);
   const textPart2 = getData(dataMain, 'ui_date_popup_text_2', currentLanguage);
   $('#delivery_info_date').text(shipDateString);
@@ -3081,13 +3082,19 @@ function calculateAndSetEstimateDates() {
   const depositAmount = convertPriceToNumber(getData(dataPrice, 'depositAmount', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
   const depositAmountString = formatPrice(depositAmount, currentCurrencySign);
   const prepaynemtTextString = getData(dataMain, 'ui_timeline_prepayment_subtitle', currentLanguage);
-  const prepaynemtAmountString = formatPrice(totalAmount / 2, currentCurrencySign);
+  const prepaynemtAmountString = formatPrice(totalAmount / 2 - depositAmount, currentCurrencySign);
+  const finalPaymentAmountString = formatPrice(totalAmount - totalAmount / 2, currentCurrencySign);
+  const weeksAhead = 0;
+  const todayTextPart1 = getData(dataMain, 'ui_timeline_today_text', currentLanguage);
+  const todayTextPart2 = getData(dataMain, 'ui_timeline_today_text_2', currentLanguage);
 
   $('#today_subtitle').text(`${depositAmountString} ${depositTextString}`);
+  $('#today_text').text(`${todayTextPart1} ${weeksAhead} ${todayTextPart2}`);
   $('#prepayment_subtitle').text(`${prepaynemtTextString} (${prepaynemtAmountString})`);
+  $('#ship_day_subtitle').text(`${prepaynemtTextString} (${finalPaymentAmountString})`);
 }
 
-function getDatedStrings(dateStr, leadTimeInWeeks = 3, lang = 'EN', prepaymentDateWeeks = -4, deliveryDateWeeks = 2) {
+function getDatesStrings(dateStr, leadTimeInWeeks = 3, lang = 'EN', prepaymentDateWeeks = -4, deliveryDateWeeks = 2) {
   const monthNames = {
     EN: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
     FR: ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"],
@@ -3144,7 +3151,10 @@ function getDatedStrings(dateStr, leadTimeInWeeks = 3, lang = 'EN', prepaymentDa
 
 
 // *****   MENU-INFO   *****
+let lastOpenElementId = '';
+
 function menuInfoBtnHandler(opt) {
+
   $(opt.element).find('.image-info').on('click', function (event) {
     event.stopPropagation();
 
@@ -3250,8 +3260,15 @@ function menuInfoBtnHandler(opt) {
       $('.ar_menu_info__tabs').show();
     }
 
-    // show menu info
-    $('.ar_menu_info_container').addClass('active');
+    
+    // show or hide menu info
+    if (this.id === lastOpenElementId) {
+      $('.ar_menu_info_container').removeClass('active');
+      lastOpenElementId = '';
+    } else {
+      $('.ar_menu_info_container').addClass('active');
+      lastOpenElementId = this.id;
+    }
   });
 }
 

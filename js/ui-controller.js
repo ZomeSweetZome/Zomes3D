@@ -80,9 +80,7 @@ export async function createMenu(mainData) {
         // ----------
         { '.popup__info_timeline_title': 'ui_timeline_title' },
         { '#today_title': 'ui_timeline_today_title' },
-        { '#today_text': 'ui_timeline_today_text' },
         { '#prepayment_text': 'ui_timeline_prepayment_text' },
-        { '#ship_day_subtitle': 'ui_timeline_ship_day_subtitle' },
         { '#ship_day_text': 'ui_timeline_ship_day_text' },
         { '#delivery_subtitle': 'ui_timeline_delivery_subtitle' },
         { '#delivery_text': 'ui_timeline_delivery_text' },
