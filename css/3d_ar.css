@@ -2419,6 +2419,7 @@ textarea[name="ar_order_comment"] {
   justify-content: end;
   position: relative;
   width: 100%;
+  margin-bottom: 50px;
 }
 
 .details__tax_amount,
@@ -2459,7 +2460,6 @@ textarea[name="ar_order_comment"] {
   text-align: center;
   align-items: center;
   width: 100%;
-  margin: 50px 0;
 }
 
 .summary__footer_container .summary__link {
@@ -2757,14 +2757,13 @@ textarea[name="ar_order_comment"] {
 }
 
 .popup__info_timeline_content {
-  overflow-x: hidden;
-  overflow-y: auto;
-  padding-right: 15px;
+  margin-bottom: 23px;
 }
 
 .popup__info_timeline_title {
   font-size: 18px;
   font-weight: 700;
+  margin-bottom: 20px;
 }
 
 .timeline__container {
@@ -4114,7 +4113,6 @@ textarea[name="ar_order_comment"] {
 
   .summary__footer_container {
     flex-direction: column;
-    margin-top: 0;
   }
 
   .summary__footer_container .summary__link {

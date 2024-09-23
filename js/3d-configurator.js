@@ -1903,29 +1903,6 @@ function convertPriceToNumber(priceString) {
   return priceNumber;
 }
 
-
-function getOrderList() {
-  // let orderList = "ORDER" + '\n';
-
-  // for (let i = 0; i < SharedParameterList.length; i++) {
-  //   if (DATA_CHECKING_PRICE[i]) {
-  //     const dataName = DATA_CHECKING_PRICE[i]?.name + ': ' +
-  //       DATA_CHECKING_PRICE[i]?.value[SharedParameterList[i].value];
-
-  //     if (SharedParameterList[i].groupIds) {
-  //       for (let k = 0; k < SharedParameterList[i].groupIds.length; k++) {
-  //         if (isGroupActive(SharedParameterList[i].groupIds[k])) {
-  //           orderList += dataName + '\n';
-  //           break;
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
-  // orderList = orderList + 'Amount: ' + totalAmount;
-  // return orderList;
-}
-
 function formatPrice(price, currency, needToBeRounded = true, needToAddSpace = false) {
   if (
     !price
@@ -1973,28 +1950,6 @@ function formatPrice(price, currency, needToBeRounded = true, needToAddSpace = f
   }
 
   return result;
-}
-
-const store_endpoint_link = '';
-// eslint-disable-next-line no-unused-vars
-function SendProductInfo(element) {
-  const resultString = getOrderList();
-  console.log(resultString);
-
-  // if(element.classList.contains('tbl-price-btn')){
-  //   element.classList.add('load')
-  // }
-  // createProduct()
-
-  var xhr = new XMLHttpRequest();
-  xhr.open("POST", store_endpoint_link, true);
-  xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
-      //Request DONE
-    }
-  }
-  xhr.send(resultString);
 }
 
 //#endregion
@@ -2953,7 +2908,6 @@ async function PrepareUI() {
     getPdfBtnHandler();
     bookTimeBtnHandler();
     bookConsultationAndDepositBtns();
-    // calculateTaxHandler();
   });
 
   // Date and Tax popups
@@ -2961,16 +2915,6 @@ async function PrepareUI() {
     $('.menu__footer_delivery_info .menu__footer__info_icon').on('click', function () {
       $('.popup__info_date').toggleClass('hidden');
     });
-
-    // $('#calculate_shipping_tax').on('click', function () {
-    //   const savedEmail = localStorage.getItem('userEmail');
-  
-    //   if (savedEmail) {
-    //     $('#popup_tax_email').val(savedEmail);
-    //   }
-
-    //   $('.popup__info_tax').toggleClass('hidden');
-    // });
 
     $('.menu__footer_payment_info .menu__footer__calc_icon').on('click', function () {
       $('.popup__info_tax').toggleClass('hidden');
@@ -3029,30 +2973,12 @@ async function PrepareUI() {
   
     validateForm();
   });
-  
-  // function validateTaxForm() {
-  //   const email = $('#popup_tax_email').val();
-  //   const zipcode = $('#popup_tax_zipcode').val();
-  //   const emailIsValid = email.includes('@') && email.includes('.');
-  //   const zipcodeIsValid = zipcode.length >= 5;
-  //   return emailIsValid && zipcodeIsValid;
-  // }
-
-  // $('#popup_tax_email, #popup_tax_zipcode').on('input', function() {
-  //   if (validateTaxForm()) {
-  //     $('#popup_tax_calculate').prop('disabled', false);
-  //   } else {
-  //     $('#popup_tax_calculate').prop('disabled', true);
-  //   }
-  // });
 }
 
 function validateForm() {
   const isNameValid = $('#form_name').val().trim() !== '';
   const isEmailValid = validateEmail($('#form_email').val().trim());
-  
-  const zipcodeIsValid = true;
-  // const zipcodeIsValid = $('#form_zipcode').val().trim().length >= 5;
+  const zipcodeIsValid = $('#form_zipcode').val().trim().length >= 5;
   
   const isFormValid = isNameValid && isEmailValid && zipcodeIsValid;
 
@@ -3506,54 +3432,15 @@ function getPdfBtnHandler() {
 
 function bookTimeBtnHandler() {
   $('#summary_book_time_btn').on('click', function() {
-    // window.open(CALENDLY_LINK, '_self'); // same browser window
-    window.open(CALENDLY_LINK, '_blank'); // new browser window
+    window.open(CALENDLY_LINK, '_blank');
   });
 }
 
 function bookConsultationAndDepositBtns() {
-  // $('#ar_button_book_consult_1, #ar_button_book_consult_2').on('click', function() {
-  //   $('.popup__info_timeline').toggleClass('active');
-  // });
-
-  // $('#popup__info_timeline_close').on('click', function() {
-  //   $('.popup__info_timeline').removeClass('active');
-  // });
-
   $('#timeline_btn_pay_deposit').on('click', function() {
-    // window.open(PAY_DEPOSITE_LINK, '_self'); // same browser window
-    window.open(PAY_DEPOSITE_LINK, '_blank'); // new browser window
+    window.open(PAY_DEPOSITE_LINK, '_blank');
   });
-
-  // $('#timeline_btn_book_consult').on('click', function() {
-  //   // window.open(BOOK_CONSULTATION_LINK, '_self'); // same browser window
-  //   window.open(BOOK_CONSULTATION_LINK, '_blank'); // new browser window
-  // });
 }
-
-
-// function calculateTaxHandler() {
-//   $('#popup_tax_calculate').on('click', async function() {
-//     $('#popup_tax_calculate').prop('disabled', true);
-
-//     userZipcode = $('#popup_tax_zipcode').val();
-//     userEmail = $('#popup_tax_email').val();
-    
-//     localStorage.setItem('userEmail', userEmail);
-
-//     try {
-//       stateSalesTax = +getTaxRate(userZipcode);
-//       shippingDistance = await getDistance(userZipcode);
-//       updateShippingTaxInfo();
-//     } catch (error) {
-//       console.error('Error fetching distance:', error);
-//     } finally {
-//       $('#popup_tax_calculate').prop('disabled', false);
-//       $('.popup__info').addClass('hidden');
-
-//     }
-//   });
-// }
 
 function getTaxRate(destinationZipCode) {
   const taxRate = getData(dataZiptax, destinationZipCode + '', 'StateRate', 'ZipCode');
@@ -3761,8 +3648,6 @@ function collectSummary() {
 
     detailsGroup.appendTo(detailsContainer);
 
-    // $('#details__tax_amount').html(`+ ${currentTaxAmountString}&nbsp;`);
-    
     pdfContentData.push(
       { text: '', width: '*', margin: [0, 0, 0, 10] },
     );
@@ -3780,7 +3665,6 @@ function collectSummary() {
   const amountText = (totalAmountShipTax) ? `${currentTaxAmountString}` : '';
   
   $('#details__tax_text').html(`+ ${amountText}${text}`);
-  // const currentTaxAmountWithTextForPDF = `+ ${currentTaxAmountString} ${getData(dataMain, 'ui_summary_details__tax_text', currentLanguage)}`;
 
   pdfContentData.push(
     { canvas: [ { type: 'line', x1: 0, y1: 0, x2: 535, y2: 0, lineWidth: 1 }], margin: [0, 10, 0, 6], },

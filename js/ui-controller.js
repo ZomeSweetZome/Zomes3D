@@ -85,7 +85,7 @@ export async function createMenu(mainData) {
         { '#delivery_subtitle': 'ui_timeline_delivery_subtitle' },
         { '#delivery_text': 'ui_timeline_delivery_text' },
         { '#timeline_btn_deposit': 'ui_ar_pay_deposit' },
-        { '#timeline_btn_bookconsult': 'ui_ar_book_consult' },
+        // { '#timeline_btn_bookconsult': 'ui_ar_book_consult' },
       );
 
       uiPlaceholdersMultiLanguages.push(
