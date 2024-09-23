@@ -3068,7 +3068,7 @@ function calculateAndSetEstimateDates() {
   const shipDateString = getDatesStrings(estimateDate, maximumLeadTimeWeeks, currentLanguage).shipDateString;
   const prepaymentDateString = getDatesStrings(estimateDate, maximumLeadTimeWeeks, currentLanguage).prepaymentDateString;
   const deliveryDateString = getDatesStrings(estimateDate, maximumLeadTimeWeeks, currentLanguage).deliveryDateString;
-  console.log("🚀 ~ calculateAndSetEstimateDates ~ estimateDate:", estimateDate)
+  const weeksAhead = getDatesStrings(estimateDate, maximumLeadTimeWeeks, currentLanguage).differenceInWeeks;
   const textPart1 = getData(dataMain, 'ui_date_popup_text_1', currentLanguage);
   const textPart2 = getData(dataMain, 'ui_date_popup_text_2', currentLanguage);
   $('#delivery_info_date').text(shipDateString);
@@ -3083,15 +3083,15 @@ function calculateAndSetEstimateDates() {
   const depositAmountString = formatPrice(depositAmount, currentCurrencySign);
   const prepaynemtTextString = getData(dataMain, 'ui_timeline_prepayment_subtitle', currentLanguage);
   const prepaynemtAmountString = formatPrice(totalAmount / 2 - depositAmount, currentCurrencySign);
+  const finalPaymentTextString = getData(dataMain, 'ui_timeline_ship_day_subtitle', currentLanguage);
   const finalPaymentAmountString = formatPrice(totalAmount - totalAmount / 2, currentCurrencySign);
-  const weeksAhead = 0;
   const todayTextPart1 = getData(dataMain, 'ui_timeline_today_text', currentLanguage);
   const todayTextPart2 = getData(dataMain, 'ui_timeline_today_text_2', currentLanguage);
 
   $('#today_subtitle').text(`${depositAmountString} ${depositTextString}`);
   $('#today_text').text(`${todayTextPart1} ${weeksAhead} ${todayTextPart2}`);
   $('#prepayment_subtitle').text(`${prepaynemtTextString} (${prepaynemtAmountString})`);
-  $('#ship_day_subtitle').text(`${prepaynemtTextString} (${finalPaymentAmountString})`);
+  $('#ship_day_subtitle').text(`${finalPaymentTextString} (${finalPaymentAmountString})`);
 }
 
 function getDatesStrings(dateStr, leadTimeInWeeks = 3, lang = 'EN', prepaymentDateWeeks = -4, deliveryDateWeeks = 2) {
@@ -3146,7 +3146,12 @@ function getDatesStrings(dateStr, leadTimeInWeeks = 3, lang = 'EN', prepaymentDa
   const prepaymentDateString = formatDate(prepaymentDate, lang);
   const deliveryDateString = formatDate(deliveryDate, lang);
 
-  return {shipDateString, prepaymentDateString, deliveryDateString};
+  const futureDate = new Date();
+  futureDate.setDate(currentDate.getDate() + 1);
+  const timeDifference = deliveryDate.getTime() - futureDate.getTime();
+  const differenceInWeeks = Math.round(timeDifference / (7 * 24 * 60 * 60 * 1000));
+
+  return {shipDateString, prepaymentDateString, deliveryDateString, differenceInWeeks};
 }
 
 
@@ -3497,7 +3502,7 @@ function getPdfBtnHandler() {
 function bookTimeBtnHandler() {
   $('#summary_book_time_btn').on('click', function() {
     // window.open(CALENDLY_LINK, '_self'); // same browser window
-    window.open(CALENDLY_LINK, '_blank');
+    window.open(CALENDLY_LINK, '_blank'); // new browser window
   });
 }
 
@@ -3511,13 +3516,13 @@ function bookConsultationAndDepositBtns() {
   });
 
   $('#timeline_btn_pay_deposit').on('click', function() {
-    window.open(PAY_DEPOSITE_LINK, '_self'); // same browser window
-    // window.open(PAY_DEPOSITE_LINK, '_blank'); // new browser window
+    // window.open(PAY_DEPOSITE_LINK, '_self'); // same browser window
+    window.open(PAY_DEPOSITE_LINK, '_blank'); // new browser window
   });
 
   $('#timeline_btn_book_consult').on('click', function() {
-    window.open(BOOK_CONSULTATION_LINK, '_self'); // same browser window
-    // window.open(BOOK_CONSULTATION_LINK, '_blank'); // new browser window
+    // window.open(BOOK_CONSULTATION_LINK, '_self'); // same browser window
+    window.open(BOOK_CONSULTATION_LINK, '_blank'); // new browser window
   });
 }
 
