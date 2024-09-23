@@ -65,8 +65,8 @@ export async function createMenu(mainData) {
         { '#summary_download_pdf_btn': 'ui_summary_download_pdf_btn' },
         { '#contact_form_btn_text .ar_button_order__caption_large': 'ui_btn_buy' },
         // ----------
-        { '.popup_tax__title': 'ui_popup_tax_title' },
-        { '#popup_tax_calculate': 'ui_popup_tax_form_btn' },
+        // { '.popup_tax__title': 'ui_popup_tax_title' },
+        // { '#popup_tax_calculate': 'ui_popup_tax_form_btn' },
         // ----------
         { '.popup_select__title': 'ui_popup_select_model_title' },
         { '#select_btn_pod .popup_select__item_button': 'ui_popup_select_model_btn_1' },
@@ -91,9 +91,10 @@ export async function createMenu(mainData) {
       uiPlaceholdersMultiLanguages.push(
         { '#form_name': 'ui_summary_form_label_name' },
         { '#form_email': 'ui_summary_form_label_email' },
+        { '#form_zipcode': 'ui_summary_form_label_zipcode' },
         // ----------
-        { '#popup_tax_email': 'ui_popup_tax_label_email' },
-        { '#popup_tax_zipcode': 'ui_popup_tax_label_zipcode' },
+        // { '#popup_tax_email': 'ui_popup_tax_label_email' },
+        // { '#popup_tax_zipcode': 'ui_popup_tax_label_zipcode' },
       );
 
       const groupsContainer = $('#ar_filter');

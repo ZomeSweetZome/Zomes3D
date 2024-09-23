@@ -174,7 +174,9 @@ let shippingAmount = 0;
 let stateSalesTax = 0;
 let shippingDistance = 0;
 let totalAmountShipTax = 0;
-let userZipCode = '';
+let userName = '';
+let userEmail = '';
+let userZipcode = '';
 
 const baseColorForRowA = '#aaaaaa';
 
@@ -2951,7 +2953,7 @@ async function PrepareUI() {
     getPdfBtnHandler();
     bookTimeBtnHandler();
     bookConsultationAndDepositBtns();
-    calculateTaxHandler();
+    // calculateTaxHandler();
   });
 
   // Date and Tax popups
@@ -2960,15 +2962,15 @@ async function PrepareUI() {
       $('.popup__info_date').toggleClass('hidden');
     });
 
-    $('#calculate_shipping_tax').on('click', function () {
-      const savedEmail = localStorage.getItem('userEmail');
+    // $('#calculate_shipping_tax').on('click', function () {
+    //   const savedEmail = localStorage.getItem('userEmail');
   
-      if (savedEmail) {
-        $('#popup_tax_email').val(savedEmail);
-      }
+    //   if (savedEmail) {
+    //     $('#popup_tax_email').val(savedEmail);
+    //   }
 
-      $('.popup__info_tax').toggleClass('hidden');
-    });
+    //   $('.popup__info_tax').toggleClass('hidden');
+    // });
 
     $('.menu__footer_payment_info .menu__footer__calc_icon').on('click', function () {
       $('.popup__info_tax').toggleClass('hidden');
@@ -2986,26 +2988,9 @@ async function PrepareUI() {
   // Contact form popup
   jQuery(document).ready(function () {
     const $form = $('#popupForm');
-    // const $submitButton = $('#submitButton');
     const $nameInput = $('#form_name');
     const $emailInput = $('#form_email');
-    
-    // function validateForm() {
-    //   const isNameValid = $nameInput.val().trim() !== '';
-    //   const isEmailValid = validateEmail($emailInput.val().trim());
-    //   const isFormValid = isNameValid && isEmailValid;
-  
-    //   if (isFormValid) {
-    //     $submitButton.prop('disabled', false);
-    //   } else {
-    //     $submitButton.prop('disabled', true);
-    //   }
-    // }
-
-    // function validateEmail(email) {
-    //   const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    //   return emailPattern.test(email);
-    // }
+    const $zipcodeInput = $('#form_zipcode');
   
     $nameInput.on('input', () => {
       validateForm();
@@ -3014,14 +2999,30 @@ async function PrepareUI() {
     $emailInput.on('input', () => {
       validateForm();
     });
+
+    $zipcodeInput.on('input', () => {
+      validateForm();
+    });
   
-    $form.on('submit', function (event) {
+    $form.on('submit', async function (event) {
       event.preventDefault();
       
+      userName = $nameInput.val();
+      userEmail = $emailInput.val();
+      userZipcode = $zipcodeInput.val();
+
       localStorage.setItem('userName', $nameInput.val());
       localStorage.setItem('userEmail', $emailInput.val());
-      
-      if ($form[0].checkValidity()) {
+      localStorage.setItem('userZipcode', $emailInput.val());
+
+      try {
+        stateSalesTax = +getTaxRate(userZipcode);
+        shippingDistance = await getDistance(userZipcode);
+        console.log("🚀 ~ stateSalesTax, shippingDistance:", stateSalesTax, shippingDistance);
+        updateShippingTaxInfo();
+      } catch (error) {
+        console.error('Error fetching distance:', error);
+      } finally {
         closeContactForm();
       }
     });
@@ -3029,27 +3030,31 @@ async function PrepareUI() {
     validateForm();
   });
   
-  function validateTaxForm() {
-    const email = $('#popup_tax_email').val();
-    const zipcode = $('#popup_tax_zipcode').val();
-    const emailIsValid = email.includes('@') && email.includes('.');
-    const zipcodeIsValid = zipcode.length >= 5;
-    return emailIsValid && zipcodeIsValid;
-  }
+  // function validateTaxForm() {
+  //   const email = $('#popup_tax_email').val();
+  //   const zipcode = $('#popup_tax_zipcode').val();
+  //   const emailIsValid = email.includes('@') && email.includes('.');
+  //   const zipcodeIsValid = zipcode.length >= 5;
+  //   return emailIsValid && zipcodeIsValid;
+  // }
 
-  $('#popup_tax_email, #popup_tax_zipcode').on('input', function() {
-    if (validateTaxForm()) {
-      $('#popup_tax_calculate').prop('disabled', false);
-    } else {
-      $('#popup_tax_calculate').prop('disabled', true);
-    }
-  });
+  // $('#popup_tax_email, #popup_tax_zipcode').on('input', function() {
+  //   if (validateTaxForm()) {
+  //     $('#popup_tax_calculate').prop('disabled', false);
+  //   } else {
+  //     $('#popup_tax_calculate').prop('disabled', true);
+  //   }
+  // });
 }
 
 function validateForm() {
   const isNameValid = $('#form_name').val().trim() !== '';
   const isEmailValid = validateEmail($('#form_email').val().trim());
-  const isFormValid = isNameValid && isEmailValid;
+  
+  const zipcodeIsValid = true;
+  // const zipcodeIsValid = $('#form_zipcode').val().trim().length >= 5;
+  
+  const isFormValid = isNameValid && isEmailValid && zipcodeIsValid;
 
   if (isFormValid) {
     $('#submitButton').prop('disabled', false);
@@ -3495,7 +3500,7 @@ function proceedSummaryAndPdf() {
 
 function getPdfBtnHandler() {
   $('#summary_download_pdf_btn').on('click', function () {
-    generatePDF(currentHouse, dataMain, currentLanguage, imageSources, pdfContentData);
+    generatePDF(currentHouse, dataMain, currentLanguage, imageSources, pdfContentData, userName, userEmail, userZipcode);
   });
 }
 
@@ -3526,28 +3531,29 @@ function bookConsultationAndDepositBtns() {
   });
 }
 
-function calculateTaxHandler() {
-  $('#popup_tax_calculate').on('click', async function() {
-    $('#popup_tax_calculate').prop('disabled', true);
 
-    userZipCode = $('#popup_tax_zipcode').val();
-    const email = $('#popup_tax_email').val();
+// function calculateTaxHandler() {
+//   $('#popup_tax_calculate').on('click', async function() {
+//     $('#popup_tax_calculate').prop('disabled', true);
 
-    localStorage.setItem('userEmail', email);
+//     userZipcode = $('#popup_tax_zipcode').val();
+//     userEmail = $('#popup_tax_email').val();
+    
+//     localStorage.setItem('userEmail', userEmail);
 
-    try {
-      stateSalesTax = +getTaxRate(userZipCode);
-      shippingDistance = await getDistance(userZipCode);
-      updateShippingTaxInfo();
-    } catch (error) {
-      console.error('Error fetching distance:', error);
-    } finally {
-      $('#popup_tax_calculate').prop('disabled', false);
-      $('.popup__info').addClass('hidden');
+//     try {
+//       stateSalesTax = +getTaxRate(userZipcode);
+//       shippingDistance = await getDistance(userZipcode);
+//       updateShippingTaxInfo();
+//     } catch (error) {
+//       console.error('Error fetching distance:', error);
+//     } finally {
+//       $('#popup_tax_calculate').prop('disabled', false);
+//       $('.popup__info').addClass('hidden');
 
-    }
-  });
-}
+//     }
+//   });
+// }
 
 function getTaxRate(destinationZipCode) {
   const taxRate = getData(dataZiptax, destinationZipCode + '', 'StateRate', 'ZipCode');
@@ -3600,12 +3606,11 @@ function updateShippingTaxInfo() {
   }
   
   const text = (totalAmountShipTax) 
-    ? `${getData(dataMain, 'ui_summary_details__tax_text_short', currentLanguage)} ${userZipCode}`
+    ? `${getData(dataMain, 'ui_summary_details__tax_text_short', currentLanguage)} ${userZipcode}`
     : getData(dataMain, 'ui_summary_details__tax_text', currentLanguage);
   const amountText = (totalAmountShipTax) ? `${currentTaxAmountString}` : '';
   $('#payment_info_title').html(`+ ${amountText}${text}`); 
-
-  // console.log("🚀 ~ shipppingCostBase, shipppingCostMile:", shipppingCostBase, shipppingCostMile);
+  $('#details__tax_text').html(`+ ${amountText}${text}`);
 }
 
 function openSummary() {
@@ -3765,7 +3770,7 @@ function collectSummary() {
     currentTaxAmountString = formatPrice(totalAmountShipTax + shipppingCostBase, currentCurrencySign);
   }
   const text = (totalAmountShipTax) 
-  ? `${getData(dataMain, 'ui_summary_details__tax_text_short', currentLanguage)} ${userZipCode}`
+  ? `${getData(dataMain, 'ui_summary_details__tax_text_short', currentLanguage)} ${userZipcode}`
   : getData(dataMain, 'ui_summary_details__tax_text', currentLanguage);
   const amountText = (totalAmountShipTax) ? `${currentTaxAmountString}` : '';
   
@@ -4808,8 +4813,6 @@ function CreateImageList() {
     default:
       break;
   }
-
-  console.log("🚀 ~ CreateImageList ~ currentHouse:", currentHouse, cameraFar);
 
   cameraImageViews_Global[0].position = new THREE.Vector3(0, HUMAN_HEIGHT, cameraFar); // front
   cameraImageViews_Global[1].position = new THREE.Vector3(-cameraFar, HUMAN_HEIGHT, 0); // left

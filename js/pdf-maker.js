@@ -7,13 +7,9 @@ import { getData } from './ui-controller.js';
 
 export function generatePDF(
   currentHouse, data, language, imageSources, configurationData, 
-  userName = 'Name Surname',
-  address = 'Address',
-  zipcode = 'Zipcode',
-  city = 'City',
-  country = 'Country',
-  phone = 'Phone',
-  email = 'Email',
+  userName = '',
+  email = '',
+  zipcode = '',
   opt = 'all',
 ) {
   const colorTextBlack = '#101011';
@@ -130,11 +126,8 @@ export function generatePDF(
         margin: [0, 6, 0, 6],
       },
       { text: userName, style: 'tableText', },
-      { text: address, style: 'tableText', },
-      { text: `${zipcode} ${city}`, style: 'tableText', },
-      { text: country, style: 'tableText', },
-      { text: phone, style: 'tableText', },
       { text: email, style: 'tableText', },
+      { text: zipcode, style: 'tableText', },
 
       // ******************    PAGE 2    ***********************
 
