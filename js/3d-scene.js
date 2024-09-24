@@ -99,7 +99,7 @@ export function create3DScene(properties = scenePropertiesDefault, startFunction
     camera.getWorldDirection(cameraDirection);
     clippingPlaneCam.normal.copy(cameraDirection);
     
-    const clippingDistance = 5.0;
+    const clippingDistance = 4.75;
     clippingPlaneCam.constant = -camera.position.dot(cameraDirection) - clippingDistance;
   }
 
@@ -217,7 +217,7 @@ export function create3DScene(properties = scenePropertiesDefault, startFunction
     planeMesh.position.set(0, 20, 0);
     scene.add(planeMesh);
 
-    const dirLight2 = new THREE.DirectionalLight(0xffffff, 0.75); // 1.5
+    const dirLight2 = new THREE.DirectionalLight(0xffffff, 0.7); // 1.5
     dirLight2.position.set(0, 4, 0);
     dirLight2.castShadow = true;
     dirLight2.shadow.bias = -0.0005;
@@ -231,6 +231,10 @@ export function create3DScene(properties = scenePropertiesDefault, startFunction
 
     dirLight2.target = planeMesh;
     scene.add(dirLight2);
+
+    const pointLight = new THREE.PointLight(0xffffff, 0.4, 0);
+    pointLight.position.set(0, 2.2, 0);
+    scene.add(pointLight);
   }
 
   switch (getMobileOperatingSystem()) {
