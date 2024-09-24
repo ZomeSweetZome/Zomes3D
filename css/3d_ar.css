@@ -100,6 +100,10 @@
   font-weight: normal;
 } */
 
+* {
+  /* outline: 1px solid green !important; */
+}
+
 body, html {
   box-sizing: border-box;
   overflow-x: hidden;
@@ -146,7 +150,7 @@ body, html {
   z-index: 1;
   display: block;
   width: 100%;
-  height: calc(var(--vh, 1vh) * 100);
+  height: 100vh;
   overflow: hidden;
   position: absolute;
   -webkit-font-smoothing: antialiased;
@@ -159,7 +163,7 @@ body, html {
   position: fixed;
   left: 0;
   top: 0;
-  width: 100%;
+  width: 100vw;
   height: var(--marevo-header-height, 100px);
   padding: 20px 30px;
   color: #000;
@@ -202,11 +206,14 @@ body, html {
 .select-wrapper {
   display: inline-block;
   width: 50px;
+  position: relative;
 }
 
 .select-wrapper.currency-picker {
   margin-right: 6px;
 }
+
+select2-container
 
 .select-wrapper.language-picker {
   width: 60px;
@@ -302,14 +309,22 @@ body, html {
 }
 
 .select2-container {
-  width: 100% !important;
   font-family: "Inter", sans-serif !important;
   font-size: 16px !important;
   font-weight: 400 !important;
 }
 
+.currency-picker .select2-container {
+  width: 52px !important;
+}
+
+.language-picker .select2-container {
+  width: 60px !important;
+}
+
 .select2-dropdown {
   width: 62px !important;
+  max-width: 62px !important;
   border: 1px solid var(--marevo-color-popup-border, #ECECEF) !important;
   border-radius: 10px !important;
   margin-top: 10px;
@@ -317,7 +332,6 @@ body, html {
 
 .select2-container--default .select2-results>.select2-results__options {
   border-radius: 10px !important;
-  /* padding: 10px !important; */
 }
 
 .select2-container--default .select2-selection--single .select2-selection__arrow {
@@ -336,17 +350,15 @@ body, html {
 }
 
 .select2-container--default .select2-selection--single .select2-selection__arrow b {
-  display: none; /* Hides a standard arrow */
+  display: none;
 }
 
 .select2-dropdown .select2-results .select2-results__options li:hover {
-  /* background-color: var(--marevo-color-text-black, #000) !important; */
   background-color: var(--marevo-color-text-lightgray, #d4d4d4) !important;
   color: black !important;
 }
 
 .select2-results__option.select2-results__option--selectable.select2-results__option--selected {
-  /* background-color: var(--marevo-color-text-lightgray, #d4d4d4) !important; */
   background-color: white !important;
   color: black !important;
 }
@@ -1935,6 +1947,10 @@ textarea[name="ar_order_comment"] {
   position: relative;
 }
 
+.ar_total_amount_canvas__container {
+  display: none;
+}
+
 .popup__info {
   display: flex;
   position: absolute;
@@ -3148,6 +3164,7 @@ textarea[name="ar_order_comment"] {
 
   .select2-container {
     font-size: 14px !important;
+    /* width: 35px !important; */
   }
 
   .select2-dropdown {
@@ -3169,7 +3186,7 @@ textarea[name="ar_order_comment"] {
 
   .select-wrapper {
     display: inline-block;
-    width: 33px;
+    width: 33px !important;
     margin-right: 2px;
   }
   
@@ -3178,7 +3195,15 @@ textarea[name="ar_order_comment"] {
   }
   
   .select-wrapper.language-picker {
-    width: 43px;
+    width: 43px !important;
+  }
+
+  .currency-picker .select2-container {
+    width: 35px !important;
+  }
+  
+  .language-picker .select2-container {
+    width: 46px !important;
   }
 
   /*! -----------------------------*/
@@ -3605,6 +3630,38 @@ textarea[name="ar_order_comment"] {
 
   /*!---------------*/
 
+  .ar_total_amount_canvas__container {
+    display: flex;
+    position: absolute;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    padding: 16px 20px 30px;
+  }
+
+  .ar_total_amount_canvas__price {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--marevo-color-text-black, #000);
+  }
+  
+  .payment_info_canvas__container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+  }
+  
+  .payment_info_canvas__info_item {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--marevo-color-text-black, #000);
+  }
+
+
+  /*!---------------*/
+
   .title_list__container .title_list {
     padding: 9px 20px;
   }
@@ -3816,6 +3873,9 @@ textarea[name="ar_order_comment"] {
 
   #button_ar_qr_menu {
     display: flex;
+    position: absolute;
+    top: 16px;
+    left: 20px;
     justify-content: center;
     align-items: center;
     padding: 0;

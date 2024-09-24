@@ -1782,6 +1782,7 @@ function checkLanguageForDimensions() {
 
 function calculatePrice() {
   const totalAmountElement = document.getElementById('ar_total_price');
+  const totalAmountElement2 = document.getElementById('ar_total_price_2');
   totalAmount = 0;
   maximumLeadTimeWeeks = 0;
 
@@ -1892,6 +1893,7 @@ function calculatePrice() {
   totalAmount = totalAmount.toFixed(0);
   currentAmountString = formatPrice(totalAmount, currentCurrencySign);
   totalAmountElement.innerText = currentAmountString;
+  totalAmountElement2.innerText = currentAmountString;
   updateShippingTaxInfo();
 }
 
@@ -3024,6 +3026,7 @@ function calculateAndSetEstimateDates() {
   const textPart1 = getData(dataMain, 'ui_date_popup_text_1', currentLanguage);
   const textPart2 = getData(dataMain, 'ui_date_popup_text_2', currentLanguage);
   $('#delivery_info_date').text(shipDateString);
+  $('#delivery_info_date_2').text(shipDateString);
   $('.popup__info_content_date').html(`Ships ${shipDateString}. ${textPart1} ${maximumLeadTimeWeeks} ${textPart2}`);
   
   $('#prepayment_title').text(prepaymentDateString);
@@ -3518,6 +3521,7 @@ function updateShippingTaxInfo() {
     : getData(dataMain, 'ui_summary_details__tax_text', currentLanguage);
   const amountText = (totalAmountShipTax) ? `${currentTaxAmountString}` : '';
   $('#payment_info_title').html(`+ ${amountText}${text}`); 
+  $('#payment_info_title_2').html(`+ ${amountText}${text}`); 
   $('#details__tax_text').html(`+ ${amountText}${text}`);
 }
 
