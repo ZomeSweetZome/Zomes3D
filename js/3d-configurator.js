@@ -368,6 +368,8 @@ SharedParameterList[4].groupOptionAction = function () {
       floor.position.y = MODEL_CENTER_POSITION;
     }
 
+    floor.position.y -= 0.01;
+
     if (currentHouse == '2') {
       if (this.value[5] == '1') { // extra door
         isExtraDoorOn = true;
@@ -2386,6 +2388,25 @@ function disableModelReceivingShadows(model) {
     }
   });
 }
+
+// eslint-disable-next-line no-unused-vars
+function disableEnvMapForMaterials(materialNames) {
+  scene.traverse((object) => {
+    if (object.isMesh && object.material) {
+      const materials = Array.isArray(object.material)
+        ? object.material
+        : [object.material];
+
+      materials.forEach((material) => {
+        if (materialNames.includes(material.name)) {
+          material.envMap = null;
+          material.needsUpdate = true;
+        }
+      });
+    }
+  });
+}
+
 
 //#endregion
 
