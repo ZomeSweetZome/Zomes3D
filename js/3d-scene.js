@@ -247,7 +247,7 @@ export function create3DScene(properties = scenePropertiesDefault, startFunction
     case 'Windows':
       dirLight.shadow.mapSize = new THREE.Vector2(2048, 2048);
       dirLight.shadow.radius = (LIGHT_SCHEME === 0) ? 5 : 40;
-      dirLight.shadow.blurSamples = 40;
+      dirLight.shadow.blurSamples = 30;
       break;
     case 'Macintosh':
       dirLight.shadow.mapSize = new THREE.Vector2(2048, 2048);
@@ -259,6 +259,8 @@ export function create3DScene(properties = scenePropertiesDefault, startFunction
       dirLight.shadow.radius = (LIGHT_SCHEME === 0) ? 15 : 15;
       dirLight.shadow.blurSamples = 10;
       break;
+
+      
   }
 
   scene.add(dirLight);

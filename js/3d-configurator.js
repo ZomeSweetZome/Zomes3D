@@ -3211,15 +3211,15 @@ function menuInfoBtnHandler(opt) {
 // *****   Camera Btns   *****
 function cameraBtnHandlers() {
 
-  $('#button_camera_inside').on('click', function (event) {
+  $('#button_camera_inside').on('click', function (event, aim = 'outXrays') {
     event.stopPropagation();
     $(this).toggleClass('hidden');
     $('#button_camera_outside').toggleClass('hidden');
     $('.canvas_btn_camera').addClass('disabled');
 
-    flyCameraTo('outXrays', 'inside', () => {
+    flyCameraTo(aim, 'inside', () => {
       renderer.clippingPlanes = [];
-      notClippingMaterials = ['floor'];
+      notClippingMaterials = ['floor', 'AC_white', 'AC_gray', 'AC_gray.001', 'AC_screen'];
       current3Dmodel = modelHouse;
       isLocalClippingOn = true;
       $('.canvas_btn_camera').removeClass('disabled');
@@ -3771,6 +3771,15 @@ $(document).on('click', '.option.option_4-3', function () { // extra door
     if (!isCameraInside) {
       flyCameraTo('outExtraDoor', 'outside');
     }
+  }
+});
+
+$(document).on('click', '.option.option_4-4', function () { // air conditioner
+  if (!isCameraInside) {
+    $('#button_camera_inside').trigger('click', ['outAirConditioner']);
+    flyCameraTo('outAirConditioner', 'inside');
+  } else {
+    flyCameraTo('outAirConditioner', 'inside');
   }
 });
 
