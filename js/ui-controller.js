@@ -63,6 +63,8 @@ export async function createMenu(mainData) {
         { '#summary_back_to_conf': 'ui_summary_back_to_conf' },
         { '#summary_download_pdf_btn': 'ui_summary_download_pdf_btn' },
         { '#contact_form_btn_text .ar_button_order__caption_large': 'ui_btn_buy' },
+        { '.summary_container .ar_button_order__caption_large': 'ui_btn_buy' },
+        { '#submitButton .ar_button_order__caption_large': 'ui_btn_buy' },
         // ----------
         { '.popup_select__title': 'ui_popup_select_model_title' },
         { '#select_btn_pod .popup_select__item_button': 'ui_popup_select_model_btn_1' },

@@ -3405,7 +3405,38 @@ function proceedSummaryAndPdf() {
 
 function getPdfBtnHandler() {
   $('#summary_download_pdf_btn').on('click', function () {
-    generatePDF(currentHouse, dataMain, currentLanguage, imageSources, pdfContentData, userName, userEmail, userZipcode);
+    
+    const timelineTexts = {
+      details__tax_text: $('#details__tax_text').text(),
+
+      today_title: $('#today_title').text(),
+      today_subtitle: $('#today_subtitle').text(),
+      today_text: $('#today_text').text(),
+
+      prepayment_title: $('#prepayment_title').text(),
+      prepayment_subtitle: $('#prepayment_subtitle').text(),
+      prepayment_text: $('#prepayment_text').text(),
+      
+      ship_day_title: $('#ship_day_title').text(),
+      ship_day_subtitle: $('#ship_day_subtitle').text(),
+      ship_day_text: $('#ship_day_text').text(),
+      
+      delivery_title: $('#delivery_title').text(),
+      delivery_subtitle: $('#delivery_subtitle').text(),
+      delivery_text: $('#delivery_text').text(),
+    };
+
+    generatePDF(
+      currentHouse,
+      dataMain,
+      currentLanguage,
+      imageSources,
+      pdfContentData,
+      timelineTexts,
+      userName,
+      userEmail,
+      userZipcode,
+    );
   });
 }
 
@@ -3658,9 +3689,6 @@ function collectSummary() {
       { text: getData(dataMain, 'ui_pdf_total', currentLanguage), width: '70%', style: 'tableTitle', margin: [0, 0, 0, 0], },
       { text: '', width: '*', margin: [0, 0, 0, 0] },
       { text: currentAmountString, style: 'tableTitle', margin: [0, 0, 0, 0], alignment: 'right', },
-    ]},
-    { columns: [
-      { text: `+ ${amountText}${text}`, width: '100%', style: 'tableTitle', margin: [0, 6, 0, 0], alignment: 'right', },
     ]},
   );
 }

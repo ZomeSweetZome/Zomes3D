@@ -6,7 +6,7 @@
 import { getData } from './ui-controller.js';
 
 export function generatePDF(
-  currentHouse, data, language, imageSources, configurationData, 
+  currentHouse, data, language, imageSources, configurationData, timelineData, 
   userName = '',
   email = '',
   zipcode = '',
@@ -24,6 +24,7 @@ export function generatePDF(
     './src/pdf/images/icon_website.png',
     './src/pdf/images/icon_phone.png',
     './src/pdf/images/icon_email.png',
+    './src/pdf/images/timeline_point.png',
   ];
 
   currentHouse = currentHouse + '';
@@ -32,7 +33,6 @@ export function generatePDF(
     case '0':
       imageUrls.push('./src/pdf/images/sch_pod.png');
       imageUrls.push('./src/pdf/images/dimensions_pod.png');
-      console.log("🚀 ~ currentHouse:", currentHouse);
       break;
     case '1':
       imageUrls.push('./src/pdf/images/sch_office.png');
@@ -73,6 +73,7 @@ export function generatePDF(
     websiteIconImage,
     phoneIconImage,
     emailIconImage,
+    timelinePointImage,
     schemeImage,
     dimensionsImage,
   ]) => {
@@ -92,19 +93,44 @@ export function generatePDF(
     const uiPdfEmail = getData(data, "ui_pdf_email", language);
     const uiPdfPersonalDetails = getData(data, "ui_pdf_personal_details", language);
     const uiPdfYourConfiguration = getData(data, "ui_pdf_your_configuration", language);
+    const uiPdfTimeline = getData(data, "ui_timeline_title", language);
 
     const headerContent = {
       columns: [
         { image: logoImage, width: 60, margin: [30, 30, 0, 0] },
         { text: '', width: '*', margin: [0, 30, 0, 0] },
-        { image: phoneIconImage, width: 14, margin: [0, 43, 0, 0] },
+        { image: phoneIconImage, width: 14, height: 14,  margin: [0, 43, 0, 0] },
         { text: uiPdfPhone, width: 'auto', fontSize: 10, margin: [6, 43, 16, 0] },
-        { image: websiteIconImage, width: 14, margin: [0, 43, 0, 0] },
+        { image: websiteIconImage, width: 14, height: 14,  margin: [0, 43, 0, 0] },
         { text: uiPdfWeb, width: 'auto', fontSize: 10, margin: [6, 43, 16, 0] },
-        { image: emailIconImage, width: 14, margin: [0, 43, 0, 0] },
+        { image: emailIconImage, width: 14, height: 14,  margin: [0, 43, 0, 0] },
         { text: uiPdfEmail, link: `mailto:${uiPdfEmail}`, width: 'auto', fontSize: 10, margin: [6, 43, 30, 0] }
       ]
     };
+
+    const timelineOffset = 35;
+    const timelinePointDiameter = 12;
+    const timelineColumnWidth = 100;
+    const timelineMarginSmall = 4;
+    const timelineMarginLarge = 20;
+    let lineY2 = 375;
+
+    console.log("🚀 ~ language:", language);
+
+    switch (language) {
+      case 'EN':
+        lineY2 = 375;
+        break;
+      case 'FR':
+        lineY2 = 432;
+        break;
+      case 'ES':
+        lineY2 = 415;
+        break;
+      default:
+        lineY2 = 375;
+        break;
+    }
 
     const pdfContent = [
       // ******************    PAGE 1    ***********************
@@ -139,6 +165,88 @@ export function generatePDF(
       },
 
       ...configurationData,
+
+      { columns: [
+        { text: timelineData.details__tax_text, width: '100%', style: 'tableTitle', margin: [0, 6, 0, 0], alignment: 'right', },
+      ]},
+
+      // ******************    PAGE 3    ***********************
+
+      {
+        text: uiPdfTimeline,
+        style: 'title',
+        margin: [0, 0, 0, 20],
+        pageBreak: "before"
+      },
+
+      { canvas: [ { type: 'line', 
+        x1: 30 + timelineColumnWidth + timelineOffset + timelinePointDiameter / 2, 
+        y1: 140, 
+        x2: 30 + timelineColumnWidth + timelineOffset + timelinePointDiameter / 2, 
+        y2: lineY2, 
+        lineWidth: 0.5 }],
+        absolutePosition: { x: 0, y: 0 },
+      },
+
+      { columns: [
+        { text: timelineData.today_title, style: 'timelineTitle', width:  timelineColumnWidth, margin: [0, 0, 0, 0], },
+        { text: '', width: timelineOffset, margin: [0, 0, 0, 0] },
+        { image: timelinePointImage, width: timelinePointDiameter, height: timelinePointDiameter, margin: [0, 2, 0, 0] },
+        { text: '', width: timelineOffset, margin: [0, 0, 0, 0] },
+        { text: timelineData.today_subtitle, style: 'timelineTitle', margin: [0, 0, 0, timelineMarginSmall], },
+      ]},
+      { columns: [
+        { text: '', style: 'timelineText', width:  timelineColumnWidth, margin: [0, 0, 0, 0], },
+        { text: '', width: timelineOffset, margin: [0, 0, 0, 0] },
+        { text: '', style: 'timelineText', width: timelinePointDiameter, height: timelinePointDiameter,  margin: [0, 0, 0, 0] },
+        { text: '', width: timelineOffset, margin: [0, 0, 0, 0] },
+        { text: timelineData.today_text, style: 'timelineText', margin: [0, 0, 0, timelineMarginLarge], },
+      ]},
+
+      { columns: [
+        { text: timelineData.prepayment_title, style: 'timelineTitle', width:  timelineColumnWidth, margin: [0, 0, 0, 0], },
+        { text: '', width: timelineOffset, margin: [0, 0, 0, 0] },
+        { image: timelinePointImage, width: timelinePointDiameter, height: timelinePointDiameter, margin: [0, 2, 0, 0] },
+        { text: '', width: timelineOffset, margin: [0, 0, 0, 0] },
+        { text: timelineData.prepayment_subtitle, style: 'timelineTitle', margin: [0, 0, 0, timelineMarginSmall], },
+      ]},
+      { columns: [
+        { text: '', style: 'timelineText', width:  timelineColumnWidth, margin: [0, 0, 0, 0], },
+        { text: '', width: timelineOffset, margin: [0, 0, 0, 0] },
+        { text: '', style: 'timelineText', width: timelinePointDiameter, height: timelinePointDiameter,  margin: [0, 0, 0, 0] },
+        { text: '', width: timelineOffset, margin: [0, 0, 0, 0] },
+        { text: timelineData.prepayment_text, style: 'timelineText', margin: [0, 0, 0, timelineMarginLarge], },
+      ]},
+
+      { columns: [
+        { text: timelineData.ship_day_title, style: 'timelineTitle', width:  timelineColumnWidth, margin: [0, 0, 0, 0], },
+        { text: '', width: timelineOffset, margin: [0, 0, 0, 0] },
+        { image: timelinePointImage, width: timelinePointDiameter, height: timelinePointDiameter, margin: [0, 2, 0, 0] },
+        { text: '', width: timelineOffset, margin: [0, 0, 0, 0] },
+        { text: timelineData.ship_day_subtitle, style: 'timelineTitle', margin: [0, 0, 0, timelineMarginSmall], },
+      ]},
+      { columns: [
+        { text: '', style: 'timelineText', width:  timelineColumnWidth, margin: [0, 0, 0, 0], },
+        { text: '', width: timelineOffset, margin: [0, 0, 0, 0] },
+        { text: '', style: 'timelineText', width: timelinePointDiameter, height: timelinePointDiameter,  margin: [0, 0, 0, 0] },
+        { text: '', width: timelineOffset, margin: [0, 0, 0, 0] },
+        { text: timelineData.ship_day_text, style: 'timelineText', margin: [0, 0, 0, timelineMarginLarge], },
+      ]},
+
+      { columns: [
+        { text: timelineData.delivery_title, style: 'timelineTitle', width:  timelineColumnWidth, margin: [0, 0, 0, 0], },
+        { text: '', width: timelineOffset, margin: [0, 0, 0, 0] },
+        { image: timelinePointImage, width: timelinePointDiameter, height: timelinePointDiameter, margin: [0, 2, 0, 0] },
+        { text: '', width: timelineOffset, margin: [0, 0, 0, 0] },
+        { text: timelineData.delivery_subtitle, style: 'timelineTitle', margin: [0, 0, 0, timelineMarginSmall], },
+      ]},
+      { columns: [
+        { text: '', style: 'timelineText', width:  timelineColumnWidth, margin: [0, 0, 0, 0], },
+        { text: '', width: timelineOffset, margin: [0, 0, 0, 0] },
+        { text: '', style: 'timelineText', width: timelinePointDiameter, height: timelinePointDiameter,  margin: [0, 0, 0, 0] },
+        { text: '', width: timelineOffset, margin: [0, 0, 0, 0] },
+        { text: timelineData.delivery_text, style: 'timelineText', margin: [0, 0, 0, 0], },
+      ]},
     ];
 
     const pdfDefinition = {
@@ -153,6 +261,8 @@ export function generatePDF(
         tableText: { fontSize: 14, bold: false, font: 'SourceSansPro' },
         cost: { fontSize: 14, bold: false, font: 'SourceSansPro' },
         amount: { fontSize: 14, bold: true, font: 'SourceSansPro' },
+        timelineTitle: { fontSize: 14, bold: true, font: 'SourceSansPro' },
+        timelineText: { fontSize: 14, bold: false, font: 'SourceSansPro', color: '#7D7D7D' },
       },
       defaultStyle: { font: 'SourceSansPro' },
     };
