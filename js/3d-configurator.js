@@ -325,42 +325,6 @@ SharedParameterList[3].groupOptionAction = function () {
 
 // addons
 SharedParameterList[4].groupOptionAction = function () {
-  // if (isFirstStart || justClicked) {
-  //   if (this.value[2] == '1') { // foundation kit
-  //     floor.position.y = MODEL_CENTER_POSITION - FOUNDATION_HEIGHT;
-  //   } else {
-  //     floor.position.y = MODEL_CENTER_POSITION;
-  //   }
-
-  //   if (currentHouse == '2') {
-  //     if (this.value[3] == '1') { // extra door
-  //       isExtraDoorOn = true;
-  //     } else if (this.value[3] == '0') {
-  //       isExtraDoorOn = false;
-  //     }
-
-  //     updateFurnitureSet();
-  //   }
-
-  //   if (this.value[1] == '1') { // in-build desk
-  //     isBuiltInDeskOn = true;
-  //   } else if (this.value[1] == '0') {
-  //     isBuiltInDeskOn = false;
-  //   }
-
-  //   checkBuiltInDeskState();
-
-  //   if ($('#button_dimensions').hasClass('active')) {
-  //     if (this.value[2] == '1') { // foundation kit
-  //       isFoundationKitOn = true;
-  //     } else {
-  //       isFoundationKitOn = false;
-  //     }
-
-  //     dimensionsController(true);
-  //   }
-  // }
-
   if (isFirstStart || justClicked) {
     if (this.value[0] == '1') { // foundation kit
       floor.position.y = MODEL_CENTER_POSITION - FOUNDATION_HEIGHT;
@@ -386,7 +350,7 @@ SharedParameterList[4].groupOptionAction = function () {
       isBuiltInDeskOn = false;
     }
 
-    checkBuiltInDeskState();
+    checkDeskAndAircondState();
 
     if ($('#button_dimensions').hasClass('active')) {
       if (this.value[0] == '1') { // foundation kit
@@ -1312,13 +1276,6 @@ function updateStateVars() {
   isWindowCustomOn = (SharedParameterList[1].value[2] == '1') ? true : false;
   currentInteriorOption = SharedParameterList[2].value;
   currentExteriorOption = SharedParameterList[3].value;
-  // isExtrimeWeatherPackOn = (SharedParameterList[4].value[0] == '1') ? true : false;
-  // isBuiltInDeskOn = (SharedParameterList[4].value[1] == '1') ? true : false;
-  // isFoundationKitOn = (SharedParameterList[4].value[2] == '1') ? true : false;
-  // isExtraDoorOn = (SharedParameterList[4].value[3] == '1') ? true : false;
-  // isHeatCoolUnitOn = (SharedParameterList[4].value[3] == '1') ? true : false;
-  // isAirconditionOn = (SharedParameterList[4].value[3] == '1') ? true : false;
-  // isSmartGlassOn = (SharedParameterList[4].value[3] == '1') ? true : false;
   isFoundationKitOn = (SharedParameterList[4].value[0] == '1') ? true : false;
   isBuiltInDeskOn = (SharedParameterList[4].value[1] == '1') ? true : false;
   isSmartGlassOn = (SharedParameterList[4].value[2] == '1') ? true : false;
@@ -1577,7 +1534,7 @@ function CheckChanges() {
 
   updateStateVars();
 
-  checkBuiltInDeskState();
+  checkDeskAndAircondState();
 
   calculatePrice();
   calculateAndSetEstimateDates();
@@ -1696,19 +1653,19 @@ function furnitureController(value) {
 
 function updateFurnitureSet() {
   if ($('#button_sleep').hasClass('active')) {
-    setVisibility(modelFurniture, false, ['Pod-desk-top', 'office-desk-top', 'Studio-desk-top']);
+    // setVisibility(modelFurniture, false, ['Pod-desk-top', 'office-desk-top', 'Studio-desk-top']);
     setVisibility(modelFurniture, false, ['work-back-door', 'work', 'live']);
     setVisibility(modelFurniture, true, ['sleep']);
   }
 
   if ($('#button_live').hasClass('active')) {
-    setVisibility(modelFurniture, false, ['Pod-desk-top', 'office-desk-top', 'Studio-desk-top']);
+    // setVisibility(modelFurniture, false, ['Pod-desk-top', 'office-desk-top', 'Studio-desk-top']);
     setVisibility(modelFurniture, false, ['sleep', 'work', 'work-back-door']);
     setVisibility(modelFurniture, true, ['live']);
   }
 
   if ($('#button_work').hasClass('active')) {
-    setVisibility(modelFurniture, false, ['Pod-desk-top', 'office-desk-top', 'Studio-desk-top']);
+    // setVisibility(modelFurniture, false, ['Pod-desk-top', 'office-desk-top', 'Studio-desk-top']);
     setVisibility(modelFurniture, false, ['sleep', 'live']);
 
     if (currentHouse == '2' && !isExtraDoorOn) {
@@ -1911,9 +1868,7 @@ function formatPrice(price, currency, needToBeRounded = true, needToAddSpace = f
   if (
     !price
     && SharedParameterList[1].value[2] != 1 // custom windows
-    // && SharedParameterList[4].value[3] != 1 // extra door
     && SharedParameterList[4].value[5] != 1 // extra door
-    // && SharedParameterList[4].value[5] != 1 // smart glass
     && SharedParameterList[4].value[2] != 1 // smart glass
   ) {
     return getData(dataMain, 'ui_component_price_included', currentLanguage);
@@ -3243,7 +3198,7 @@ function cameraBtnHandlers() {
 
     flyCameraTo(aim, 'inside', () => {
       renderer.clippingPlanes = [];
-      notClippingMaterials = ['floor', 'AC_white', 'AC_gray', 'AC_gray.001', 'AC_screen'];
+      notClippingMaterials = ['floor', 'AC_white', 'AC_gray', 'AC_gray.001', 'AC_screen', 'bamboo'];
       current3Dmodel = modelHouse;
       isLocalClippingOn = true;
       $('.canvas_btn_camera').removeClass('disabled');
@@ -3806,6 +3761,8 @@ $(document).on('click', '.option.option_4-3', function () { // extra door
 });
 
 $(document).on('click', '.option.option_4-4', function () { // air conditioner
+  checkDeskAndAircondState();
+  
   if (!isCameraInside) {
     $('#button_camera_inside').trigger('click', ['outAirConditioner']);
     flyCameraTo('outAirConditioner', 'inside');
@@ -3821,29 +3778,25 @@ $(document).on('click', '.option.option_1-2', function () { // custom windows
 });
 
 $(document).on('click', '.option.option_4-1', function () { // in-build desk
-  checkBuiltInDeskState();
+  checkDeskAndAircondState();
 
   if ($('.option.option_4-1').hasClass('active')) {
     if (!isCameraInside) {
       $('#button_camera_inside').click();
-      // flyCameraTo('inBuildInDesk', 'inside');
     } 
   }
 });
 
-function checkBuiltInDeskState() {
-  if ($('.option.option_4-1').hasClass('active')) {
+function checkDeskAndAircondState() {
+  if ($('.option.option_4-1').hasClass('active') || $('.option.option_4-4').hasClass('active')) {
     disableFurnitureBtn();
-    modelFurniture.visible = true;
-    setVisibility(modelFurniture, true, ['Pod-desk-top', 'office-desk-top', 'Studio-desk-top']);
-    setVisibility(modelFurniture, false, ['work-back-door', 'work', 'live', 'sleep']);
-  } else {
-    setVisibility(modelFurniture, false, ['work-back-door', 'work', 'live', 'sleep']);
-    setVisibility(modelFurniture, false, ['Pod-desk-top', 'office-desk-top', 'Studio-desk-top']);
-    modelFurniture.visible = false;
+  } 
+  
+  if (!$('.option.option_4-1').hasClass('active') && !$('.option.option_4-4').hasClass('active')) {
     enableFurnitureBtn();
   }
 }
+
 
 // *******************
 

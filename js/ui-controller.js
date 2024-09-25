@@ -37,7 +37,6 @@ export async function createMenu(mainData) {
         { '#button_work .canvas_btn_text': 'ui_btn_radio_work' },
         { '#button_live .canvas_btn_text': 'ui_btn_radio_live' },
         { '#ar_button_calculate__caption .ar_button_calculate__caption_large': 'ui_btn_calculate_tax' },
-        // { '#ar_button_order__caption .ar_button_order__caption_large': 'ui_btn_buy' },
         { '.popup-sharing-title': 'ui_popup-title-share' },
         { '#popup-qr-title-ui': 'ui_popup-title-qr' },
         { '#popup-qr-text-ui': 'ui_popup-text-qr' },
@@ -53,9 +52,6 @@ export async function createMenu(mainData) {
         { '#menu_info_tab_specs': 'ui_menu_info_tab_specs' },
         { '#canvas_notification': 'ui_canvas_notification' },
         { '#canvas_notification_limit': 'ui_canvas_notification_limit' },
-        // { '#ar_book-btn__caption': 'ui_ar_book-btn__caption' },
-        // { '#ar_button_book_consult_1 .ar_book-btn__caption': 'ui_ar_book-btn__caption' },
-        // { '#ar_button_book_consult_2 .ar_book-btn__caption': 'ui_ar_book-btn__caption' },
         // ----------
         { '.summary__popup-title': 'ui_summary_title' },
         { '.details__item_not_included': 'ui_summary_not_included' },
@@ -66,9 +62,6 @@ export async function createMenu(mainData) {
         { '#summary_back_to_conf': 'ui_summary_back_to_conf' },
         { '#summary_download_pdf_btn': 'ui_summary_download_pdf_btn' },
         { '#contact_form_btn_text .ar_button_order__caption_large': 'ui_btn_buy' },
-        // ----------
-        // { '.popup_tax__title': 'ui_popup_tax_title' },
-        // { '#popup_tax_calculate': 'ui_popup_tax_form_btn' },
         // ----------
         { '.popup_select__title': 'ui_popup_select_model_title' },
         { '#select_btn_pod .popup_select__item_button': 'ui_popup_select_model_btn_1' },
@@ -87,16 +80,12 @@ export async function createMenu(mainData) {
         { '#delivery_subtitle': 'ui_timeline_delivery_subtitle' },
         { '#delivery_text': 'ui_timeline_delivery_text' },
         { '#timeline_btn_deposit': 'ui_ar_pay_deposit' },
-        // { '#timeline_btn_bookconsult': 'ui_ar_book_consult' },
       );
 
       uiPlaceholdersMultiLanguages.push(
         { '#form_name': 'ui_summary_form_label_name' },
         { '#form_email': 'ui_summary_form_label_email' },
         { '#form_zipcode': 'ui_summary_form_label_zipcode' },
-        // ----------
-        // { '#popup_tax_email': 'ui_popup_tax_label_email' },
-        // { '#popup_tax_zipcode': 'ui_popup_tax_label_zipcode' },
       );
 
       const groupsContainer = $('#ar_filter');
