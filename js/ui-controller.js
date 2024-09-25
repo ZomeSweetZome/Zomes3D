@@ -42,7 +42,7 @@ export async function createMenu(mainData) {
         { '#popup-qr-title-ui': 'ui_popup-title-qr' },
         { '#popup-qr-text-ui': 'ui_popup-text-qr' },
         { '#delivery_info_title': 'ui_delivery_info_title' },
-        { '#delivery_info_title_2': 'ui_delivery_info_title' },
+        { '#delivery_info_title_2': 'ui_delivery_info_title_2' },
         { '#payment_info_title': 'ui_payment_info_title' },
         { '#payment_info_title_2': 'ui_payment_info_title' },
         { '.ar_button_back__caption': 'ui_btn_back' },
@@ -53,7 +53,7 @@ export async function createMenu(mainData) {
         { '#menu_info_tab_specs': 'ui_menu_info_tab_specs' },
         { '#canvas_notification': 'ui_canvas_notification' },
         { '#canvas_notification_limit': 'ui_canvas_notification_limit' },
-        { '#ar_book-btn__caption': 'ui_ar_book-btn__caption' },
+        // { '#ar_book-btn__caption': 'ui_ar_book-btn__caption' },
         // { '#ar_button_book_consult_1 .ar_book-btn__caption': 'ui_ar_book-btn__caption' },
         // { '#ar_button_book_consult_2 .ar_book-btn__caption': 'ui_ar_book-btn__caption' },
         // ----------

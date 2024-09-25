@@ -1106,7 +1106,7 @@ select2-container
   margin-right: 8px;
 }
 
-.canvas_button__book {
+.canvas_button__save {
   display: none;
 }
 
@@ -1133,10 +1133,6 @@ select2-container
   width: 18px;
   height: 18px;
   margin-left: 8px;
-}
-
-.ar_book-btn .ar_book-btn__caption {
-
 }
 
 .ar_book-btn:hover {
@@ -2962,6 +2958,10 @@ textarea[name="ar_order_comment"] {
   visibility: hidden;
 }
 
+#button_ar_qr {
+  display: none;
+}
+
 /* ################  MOBILE ################ */
 
 @media screen and (max-width: 1059px) and (orientation: landscape) {
@@ -3583,15 +3583,21 @@ textarea[name="ar_order_comment"] {
     bottom: 40px;
   }
 
-  .canvas_button__book {
+  .canvas_button__save {
     display: flex;
     align-items: center;
     justify-content: center;
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: 74px;
+    width: 48px;
+    height: 35px;
+    background-color: var(--marevo-color-text-black, #000000);
+    border: 1px solid var(--marevo-color-text-black, #000000);
+    border-radius: 50px;
+  }
+
+  .canvas_button__save_image {
+    content: var(--marevo-ui-icon_floppy_w);
+    width: 20px;
+    height: 20px;
   }
 
   .ar_menu_footer_container .ar_book-btn {
@@ -3603,15 +3609,6 @@ textarea[name="ar_order_comment"] {
     font-size: 14px;
     margin: 16px 20px;
   }
-
-  .ar_book-btn .ar_book-btn__image {
-
-  }
-
-  .ar_book-btn .ar_book-btn__caption {
-    
-  }
-
 
   #delivery_info_title {
     flex-direction: row-reverse;
@@ -3638,7 +3635,7 @@ textarea[name="ar_order_comment"] {
     width: 100%;
     bottom: 0;
     left: 0;
-    padding: 16px 20px 30px;
+    padding: 16px 20px 25px;
   }
 
   .ar_total_amount_canvas__price {

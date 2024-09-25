@@ -3412,7 +3412,7 @@ function notificationHandler() {
 }
 
 function summaryBtnsHandler() {
-  $(document).on('click', '#ar_button_order, #ar_button_next_4', function () {
+  $(document).on('click', '#ar_button_order, #ar_button_next_4, #canvas_button_save', function () {
     if (!isCameraInside) {
       proceedSummaryAndPdf();
     } else {
@@ -3517,11 +3517,17 @@ function updateShippingTaxInfo() {
   }
   
   const text = (totalAmountShipTax) 
-    ? `${getData(dataMain, 'ui_summary_details__tax_text_short', currentLanguage)} ${userZipcode}`
+    ? ` ${getData(dataMain, 'ui_summary_details__tax_text_short', currentLanguage)} ${userZipcode}`
     : getData(dataMain, 'ui_summary_details__tax_text', currentLanguage);
-  const amountText = (totalAmountShipTax) ? `${currentTaxAmountString}` : '';
-  $('#payment_info_title').html(`+ ${amountText}${text}`); 
-  $('#payment_info_title_2').html(`+ ${amountText}${text}`); 
+
+  const text2 = (totalAmountShipTax) 
+    ? ` ${getData(dataMain, 'ui_summary_details__tax_text_short_2', currentLanguage)} ${userZipcode}`
+    : getData(dataMain, 'ui_summary_details__tax_text_2', currentLanguage);
+  
+    const amountText = (totalAmountShipTax) ? ` ${currentTaxAmountString}` : ' ';
+
+  $('#payment_info_title').html(`+${amountText}${text}`); 
+  $('#payment_info_title_2').html(`+${amountText}${text2}`); 
   $('#details__tax_text').html(`+ ${amountText}${text}`);
 }
 
