@@ -52,6 +52,7 @@ export async function createMenu(mainData) {
         { '#menu_info_tab_specs': 'ui_menu_info_tab_specs' },
         { '#canvas_notification': 'ui_canvas_notification' },
         { '#canvas_notification_limit': 'ui_canvas_notification_limit' },
+        { '#tumbler_label': 'ui_tumbler_label' },
         // ----------
         { '.summary__popup-title': 'ui_summary_title' },
         { '.details__item_not_included': 'ui_summary_not_included' },

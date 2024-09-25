@@ -72,6 +72,9 @@
   --marevo-ui-btn_studio : url(../src/ar-ui-icons/btn_studio.png);
   --marevo-ui-btn_men : url(../src/ar-ui-icons/men.png);
 
+  --marevo-ui-icon_tumblr_on : url(../src/ar-ui-icons/tumblrOn.png);
+  --marevo-ui-icon_tumblr_off : url(../src/ar-ui-icons/tumblrOff.png);
+
   --marevo-scheme_pod : url(../src/pdf/images/sch_pod.png);
   --marevo-scheme_office : url(../src/pdf/images/sch_office.png);
   --marevo-scheme_studio : url(../src/pdf/images/sch_studio.png);
@@ -2899,56 +2902,63 @@ textarea[name="ar_order_comment"] {
 
 /* ----------------------- */
 
-.tumbler-wrapper {
-  box-sizing: border-box;
-  margin-left: auto;
-  width: 51px;
-  height: 30px;
-  background-color: var(--color-dark, black);
-  border: darken(#aae2f1, 40);
-  border: 1px solid var(--colors-secondary);
-  border-radius: 30px;
+.tumbler__container {
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  gap: 10px;
+  z-index: 2;
+}
+
+.tumbler__container.active {
   display: flex;
+}
+
+.tumbler__label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--marevo-color-text-black, #000);
+}
+
+.tumbler-wrapper {
+  display: flex;
+  box-sizing: border-box;
+  width: 56px;
+  height: 30px;
+  background-color: #ffffff;
+  border: 1px solid var(--marevo-color-text-black, #000000);
+  border-radius: 30px;
   justify-content: space-between;
   align-items: center;
-  padding: 0 6px;
   cursor: pointer;
-  position: absolute;
-  top: 20px;
-  left: 20px;
-
-  display: none;
+  position: relative;
 }
 
-.tumbler-wrapper.active {
-  display: flex;
-}
-
-.tumbler-wrapper img {
-  width: 15px;
-  height: 15px;
+.tumbler-wrapper.turned-on {
+  background-color: var(--color-dark, black);
 }
 
 .tumbler {
   position: absolute;
-  height: 20px;
-  width: 20px;
+  height: 28px;
+  width: 28px;
   border-radius: 50%;
-  background-color: #fff;
-  transition: transform .5s, background-color .5s;
-  /* will-change: transform; */
+  border: 1px solid var(--marevo-color-text-black, #000000);
+  padding: 2px;
+  background-color: #ffffff;
+  background-image: var(--marevo-ui-icon_tumblr_off);
+  background-size: 22px 22px;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
-#tumbler-icon-sun {
-  /* content: url('../src/ar-ui-icons/icon_sun.png'); */
 
-}
-
-#tumbler-icon-moon {
-  /* content: url('../src/ar-ui-icons/icon_moon.png'); */
-}
-
-.tumbler.smart-mode {
+.tumbler-wrapper.turned-on .tumbler {
+  border: 1px solid #ffffff;
+  background-color: var(--marevo-color-text-black, #000000);
+  background-image: var(--marevo-ui-icon_tumblr_on);
   transform: translateX(calc(100% - 2px));
 }
 
@@ -4296,6 +4306,35 @@ textarea[name="ar_order_comment"] {
     white-space: nowrap;
 
     margin-top: 32px;
+  }
+
+  /* ----------------------- */
+
+  .tumbler__container {
+    top: 4px;
+    left: 20px;
+    gap: 6px;
+  }
+
+  .tumbler__label {
+    font-size: 12px;
+  }
+
+  .tumbler-wrapper {
+    width: 36px;
+    height: 20px;
+    border-radius: 20px;
+  }
+
+  .tumbler {
+    height: 18px;
+    width: 18px;
+    padding: 2px;
+    background-size: 12px 12px;
+  }
+
+  .tumbler-wrapper.turned-on .tumbler {
+    transform: translateX(calc(100% - 2px));
   }
 }
 

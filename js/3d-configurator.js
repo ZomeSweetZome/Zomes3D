@@ -92,6 +92,8 @@ let isHeatCoolUnitOn = false;
 let isAirconditionOn = false;
 let isSmartGlassOn = false;
 
+let isWindowsSmart = false;
+
 let [houseDiameter, houseHeight] = [0, 0];
 
 let uiMenuInfoLanguages = [
@@ -350,7 +352,7 @@ SharedParameterList[4].groupOptionAction = function () {
       isBuiltInDeskOn = false;
     }
 
-    checkDeskAndAircondState();
+    checkAddonsState();
 
     if ($('#button_dimensions').hasClass('active')) {
       if (this.value[0] == '1') { // foundation kit
@@ -1534,7 +1536,10 @@ function CheckChanges() {
 
   updateStateVars();
 
-  checkDeskAndAircondState();
+  checkAddonsState();
+
+  smartWindowsController('glass', isWindowsSmart);
+  smartWindowsController('glass.001', isWindowsSmart);
 
   calculatePrice();
   calculateAndSetEstimateDates();
@@ -3189,7 +3194,6 @@ function menuInfoBtnHandler(opt) {
 
 // *****   Camera Btns   *****
 function cameraBtnHandlers() {
-
   $('#button_camera_inside').on('click', function (event, aim = 'outXrays') {
     event.stopPropagation();
     $(this).toggleClass('hidden');
@@ -3213,10 +3217,6 @@ function cameraBtnHandlers() {
     $('#button_camera_inside').toggleClass('hidden');
 
     $('.canvas_btn_camera').addClass('disabled');
-
-    // flyCameraTo('outMain', 'outside', () => {
-    //   $('.canvas_btn_camera').removeClass('disabled');
-    // });
 
     flyCameraTo('outMain', 'outside', () => {
       isLocalClippingOn = false;
@@ -3752,6 +3752,23 @@ $(document).on('click', '.option.option_1-1', function () { // windows viewport
   }
 });
 
+
+$(document).on('click', '.option.option_1-2', function () { // custom windows
+  if (isCameraInside) {
+    $('#button_camera_outside').click();
+  }
+});
+
+$(document).on('click', '.option.option_4-1', function () { // in-build desk
+  checkAddonsState();
+
+  if ($('.option.option_4-1').hasClass('active')) {
+    if (!isCameraInside) {
+      $('#button_camera_inside').click();
+    } 
+  }
+});
+
 $(document).on('click', '.option.option_4-3', function () { // extra door
   if (currentHouse == '2' && $('.option.option_4-3').hasClass('active')) {
     if (!isCameraInside) {
@@ -3761,7 +3778,7 @@ $(document).on('click', '.option.option_4-3', function () { // extra door
 });
 
 $(document).on('click', '.option.option_4-4', function () { // air conditioner
-  checkDeskAndAircondState();
+  checkAddonsState();
   
   if (!isCameraInside) {
     $('#button_camera_inside').trigger('click', ['outAirConditioner']);
@@ -3771,30 +3788,58 @@ $(document).on('click', '.option.option_4-4', function () { // air conditioner
   }
 });
 
-$(document).on('click', '.option.option_1-2', function () { // custom windows
-  if (isCameraInside) {
-    $('#button_camera_outside').click();
-  }
-});
 
-$(document).on('click', '.option.option_4-1', function () { // in-build desk
-  checkDeskAndAircondState();
-
-  if ($('.option.option_4-1').hasClass('active')) {
-    if (!isCameraInside) {
-      $('#button_camera_inside').click();
-    } 
-  }
-});
-
-function checkDeskAndAircondState() {
+function checkAddonsState() {
+  // Built-in desk ON or Air conditioner ON
   if ($('.option.option_4-1').hasClass('active') || $('.option.option_4-4').hasClass('active')) {
     disableFurnitureBtn();
   } 
   
+  // Built-in desk OFF and Air conditioner OFF
   if (!$('.option.option_4-1').hasClass('active') && !$('.option.option_4-4').hasClass('active')) {
     enableFurnitureBtn();
   }
+
+  //Smart windows
+  if ($('.option.option_4-5').hasClass('active')) {
+    $('.tumbler__container').addClass('active');
+  } else {
+    $('.tumbler__container').removeClass('active');
+    if ($('.tumbler-wrapper').hasClass('turned-on')) {
+      $('.tumbler-wrapper').removeClass('turned-on');
+      isWindowsSmart = false;
+      smartWindowsController('glass', isWindowsSmart);
+      smartWindowsController('glass.001', isWindowsSmart);
+    }
+  }
+}
+
+$(document).on('click', '.tumbler-wrapper', function () { //Smart windows tumblr
+  $('.tumbler-wrapper').toggleClass('turned-on');
+  isWindowsSmart = !isWindowsSmart;
+  smartWindowsController('glass', isWindowsSmart);
+  smartWindowsController('glass.001', isWindowsSmart);
+});
+
+
+function smartWindowsController(materialName, isEnabled) {
+  scene.traverse((object) => {
+    if (object.isMesh && object.material && object.material.name === materialName) {
+      const material = object.material;
+      
+      if (isEnabled) {
+        material.opacity = 1;
+        material.roughness = 0.1;
+        material.metalness = 0.2;
+        material.needsUpdate = true;
+      } else {
+        material.opacity = 0.3;
+        material.roughness = 0;
+        material.metalness = 1;
+        material.needsUpdate = true;
+      }
+    }
+  });
 }
 
 
@@ -3939,6 +3984,9 @@ export function flyCameraTo(namePosition, inOrOut, callback = () => { }, duratio
   }
 
   onChangePosition(DATA_HOUSE_NAME[currentHouse], namePosition, callback, duration);
+
+  smartWindowsController('glass', isWindowsSmart);
+  smartWindowsController('glass.001', isWindowsSmart);
 }
 
 //#endregion
