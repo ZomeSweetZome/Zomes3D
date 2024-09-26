@@ -3638,27 +3638,35 @@ textarea[name="ar_order_comment"] {
   /*!---------------*/
 
   .ar_total_amount_canvas__container {
-    display: flex;
-    position: absolute;
-    flex-direction: row;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    /* flex-direction: row; */
+    /* justify-content: space-between; */
     width: 100%;
     max-width: 500px;
+    position: absolute;
     bottom: -42px;
     left: 0;
     padding: 16px 42px 25px;
   }
 
+
+
   .ar_total_amount_canvas__price {
     font-size: 24px;
     font-weight: 700;
     color: var(--marevo-color-text-black, #000);
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .payment_info_canvas__container {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
+    text-align: end;
   }
   
   .payment_info_canvas__info_item {
