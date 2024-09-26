@@ -2096,8 +2096,8 @@ textarea[name="ar_order_comment"] {
   align-items: center;
   text-align: center;
   width: 100vw;
-  /* height: calc(100svh - var(--marevo-header-height, 100px)); */
-  height: 100dvh;
+  height: calc(100svh - var(--marevo-header-height, 100px));
+  /* height: 100dvh; */
   background-color: var(--marevo-color-bgrd-menu, #fff);
   left: 0;
   top: 0;
