@@ -379,8 +379,6 @@ export function create3DScene(properties = scenePropertiesDefault, startFunction
 }
 
 export async function disposeModel(model) {
-  console.log("🚀 ~ disposeModel ~ model:", model);
-  
   if (model) {
     model.visible = false;
 

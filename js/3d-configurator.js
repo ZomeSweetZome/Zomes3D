@@ -1763,8 +1763,9 @@ function calculatePrice() {
     } else if (SharedParameterList[i].type === 'array-string') {
       for (let j = 0; j < SharedParameterList[i].value.length; j++) {
         if (SharedParameterList[i].value[j] == '1') {
-          // optionId = `option_${i}-${j}`;
-          optionId = `option_${i}-${OPTIONS_ID_ORDER_FOR_ADDONS[j]}`;
+          optionId = (i === 4)
+            ? `option_${i}-${OPTIONS_ID_ORDER_FOR_ADDONS[j]}` // addons
+            : `option_${i}-${j}`;
           if ($(`.${optionId}`).hasClass('disabled')) { continue; }
           activeOptions.push(optionId);
         }
@@ -1786,7 +1787,7 @@ function calculatePrice() {
       $(`.${option} .component_price`).html(
         `${formatPrice(price, currentCurrencySign)} ${getData(dataMain, 'ui_per_window', currentLanguage)}`
       );
-    } else if (option === 'option_4-5') {
+    } else if (option === 'option_4-5') { // smart glass
       price = '';
     } else {
       price = convertPriceToNumber(getData(dataPrice, option, `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
