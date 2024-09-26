@@ -2096,7 +2096,8 @@ textarea[name="ar_order_comment"] {
   align-items: center;
   text-align: center;
   width: 100vw;
-  height: calc(100svh - var(--marevo-header-height, 100px));
+  /* height: calc(100svh - var(--marevo-header-height, 100px)); */
+  height: 100dvh;
   background-color: var(--marevo-color-bgrd-menu, #fff);
   left: 0;
   top: 0;
@@ -3642,9 +3643,10 @@ textarea[name="ar_order_comment"] {
     flex-direction: row;
     justify-content: space-between;
     width: 100%;
-    bottom: 0;
+    max-width: 500px;
+    bottom: -42px;
     left: 0;
-    padding: 16px 20px 25px;
+    padding: 16px 42px 25px;
   }
 
   .ar_total_amount_canvas__price {
@@ -4352,7 +4354,7 @@ textarea[name="ar_order_comment"] {
   }
 
   .ar_model_viewer {
-    height: calc(100svh - var(--marevo-header-height-mobile, 53px) - 198px - 44px);
+    /* height: calc(100svh - var(--marevo-header-height-mobile, 53px) - 198px - 44px); */
   }
 
   .annotation-text.long,
@@ -4481,6 +4483,10 @@ textarea[name="ar_order_comment"] {
 
   .canvas_btn.canvas_btn_share {
     margin-right: calc(25vw - 70px);
+  }
+
+  .ar_total_amount_canvas__container {
+    padding: 16px 20px 25px;
   }
 }
 

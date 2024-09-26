@@ -784,9 +784,11 @@ async function StartSettings() {
     unBlockBuyBtn(); 
     CheckChanges();
     applyAdditionalSharedParameters(7); // customWindows
+    populateFormFromUrl();
   });
 
   isFirstStart = false;
+
 }
 //! ************************************************
 
@@ -2945,7 +2947,6 @@ async function PrepareUI() {
       try {
         stateSalesTax = +getTaxRate(userZipcode);
         shippingDistance = await getDistance(userZipcode);
-        console.log("🚀 ~ stateSalesTax, shippingDistance:", stateSalesTax, shippingDistance);
         updateShippingTaxInfo();
       } catch (error) {
         console.error('Error fetching distance:', error);
@@ -2958,6 +2959,12 @@ async function PrepareUI() {
   });
 }
 
+
+function validateEmail(email) {
+  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  return emailPattern.test(email);
+}
+
 function validateForm() {
   const isNameValid = $('#form_name').val().trim() !== '';
   const isEmailValid = validateEmail($('#form_email').val().trim());
@@ -2967,14 +2974,49 @@ function validateForm() {
 
   if (isFormValid) {
     $('#submitButton').prop('disabled', false);
+    
+    WriteURLParameters();
+    
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.set('name', $('#form_name').val().trim());
+    currentUrl.searchParams.set('email', $('#form_email').val().trim());
+    currentUrl.searchParams.set('zipcode', $('#form_zipcode').val().trim());
+    window.history.replaceState({}, '', currentUrl);
   } else {
     $('#submitButton').prop('disabled', true);
   }
 }
 
-function validateEmail(email) {
-  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  return emailPattern.test(email);
+async function populateFormFromUrl() {
+  const currentUrl = new URL(window.location.href);
+
+  const name = currentUrl.searchParams.get('name');
+  const email = currentUrl.searchParams.get('email');
+  const zipcode = currentUrl.searchParams.get('zipcode');
+
+  if (name) {
+    $('#form_name').val(name);
+    localStorage.setItem('userName', name);
+  }
+  if (email) {
+    $('#form_email').val(email);
+    localStorage.setItem('userEmail', email);
+  }
+  if (zipcode) {
+    $('#form_zipcode').val(zipcode);
+    localStorage.setItem('userZipcode', zipcode);
+  }
+
+  if (name && email && zipcode) {
+    console.log("🚀🚀🚀 Start Summary 🚀🚀🚀");
+    proceedSummaryAndPdf(false);
+    userName = $('#form_name').val();
+    userEmail = $('#form_email').val();
+    userZipcode = $('#form_zipcode').val();
+    stateSalesTax = +getTaxRate(zipcode);
+    shippingDistance = await getDistance(userZipcode);
+    updateShippingTaxInfo();
+  }
 }
 
 function calculateAndSetEstimateDates() {
@@ -3396,10 +3438,11 @@ function summaryBtnsHandler() {
   });
 }
 
-function proceedSummaryAndPdf() {
+function proceedSummaryAndPdf(shouldOpenForm = true) {
   CreateImageList();
   collectSummary();
   openSummary();
+  shouldOpenForm && openContactForm();
   $('.summary__popup-overlay').scrollTop(0);
 }
 
@@ -3530,7 +3573,7 @@ function openSummary() {
   $(`.summary__scheme_${DATA_HOUSE_NAME[currentHouse]}`).addClass('active');
   $(`.summary__scheme_dimensions_${DATA_HOUSE_NAME[currentHouse]}`).addClass('active');
 
-  openContactForm();
+  // openContactForm();
 }
 
 function closeSummary() {
