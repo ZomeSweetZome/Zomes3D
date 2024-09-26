@@ -2909,7 +2909,7 @@ textarea[name="ar_order_comment"] {
   top: 30px;
   left: 30px;
   gap: 10px;
-  z-index: 2;
+  z-index: 1;
 }
 
 .tumbler__container.active {
@@ -3656,7 +3656,7 @@ textarea[name="ar_order_comment"] {
     font-size: 24px;
     font-weight: 700;
     color: var(--marevo-color-text-black, #000);
-    
+
     display: flex;
     align-items: center;
     justify-content: center;

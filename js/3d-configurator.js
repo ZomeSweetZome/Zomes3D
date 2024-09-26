@@ -3583,6 +3583,8 @@ function closeSummary() {
 }
 
 function openContactForm() {
+  $('.summary__popup-overlay').css('overflow-y', 'hidden');
+
   const savedName = localStorage.getItem('userName');
   const savedEmail = localStorage.getItem('userEmail');
   const savedZipcode = localStorage.getItem('userZipcode');
@@ -3605,6 +3607,7 @@ function openContactForm() {
 }
 
 function closeContactForm() {
+  $('.summary__popup-overlay').css('overflow-y', 'auto');
   $('.contact_form__popup-overlay').removeClass('active');
 }
 
