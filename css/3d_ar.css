@@ -4868,4 +4868,9 @@ model-viewer {
   border: 1px solid var(--marevo-loader-cube-color);
 }
 
+#menu_info_content_specs li {
+  padding-bottom: 10px;
+}
+
+
 /* --------------------------------- */
