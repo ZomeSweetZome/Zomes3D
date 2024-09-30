@@ -722,11 +722,29 @@ function InitializationGroups(callback) {
   if (callback != null) callback();
 }
 
+async function payAttentionToIcons() {
+  const infoIcons = document.querySelectorAll('.image-info');
+  
+  // Show the animation for all icons
+  infoIcons.forEach(icon => {
+      icon.classList.add('attention-icon');
+  });
+  
+  // Optionally, remove the animation after a few seconds
+  setTimeout(() => {
+      infoIcons.forEach(icon => {
+          icon.classList.remove('attention-icon');
+      });
+  }, 20000); // 20 seconds
+};
+
+
 //! *****************   START   ********************
 async function Start() {
   await createMenu(dataMain);
   PrepareUI();
   create3DScene(sceneProperties, () => InitializationGroups(startCallback));
+  payAttentionToIcons();
 
   function startCallback() {
     if (loaded) return;
