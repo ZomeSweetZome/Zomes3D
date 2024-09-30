@@ -536,3 +536,29 @@ function getStringBetweenSquareBrackets(inputString) {
     return '';
   }
 }
+
+//form handler
+document.getElementById('popupForm').addEventListener('submit', function(event) {
+  event.preventDefault(); // Still preventing default to handle the submission ourselves
+
+  // Get the form data
+  const formData = new FormData(this);
+
+  // Add the current URL to the form data
+  formData.append('designURL', window.location.href);
+
+  // Send the data to the webhook
+  fetch(this.action, {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Success:', data);
+    // Handle successful submission (e.g., show a success message)
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+    // Handle errors (e.g., show an error message)
+  });
+});
