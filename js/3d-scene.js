@@ -434,8 +434,12 @@ export async function disposeModel(model) {
   }
 }
 
-export async function loadModel(modelPath, i = 1, retryCount = 999, retryDelay = 1000) {
-  // console.log("🚀 ~ loadModel ~ model:", modelPath);
+export async function loadModel(
+  modelPath, 
+  isSecondaryModel = true, 
+  callback = () => {},
+  isLoaderNeeded = false,
+  retryCount = 999, retryDelay = 1000) {
   if (!modelPath) { return; }
 
   const {
@@ -444,7 +448,7 @@ export async function loadModel(modelPath, i = 1, retryCount = 999, retryDelay =
     MODEL_CENTER_POSITION,
   } = externalProperties;
 
-  LOADER.classList.remove('invisible');
+  (isLoaderNeeded) && LOADER.classList.remove('invisible');
   const loader = new THREE.GLTFLoader();
 
   let model;
@@ -457,7 +461,7 @@ export async function loadModel(modelPath, i = 1, retryCount = 999, retryDelay =
     if (retryCount > 0) {
       console.log(`Retrying loadModel... Attempts left: ${retryCount}`);
       await new Promise(resolve => setTimeout(resolve, retryDelay));
-      return loadModel(modelPath, i, retryCount - 1, retryDelay);
+      return loadModel(modelPath, isSecondaryModel, callback, isLoaderNeeded, retryCount - 1, retryDelay);
     } else {
       console.error("Failed to load model after multiple attempts:", modelPath);
       LOADER?.classList.add('invisible');
@@ -487,12 +491,13 @@ export async function loadModel(modelPath, i = 1, retryCount = 999, retryDelay =
   model.scale.set(1, 1, 1);
   model.position.y = MODEL_CENTER_POSITION;
 
-  if (i > 0) {
+  if (isSecondaryModel) {
     IMPORTED_MODELS.push(model);
   } else {
     IMPORTED_MODELS.splice(0, 1, model);
   }
 
+  callback();
   LOADER?.classList.add('invisible');
 }
 

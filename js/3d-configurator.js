@@ -767,17 +767,18 @@ async function StartSettings() {
 
   currentHouse = SharedParameterList[0].value || '0';
 
-  await loadModel(MODEL_PATHS[currentHouse], 0);
-  await loadModel(MODEL_PATHS[parseInt(parseInt(currentHouse) + 3)], 1);
+  await loadModel(MODEL_PATHS[currentHouse], false);
   modelHouse = IMPORTED_MODELS[0];
   modelHouse?.scale.set(0, 0, 0);
   modelHouse && scene.add(modelHouse);
-
-  modelFurniture = IMPORTED_MODELS[1];
-  modelFurniture.visible = false;
-  modelFurniture && scene.add(modelFurniture);
-  disableModelCastingShadows(modelFurniture);
-  disableModelReceivingShadows(modelFurniture);
+  
+  loadModel(MODEL_PATHS[parseInt(parseInt(currentHouse) + 3)], true, () => {
+    modelFurniture = IMPORTED_MODELS[1];
+    modelFurniture.visible = false;
+    modelFurniture && scene.add(modelFurniture);
+    disableModelCastingShadows(modelFurniture);
+    disableModelReceivingShadows(modelFurniture);
+  });
 
   preloadTextures();
 
@@ -1590,20 +1591,21 @@ async function changeModel(modelId) {
 
   IMPORTED_MODELS.length = 0;
 
-  await loadModel(MODEL_PATHS[modelId], 0);
-  await loadModel(MODEL_PATHS[parseInt(parseInt(modelId) + 3)], 1);
+  await loadModel(MODEL_PATHS[modelId], false, () => {}, true);
   modelHouse = IMPORTED_MODELS[0];
   modelHouse?.scale.set(0, 0, 0);
   modelHouse && scene.add(modelHouse);
-
+  
   setObjectTexture(TEXTURES.interiorBase.materialNames, TEXTURES.interiorBase.white);
   setMaterialColor(TEXTURES.interiorBase.materialNames[0], baseColorForRowA);
-
-  modelFurniture = IMPORTED_MODELS[1];
-  modelFurniture.visible = false;
-  modelFurniture && scene.add(modelFurniture);
-  disableModelCastingShadows(modelFurniture);
-  disableModelReceivingShadows(modelFurniture);
+  
+  await loadModel(MODEL_PATHS[parseInt(parseInt(modelId) + 3)], true, () => {
+    modelFurniture = IMPORTED_MODELS[1];
+    modelFurniture.visible = false;
+    modelFurniture && scene.add(modelFurniture);
+    disableModelCastingShadows(modelFurniture);
+    disableModelReceivingShadows(modelFurniture);
+  });
 
   $('.summary_container').css('pointer-events', '');
   $('.product-type-3dmodel').css('cursor', '');
@@ -1770,8 +1772,6 @@ function calculatePrice() {
 
   let optionId = '';
   let activeOptions = [];
-
-
 
   // get active options array
   for (let i = 0; i < SharedParameterList.length - 4; i++) {
