@@ -767,7 +767,7 @@ async function StartSettings() {
 
   currentHouse = SharedParameterList[0].value || '0';
 
-  await loadModel(MODEL_PATHS[currentHouse], false);
+  await loadModel(MODEL_PATHS[currentHouse], false, () => {}, true);
   modelHouse = IMPORTED_MODELS[0];
   modelHouse?.scale.set(0, 0, 0);
   modelHouse && scene.add(modelHouse);
