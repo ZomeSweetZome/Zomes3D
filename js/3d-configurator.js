@@ -3510,7 +3510,12 @@ function bookTimeBtnHandler() {
 
 function bookConsultationAndDepositBtns() {
   $('#timeline_btn_pay_deposit').on('click', function() {
-    window.open(PAY_DEPOSITE_LINK, '_blank');
+    const email = localStorage.getItem('userEmail');
+    const payDepositeUrl = (email)
+      ? `${PAY_DEPOSITE_LINK}?prefilled_email=${encodeURIComponent(email)}`
+      : PAY_DEPOSITE_LINK;
+
+    window.open(payDepositeUrl, '_blank');
   });
 }
 
