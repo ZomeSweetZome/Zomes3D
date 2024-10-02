@@ -1416,9 +1416,13 @@ select2-container
   margin-right: 10px;
 }
 
-#button_ar_qr_menu {
+/* #button_ar_qr_menu {
   display: none;
 }
+
+#button_ar_qr {
+  display: none;
+} */
 
 #button_share_url .canvas_btn__image {
   content: var(--marevo-ui-icon_share);
@@ -2968,9 +2972,6 @@ textarea[name="ar_order_comment"] {
   visibility: hidden;
 }
 
-#button_ar_qr {
-  display: none;
-}
 
 /* ################  MOBILE ################ */
 
