@@ -3466,7 +3466,7 @@ function proceedSummaryAndPdf(shouldOpenForm = true) {
 }
 
 function getPdfBtnHandler() {
-  $('#summary_download_pdf_btn').on('click', function () {
+  $('.summary_download_pdf_btn').on('click', function () {
     
     const timelineTexts = {
       details__tax_text: $('#details__tax_text').text(),
@@ -3503,13 +3503,13 @@ function getPdfBtnHandler() {
 }
 
 function bookTimeBtnHandler() {
-  $('#summary_book_time_btn').on('click', function() {
+  $('.summary_book_time_btn').on('click', function() {
     window.open(CALENDLY_LINK, '_blank');
   });
 }
 
 function bookConsultationAndDepositBtns() {
-  $('#timeline_btn_pay_deposit').on('click', function() {
+  $('.timeline_btn_pay_deposit').on('click', function() {
     const email = localStorage.getItem('userEmail');
     const payDepositeUrl = (email)
       ? `${PAY_DEPOSITE_LINK}?prefilled_email=${encodeURIComponent(email)}`
