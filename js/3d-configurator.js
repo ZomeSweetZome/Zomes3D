@@ -79,19 +79,9 @@ let currentLanguage = DEFAULT_LANGUAGE;
 let currentCurrency = DEFAULT_CURRENCY;
 let currentCurrencySign = CURRENCY_SIGN[currentCurrency] || CURRENCY_SIGN['USD'];
 let currentHouse = '0';
-let isWindowStripOn = false;
-let isWindowViewportOn = false;
 let isWindowCustomOn = false;
-let currentInteriorOption = 0;
-let currentExteriorOption = 0;
-let isExtrimeWeatherPackOn = false;
-let isBuiltInDeskOn = false;
 let isFoundationKitOn = false;
 let isExtraDoorOn = false;
-let isHeatCoolUnitOn = false;
-let isAirconditionOn = false;
-let isSmartGlassOn = false;
-
 let isWindowsSmart = false;
 
 let [houseDiameter, houseHeight] = [0, 0];
@@ -171,8 +161,6 @@ let currentTaxAmountString = '';
 let totalAmount = 0;
 let maximumLeadTimeWeeks = 0;
 
-let taxAmount = 0;
-let shippingAmount = 0;
 let stateSalesTax = 0;
 let shippingDistance = 0;
 let totalAmountShipTax = 0;
@@ -344,12 +332,6 @@ SharedParameterList[4].groupOptionAction = function () {
       }
 
       updateFurnitureSet();
-    }
-
-    if (this.value[1] == '1') { // in-build desk
-      isBuiltInDeskOn = true;
-    } else if (this.value[1] == '0') {
-      isBuiltInDeskOn = false;
     }
 
     checkAddonsState();
@@ -736,7 +718,7 @@ async function payAttentionToIcons() {
           icon.classList.remove('attention-icon');
       });
   }, 20000); // 20 seconds
-};
+}
 
 
 //! *****************   START   ********************
@@ -1294,16 +1276,16 @@ function additionalConditions() {
 function updateStateVars() {
   // Update state vars if needed
   currentHouse = SharedParameterList[0].value;
-  isWindowStripOn = (SharedParameterList[1].value[0] == '1') ? true : false;
-  isWindowViewportOn = (SharedParameterList[1].value[1] == '1') ? true : false;
+  // isWindowStripOn = (SharedParameterList[1].value[0] == '1') ? true : false;
+  // isWindowViewportOn = (SharedParameterList[1].value[1] == '1') ? true : false;
   isWindowCustomOn = (SharedParameterList[1].value[2] == '1') ? true : false;
-  currentInteriorOption = SharedParameterList[2].value;
-  currentExteriorOption = SharedParameterList[3].value;
+  // currentInteriorOption = SharedParameterList[2].value;
+  // currentExteriorOption = SharedParameterList[3].value;
   isFoundationKitOn = (SharedParameterList[4].value[0] == '1') ? true : false;
-  isBuiltInDeskOn = (SharedParameterList[4].value[1] == '1') ? true : false;
-  isSmartGlassOn = (SharedParameterList[4].value[2] == '1') ? true : false;
-  isExtrimeWeatherPackOn = (SharedParameterList[4].value[3] == '1') ? true : false;
-  isAirconditionOn = (SharedParameterList[4].value[4] == '1') ? true : false;
+  // isBuiltInDeskOn = (SharedParameterList[4].value[1] == '1') ? true : false;
+  // isSmartGlassOn = (SharedParameterList[4].value[2] == '1') ? true : false;
+  // isExtrimeWeatherPackOn = (SharedParameterList[4].value[3] == '1') ? true : false;
+  // isAirconditionOn = (SharedParameterList[4].value[4] == '1') ? true : false;
   isExtraDoorOn = (SharedParameterList[4].value[5] == '1') ? true : false;
 }
 
@@ -1512,6 +1494,7 @@ function assignOptionsInRelatedGroups(groupIDs) {
   }
 }
 
+// eslint-disable-next-line no-unused-vars
 function isGroupActive(groupId) {
   const parentGroup = mainGroups.find(element => element.id == groupId);
   if (!parentGroup) { return false; }
@@ -1941,6 +1924,7 @@ function formatPrice(price, currency, needToBeRounded = true, needToAddSpace = f
 
 //#region SETTING COLORS
 
+// eslint-disable-next-line no-unused-vars
 function setColorOfActiveOption(groupIDs, materialNames) {
   for (let i = 0; i < groupIDs.length; i++) {
     const group = mainGroups.find(element => element.id == groupIDs[i])?.group;
@@ -2090,6 +2074,7 @@ function ChangeMaterialOffset(materialName, x, y) {
   }
 }
 
+// eslint-disable-next-line no-unused-vars
 function getMeshesWithMaterial(model, materialName) {
   const meshesWithMaterial = [];
 
@@ -3796,6 +3781,7 @@ function summaryItemVisibility(groupId, value) {
   }
 }
 
+// eslint-disable-next-line no-unused-vars
 function infoPopup(infoPopupTitle, infoPopupDescription, infoPopupImage) {
   $('#popup-info-title-ui').html(infoPopupTitle);
   $('#popup-info-text-ui').html(infoPopupDescription);
@@ -4454,7 +4440,7 @@ function ChangeObjectMorph(morph, inputvalue) {
     if (morph.object.morphTargetInfluences != null) {
       morph.object.morphTargetInfluences[morph.key] = inputvalue;
     }
-  } f
+  }
 }
 
 function ChangeGlobalMorph(morphName, inputvalue) {

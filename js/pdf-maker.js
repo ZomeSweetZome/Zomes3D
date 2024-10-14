@@ -12,10 +12,6 @@ export function generatePDF(
   zipcode = '',
   opt = 'all',
 ) {
-  const colorTextBlack = '#101011';
-  const colorLineBlack = '#000000';
-  const colorBackground = '#ffffff';
-
   const mainMargins = [30, 90, 30, 30];
   const contentWidth = 595 - mainMargins[0] - mainMargins[2];
 

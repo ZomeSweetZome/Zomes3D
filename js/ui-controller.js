@@ -73,6 +73,7 @@ export async function createMenu(mainData) {
         // ----------
         { '#details__total_title': 'ui_pdf_total' },
         { '#summary_btn_calendar__caption': 'ui_summary_btn_book_text' },
+        { '#summary_btn_calendar__caption2': 'ui_summary_btn_book_text' },
         { '#summary_btn_save__caption': 'ui_summary_btn_save_text' },
         { '#details__tax_text': 'ui_summary_details__tax_text' },
         // ----------
@@ -83,6 +84,7 @@ export async function createMenu(mainData) {
         { '#delivery_subtitle': 'ui_timeline_delivery_subtitle' },
         { '#delivery_text': 'ui_timeline_delivery_text' },
         { '#timeline_btn_deposit': 'ui_ar_pay_deposit' },
+        { '#timeline_btn_deposit2': 'ui_ar_pay_deposit' },
       );
 
       uiPlaceholdersMultiLanguages.push(
