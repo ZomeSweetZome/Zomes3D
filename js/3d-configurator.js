@@ -1860,6 +1860,10 @@ function calculatePrice() {
   currentAmountString = formatPrice(totalAmount, currentCurrencySign);
   totalAmountElement.innerText = currentAmountString;
   totalAmountElement2.innerText = currentAmountString;
+
+  document.getElementById('summary_form_totalamount_number').innerText = totalAmount;
+  document.getElementById('summary_form_totalamount_string').innerText = currentAmountString;
+
   updateShippingTaxInfo();
 }
 
@@ -3421,6 +3425,10 @@ function summaryBtnsHandler() {
         proceedSummaryAndPdf();
       });
     }
+  });
+
+  $('.summary__link').on('click', function () {
+    closeSummary();
   });
 
   $('#backToConfiguration').on('click', function () {

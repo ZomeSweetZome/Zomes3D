@@ -2507,6 +2507,10 @@ textarea[name="ar_order_comment"] {
 
 /* ----------- contact form ------------*/
 
+.hidden_block {
+  display: none;
+}
+
 .contact_form__popup-overlay {
   position: fixed;
   top: 0;
