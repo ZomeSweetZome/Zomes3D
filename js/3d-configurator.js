@@ -1861,8 +1861,8 @@ function calculatePrice() {
   totalAmountElement.innerText = currentAmountString;
   totalAmountElement2.innerText = currentAmountString;
 
-  document.getElementById('summary_form_totalamount_number').innerText = totalAmount;
-  document.getElementById('summary_form_totalamount_string').innerText = currentAmountString;
+  document.getElementById('summary_form_totalamount_number').value = totalAmount;
+  document.getElementById('summary_form_totalamount_string').value = currentAmountString;
 
   updateShippingTaxInfo();
 }
