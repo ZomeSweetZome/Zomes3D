@@ -1816,28 +1816,28 @@ function calculatePrice() {
       let windowsSmartPrice = (currentHouse == '2') ? optionPrice * 6 : optionPrice * 5;
       $(`.${activeOptions[i]} .component_price`).html(formatPrice(windowsSmartPrice, currentCurrencySign));
       if (optionLeadTime > maximumLeadTimeWeeks) { maximumLeadTimeWeeks = optionLeadTime; }
-      totalAmount += windowsSmartPrice;
+      totalAmount += windowsSmartPrice; // added skylights (smart glass)
 
       if (activeOptions.includes('option_1-2')) { // custom windows
         const windowsQty = Object.values(customWindows).reduce((total, array) => total + array.length, 0);
         windowsSmartPrice = windowsSmartPrice + optionPrice * windowsQty;
         $(`.${activeOptions[i]} .component_price`).html(formatPrice(windowsSmartPrice, currentCurrencySign));
         if (optionLeadTime > maximumLeadTimeWeeks) { maximumLeadTimeWeeks = optionLeadTime; }
-        totalAmount += windowsSmartPrice;
+        totalAmount += optionPrice * windowsQty;
       } else if (!activeOptions.includes('option_1-2')) { // NOT custom windows
         if (activeOptions.includes('option_1-1')) { // viewport
           const windowsQty = 4;
           windowsSmartPrice = windowsSmartPrice + optionPrice * windowsQty;
           $(`.${activeOptions[i]} .component_price`).html(formatPrice(windowsSmartPrice, currentCurrencySign));
           if (optionLeadTime > maximumLeadTimeWeeks) { maximumLeadTimeWeeks = optionLeadTime; }
-          totalAmount += windowsSmartPrice;
+          totalAmount += optionPrice * windowsQty;
         }
         if (activeOptions.includes('option_1-0')) { // strip
           let windowsQty = (currentHouse == '2') ? 5 : 4;
           windowsSmartPrice = windowsSmartPrice + optionPrice * windowsQty;
           $(`.${activeOptions[i]} .component_price`).html(formatPrice(windowsSmartPrice, currentCurrencySign));
           if (optionLeadTime > maximumLeadTimeWeeks) { maximumLeadTimeWeeks = optionLeadTime; }
-          totalAmount += windowsSmartPrice;
+          totalAmount += optionPrice * windowsQty;
         }
       }
     } else {
