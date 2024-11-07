@@ -3636,6 +3636,9 @@ function collectSummary() {
   $('.ar_filter_group').each(function () {
     const group = $(this);
     const groupId = group.attr('id');
+
+    if (groupId === 'group-3') { return; } //! TEMPORARY CODE for removing EXTERIOR group
+    
     const groupTitle = group.find('.ar_filter_caption').text();
     const filterOptions = group.find('.ar_filter_options');
 

@@ -396,7 +396,10 @@ function setEventListenersForNextBtns() {
     const identifier = itemId.split('ar_button_next_')[1];
 
     if (identifier !== '4') {
-      const nextIndex = GROUP_ID_ORDER_FOR_NEXT_MENU_BTNS.indexOf(identifier) + 1;
+      let nextIndex = GROUP_ID_ORDER_FOR_NEXT_MENU_BTNS.indexOf(identifier) + 1;
+
+      if (nextIndex === 2) { nextIndex += 1; } //! TEMPORARY CODE for removing EXTERIOR group
+
       $('.ar_menu_info_container').removeClass('active');
       $('.ar_filter .ar_filter_group').addClass('invisible');
       $(`#group-${GROUP_ID_ORDER_FOR_NEXT_MENU_BTNS[nextIndex]}`).removeClass('invisible');
