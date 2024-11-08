@@ -273,8 +273,17 @@ export function generatePDF(
         break;
 
       case 'all':
-        pdfMake.createPdf(pdfDefinition).open();
-        pdfMake.createPdf(pdfDefinition).download("Zome_configuration.pdf");
+        pdfMake.createPdf(pdfDefinition).getBlob((pdfBlob) => {
+          const urlForTab = URL.createObjectURL(pdfBlob);
+          window.open(urlForTab);
+        
+          const link = document.createElement('a');
+          link.href = urlForTab;
+          link.download = 'Zome_configuration.pdf';
+          link.click();
+        
+          URL.revokeObjectURL(urlForTab);
+        });
         break;
 
       default:
