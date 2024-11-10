@@ -3023,7 +3023,7 @@ textarea[name="ar_order_comment"] {
   }
 
   .ar_filter {
-    padding: 20px;
+    padding: 5px;
   }
 
   .ar_menu_footer_container {
@@ -3657,7 +3657,7 @@ textarea[name="ar_order_comment"] {
   }
 
   .ar_filter .ar_filter_group .ar_filter_header {
-    margin-bottom: 16px;
+    margin-bottom: 2px;
   }
   
   /*!---------------*/
@@ -4482,7 +4482,7 @@ textarea[name="ar_order_comment"] {
 @media (max-width: 449px) {
   .summary_container {
     /* 198px - menu height, 44px - menu summary height */
-    min-height: calc(198px + 44px);
+    min-height: calc(198px + 74px);
   }
 
   .title_list__container .title_list__item {
