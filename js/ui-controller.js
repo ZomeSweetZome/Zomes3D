@@ -395,7 +395,7 @@ function setEventListenersForNextBtns() {
     const itemId = $(this).attr('id');
     const identifier = itemId.split('ar_button_next_')[1];
 
-    if (identifier !== '4') {
+    if (identifier !== '5') {
       let nextIndex = GROUP_ID_ORDER_FOR_NEXT_MENU_BTNS.indexOf(identifier) + 1;
 
       if (nextIndex === 2) { nextIndex += 1; } //! TEMPORARY CODE for removing EXTERIOR group

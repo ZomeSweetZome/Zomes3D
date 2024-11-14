@@ -39,6 +39,7 @@ import {
   // BOOK_CONSULTATION_LINK,
   PAY_DEPOSITE_LINK,
   ORIGIN_ZIPCODE,
+  OPTIONS_ID_ORDER_FOR_UPGRADES,
   OPTIONS_ID_ORDER_FOR_ADDONS,
 } from './settings.js';
 
@@ -226,28 +227,28 @@ let SharedParameterList = [
     applyURLAction: null,
     applyURLActionReturn: false
   },
-  {  // [4] addons
-    id: 'addons',
+  {  // [4] upgrades
+    id: 'upgrades',
     groupIds: ['group-4'],
     splitValue: 'V',
     type: 'array-string',
-    value: [0, 0, 0, 0, 0, 0],
+    value: [0, 0, 0],
     groupOptionAction: null,
     applyURLAction: null,
     applyURLActionReturn: false
   },
-  { // [5] language
-    id: 'lang',
-    groupIds: null,
+  {  // [5] addons
+    id: 'addons',
+    groupIds: ['group-5'],
     splitValue: 'O',
-    type: 'string',
-    value: '0',
+    type: 'array-string',
+    value: [0, 0, 0],
     groupOptionAction: null,
     applyURLAction: null,
     applyURLActionReturn: false
   },
-  { // [6] currency
-    id: 'curr',
+  { // [6] language
+    id: 'lang',
     groupIds: null,
     splitValue: 'u',
     type: 'string',
@@ -256,20 +257,30 @@ let SharedParameterList = [
     applyURLAction: null,
     applyURLActionReturn: false
   },
-  { // [7] customWindows
-    id: 'customWindows',
+  { // [7] currency
+    id: 'curr',
     groupIds: null,
     splitValue: 'a',
+    type: 'string',
+    value: '0',
+    groupOptionAction: null,
+    applyURLAction: null,
+    applyURLActionReturn: false
+  },
+  { // [8] customWindows
+    id: 'customWindows',
+    groupIds: null,
+    splitValue: 'q',
     type: 'array-string',
     value: ['c', 'd', 'e', 'f', 'g'],
     groupOptionAction: null,
     applyURLAction: null,
     applyURLActionReturn: false
   },
-  { // [8] qr
+  { // [9] qr
     id: 'qr',
     groupIds: null,
-    splitValue: 'q',
+    splitValue: 'r',
     type: 'int',
     value: 0,
     groupOptionAction: null,
@@ -313,8 +324,25 @@ SharedParameterList[3].groupOptionAction = function () {
   setObjectTexture(TEXTURES.exterior.materialNames, TEXTURES.exterior[this.value]);
 }
 
-// addons
+// upgrades
 SharedParameterList[4].groupOptionAction = function () {
+  if (isFirstStart || justClicked) {
+    if (currentHouse == '2') {
+      if (this.value[2] == '1') { // extra door
+        isExtraDoorOn = true;
+      } else if (this.value[2] == '0') {
+        isExtraDoorOn = false;
+      }
+
+      updateFurnitureSet();
+    }
+
+    checkUpgradesAndAddonsState();
+  }
+}
+
+// addons
+SharedParameterList[5].groupOptionAction = function () {
   if (isFirstStart || justClicked) {
     if (this.value[0] == '1') { // foundation kit
       floor.position.y = MODEL_CENTER_POSITION - FOUNDATION_HEIGHT;
@@ -324,17 +352,7 @@ SharedParameterList[4].groupOptionAction = function () {
 
     floor.position.y -= 0.01;
 
-    if (currentHouse == '2') {
-      if (this.value[5] == '1') { // extra door
-        isExtraDoorOn = true;
-      } else if (this.value[5] == '0') {
-        isExtraDoorOn = false;
-      }
-
-      updateFurnitureSet();
-    }
-
-    checkAddonsState();
+    checkUpgradesAndAddonsState();
 
     if ($('#button_dimensions').hasClass('active')) {
       if (this.value[0] == '1') { // foundation kit
@@ -349,7 +367,7 @@ SharedParameterList[4].groupOptionAction = function () {
 }
 
 // language
-SharedParameterList[5].groupOptionAction = function () {
+SharedParameterList[6].groupOptionAction = function () {
   if (isFirstStart || justClicked) {
     let language = 'EN';
     switch (this.value) {
@@ -372,7 +390,7 @@ SharedParameterList[5].groupOptionAction = function () {
 }
 
 // currency
-SharedParameterList[6].groupOptionAction = function () {
+SharedParameterList[7].groupOptionAction = function () {
   if (isFirstStart || justClicked) {
     let currency = 'EN';
     switch (this.value) {
@@ -392,7 +410,7 @@ SharedParameterList[6].groupOptionAction = function () {
 }
 
 // customWindows
-SharedParameterList[7].groupOptionAction = function () {
+SharedParameterList[8].groupOptionAction = function () {
   if (isFirstStart || justClicked) {
     if (this.value.length > 0) {
       restoreCustomWindows();
@@ -401,7 +419,7 @@ SharedParameterList[7].groupOptionAction = function () {
 }
 
 // qr
-SharedParameterList[8].groupOptionAction = function () {
+SharedParameterList[9].groupOptionAction = function () {
 }
 
 //#endregion
@@ -1276,17 +1294,9 @@ function additionalConditions() {
 function updateStateVars() {
   // Update state vars if needed
   currentHouse = SharedParameterList[0].value;
-  // isWindowStripOn = (SharedParameterList[1].value[0] == '1') ? true : false;
-  // isWindowViewportOn = (SharedParameterList[1].value[1] == '1') ? true : false;
   isWindowCustomOn = (SharedParameterList[1].value[2] == '1') ? true : false;
-  // currentInteriorOption = SharedParameterList[2].value;
-  // currentExteriorOption = SharedParameterList[3].value;
-  isFoundationKitOn = (SharedParameterList[4].value[0] == '1') ? true : false;
-  // isBuiltInDeskOn = (SharedParameterList[4].value[1] == '1') ? true : false;
-  // isSmartGlassOn = (SharedParameterList[4].value[2] == '1') ? true : false;
-  // isExtrimeWeatherPackOn = (SharedParameterList[4].value[3] == '1') ? true : false;
-  // isAirconditionOn = (SharedParameterList[4].value[4] == '1') ? true : false;
-  isExtraDoorOn = (SharedParameterList[4].value[5] == '1') ? true : false;
+  isFoundationKitOn = (SharedParameterList[5].value[0] == '1') ? true : false; //!!! corrected
+  isExtraDoorOn = (SharedParameterList[4].value[2] == '1') ? true : false; //!!! corrected
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -1527,12 +1537,12 @@ function CheckChanges() {
 
   if (currentHouse == '2' && isExtraDoorOn) {
     removeExtraDoorPanelsFromCustomWindows();
-    SharedParameterList[7].value = convertObjectToArray(customWindows);
+    SharedParameterList[8].value = convertObjectToArray(customWindows);
     WriteURLParameters();
     restoreCustomWindows();
   }
 
-  if (isWindowCustomOn && SharedParameterList[7].value.length > 0) {
+  if (isWindowCustomOn && SharedParameterList[8].value.length > 0) {
     restoreCustomWindows();
   }
 
@@ -1540,7 +1550,7 @@ function CheckChanges() {
 
   updateStateVars();
 
-  checkAddonsState();
+  checkUpgradesAndAddonsState();
 
   smartWindowsController('glass', isWindowsSmart);
   smartWindowsController('glass.001', isWindowsSmart);
@@ -1630,7 +1640,7 @@ function resetCustomWindowsObject() {
     }
   }
 
-  SharedParameterList[7].value = convertObjectToArray(customWindows);
+  SharedParameterList[8].value = convertObjectToArray(customWindows);
   WriteURLParameters();
 }
 
@@ -1764,10 +1774,16 @@ function calculatePrice() {
     } else if (SharedParameterList[i].type === 'array-string') {
       for (let j = 0; j < SharedParameterList[i].value.length; j++) {
         if (SharedParameterList[i].value[j] == '1') {
-          optionId = (i === 4)
-            ? `option_${i}-${OPTIONS_ID_ORDER_FOR_ADDONS[j]}` // addons
-            : `option_${i}-${j}`;
+          if (i === 4) {
+            optionId = `option_${i}-${OPTIONS_ID_ORDER_FOR_UPGRADES[j]}`; // upgrades
+          } else if (i === 5) {
+            optionId = `option_${i}-${OPTIONS_ID_ORDER_FOR_ADDONS[j]}`; // addons
+          } else {
+            optionId = `option_${i}-${j}`;
+          }
+
           if ($(`.${optionId}`).hasClass('disabled')) { continue; }
+
           activeOptions.push(optionId);
         }
       }
@@ -1881,8 +1897,8 @@ function formatPrice(price, currency, needToBeRounded = true, needToAddSpace = f
   if (
     !price
     && SharedParameterList[1].value[2] != 1 // custom windows
-    && SharedParameterList[4].value[5] != 1 // extra door
-    && SharedParameterList[4].value[2] != 1 // smart glass
+    && SharedParameterList[4].value[2] != 1 // extra door //!!! corrected
+    && SharedParameterList[4].value[0] != 1 // smart glass //!!! corrected
   ) {
     return getData(dataMain, 'ui_component_price_included', currentLanguage);
   }
@@ -2857,7 +2873,7 @@ async function PrepareUI() {
           break;
       }
 
-      SharedParameterList[5].value = valueForURL;
+      SharedParameterList[6].value = valueForURL;
       CheckChanges();
       WriteURLParameters();
 
@@ -2882,7 +2898,7 @@ async function PrepareUI() {
           break;
       }
 
-      SharedParameterList[6].value = valueForURL;
+      SharedParameterList[7].value = valueForURL;
       CheckChanges();
       WriteURLParameters();
     });
@@ -3417,7 +3433,7 @@ function notificationHandler() {
 }
 
 function summaryBtnsHandler() {
-  $(document).on('click', '#ar_button_order, #ar_button_next_4, #canvas_button_save', function () {
+  $(document).on('click', '#ar_button_order, #ar_button_next_5, #canvas_button_save', function () {
     if (!isCameraInside) {
       proceedSummaryAndPdf();
     } else {
@@ -3854,10 +3870,10 @@ $(document).on('click', '.option.option_1-2', function () { // custom windows
   }
 });
 
-$(document).on('click', '.option.option_4-1', function () { // in-build desk
-  checkAddonsState();
+$(document).on('click', '.option.option_5-1', function () { // in-build desk
+  checkUpgradesAndAddonsState();
 
-  if ($('.option.option_4-1').hasClass('active')) {
+  if ($('.option.option_5-1').hasClass('active')) {
     if (!isCameraInside) {
       $('#button_camera_inside').click();
     } 
@@ -3872,8 +3888,8 @@ $(document).on('click', '.option.option_4-3', function () { // extra door
   }
 });
 
-$(document).on('click', '.option.option_4-4', function () { // air conditioner
-  checkAddonsState();
+$(document).on('click', '.option.option_5-4', function () { // air conditioner
+  checkUpgradesAndAddonsState();
   
   if (!isCameraInside) {
     $('#button_camera_inside').trigger('click', ['outAirConditioner']);
@@ -3884,14 +3900,14 @@ $(document).on('click', '.option.option_4-4', function () { // air conditioner
 });
 
 
-function checkAddonsState() {
+function checkUpgradesAndAddonsState() {
   // Built-in desk ON or Air conditioner ON
-  if ($('.option.option_4-1').hasClass('active') || $('.option.option_4-4').hasClass('active')) {
+  if ($('.option.option_5-1').hasClass('active') || $('.option.option_5-4').hasClass('active')) {
     disableFurnitureBtn();
   } 
   
   // Built-in desk OFF and Air conditioner OFF
-  if (!$('.option.option_4-1').hasClass('active') && !$('.option.option_4-4').hasClass('active')) {
+  if (!$('.option.option_5-1').hasClass('active') && !$('.option.option_5-4').hasClass('active')) {
     enableFurnitureBtn();
   }
 
@@ -4135,7 +4151,7 @@ function onMouseUp(event) {
         if (letter && number) {
           // clickedMeshName = `${letter}-${number}`;
           updateCustomWindows([letter, number]);
-          SharedParameterList[7].value = convertObjectToArray(customWindows);
+          SharedParameterList[8].value = convertObjectToArray(customWindows);
           WriteURLParameters();
         }
       }
@@ -4260,7 +4276,7 @@ function findMeshByLetterAndNumber(parent, letter, number) {
 }
 
 function restoreCustomWindows() {
-  customWindows = convertArrayToObject(SharedParameterList[7].value);
+  customWindows = convertArrayToObject(SharedParameterList[8].value);
 
   if (!isWindowCustomOn) return;
 
@@ -4324,7 +4340,7 @@ function addStripAndViewportWindowsToCustomWindowsObject(strip, viewport) {
       }
     });
 
-    SharedParameterList[7].value = convertObjectToArray(customWindows);
+    SharedParameterList[8].value = convertObjectToArray(customWindows);
     WriteURLParameters();
   }
 }
