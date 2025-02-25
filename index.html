@@ -94,79 +94,8 @@
     </script>
     <!-- DO NOT MODIFY UNLESS TO REPLACE A USER IDENTIFIER -->
     <!-- End Reddit Pixel -->
-
-    <!-- Customer.IO Analytics  |  START -->
-    <script>
-      !(function () {
-        var analytics = (window.analytics = window.analytics || []);
-        if (!analytics.initialize)
-          if (analytics.invoked)
-            window.console &&
-              console.error &&
-              console.error('Snippet included twice.');
-          else {
-            analytics.invoked = !0;
-            analytics.methods = [
-              'trackSubmit',
-              'trackClick',
-              'trackLink',
-              'trackForm',
-              'pageview',
-              'identify',
-              'reset',
-              'group',
-              'track',
-              'ready',
-              'alias',
-              'debug',
-              'page',
-              'once',
-              'off',
-              'on',
-              'addSourceMiddleware',
-              'addIntegrationMiddleware',
-              'setAnonymousId',
-              'addDestinationMiddleware',
-            ];
-            analytics.factory = function (e) {
-              return function () {
-                var t = Array.prototype.slice.call(arguments);
-                t.unshift(e);
-                analytics.push(t);
-                return analytics;
-              };
-            };
-            for (var e = 0; e < analytics.methods.length; e++) {
-              var key = analytics.methods[e];
-              analytics[key] = analytics.factory(key);
-            }
-            analytics.load = function (key, e) {
-              var t = document.createElement('script');
-              t.type = 'text/javascript';
-              t.async = !0;
-              t.src =
-                'https://cdp.customer.io/v1/analytics-js/snippet/' +
-                key +
-                '/analytics.min.js';
-              var n = document.getElementsByTagName('script')[0];
-              n.parentNode.insertBefore(t, n);
-              analytics._writeKey = key;
-              analytics._loadOptions = e;
-            };
-            analytics.SNIPPET_VERSION = '4.15.3';
-            analytics.load('85c5fbe87ad0ec405f84', {
-              cookie: {
-                domain: '.zomes.com',
-              },
-              storage: {
-                stores: ['cookie', 'localStorage', 'memory'],
-              },
-            });
-            analytics.page();
-          }
-      })();
-    </script>
-    <!-- Customer.IO Analytics  |  END -->
+     <!-- Google reCAPTCHA v2 -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   </head>
 
   <body>
@@ -814,6 +743,7 @@
                   class="contact_form__form-item contact_form__form-item_name"
                 >
                   <label for="form_name" id="summary_form_label_name"></label>
+                  
                   <input
                     type="text"
                     name="name"
@@ -865,24 +795,25 @@
 
                 <input type="hidden" id="summary_form_totalamount_number" name="totalamount_number" value="">
                 <input type="hidden" id="summary_form_totalamount_string" name="totalamount_string" value="">
+                <div class="contact_form__form-item contact_form__captcha">
+                  <div class="g-recaptcha" data-sitekey="6LcyxOIqAAAAAFOryZMKbYj4CFD9kmJOoQrjg00K"></div>
+                </div>
 
                 <button
-                  type="submit"
-                  id="submitButton"
-                  class="ar_buy-btn contact_form__button"
-                  disabled
-                >
-                  <div class="ar_button_order__image"></div>
+  type="submit"
+  id="submitButton"
+  class="ar_buy-btn contact_form__button"
+  disabled
+>
+  <div class="ar_button_order__image"></div>
 
-                  <div
-                    id="ar_button_order__caption"
-                    class="ar_button_order__caption"
-                  >
-                    <span class="ar_button_order__caption_large"
-                      >Save my design</span
-                    >
-                  </div>
-                </button>
+  <div
+    id="ar_button_order__caption"
+    class="ar_button_order__caption"
+  >
+    <span class="ar_button_order__caption_large">Save my design</span>
+  </div>
+</button>
 
                 <div class="contact_form__close_btn">Back</div>
               </form>
@@ -953,6 +884,25 @@
     })();
   </script>
 -->
+<script>
+  // Form validation with reCAPTCHA
+  document.addEventListener('DOMContentLoaded', function() {
+    // Function to enable submit button when captcha is completed
+    window.enableSubmit = function() {
+      document.getElementById('submitButton').disabled = false;
+    }
+    
+    // Form submission handling
+    document.getElementById('popupForm').addEventListener('submit', function(event) {
+      const recaptchaResponse = grecaptcha.getResponse();
+      
+      if (!recaptchaResponse) {
+        event.preventDefault();
+        alert('Please complete the captcha verification');
+      }
+    });
+  });
+</script>
   </body>
 
   <!-- jQuery -->

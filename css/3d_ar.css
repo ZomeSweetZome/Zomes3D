@@ -4943,3 +4943,7 @@ model-viewer {
 #group-3 {
   display: none;
 }
+
+.contact_form__captcha {
+  margin-bottom: 20px;
+}
