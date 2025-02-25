@@ -4945,5 +4945,6 @@ model-viewer {
 }
 
 .contact_form__captcha {
-  margin-bottom: 20px;
+  padding-bottom: 20px;
+  padding-top: 20px;
 }
