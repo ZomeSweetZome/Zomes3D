@@ -575,21 +575,8 @@ function getStringBetweenSquareBrackets(inputString) {
 //   });
 // });
 
-//reCAPTCHA
-var recaptchaWidget;
 
-window.onRecaptchaLoad = function () {
-  const recaptchaContainer = document.getElementById('recaptcha-container');
-
-  if (recaptchaContainer) {
-    recaptchaWidget = grecaptcha.render(recaptchaContainer, {
-      'sitekey': '6LcyxOIqAAAAAFOryZMKbYj4CFD9kmJOoQrjg00K'
-    });
-  } else {
-    console.error("reCAPTCHA container not found.");
-  }
-};
-
+//form handler
 document.addEventListener('DOMContentLoaded', function () {
   const form = document.getElementById('popupForm');
 
