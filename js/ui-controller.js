@@ -1,5 +1,5 @@
 'use strict';
-/* global jQuery, $ */
+/* global jQuery, $, grecaptcha */
 
 import { 
   DEFAULT_LANGUAGE,
@@ -546,9 +546,16 @@ function getStringBetweenSquareBrackets(inputString) {
 document.getElementById('popupForm').addEventListener('submit', function(event) {
   event.preventDefault(); // Still preventing default to handle the submission ourselves
 
+  const recaptchaResponse = grecaptcha.getResponse();
+  if (!recaptchaResponse) {
+    alert('Please complete the captcha verification');
+    return;
+  }
+
   // Get the form data
   const formData = new FormData(this);
-
+  formData.append('g-recaptcha-response', recaptchaResponse);
+  
   // Add the current URL to the form data
   formData.append('designURL', window.location.href);
 
