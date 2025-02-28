@@ -587,18 +587,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
   form.addEventListener('submit', async function (event) {
     event.preventDefault();
+    event.stopPropagation();
 
     const honeypotValue = document.querySelector('input[name="website"]');
     if (honeypotValue && honeypotValue.value) {
-      console.warn("Honeypot field filled. Possible bot detected.");
-      return;
+      return false;
     }
 
     // Checking reCAPTCHA
     const recaptchaResponse = grecaptcha.getResponse();
     if (!recaptchaResponse) {
+      event.stopImmediatePropagation();
       alert('Please complete the captcha verification');
-      return;
+      return false;
     }
 
     const formData = new FormData(form);
@@ -611,10 +612,15 @@ document.addEventListener('DOMContentLoaded', function () {
         method: 'POST',
         body: formData
       });
-
-      const data = await response.json();
-      console.log('🚀 Success:', data);
-
+      
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        const data = await response.json();
+        console.log('🚀 Success:', data);
+      } else {
+        const textData = await response.text();
+        console.log('🚀 Success:', textData);
+      }
     } catch (error) {
       console.error('🚀 Error:', error);
     }
