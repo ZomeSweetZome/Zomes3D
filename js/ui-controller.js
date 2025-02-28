@@ -543,34 +543,94 @@ function getStringBetweenSquareBrackets(inputString) {
 }
 
 //form handler
-document.getElementById('popupForm').addEventListener('submit', function(event) {
-  event.preventDefault(); // Still preventing default to handle the submission ourselves
+// document.getElementById('popupForm').addEventListener('submit', function(event) {
+//   event.preventDefault(); // Still preventing default to handle the submission ourselves
 
-  const recaptchaResponse = grecaptcha.getResponse();
-  if (!recaptchaResponse) {
-    alert('Please complete the captcha verification');
+//   const recaptchaResponse = grecaptcha.getResponse();
+//   if (!recaptchaResponse) {
+//     alert('Please complete the captcha verification');
+//     return;
+//   }
+
+//   // Get the form data
+//   const formData = new FormData(this);
+//   formData.append('g-recaptcha-response', recaptchaResponse);
+  
+//   // Add the current URL to the form data
+//   formData.append('designURL', window.location.href);
+
+//   // Send the data to the webhook
+//   fetch(this.action, {
+//     method: 'POST',
+//     body: formData
+//   })
+//   .then(response => response.json())
+//   .then(data => {
+//     console.log('Success:', data);
+//     // Handle successful submission (e.g., show a success message)
+//   })
+//   .catch((error) => {
+//     console.error('Error:', error);
+//     // Handle errors (e.g., show an error message)
+//   });
+// });
+
+//reCAPTCHA
+var recaptchaWidget;
+
+window.onRecaptchaLoad = function () {
+  const recaptchaContainer = document.getElementById('recaptcha-container');
+
+  if (recaptchaContainer) {
+    recaptchaWidget = grecaptcha.render(recaptchaContainer, {
+      'sitekey': '6LcyxOIqAAAAAFOryZMKbYj4CFD9kmJOoQrjg00K'
+    });
+  } else {
+    console.error("reCAPTCHA container not found.");
+  }
+};
+
+document.addEventListener('DOMContentLoaded', function () {
+  const form = document.getElementById('popupForm');
+
+  if (!form) {
+    console.error('Form not found.');
     return;
   }
 
-  // Get the form data
-  const formData = new FormData(this);
-  formData.append('g-recaptcha-response', recaptchaResponse);
-  
-  // Add the current URL to the form data
-  formData.append('designURL', window.location.href);
+  form.addEventListener('submit', async function (event) {
+    event.preventDefault();
 
-  // Send the data to the webhook
-  fetch(this.action, {
-    method: 'POST',
-    body: formData
-  })
-  .then(response => response.json())
-  .then(data => {
-    console.log('Success:', data);
-    // Handle successful submission (e.g., show a success message)
-  })
-  .catch((error) => {
-    console.error('Error:', error);
-    // Handle errors (e.g., show an error message)
+    const honeypotValue = document.querySelector('input[name="website"]');
+    if (honeypotValue && honeypotValue.value) {
+      console.warn("Honeypot field filled. Possible bot detected.");
+      return;
+    }
+
+    // Checking reCAPTCHA
+    const recaptchaResponse = grecaptcha.getResponse();
+    if (!recaptchaResponse) {
+      alert('Please complete the captcha verification');
+      return;
+    }
+
+    const formData = new FormData(form);
+    formData.append('g-recaptcha-response', recaptchaResponse);
+    formData.append('designURL', window.location.href);
+
+    try {
+      console.log("Submitting form...");
+      const response = await fetch(form.action, {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+      console.log('🚀 Success:', data);
+
+    } catch (error) {
+      console.error('🚀 Error:', error);
+    }
   });
 });
+
