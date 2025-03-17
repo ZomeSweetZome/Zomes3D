@@ -160,7 +160,7 @@ let pdfContentData = [];
 let currentAmountString = '';
 let currentTaxAmountString = '';
 let totalAmount = 0;
-let maximumLeadTimeWeeks = 7;
+let maximumLeadTimeWeeks = 0;
 
 let stateSalesTax = 0;
 let shippingDistance = 0;
