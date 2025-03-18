@@ -68,6 +68,7 @@ import {
   loadAndParseCSV,
   getData,
   updateUIlanguages,
+  checkConfigFinalized,
 } from './ui-controller.js';
 
 // Clipping model mode
@@ -751,6 +752,7 @@ async function Start() {
     loaded = true;
 
     ReadURLParameters(StartSettings);
+    checkConfigFinalized();
   }
 }
 
@@ -3042,7 +3044,7 @@ async function populateFormFromUrl() {
   }
 
   if (name && email && zipcode) {
-    console.log("🚀🚀🚀 Start Summary 🚀🚀🚀");
+    // console.log("🚀🚀🚀 Start Summary 🚀🚀🚀");
     proceedSummaryAndPdf(false);
     userName = $('#form_name').val();
     userEmail = $('#form_email').val();

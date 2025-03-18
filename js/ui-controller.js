@@ -1,7 +1,7 @@
 'use strict';
 /* global jQuery, $, grecaptcha */
 
-import { 
+import {
   DEFAULT_LANGUAGE,
   IS_PRICE_SIMPLE,
   GROUP_ID_ORDER_FOR_NEXT_MENU_BTNS,
@@ -263,8 +263,8 @@ export async function createMenu(mainData) {
           );
 
           if (mainData[i + 1] && !mainData[i + 1][0].includes("option") ||
-          !mainData[i + 1] && mainData[i][0].includes("option")) {
-            
+            !mainData[i + 1] && mainData[i][0].includes("option")) {
+
             const groupControlButtonsHTML = `
               <div class="ar_group_control_buttons">
                 <div class="ar_button_back">
@@ -319,7 +319,7 @@ export async function createMenu(mainData) {
         $('.ar_menu_info_tab').removeClass('active');
         $(this).addClass('active');
       });
-      
+
       $('#menu_info_tab_descr').on('click', function () {
         $(this).addClass('active');
         $('#menu_info_tab_specs').removeClass('active');
@@ -333,7 +333,7 @@ export async function createMenu(mainData) {
         $('#menu_info_content_descr').removeClass('active');
         $('#menu_info_content_specs').addClass('active');
       });
-      
+
       resolve();
     });
   });
@@ -343,7 +343,7 @@ export function updateUIlanguages(dataArr, uiDataArr = uiMultiLanguages, langKey
   for (let i = 0; i < uiDataArr.length; i++) {
     for (let key in uiDataArr[i]) {
       let contentText = getData(dataArr, uiDataArr[i][key], langKey);
-      
+
       if (!contentText) continue;
 
       if (contentText !== '' && contentText?.toLowerCase() !== 'null') {
@@ -353,7 +353,7 @@ export function updateUIlanguages(dataArr, uiDataArr = uiMultiLanguages, langKey
       } else {
         contentText = '';
       }
-      
+
       $(key).html(contentText);
     }
   }
@@ -363,7 +363,7 @@ function updatePlaceholderslanguages(dataArr, uiDataArr = uiPlaceholdersMultiLan
   for (let i = 0; i < uiDataArr.length; i++) {
     for (let key in uiDataArr[i]) {
       let contentText = getData(dataArr, uiDataArr[i][key], langKey);
-      
+
       if (!contentText) continue;
 
       if (contentText !== '' && contentText?.toLowerCase() !== 'null') {
@@ -373,7 +373,7 @@ function updatePlaceholderslanguages(dataArr, uiDataArr = uiPlaceholdersMultiLan
       } else {
         contentText = '';
       }
-      
+
       $(key).attr('placeholder', contentText);
     }
   }
@@ -403,7 +403,7 @@ function setEventListenersForNextBtns() {
       $('.ar_menu_info_container').removeClass('active');
       $('.ar_filter .ar_filter_group').addClass('invisible');
       $(`#group-${GROUP_ID_ORDER_FOR_NEXT_MENU_BTNS[nextIndex]}`).removeClass('invisible');
-  
+
       if (nextIndex === 3) {
         $('#button_camera_inside').click();
       }
@@ -421,7 +421,7 @@ export async function loadAndParseCSV(link, fileType, output, retryCount = 999, 
   for (let attempt = 0; attempt < retryCount; attempt++) {
     try {
       const response = await fetch(link);
-      
+
       if (response.ok) {
         const type = response.headers.get('Content-Type');
         if (type && type.includes(fileType)) {
@@ -485,7 +485,7 @@ export function getData(data, text, desiredId, titleId = 'id') {
   let titleIdInd = data[0]?.findIndex(
     (title) => title?.toUpperCase() === titleId?.toUpperCase(),
   );
-  
+
   if (titleIdInd === -1) {
     titleIdInd = 0;
   }
@@ -503,7 +503,7 @@ export function getData(data, text, desiredId, titleId = 'id') {
   for (let i = 1; i < data.length; i++) {
     if (data[i][titleIdInd].toUpperCase() === text.toUpperCase()) {
       let res = data[i][index];
-      
+
       if (res[0] === '"' && res[res.length - 1] === '"') {
         res = res.slice(1, -1);
       }
@@ -564,7 +564,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const userZipcode = $zipcodeInput.value.trim();
     if (userZipcode.length > 5) {
       $('.summary__popup-overlay').css('overflow-y', 'auto');
-      $('.contact_form__popup-overlay').removeClass('active'); 
+      $('.contact_form__popup-overlay').removeClass('active');
       return false;
     }
 
@@ -586,7 +586,7 @@ document.addEventListener('DOMContentLoaded', function () {
         method: 'POST',
         body: formData
       });
-      
+
       const contentType = response.headers.get('content-type');
       if (contentType && contentType.includes('application/json')) {
         const data = await response.json();
@@ -604,3 +604,32 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 
+//! Checking finalizing status
+const blockedMenuSelectors = [
+  '.product-type-3dmodel .summary_wrapper'
+];
+
+export function checkConfigFinalized() {
+  $(document).ready(function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('s') === 'final') {
+      blockedMenuSelectors.forEach(selector => {
+        $(selector).css({
+          'pointer-events': 'none',
+          'position': 'relative',
+          'color': '#aaa'
+        }).append('<div class="overlay"></div>');
+        
+        $('.overlay').css({
+          'position': 'absolute',
+          'top': 0,
+          'left': 0,
+          'width': '100%',
+          'height': '100%',
+          'background': 'rgba(255,255,255,0.8)',
+          'z-index': 1
+        });
+      });
+    }
+  });
+}
