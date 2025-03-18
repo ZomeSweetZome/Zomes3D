@@ -2964,18 +2964,23 @@ async function PrepareUI() {
       userEmail = $emailInput.val();
       userZipcode = $zipcodeInput.val();
 
-      localStorage.setItem('userName', $nameInput.val());
-      localStorage.setItem('userEmail', $emailInput.val());
-      localStorage.setItem('userZipcode', $zipcodeInput.val());
-
-      try {
-        stateSalesTax = +getTaxRate(userZipcode);
-        shippingDistance = await getDistance(userZipcode);
-        updateShippingTaxInfo();
-      } catch (error) {
-        console.error('Error fetching distance:', error);
-      } finally {
+      if (userZipcode.length > 5) {
         closeContactForm();
+        return false;
+      } else if (userZipcode.length === 5) {
+        localStorage.setItem('userName', $nameInput.val());
+        localStorage.setItem('userEmail', $emailInput.val());
+        localStorage.setItem('userZipcode', $zipcodeInput.val());
+
+        try {
+          stateSalesTax = +getTaxRate(userZipcode);
+          shippingDistance = await getDistance(userZipcode);
+          updateShippingTaxInfo();
+        } catch (error) {
+          console.error('Error fetching distance:', error);
+        } finally {
+          closeContactForm();
+        }
       }
     });
   
@@ -3008,6 +3013,11 @@ function validateForm() {
     window.history.replaceState({}, '', currentUrl);
   } else {
     $('#submitButton').prop('disabled', true);
+  }
+
+  const userZipcode = $('#form_zipcode').val().trim();
+  if (userZipcode.length > 5) {
+    $('#submitButton').prop('disabled', false);
   }
 }
 

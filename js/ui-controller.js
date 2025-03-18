@@ -543,42 +543,9 @@ function getStringBetweenSquareBrackets(inputString) {
 }
 
 //form handler
-// document.getElementById('popupForm').addEventListener('submit', function(event) {
-//   event.preventDefault(); // Still preventing default to handle the submission ourselves
-
-//   const recaptchaResponse = grecaptcha.getResponse();
-//   if (!recaptchaResponse) {
-//     alert('Please complete the captcha verification');
-//     return;
-//   }
-
-//   // Get the form data
-//   const formData = new FormData(this);
-//   formData.append('g-recaptcha-response', recaptchaResponse);
-  
-//   // Add the current URL to the form data
-//   formData.append('designURL', window.location.href);
-
-//   // Send the data to the webhook
-//   fetch(this.action, {
-//     method: 'POST',
-//     body: formData
-//   })
-//   .then(response => response.json())
-//   .then(data => {
-//     console.log('Success:', data);
-//     // Handle successful submission (e.g., show a success message)
-//   })
-//   .catch((error) => {
-//     console.error('Error:', error);
-//     // Handle errors (e.g., show an error message)
-//   });
-// });
-
-
-//form handler
 document.addEventListener('DOMContentLoaded', function () {
   const form = document.getElementById('popupForm');
+  const $zipcodeInput = document.getElementById('form_zipcode');
 
   if (!form) {
     console.error('Form not found.');
@@ -594,16 +561,23 @@ document.addEventListener('DOMContentLoaded', function () {
       return false;
     }
 
-    // Checking reCAPTCHA
-    const recaptchaResponse = grecaptcha.getResponse();
-    if (!recaptchaResponse) {
-      event.stopImmediatePropagation();
-      alert('Please complete the captcha verification');
+    const userZipcode = $zipcodeInput.value.trim();
+    if (userZipcode.length > 5) {
+      $('.summary__popup-overlay').css('overflow-y', 'auto');
+      $('.contact_form__popup-overlay').removeClass('active'); 
       return false;
     }
 
+    // Checking reCAPTCHA
+    // const recaptchaResponse = grecaptcha.getResponse();
+    // if (!recaptchaResponse) {
+    //   event.stopImmediatePropagation();
+    //   alert('Please complete the captcha verification');
+    //   return false;
+    // }
+
     const formData = new FormData(form);
-    formData.append('g-recaptcha-response', recaptchaResponse);
+    // formData.append('g-recaptcha-response', recaptchaResponse);
     formData.append('designURL', window.location.href);
 
     try {
@@ -624,6 +598,9 @@ document.addEventListener('DOMContentLoaded', function () {
     } catch (error) {
       console.error('🚀 Error:', error);
     }
+
+    $('.summary__popup-overlay').css('overflow-y', 'auto');
+    $('.contact_form__popup-overlay').removeClass('active');
   });
 });
 
