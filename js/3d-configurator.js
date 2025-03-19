@@ -69,6 +69,7 @@ import {
   getData,
   updateUIlanguages,
   checkConfigFinalized,
+  isFinalized,
 } from './ui-controller.js';
 
 // Clipping model mode
@@ -3447,10 +3448,10 @@ function notificationHandler() {
 function summaryBtnsHandler() {
   $(document).on('click', '#ar_button_order, #ar_button_next_5, #canvas_button_save', function () {
     if (!isCameraInside) {
-      proceedSummaryAndPdf();
+      proceedSummaryAndPdf(!isFinalized);
     } else {
       flyCameraTo('outMain', 'outside', () => {
-        proceedSummaryAndPdf();
+        proceedSummaryAndPdf(!isFinalized);
       });
     }
   });

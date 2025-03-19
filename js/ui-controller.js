@@ -9,12 +9,17 @@ import {
 
 import { isCameraInside } from './3d-configurator.js';
 
-let currentLanguage;
+export let isFinalized = false;
 
+let currentLanguage;
 export let uiMultiLanguages = [];
 let uiPlaceholdersMultiLanguages = [];
 
+let data;
+
 export async function createMenu(mainData) {
+  data = mainData;
+
   return new Promise((resolve) => {
     jQuery(document).ready(function ($) {
       currentLanguage = $('.language-picker select').val() || DEFAULT_LANGUAGE;
@@ -606,13 +611,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
 //! Checking finalizing status
 const blockedMenuSelectors = [
-  '.product-type-3dmodel .summary_wrapper'
+  // '.product-type-3dmodel .summary_wrapper'
+  '.ar_filter_options '
 ];
 
 export function checkConfigFinalized() {
   $(document).ready(function () {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('s') === 'final') {
+      isFinalized = true;
+      
+      updateElementText('#contact_form_btn_text .ar_button_order__caption_large', 'ui_btn_buy_finalized');
+      updateElementText('.summary_container .ar_button_order__caption_large', 'ui_btn_buy_finalized');
+      updateElementText('#submitButton .ar_button_order__caption_large', 'ui_btn_buy_finalized');
+      updateUIlanguages(data);
+
       blockedMenuSelectors.forEach(selector => {
         $(selector).css({
           'pointer-events': 'none',
@@ -626,10 +639,24 @@ export function checkConfigFinalized() {
           'left': 0,
           'width': '100%',
           'height': '100%',
-          'background': 'rgba(255,255,255,0.8)',
+          'background': 'rgba(255,255,255,0.5)',
           'z-index': 1
         });
       });
+
+      $('.popup__info_timeline_content').hide();
+      $('.summary_book_time_btn').hide();
+      $('.timeline_btn_pay_deposit').hide();
+
+    } else {
+      isFinalized = false;
     }
   });
+}
+
+function updateElementText(selector, newValue, array = uiMultiLanguages) {
+  const item = array.find(obj => Object.keys(obj)[0] === selector);
+  if (item) {
+    item[selector] = newValue;
+  }
 }
