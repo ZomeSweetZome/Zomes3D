@@ -3058,10 +3058,14 @@ async function populateFormFromUrl() {
 
 function calculateAndSetEstimateDates() {
   const estimateDate = getData(dataPrice, 'shipDate', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`);
-  const shipDateString = getDatesStrings(estimateDate, maximumLeadTimeWeeks, currentLanguage).shipDateString;
-  const prepaymentDateString = getDatesStrings(estimateDate, maximumLeadTimeWeeks, currentLanguage).prepaymentDateString;
-  const deliveryDateString = getDatesStrings(estimateDate, maximumLeadTimeWeeks, currentLanguage).deliveryDateString;
-  const weeksAhead = getDatesStrings(estimateDate, maximumLeadTimeWeeks, currentLanguage).differenceInWeeks;
+  const prepaymentDays = getData(dataPrice, 'prepaymentDays', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`);
+  
+  const dateStrings = getDatesStrings(estimateDate, maximumLeadTimeWeeks, currentLanguage, prepaymentDays);
+  const shipDateString = dateStrings.shipDateString;
+  const prepaymentDateString = dateStrings.prepaymentDateString;
+  const deliveryDateString = dateStrings.deliveryDateString;
+
+  const weeksAhead = dateStrings.differenceInWeeks;
   const textPart1 = getData(dataMain, 'ui_date_popup_text_1', currentLanguage);
   const textPart2 = getData(dataMain, 'ui_date_popup_text_2', currentLanguage);
   $('#delivery_info_date').text(shipDateString);
@@ -3088,7 +3092,7 @@ function calculateAndSetEstimateDates() {
   $('#ship_day_subtitle').text(`${finalPaymentTextString} (${finalPaymentAmountString})`);
 }
 
-function getDatesStrings(dateStr, leadTimeInWeeks = 3, lang = 'EN', prepaymentDateWeeks = -4, deliveryDateWeeks = 2) {
+function getDatesStrings(dateStr, leadTimeInWeeks = 3, lang = 'EN', prepaymentDateDays = 28, deliveryDateWeeks = 2) {
   const monthNames = {
     EN: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
     FR: ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"],
@@ -3135,7 +3139,8 @@ function getDatesStrings(dateStr, leadTimeInWeeks = 3, lang = 'EN', prepaymentDa
   let prepaymentDate = new Date(resultDate);
   let deliveryDate = new Date(resultDate);
 
-  prepaymentDate.setDate(resultDate.getDate() + prepaymentDateWeeks * 7);
+  // prepaymentDate.setDate(resultDate.getDate() + prepaymentDateWeeks * 7);
+  prepaymentDate.setDate(resultDate.getDate() - prepaymentDateDays);
   deliveryDate.setDate(resultDate.getDate() + deliveryDateWeeks * 7);
   const prepaymentDateString = formatDate(prepaymentDate, lang);
   const deliveryDateString = formatDate(deliveryDate, lang);
