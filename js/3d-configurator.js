@@ -3703,63 +3703,65 @@ function collectSummary() {
 
     filterOptions.find('.option').each(function () {
       const option = $(this);
-      const optionClasses = option.attr('class').split(' ').map(cls => `details__${cls}`);
-      const optionTitle = option.find('.component_title').text();
-      let optionPrice = option.find('.component_price').text();
-
-      if (!optionClasses.includes('details__active')) {
-        optionPrice = `${currentCurrencySign} 0`;
-      }
-
-      const detailsItem = $('<div>', {
-        class: `details__item ${optionClasses.join(' ')}`
-      });
-
-      const textContainer = $('<div>', {
-        class: 'details__item_text_container'
-      });
-
-      $('<div>', {
-        class: 'details__item_title',
-        text: optionTitle
-      }).appendTo(textContainer);
-
-      $('<div>', {
-        class: 'details__item_not_included',
-        text: getData(dataMain, 'ui_summary_not_included', currentLanguage),
-      }).appendTo(textContainer);
-
-      textContainer.appendTo(detailsItem);
-
-      $('<div>', {
-        class: 'details__item_price',
-        text: optionPrice
-      }).appendTo(detailsItem);
-      
-      detailsItem.appendTo(detailsGroup);
-
-
-
-      if (optionClasses.includes('details__active')) {
-        const windowsCode = (optionClasses.includes('details__option_1-2')) ? formatCustomWindows(customWindows) : '';
-
-        pdfContentData.push(
-          { columns: [
-            { text: optionTitle + windowsCode, style: 'tableText', width: '70%', margin: [0, 0, 0, 0], },
-            { text: '', width: '*', margin: [0, 0, 0, 0] },
-            { text: optionPrice, style: 'tableText', margin: [0, 0, 0, 0], alignment: 'right', },
-          ]},
-        );
-      }
-
-      if (!optionClasses.includes('details__active') && detailsGroupId === 'details__group-4') { // ADD-ONs
-        pdfContentData.push(
-          { columns: [
-            { text: optionTitle + getData(dataMain, 'ui_summary_not_included', currentLanguage),  width: '70%', style: 'tableText', margin: [0, 0, 0, 0], },
-            { text: '', width: '*', margin: [0, 0, 0, 0] },
-            { text: optionPrice, style: 'tableText', margin: [0, 0, 0, 0], alignment: 'right', },
-          ]},
-        );
+      if (!option.hasClass('disabled')) {
+        const optionClasses = option.attr('class').split(' ').map(cls => `details__${cls}`);
+        const optionTitle = option.find('.component_title').text();
+        let optionPrice = option.find('.component_price').text();
+  
+        if (!optionClasses.includes('details__active')) {
+          optionPrice = `${currentCurrencySign} 0`;
+        }
+  
+        const detailsItem = $('<div>', {
+          class: `details__item ${optionClasses.join(' ')}`
+        });
+  
+        const textContainer = $('<div>', {
+          class: 'details__item_text_container'
+        });
+  
+        $('<div>', {
+          class: 'details__item_title',
+          text: optionTitle
+        }).appendTo(textContainer);
+  
+        $('<div>', {
+          class: 'details__item_not_included',
+          text: getData(dataMain, 'ui_summary_not_included', currentLanguage),
+        }).appendTo(textContainer);
+  
+        textContainer.appendTo(detailsItem);
+  
+        $('<div>', {
+          class: 'details__item_price',
+          text: optionPrice
+        }).appendTo(detailsItem);
+        
+        detailsItem.appendTo(detailsGroup);
+  
+  
+  
+        if (optionClasses.includes('details__active')) {
+          const windowsCode = (optionClasses.includes('details__option_1-2')) ? formatCustomWindows(customWindows) : '';
+  
+          pdfContentData.push(
+            { columns: [
+              { text: optionTitle + windowsCode, style: 'tableText', width: '70%', margin: [0, 0, 0, 0], },
+              { text: '', width: '*', margin: [0, 0, 0, 0] },
+              { text: optionPrice, style: 'tableText', margin: [0, 0, 0, 0], alignment: 'right', },
+            ]},
+          );
+        }
+  
+        if (!optionClasses.includes('details__active') && detailsGroupId === 'details__group-4') { // ADD-ONs
+          pdfContentData.push(
+            { columns: [
+              { text: optionTitle + getData(dataMain, 'ui_summary_not_included', currentLanguage),  width: '70%', style: 'tableText', margin: [0, 0, 0, 0], },
+              { text: '', width: '*', margin: [0, 0, 0, 0] },
+              { text: optionPrice, style: 'tableText', margin: [0, 0, 0, 0], alignment: 'right', },
+            ]},
+          );
+        }
       }
     });
 
