@@ -65,6 +65,7 @@ export async function createMenu(mainData) {
         { '.details__item_not_included': 'ui_summary_not_included' },
         { '#summary_form_title': 'ui_summary_form_title' },
         { '#summary_form_label_name': 'ui_summary_form_label_name' },
+        { '#summary_form_label_phone': 'ui_summary_form_label_phone' },
         { '#summary_form_label_email': 'ui_summary_form_label_email' },
         { '#summary_form_checkbox_signme': 'ui_summary_form_checkbox_signme' },
         { '#summary_back_to_conf': 'ui_summary_back_to_conf' },
@@ -96,6 +97,7 @@ export async function createMenu(mainData) {
 
       uiPlaceholdersMultiLanguages.push(
         { '#form_name': 'ui_summary_form_label_name' },
+        { '#form_phone': 'ui_summary_form_label_phone' },
         { '#form_email': 'ui_summary_form_label_email' },
         { '#form_zipcode': 'ui_summary_form_label_zipcode' },
       );
@@ -550,71 +552,61 @@ function getStringBetweenSquareBrackets(inputString) {
 }
 
 //form handler
-document.addEventListener('DOMContentLoaded', function () {
-  const form = document.getElementById('popupForm');
-  const $zipcodeInput = document.getElementById('form_zipcode');
+// document.addEventListener('DOMContentLoaded', function () {
+//   const form = document.getElementById('popupForm');
+//   const $zipcodeInput = document.getElementById('form_zipcode');
 
-  if (!form) {
-    console.error('Form not found.');
-    return;
-  }
+//   if (!form) {
+//     console.error('Form not found.');
+//     return;
+//   }
 
-  form.addEventListener('submit', async function (event) {
-    event.preventDefault();
-    event.stopPropagation();
+//   form.addEventListener('submit', async function (event) {
+//     event.preventDefault();
+//     event.stopPropagation();
 
-    const honeypotValue = document.querySelector('input[name="website"]');
-    if (honeypotValue && honeypotValue.value) {
-      return false;
-    }
+//     const honeypotValue = document.querySelector('input[name="website"]');
+//     if (honeypotValue && honeypotValue.value) {
+//       return false;
+//     }
 
-    const userZipcode = $zipcodeInput.value.trim();
-    if (userZipcode.length > 5) {
-      $('.summary__popup-overlay').css('overflow-y', 'auto');
-      $('.contact_form__popup-overlay').removeClass('active');
-      return false;
-    }
+//     const userZipcode = $zipcodeInput.value.trim();
+//     if (userZipcode.length > 5) {
+//       $('.summary__popup-overlay').css('overflow-y', 'auto');
+//       $('.contact_form__popup-overlay').removeClass('active');
+//       return false;
+//     }
 
-    // Checking reCAPTCHA
-    // const recaptchaResponse = grecaptcha.getResponse();
-    // if (!recaptchaResponse) {
-    //   event.stopImmediatePropagation();
-    //   alert('Please complete the captcha verification');
-    //   return false;
-    // }
+//     const formData = new FormData(form);
+//     formData.append('designURL', window.location.href);
 
-    const formData = new FormData(form);
-    // formData.append('g-recaptcha-response', recaptchaResponse);
-    formData.append('designURL', window.location.href);
+//     try {
+//       console.log("Submitting form...");
+//       const response = await fetch(form.action, {
+//         method: 'POST',
+//         body: formData
+//       });
 
-    try {
-      console.log("Submitting form...");
-      const response = await fetch(form.action, {
-        method: 'POST',
-        body: formData
-      });
+//       const contentType = response.headers.get('content-type');
+//       if (contentType && contentType.includes('application/json')) {
+//         const data = await response.json();
+//         console.log('🚀 Success:', data);
+//       } else {
+//         const textData = await response.text();
+//         console.log('🚀 Success:', textData);
+//       }
+//     } catch (error) {
+//       console.error('🚀 Error:', error);
+//     }
 
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
-        const data = await response.json();
-        console.log('🚀 Success:', data);
-      } else {
-        const textData = await response.text();
-        console.log('🚀 Success:', textData);
-      }
-    } catch (error) {
-      console.error('🚀 Error:', error);
-    }
-
-    $('.summary__popup-overlay').css('overflow-y', 'auto');
-    $('.contact_form__popup-overlay').removeClass('active');
-  });
-});
+//     $('.summary__popup-overlay').css('overflow-y', 'auto');
+//     $('.contact_form__popup-overlay').removeClass('active');
+//   });
+// });
 
 //! Checking finalizing status
 const blockedMenuSelectors = [
-  // '.product-type-3dmodel .summary_wrapper'
-  '.ar_filter_options '
+  '.ar_filter_options',
 ];
 
 export function checkConfigFinalized() {
@@ -663,11 +655,11 @@ function updateElementText(selector, newValue, array = uiMultiLanguages) {
   }
 }
 
+//! Checking price hiding
 const priceSelectorsForHiding = [
   '.component_price',
   '.ar_total_amount-price',
   '.menu__footer_payment_info',
-  '.details__item_price',
   '.details__total',
   '.details__tax_info',
 ];
@@ -690,7 +682,7 @@ export function checkPriceHiding() {
     if (urlParams.get('fp') === 'n') {
       isFinalPriceHidden = true;
       isPriceHidden = true;
-      
+
       priceSelectorsForHiding.forEach(selector => {
         $(selector).css({
           'display': 'none',

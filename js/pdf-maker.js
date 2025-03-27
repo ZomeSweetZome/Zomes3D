@@ -6,8 +6,14 @@
 import { getData } from './ui-controller.js';
 
 export function generatePDF(
-  currentHouse, data, language, imageSources, configurationData, timelineData, 
+  currentHouse,
+  data,
+  language,
+  imageSources,
+  configurationData,
+  timelineData, 
   userName = '',
+  phone = '',
   email = '',
   zipcode = '',
   opt = 'all',
@@ -148,6 +154,7 @@ export function generatePDF(
         margin: [0, 6, 0, 6],
       },
       { text: userName, style: 'tableText', },
+      { text: phone, style: 'tableText', },
       { text: email, style: 'tableText', },
       { text: zipcode, style: 'tableText', },
 

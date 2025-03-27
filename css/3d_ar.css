@@ -2592,6 +2592,7 @@ textarea[name="ar_order_comment"] {
   margin-bottom: 20px;
 }
 
+.contact_form__form-item_name,
 .contact_form__form-item_email,
 .contact_form__form-item_phone,
 .contact_form__form-item_address,
@@ -2601,9 +2602,9 @@ textarea[name="ar_order_comment"] {
   width: calc(50% - 15px);
 }
 
-.contact_form__form-item_name {
+/* .contact_form__form-item_name {
   width: 100%;
-}
+} */
 
 .contact_form__form-item_inquiries {
   min-height: 120px;

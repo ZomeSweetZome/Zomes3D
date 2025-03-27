@@ -171,6 +171,7 @@ let stateSalesTax = 0;
 let shippingDistance = 0;
 let totalAmountShipTax = 0;
 let userName = '';
+let userPhone = '';
 let userEmail = '';
 let userZipcode = '';
 
@@ -305,7 +306,7 @@ SharedParameterList[0].groupOptionAction = function () {
 // windows
 SharedParameterList[1].groupOptionAction = function () {
   if (justClicked) {
-    if(this.value[2] == '1') {
+    if (this.value[2] == '1') {
       addStripAndViewportWindowsToCustomWindowsObject(this.value[0], this.value[1]);
     }
   }
@@ -729,17 +730,17 @@ function InitializationGroups(callback) {
 
 async function payAttentionToIcons() {
   const infoIcons = document.querySelectorAll('.image-info');
-  
+
   // Show the animation for all icons
   infoIcons.forEach(icon => {
-      icon.classList.add('attention-icon');
+    icon.classList.add('attention-icon');
   });
-  
+
   // Optionally, remove the animation after a few seconds
   setTimeout(() => {
-      infoIcons.forEach(icon => {
-          icon.classList.remove('attention-icon');
-      });
+    infoIcons.forEach(icon => {
+      icon.classList.remove('attention-icon');
+    });
   }, 20000); // 20 seconds
 }
 
@@ -774,11 +775,11 @@ async function StartSettings() {
 
   currentHouse = SharedParameterList[0].value || '0';
 
-  await loadModel(MODEL_PATHS[currentHouse], false, () => {}, true);
+  await loadModel(MODEL_PATHS[currentHouse], false, () => { }, true);
   modelHouse = IMPORTED_MODELS[0];
   modelHouse?.scale.set(0, 0, 0);
   modelHouse && scene.add(modelHouse);
-  
+
   loadModel(MODEL_PATHS[parseInt(parseInt(currentHouse) + 3)], true, () => {
     modelFurniture = IMPORTED_MODELS[1];
     modelFurniture.visible = false;
@@ -806,8 +807,8 @@ async function StartSettings() {
 
   $('#js-loader').addClass('invisible');
   $('.summary.entry-summary').removeClass('hidden');
-  animateScale(modelHouse, 500, () => { 
-    unBlockBuyBtn(); 
+  animateScale(modelHouse, 500, () => {
+    unBlockBuyBtn();
     CheckChanges();
     applyAdditionalSharedParameters(7); // customWindows
     populateFormFromUrl();
@@ -1591,14 +1592,14 @@ async function changeModel(modelId) {
 
   IMPORTED_MODELS.length = 0;
 
-  await loadModel(MODEL_PATHS[modelId], false, () => {}, true);
+  await loadModel(MODEL_PATHS[modelId], false, () => { }, true);
   modelHouse = IMPORTED_MODELS[0];
   modelHouse?.scale.set(0, 0, 0);
   modelHouse && scene.add(modelHouse);
-  
+
   setObjectTexture(TEXTURES.interiorBase.materialNames, TEXTURES.interiorBase.white);
   setMaterialColor(TEXTURES.interiorBase.materialNames[0], baseColorForRowA);
-  
+
   await loadModel(MODEL_PATHS[parseInt(parseInt(modelId) + 3)], true, () => {
     modelFurniture = IMPORTED_MODELS[1];
     modelFurniture.visible = false;
@@ -1612,11 +1613,11 @@ async function changeModel(modelId) {
 
   (isWindowCustomOn) && $('.option_1-2').trigger('click');
   resetCustomWindowsObject();
-  
+
   setVisibility(modelHouse, false, ['man']);
   onChangePosition(DATA_HOUSE_NAME[modelId], 'outMain', () => { }, 5);
-  animateScale(modelHouse, 500, () => { 
-    unBlockBuyBtn(); 
+  animateScale(modelHouse, 500, () => {
+    unBlockBuyBtn();
     CheckChanges();
   });
 }
@@ -1796,7 +1797,7 @@ function calculatePrice() {
       }
     }
   }
-  
+
   let price = 0;
 
   allOptions.forEach((option) => {
@@ -1914,7 +1915,7 @@ function formatPrice(price, currency, needToBeRounded = true, needToAddSpace = f
   if (!currency) { currency = '' }
 
   let result, firstSeparator;
-  const priceString = (needToBeRounded) 
+  const priceString = (needToBeRounded)
     ? Math.round(price).toString()
     : price.toString();
 
@@ -1939,7 +1940,7 @@ function formatPrice(price, currency, needToBeRounded = true, needToAddSpace = f
   if (currency === 'грн') {
     result = `${integerPart} ${currency}`;
   } else {
-    result = (needToAddSpace) 
+    result = (needToAddSpace)
       ? `${currency} ${integerPart}`
       : `${currency}${integerPart}`;
   }
@@ -2949,35 +2950,43 @@ async function PrepareUI() {
   jQuery(document).ready(function () {
     const $form = $('#popupForm');
     const $nameInput = $('#form_name');
+    const $phoneInput = $('#form_phone');
     const $emailInput = $('#form_email');
     const $zipcodeInput = $('#form_zipcode');
-  
-    $nameInput.on('input', () => {
-      validateForm();
-    });
+    let formOpenTime = Date.now();
 
-    $emailInput.on('input', () => {
-      validateForm();
-    });
+    $nameInput.on('input', validateForm);
+    $phoneInput.on('input', validateForm);
+    $emailInput.on('input', validateForm);
+    $zipcodeInput.on('input', validateForm);
 
-    $zipcodeInput.on('input', () => {
-      validateForm();
-    });
-  
     $form.on('submit', async function (event) {
       event.preventDefault();
-      
-      userName = $nameInput.val();
-      userEmail = $emailInput.val();
-      userZipcode = $zipcodeInput.val();
 
-      if (userZipcode.length > 5) {
-        closeContactForm();
+      userName = $nameInput.val().trim();
+      userPhone = $phoneInput.val().trim();
+      userEmail = $emailInput.val().trim();
+      userZipcode = $zipcodeInput.val().trim();
+      
+      const honeypotValue = document.querySelector('input[name="email2"]').value;
+      if (honeypotValue) {
         return false;
-      } else if (userZipcode.length === 5) {
-        localStorage.setItem('userName', $nameInput.val());
-        localStorage.setItem('userEmail', $emailInput.val());
-        localStorage.setItem('userZipcode', $zipcodeInput.val());
+      }
+      
+      const timeSpent = Date.now() - formOpenTime;
+      if (timeSpent < 500) {
+        return false;
+      }
+
+      if (!(/^\d{5}$/.test(userZipcode))) {
+        $('.summary__popup-overlay').css('overflow-y', 'auto');
+        $('.contact_form__popup-overlay').removeClass('active');
+        return false;
+      } else {
+        localStorage.setItem('userName', userName);
+        localStorage.setItem('userPhone', userPhone);
+        localStorage.setItem('userEmail', userEmail);
+        localStorage.setItem('userZipcode', userZipcode);
 
         try {
           stateSalesTax = +getTaxRate(userZipcode);
@@ -2985,16 +2994,48 @@ async function PrepareUI() {
           updateShippingTaxInfo();
         } catch (error) {
           console.error('Error fetching distance:', error);
-        } finally {
-          closeContactForm();
         }
       }
+      
+      document.getElementById('js_enabled').value = 'true';
+
+      if (/^\d{5}$/.test(userZipcode)) {
+        const formData = new FormData($form[0]);
+        formData.append('designURL', window.location.href);
+
+        try {
+          console.log("Submitting form...");
+          const response = await fetch($form.attr('action'), {
+            method: 'POST',
+            body: formData
+          });
+
+          const contentType = response.headers.get('content-type');
+          if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+            console.log('🚀 Success:', data);
+          } else {
+            const textData = await response.text();
+            console.log('🚀 Success:', textData);
+          }
+        } catch (error) {
+          console.error('🚀 Error:', error);
+        }
+        closeContactForm();
+      } else {
+        closeContactForm();
+      }
     });
-  
+
     validateForm();
   });
 }
 
+
+function validatePhone(phone) {
+  const digits = phone.replace(/\D/g, '');
+  return digits.length >= 10 && digits.length <= 15;
+}
 
 function validateEmail(email) {
   const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -3002,28 +3043,32 @@ function validateEmail(email) {
 }
 
 function validateForm() {
-  const isNameValid = $('#form_name').val().trim() !== '';
-  const isEmailValid = validateEmail($('#form_email').val().trim());
-  const zipcodeIsValid = $('#form_zipcode').val().trim().length >= 5;
-  
-  const isFormValid = isNameValid && isEmailValid && zipcodeIsValid;
+  const name = $('#form_name').val().trim();
+  const phone = $('#form_phone').val().trim();
+  const email = $('#form_email').val().trim();
+  const zipcode = $('#form_zipcode').val().trim();
+
+  const isNameValid = name !== '';
+  const isPhoneValid = validatePhone(phone);
+  const isEmailValid = validateEmail(email);
+  const isZipcodeValid = /^\d{5}$/.test(zipcode);
+
+  const isFormValid = isNameValid && isPhoneValid && isEmailValid && isZipcodeValid;
 
   if (isFormValid) {
     $('#submitButton').prop('disabled', false);
-    
     WriteURLParameters();
-    
     const currentUrl = new URL(window.location.href);
-    currentUrl.searchParams.set('name', $('#form_name').val().trim());
-    currentUrl.searchParams.set('email', $('#form_email').val().trim());
-    currentUrl.searchParams.set('zipcode', $('#form_zipcode').val().trim());
+    currentUrl.searchParams.set('name', name);
+    currentUrl.searchParams.set('phone', phone);
+    currentUrl.searchParams.set('email', email);
+    currentUrl.searchParams.set('zipcode', zipcode);
     window.history.replaceState({}, '', currentUrl);
   } else {
     $('#submitButton').prop('disabled', true);
   }
 
-  const userZipcode = $('#form_zipcode').val().trim();
-  if (userZipcode.length > 5) {
+  if (zipcode.length > 5) {
     $('#submitButton').prop('disabled', false);
   }
 }
@@ -3032,12 +3077,17 @@ async function populateFormFromUrl() {
   const currentUrl = new URL(window.location.href);
 
   const name = currentUrl.searchParams.get('name');
+  const phone = currentUrl.searchParams.get('phone');
   const email = currentUrl.searchParams.get('email');
   const zipcode = currentUrl.searchParams.get('zipcode');
 
   if (name) {
     $('#form_name').val(name);
     localStorage.setItem('userName', name);
+  }
+  if (phone) {
+    $('#form_phone').val(phone);
+    localStorage.setItem('userPhone', phone);
   }
   if (email) {
     $('#form_email').val(email);
@@ -3048,10 +3098,11 @@ async function populateFormFromUrl() {
     localStorage.setItem('userZipcode', zipcode);
   }
 
-  if (name && email && zipcode) {
+  if (name && phone && email && zipcode) {
     // console.log("🚀🚀🚀 Start Summary 🚀🚀🚀");
     proceedSummaryAndPdf(false);
     userName = $('#form_name').val();
+    userPhone = $('#form_phone').val();
     userEmail = $('#form_email').val();
     userZipcode = $('#form_zipcode').val();
     stateSalesTax = +getTaxRate(zipcode);
@@ -3063,7 +3114,7 @@ async function populateFormFromUrl() {
 function calculateAndSetEstimateDates() {
   const estimateDate = getData(dataPrice, 'shipDate', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`);
   const prepaymentDays = getData(dataPrice, 'prepaymentDays', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`);
-  
+
   const dateStrings = getDatesStrings(estimateDate, maximumLeadTimeWeeks, currentLanguage, prepaymentDays);
   const shipDateString = dateStrings.shipDateString;
   const prepaymentDateString = dateStrings.prepaymentDateString;
@@ -3075,7 +3126,7 @@ function calculateAndSetEstimateDates() {
   $('#delivery_info_date').text(shipDateString);
   $('#delivery_info_date_2').text(shipDateString);
   $('.popup__info_content_date').html(`Ships ${shipDateString}. ${textPart1} ${maximumLeadTimeWeeks} ${textPart2}`);
-  
+
   $('#prepayment_title').text(prepaymentDateString);
   $('#ship_day_title').text(shipDateString);
   $('#delivery_title').text(deliveryDateString);
@@ -3154,7 +3205,7 @@ function getDatesStrings(dateStr, leadTimeInWeeks = 3, lang = 'EN', prepaymentDa
   const timeDifference = deliveryDate.getTime() - futureDate.getTime();
   const differenceInWeeks = Math.round(timeDifference / (7 * 24 * 60 * 60 * 1000));
 
-  return {shipDateString, prepaymentDateString, deliveryDateString, differenceInWeeks};
+  return { shipDateString, prepaymentDateString, deliveryDateString, differenceInWeeks };
 }
 
 
@@ -3268,7 +3319,7 @@ function menuInfoBtnHandler(opt) {
       $('.ar_menu_info__tabs').show();
     }
 
-    
+
     // show or hide menu info
     if (this.id === lastOpenElementId) {
       $('.ar_menu_info_container').removeClass('active');
@@ -3365,14 +3416,14 @@ function dimensionsBtnHandler() {
       if ($('#button_annotation').hasClass('active')) {
         $('#button_annotation').trigger('click');
       }
-      
+
       if ($('#button_furniture').hasClass('active')) {
         $('#button_furniture').trigger('click');
       }
 
       dimensionsController(true);
 
-      if (isCameraInside) { 
+      if (isCameraInside) {
         $('#button_camera_outside').click();
         flyCameraTo('outDimensions', 'outside');
       } else {
@@ -3391,7 +3442,7 @@ function furnitureBtnHandler() {
 
     if ($(this).hasClass('active')) {
       !isCameraInside && $('#button_camera_inside').click();
-      
+
       if ($('#button_dimensions').hasClass('active')) {
         $('#button_dimensions').trigger('click');
       }
@@ -3498,7 +3549,7 @@ function proceedSummaryAndPdf(shouldOpenForm = true) {
 
 function getPdfBtnHandler() {
   $('.summary_download_pdf_btn').on('click', function () {
-    
+
     const timelineTexts = {
       details__tax_text: $('#details__tax_text').text(),
 
@@ -3509,11 +3560,11 @@ function getPdfBtnHandler() {
       prepayment_title: $('#prepayment_title').text(),
       prepayment_subtitle: $('#prepayment_subtitle').text(),
       prepayment_text: $('#prepayment_text').text(),
-      
+
       ship_day_title: $('#ship_day_title').text(),
       ship_day_subtitle: $('#ship_day_subtitle').text(),
       ship_day_text: $('#ship_day_text').text(),
-      
+
       delivery_title: $('#delivery_title').text(),
       delivery_subtitle: $('#delivery_subtitle').text(),
       delivery_text: $('#delivery_text').text(),
@@ -3527,6 +3578,7 @@ function getPdfBtnHandler() {
       pdfContentData,
       timelineTexts,
       userName,
+      userPhone,
       userEmail,
       userZipcode,
     );
@@ -3534,13 +3586,13 @@ function getPdfBtnHandler() {
 }
 
 function bookTimeBtnHandler() {
-  $('.summary_book_time_btn').on('click', function() {
+  $('.summary_book_time_btn').on('click', function () {
     window.open(CALENDLY_LINK, '_blank');
   });
 }
 
 function bookConsultationAndDepositBtns() {
-  $('.timeline_btn_pay_deposit').on('click', function() {
+  $('.timeline_btn_pay_deposit').on('click', function () {
     const email = localStorage.getItem('userEmail');
     const payDepositeUrl = (email)
       ? `${PAY_DEPOSITE_LINK}?prefilled_email=${encodeURIComponent(email)}`
@@ -3556,68 +3608,67 @@ function getTaxRate(destinationZipCode) {
 }
 
 async function getDistance(destinationZipCode) {
-  return new Promise((resolve, reject) => {
-    var api = new google.maps.DistanceMatrixService();
-    api.getDistanceMatrix({
-      origins: [ORIGIN_ZIPCODE],
-      destinations: [destinationZipCode + ''],
-      travelMode: 'DRIVING',
-      unitSystem: google.maps.UnitSystem.IMPERIAL,
-    }, 
-    function(response, status) {
-      if (status == 'OK') {
-        const element = response.rows[0].elements[0];
-        if (element.status === 'OK') {
-          const distance = element.distance.text;
-          resolve(extractDistance(distance));
+  return Promise.race([
+    new Promise((resolve, reject) => {
+      var api = new google.maps.DistanceMatrixService();
+      api.getDistanceMatrix({
+        origins: [ORIGIN_ZIPCODE],
+        destinations: [destinationZipCode + ''],
+        travelMode: 'DRIVING',
+        unitSystem: google.maps.UnitSystem.IMPERIAL,
+      }, function (response, status) {
+        if (status === 'OK') {
+          const element = response.rows[0].elements[0];
+          if (element.status === 'OK') {
+            resolve(extractDistance(element.distance.text));
+          } else {
+            resolve(null);
+          }
         } else {
-          console.log(`🚀 Could not find distance between ${ORIGIN_ZIPCODE} and ${destinationZipCode}`);
-          resolve(null);
+          reject(new Error(`API request failed with status: ${status}`));
         }
-      } else {
-        console.log(`🚀 API request error: ${status}`);
-        reject(new Error(`API request failed with status: ${status}`));
-      }
-    });
-  });
+      });
+    }),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 1500))
+  ]);
 }
 
 
 function extractDistance(distanceStr) {
   const numericValue = distanceStr.replace(/,/g, '').replace(' mi', '');
   const distance = parseFloat(numericValue);
-  
+
   return distance;
 }
 
 function updateShippingTaxInfo() {
   const shipppingCostBase = convertPriceToNumber(getData(dataPrice, 'shipppingCostBase', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
   const shipppingCostMile = convertPriceToNumber(getData(dataPrice, 'shipppingCostMile', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
-  
+
   totalAmountShipTax = totalAmount * stateSalesTax + shippingDistance * shipppingCostMile;
 
   if (totalAmountShipTax) {
     currentTaxAmountString = formatPrice(totalAmountShipTax + shipppingCostBase, currentCurrencySign);
   }
-  
-  const text = (totalAmountShipTax) 
+
+  const text = (totalAmountShipTax)
     ? ` ${getData(dataMain, 'ui_summary_details__tax_text_short', currentLanguage)} ${userZipcode}`
     : getData(dataMain, 'ui_summary_details__tax_text', currentLanguage);
 
-  const text2 = (totalAmountShipTax) 
+  const text2 = (totalAmountShipTax)
     ? ` ${getData(dataMain, 'ui_summary_details__tax_text_short_2', currentLanguage)} ${userZipcode}`
     : getData(dataMain, 'ui_summary_details__tax_text_2', currentLanguage);
-  
-    const amountText = (totalAmountShipTax) ? ` ${currentTaxAmountString}` : ' ';
 
-  $('#payment_info_title').html(`+${amountText}${text}`); 
-  $('#payment_info_title_2').html(`+${amountText}${text2}`); 
+  const amountText = (totalAmountShipTax) ? ` ${currentTaxAmountString}` : ' ';
+
+  $('#payment_info_title').html(`+${amountText}${text}`);
+  $('#payment_info_title_2').html(`+${amountText}${text2}`);
   $('#details__tax_text').html(`+ ${amountText}${text}`);
 }
 
 function openSummary() {
   $('.summary__popup-overlay').addClass('active');
-  
+
   $(`.summary__scheme_pod`).removeClass('active');
   $(`.summary__scheme_office`).removeClass('active');
   $(`.summary__scheme_studio`).removeClass('active');
@@ -3640,11 +3691,16 @@ function openContactForm() {
   $('.summary__popup-overlay').css('overflow-y', 'hidden');
 
   const savedName = localStorage.getItem('userName');
+  const savedPhone = localStorage.getItem('userPhone');
   const savedEmail = localStorage.getItem('userEmail');
   const savedZipcode = localStorage.getItem('userZipcode');
-  
+
   if (savedName) {
     $('#form_name').val(savedName);
+  }
+
+  if (savedPhone) {
+    $('#form_phone').val(savedPhone);
   }
 
   if (savedEmail) {
@@ -3676,7 +3732,7 @@ function collectSummary() {
     const groupId = group.attr('id');
 
     if (groupId === 'group-3') { return; } //! TEMPORARY CODE for removing EXTERIOR group
-    
+
     const groupTitle = group.find('.ar_filter_caption').text();
     const filterOptions = group.find('.ar_filter_options');
 
@@ -3687,7 +3743,7 @@ function collectSummary() {
     }
 
     classes = classes + ' details__type_select';
-    
+
     const detailsGroupId = `details__${groupId}`;
 
     const detailsGroup = $('<div>', {
@@ -3702,7 +3758,7 @@ function collectSummary() {
 
     pdfContentData.push(
       { text: groupTitle, style: 'subtitle', margin: [0, 0, 0, 0], },
-      { canvas: [ { type: 'line', x1: 0, y1: 0, x2: 535, y2: 0, lineWidth: 0.5 }], margin: [0, 6, 0, 6], },
+      { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 535, y2: 0, lineWidth: 0.5 }], margin: [0, 6, 0, 6], },
     );
 
     filterOptions.find('.option').each(function () {
@@ -3711,32 +3767,30 @@ function collectSummary() {
         const optionClasses = option.attr('class').split(' ').map(cls => `details__${cls}`);
         const optionTitle = option.find('.component_title').text();
         let optionPrice = option.find('.component_price').text();
-  
+
         if (!optionClasses.includes('details__active')) {
           optionPrice = `${currentCurrencySign} 0`;
         }
-  
+
         const detailsItem = $('<div>', {
           class: `details__item ${optionClasses.join(' ')}`
         });
-  
+
         const textContainer = $('<div>', {
           class: 'details__item_text_container'
         });
-  
+
         $('<div>', {
           class: 'details__item_title',
           text: optionTitle
         }).appendTo(textContainer);
-  
+
         $('<div>', {
           class: 'details__item_not_included',
           text: getData(dataMain, 'ui_summary_not_included', currentLanguage),
         }).appendTo(textContainer);
-  
+
         textContainer.appendTo(detailsItem);
-  
-        console.log("🚀 ~ isPriceHidden:", isPriceHidden, isFinalPriceHidden);
 
         if (!isPriceHidden) {
           $('<div>', {
@@ -3744,30 +3798,33 @@ function collectSummary() {
             text: optionPrice
           }).appendTo(detailsItem);
         }
-        
+
         detailsItem.appendTo(detailsGroup);
-  
-  
-  
+
+
         if (optionClasses.includes('details__active')) {
           const windowsCode = (optionClasses.includes('details__option_1-2')) ? formatCustomWindows(customWindows) : '';
-  
+
           pdfContentData.push(
-            { columns: [
-              { text: optionTitle + windowsCode, style: 'tableText', width: '70%', margin: [0, 0, 0, 0], },
-              { text: '', width: '*', margin: [0, 0, 0, 0] },
-              { text: optionPrice, style: 'tableText', margin: [0, 0, 0, 0], alignment: 'right', },
-            ]},
+            {
+              columns: [
+                { text: optionTitle + windowsCode, style: 'tableText', width: '70%', margin: [0, 0, 0, 0], },
+                { text: '', width: '*', margin: [0, 0, 0, 0] },
+                { text: optionPrice, style: 'tableText', margin: [0, 0, 0, 0], alignment: 'right', },
+              ]
+            },
           );
         }
-  
+
         if (!optionClasses.includes('details__active') && detailsGroupId === 'details__group-4') { // ADD-ONs
           pdfContentData.push(
-            { columns: [
-              { text: optionTitle + getData(dataMain, 'ui_summary_not_included', currentLanguage),  width: '70%', style: 'tableText', margin: [0, 0, 0, 0], },
-              { text: '', width: '*', margin: [0, 0, 0, 0] },
-              { text: optionPrice, style: 'tableText', margin: [0, 0, 0, 0], alignment: 'right', },
-            ]},
+            {
+              columns: [
+                { text: optionTitle + getData(dataMain, 'ui_summary_not_included', currentLanguage), width: '70%', style: 'tableText', margin: [0, 0, 0, 0], },
+                { text: '', width: '*', margin: [0, 0, 0, 0] },
+                { text: optionPrice, style: 'tableText', margin: [0, 0, 0, 0], alignment: 'right', },
+              ]
+            },
           );
         }
       }
@@ -3779,27 +3836,29 @@ function collectSummary() {
       { text: '', width: '*', margin: [0, 0, 0, 10] },
     );
   });
-  
+
   $('#details__total_price').html(currentAmountString);
 
   if (totalAmountShipTax) {
     const shipppingCostBase = convertPriceToNumber(getData(dataPrice, 'shipppingCostBase', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
     currentTaxAmountString = formatPrice(totalAmountShipTax + shipppingCostBase, currentCurrencySign);
   }
-  const text = (totalAmountShipTax) 
-  ? `${getData(dataMain, 'ui_summary_details__tax_text_short', currentLanguage)} ${userZipcode}`
-  : getData(dataMain, 'ui_summary_details__tax_text', currentLanguage);
+  const text = (totalAmountShipTax)
+    ? `${getData(dataMain, 'ui_summary_details__tax_text_short', currentLanguage)} ${userZipcode}`
+    : getData(dataMain, 'ui_summary_details__tax_text', currentLanguage);
   const amountText = (totalAmountShipTax) ? `${currentTaxAmountString}` : '';
-  
+
   $('#details__tax_text').html(`+ ${amountText}${text}`);
 
   pdfContentData.push(
-    { canvas: [ { type: 'line', x1: 0, y1: 0, x2: 535, y2: 0, lineWidth: 1 }], margin: [0, 10, 0, 6], },
-    { columns: [
-      { text: getData(dataMain, 'ui_pdf_total', currentLanguage), width: '70%', style: 'tableTitle', margin: [0, 0, 0, 0], },
-      { text: '', width: '*', margin: [0, 0, 0, 0] },
-      { text: currentAmountString, style: 'tableTitle', margin: [0, 0, 0, 0], alignment: 'right', },
-    ]},
+    { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 535, y2: 0, lineWidth: 1 }], margin: [0, 10, 0, 6], },
+    {
+      columns: [
+        { text: getData(dataMain, 'ui_pdf_total', currentLanguage), width: '70%', style: 'tableTitle', margin: [0, 0, 0, 0], },
+        { text: '', width: '*', margin: [0, 0, 0, 0] },
+        { text: currentAmountString, style: 'tableTitle', margin: [0, 0, 0, 0], alignment: 'right', },
+      ]
+    },
   );
 }
 
@@ -3809,7 +3868,7 @@ function formatCustomWindows(customWindowsObj) {
   for (const key in customWindowsObj) {
     if (Object.prototype.hasOwnProperty.call(customWindowsObj, key)) {
       const array = customWindowsObj[key];
-      
+
       if (array.length > 0) {
         const count = array.length;
         const upperKey = key.toUpperCase();
@@ -3904,7 +3963,7 @@ $(document).on('click', '.option.option_5-1', function () { // in-build desk
   if ($('.option.option_5-1').hasClass('active')) {
     if (!isCameraInside) {
       $('#button_camera_inside').click();
-    } 
+    }
   }
 });
 
@@ -3918,7 +3977,7 @@ $(document).on('click', '.option.option_4-3', function () { // extra door
 
 $(document).on('click', '.option.option_5-4', function () { // air conditioner
   checkUpgradesAndAddonsState();
-  
+
   if (!isCameraInside) {
     $('#button_camera_inside').trigger('click', ['outAirConditioner']);
     flyCameraTo('outAirConditioner', 'inside');
@@ -3932,8 +3991,8 @@ function checkUpgradesAndAddonsState() {
   // Built-in desk ON or Air conditioner ON
   if ($('.option.option_5-1').hasClass('active') || $('.option.option_5-4').hasClass('active')) {
     disableFurnitureBtn();
-  } 
-  
+  }
+
   // Built-in desk OFF and Air conditioner OFF
   if (!$('.option.option_5-1').hasClass('active') && !$('.option.option_5-4').hasClass('active')) {
     enableFurnitureBtn();
@@ -3965,7 +4024,7 @@ function smartWindowsController(materialName, isEnabled) {
   scene.traverse((object) => {
     if (object.isMesh && object.material && object.material.name === materialName) {
       const material = object.material;
-      
+
       if (isEnabled) {
         material.opacity = 1;
         material.roughness = 0.1;
@@ -4359,9 +4418,9 @@ function addStripAndViewportWindowsToCustomWindowsObject(strip, viewport) {
 
   function assignCustomWindows(house, windowType) {
     const windowData = VIEWPORT_AND_STRIP_SECTORS[house][windowType];
-  
+
     if (!windowData) return;
-  
+
     Object.keys(windowData).forEach(key => {
       if (customWindows[key]) {
         customWindows[key].push(...windowData[key]);
@@ -4560,7 +4619,7 @@ function showAnnotations() {
       const [x, y, z] = parseCoordinates(coordsString);
 
       let textLongContent = getData(dataAnnotations, item[idIndex], `LONG_${currentLanguage.toUpperCase()}`)
-      
+
       if (textLongContent[0] === '"' && textLongContent[textLongContent.length - 1] === '"') {
         textLongContent = textLongContent.slice(1, -1);
       }
@@ -4669,7 +4728,7 @@ export function updateAnnotations(camera, scene, controls) {
     }
 
     $(annotation.element).off('click').on('click', () => {
-      if ($annotationText.hasClass('disabled') && $annotationTextLong.hasClass('active')){
+      if ($annotationText.hasClass('disabled') && $annotationTextLong.hasClass('active')) {
         $annotationText.removeClass('disabled');
         $annotationTextLong.removeClass('active');
       } else {
@@ -4888,9 +4947,9 @@ function CreateImageList() {
   cameraImageViews_Global[2].position = new THREE.Vector3(0, HUMAN_HEIGHT, -cameraFar); // rear
   cameraImageViews_Global[3].position = new THREE.Vector3(cameraFar, HUMAN_HEIGHT, 0); // right
   cameraImageViews_Global[4].position = new THREE.Vector3(0, HUMAN_HEIGHT + cameraFar - topViewCorrection, 0); // top
-  
+
   $('.summary__images_container').empty();
-  
+
   $('.summary__images_container').append(
     '<div class="summary__scheme_dimensions summary__scheme_dimensions_pod"></div>' +
     '<div class="summary__scheme_dimensions summary__scheme_dimensions_office"></div>' +
