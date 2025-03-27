@@ -3,7 +3,7 @@
 
 'use strict';
 
-import { getData } from './ui-controller.js';
+import { getData, isFinalPriceHidden } from './ui-controller.js';
 
 export function generatePDF(
   currentHouse,
@@ -169,9 +169,11 @@ export function generatePDF(
 
       ...configurationData,
 
-      { columns: [
-        { text: timelineData.details__tax_text, width: '100%', style: 'tableTitle', margin: [0, 6, 0, 0], alignment: 'right', },
-      ]},
+      {
+        columns: [
+          { text: timelineData.details__tax_text, width: '100%', style: 'tableTitle', margin: [0, 6, 0, 0], alignment: 'right', },
+        ].filter((_, index) => !(isFinalPriceHidden && index === 0)),
+      },
 
       // ******************    PAGE 3    ***********************
 

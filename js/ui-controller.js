@@ -688,8 +688,6 @@ export function checkPriceHiding() {
           'display': 'none',
         });
       });
-
-      //! TODO: hide final price
     } else {
       isFinalPriceHidden = false;
     }

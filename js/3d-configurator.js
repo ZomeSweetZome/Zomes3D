@@ -3135,16 +3135,16 @@ function calculateAndSetEstimateDates() {
   const depositAmount = convertPriceToNumber(getData(dataPrice, 'depositAmount', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
   const depositAmountString = formatPrice(depositAmount, currentCurrencySign);
   const prepaynemtTextString = getData(dataMain, 'ui_timeline_prepayment_subtitle', currentLanguage);
-  const prepaynemtAmountString = formatPrice(totalAmount / 2 - depositAmount, currentCurrencySign);
+  const prepaynemtAmountString = (!isFinalPriceHidden) ? `(${formatPrice(totalAmount / 2 - depositAmount, currentCurrencySign)})` : '';
   const finalPaymentTextString = getData(dataMain, 'ui_timeline_ship_day_subtitle', currentLanguage);
-  const finalPaymentAmountString = formatPrice(totalAmount - totalAmount / 2, currentCurrencySign);
+  const finalPaymentAmountString = (!isFinalPriceHidden) ? `(${formatPrice(totalAmount - totalAmount / 2, currentCurrencySign)})` : '';
   const todayTextPart1 = getData(dataMain, 'ui_timeline_today_text', currentLanguage);
   const todayTextPart2 = getData(dataMain, 'ui_timeline_today_text_2', currentLanguage);
 
   $('#today_subtitle').text(`${depositAmountString} ${depositTextString}`);
   $('#today_text').text(`${todayTextPart1} ${weeksAhead} ${todayTextPart2}`);
-  $('#prepayment_subtitle').text(`${prepaynemtTextString} (${prepaynemtAmountString})`);
-  $('#ship_day_subtitle').text(`${finalPaymentTextString} (${finalPaymentAmountString})`);
+  $('#prepayment_subtitle').text(`${prepaynemtTextString} ${prepaynemtAmountString}`);
+  $('#ship_day_subtitle').text(`${finalPaymentTextString} ${finalPaymentAmountString}`);
 }
 
 function getDatesStrings(dateStr, leadTimeInWeeks = 3, lang = 'EN', prepaymentDateDays = 28, deliveryDateWeeks = 2) {
@@ -3792,7 +3792,7 @@ function collectSummary() {
 
         textContainer.appendTo(detailsItem);
 
-        if (!isPriceHidden) {
+        if (!isFinalPriceHidden) {
           $('<div>', {
             class: 'details__item_price',
             text: optionPrice
@@ -3811,7 +3811,7 @@ function collectSummary() {
                 { text: optionTitle + windowsCode, style: 'tableText', width: '70%', margin: [0, 0, 0, 0], },
                 { text: '', width: '*', margin: [0, 0, 0, 0] },
                 { text: optionPrice, style: 'tableText', margin: [0, 0, 0, 0], alignment: 'right', },
-              ]
+              ].filter((_, index) => !(isFinalPriceHidden && index === 2)),
             },
           );
         }
@@ -3823,7 +3823,7 @@ function collectSummary() {
                 { text: optionTitle + getData(dataMain, 'ui_summary_not_included', currentLanguage), width: '70%', style: 'tableText', margin: [0, 0, 0, 0], },
                 { text: '', width: '*', margin: [0, 0, 0, 0] },
                 { text: optionPrice, style: 'tableText', margin: [0, 0, 0, 0], alignment: 'right', },
-              ]
+              ].filter((_, index) => !(isFinalPriceHidden && index === 2)),
             },
           );
         }
@@ -3850,7 +3850,7 @@ function collectSummary() {
 
   $('#details__tax_text').html(`+ ${amountText}${text}`);
 
-  pdfContentData.push(
+  (!isFinalPriceHidden) && pdfContentData.push(
     { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 535, y2: 0, lineWidth: 1 }], margin: [0, 10, 0, 6], },
     {
       columns: [
