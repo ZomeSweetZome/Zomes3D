@@ -2426,7 +2426,6 @@ textarea[name="ar_order_comment"] {
   justify-content: end;
   position: relative;
   width: 100%;
-  margin-bottom: 50px;
 }
 
 .details__tax_amount,
@@ -2775,6 +2774,7 @@ textarea[name="ar_order_comment"] {
   font-size: 18px;
   font-weight: 700;
   margin-bottom: 20px;
+  margin-top: 50px;
 }
 
 .timeline__container {
@@ -2798,7 +2798,7 @@ textarea[name="ar_order_comment"] {
   font-size: 14px;
   font-weight: 700;
   color: var(--marevo-color-text-black, #000);
-  min-width: min(147px, 29%);
+  min-width: min(160px, 29%);
   max-width: 29%;
   padding-right: 20px;
 }

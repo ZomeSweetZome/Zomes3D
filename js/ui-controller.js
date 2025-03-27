@@ -1,5 +1,5 @@
 'use strict';
-/* global jQuery, $, grecaptcha */
+/* global jQuery, $ */
 
 import {
   DEFAULT_LANGUAGE,
@@ -10,6 +10,8 @@ import {
 import { isCameraInside } from './3d-configurator.js';
 
 export let isFinalized = false;
+export let isPriceHidden = false;
+export let isFinalPriceHidden = false;
 
 let currentLanguage;
 export let uiMultiLanguages = [];
@@ -659,4 +661,45 @@ function updateElementText(selector, newValue, array = uiMultiLanguages) {
   if (item) {
     item[selector] = newValue;
   }
+}
+
+const priceSelectorsForHiding = [
+  '.component_price',
+  '.ar_total_amount-price',
+  '.menu__footer_payment_info',
+  '.details__item_price',
+  '.details__total',
+  '.details__tax_info',
+];
+
+export function checkPriceHiding() {
+  $(document).ready(function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('p') === 'n') {
+      isPriceHidden = true;
+      
+      priceSelectorsForHiding.forEach(selector => {
+        $(selector).css({
+          'display': 'none',
+        });
+      });
+    } else {
+      isPriceHidden = false;
+    }
+
+    if (urlParams.get('fp') === 'n') {
+      isFinalPriceHidden = true;
+      isPriceHidden = true;
+      
+      priceSelectorsForHiding.forEach(selector => {
+        $(selector).css({
+          'display': 'none',
+        });
+      });
+
+      //! TODO: hide final price
+    } else {
+      isFinalPriceHidden = false;
+    }
+  });
 }

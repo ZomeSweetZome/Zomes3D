@@ -70,6 +70,9 @@ import {
   updateUIlanguages,
   checkConfigFinalized,
   isFinalized,
+  checkPriceHiding,
+  isPriceHidden,
+  isFinalPriceHidden,
 } from './ui-controller.js';
 
 // Clipping model mode
@@ -754,6 +757,7 @@ async function Start() {
 
     ReadURLParameters(StartSettings);
     checkConfigFinalized();
+    checkPriceHiding();
   }
 }
 
@@ -3732,10 +3736,14 @@ function collectSummary() {
   
         textContainer.appendTo(detailsItem);
   
-        $('<div>', {
-          class: 'details__item_price',
-          text: optionPrice
-        }).appendTo(detailsItem);
+        console.log("🚀 ~ isPriceHidden:", isPriceHidden, isFinalPriceHidden);
+
+        if (!isPriceHidden) {
+          $('<div>', {
+            class: 'details__item_price',
+            text: optionPrice
+          }).appendTo(detailsItem);
+        }
         
         detailsItem.appendTo(detailsGroup);
   
