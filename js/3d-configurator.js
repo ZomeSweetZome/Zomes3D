@@ -430,7 +430,6 @@ SharedParameterList[9].groupOptionAction = function () {
 
 //#endregion
 
-
 //#region CLASS's
 
 class Group {
@@ -779,6 +778,8 @@ async function StartSettings() {
   modelHouse = IMPORTED_MODELS[0];
   modelHouse?.scale.set(0, 0, 0);
   modelHouse && scene.add(modelHouse);
+
+  changeWindowNamesForRowC(modelHouse);
 
   loadModel(MODEL_PATHS[parseInt(parseInt(currentHouse) + 3)], true, () => {
     modelFurniture = IMPORTED_MODELS[1];
@@ -1597,6 +1598,8 @@ async function changeModel(modelId) {
   modelHouse?.scale.set(0, 0, 0);
   modelHouse && scene.add(modelHouse);
 
+  changeWindowNamesForRowC(modelHouse);
+
   setObjectTexture(TEXTURES.interiorBase.materialNames, TEXTURES.interiorBase.white);
   setMaterialColor(TEXTURES.interiorBase.materialNames[0], baseColorForRowA);
 
@@ -1616,9 +1619,11 @@ async function changeModel(modelId) {
 
   setVisibility(modelHouse, false, ['man']);
   onChangePosition(DATA_HOUSE_NAME[modelId], 'outMain', () => { }, 5);
+  
+  CheckChanges();
+  
   animateScale(modelHouse, 500, () => {
     unBlockBuyBtn();
-    CheckChanges();
   });
 }
 
@@ -3507,6 +3512,10 @@ function notificationHandler() {
 
 function summaryBtnsHandler() {
   $(document).on('click', '#ar_button_order, #ar_button_next_5, #canvas_button_save', function () {
+    if ($('#button_dimensions').hasClass('active')) {
+      $('#button_dimensions').trigger('click');
+    }
+    
     if (!isCameraInside) {
       proceedSummaryAndPdf(!isFinalized);
     } else {
@@ -4185,6 +4194,29 @@ export function flyCameraTo(namePosition, inOrOut, callback = () => { }, duratio
 
   smartWindowsController('glass', isWindowsSmart);
   smartWindowsController('glass.001', isWindowsSmart);
+}
+
+function changeWindowNamesForRowC(model) {
+  console.log("🚀 ~ changeWindowNamesForRowC ~ model:", model);
+  if (model.isModelChanged === true) {
+    return;
+  }
+
+  model.traverse((child) => {
+    if (child.isGroup && child.name) {
+      const groupName = child.name.toLowerCase();
+      if (groupName.includes("window") && groupName.includes("-c-")) {
+        if (groupName.includes("001")) {
+          child.name = child.name.replace("001", "");
+        } else {
+          child.name = child.name.replace(/window/i, "glass");
+          child.visible = false;
+        }
+      }
+    }
+  });
+
+  model.isModelChanged = true;
 }
 
 //#endregion
@@ -5014,3 +5046,5 @@ function CreateImage(view) {
 }
 
 //#endregion
+
+

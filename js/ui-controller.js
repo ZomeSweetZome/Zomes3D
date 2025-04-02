@@ -423,7 +423,6 @@ function setEventListenersForNextBtns() {
   });
 }
 
-
 //#region CSV READING FUNCTIONS
 
 export async function loadAndParseCSV(link, fileType, output, retryCount = 999, retryDelay = 1000) {
