@@ -3103,6 +3103,13 @@ async function populateFormFromUrl() {
     localStorage.setItem('userZipcode', zipcode);
   }
 
+  if (zipcode) {
+    userZipcode = $('#form_zipcode').val();
+    stateSalesTax = +getTaxRate(zipcode);
+    shippingDistance = await getDistance(userZipcode);
+    updateShippingTaxInfo();
+  }
+
   if (name && phone && email && zipcode) {
     // console.log("🚀🚀🚀 Start Summary 🚀🚀🚀");
     proceedSummaryAndPdf(false);
