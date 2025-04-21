@@ -547,13 +547,9 @@ async function prepareDataFiles() {
       loadAndParseCSV(DATAFILE_CSV_LINK_UI, 'text', dataMain),
       loadAndParseCSV(DATAFILE_CSV_LINK_PRICE, 'text', dataPrice),
       loadAndParseCSV(DATAFILE_CSV_LINK_ANNOTATIONS, 'text', dataAnnotations),
+      loadAndParseCSV(DATAFILE_CSV_LINK_SALES_ZIPCODE, 'text', dataZiptax),
     ]);
-    
     Start();
-    
-    loadAndParseCSV(DATAFILE_CSV_LINK_SALES_ZIPCODE, 'text', dataZiptax).catch((error) =>
-      console.error("Error loading ZIP tax data:", error)
-    );
   } catch (error) {
     console.error("Error loading data files:", error);
   }
