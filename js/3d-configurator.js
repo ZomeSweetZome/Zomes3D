@@ -543,11 +543,17 @@ prepareDataFiles();
 
 async function prepareDataFiles() {
   try {
-    await loadAndParseCSV(DATAFILE_CSV_LINK_ANNOTATIONS, 'text', dataAnnotations);
-    await loadAndParseCSV(DATAFILE_CSV_LINK_PRICE, 'text', dataPrice);
-    await loadAndParseCSV(DATAFILE_CSV_LINK_UI, 'text', dataMain);
-    await loadAndParseCSV(DATAFILE_CSV_LINK_SALES_ZIPCODE, 'text', dataZiptax);
+    await Promise.all([
+      loadAndParseCSV(DATAFILE_CSV_LINK_UI, 'text', dataMain),
+      loadAndParseCSV(DATAFILE_CSV_LINK_PRICE, 'text', dataPrice),
+      loadAndParseCSV(DATAFILE_CSV_LINK_ANNOTATIONS, 'text', dataAnnotations),
+    ]);
+    
     Start();
+    
+    loadAndParseCSV(DATAFILE_CSV_LINK_SALES_ZIPCODE, 'text', dataZiptax).catch((error) =>
+      console.error("Error loading ZIP tax data:", error)
+    );
   } catch (error) {
     console.error("Error loading data files:", error);
   }

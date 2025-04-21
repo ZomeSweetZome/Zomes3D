@@ -440,6 +440,7 @@ export async function loadModel(
   callback = () => {},
   isLoaderNeeded = false,
   retryCount = 999, retryDelay = 1000) {
+  console.log("🚀 ~ modelPath:", modelPath);
   if (!modelPath) { return; }
 
   const {
