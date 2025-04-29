@@ -3670,18 +3670,18 @@ function updateShippingTaxInfo() {
   }
 
   const text = (totalAmountShipTax)
-    ? ` ${getData(dataMain, 'ui_summary_details__tax_text_short', currentLanguage)} ${userZipcode}`
+    ? ` ${getData(dataMain, 'ui_summary_details__tax_text_short', currentLanguage)} ${userZipcode} ${getData(dataMain, 'ui_summary_details__tax_text_to_be_calculated', currentLanguage)}`
     : getData(dataMain, 'ui_summary_details__tax_text', currentLanguage);
 
   const text2 = (totalAmountShipTax)
-    ? ` ${getData(dataMain, 'ui_summary_details__tax_text_short_2', currentLanguage)} ${userZipcode}`
+    ? ` ${getData(dataMain, 'ui_summary_details__tax_text_short_2', currentLanguage)} ${userZipcode} ${getData(dataMain, 'ui_summary_details__tax_text_to_be_calculated2', currentLanguage)}`
     : getData(dataMain, 'ui_summary_details__tax_text_2', currentLanguage);
 
   const amountText = (totalAmountShipTax) ? ` ${currentTaxAmountString}` : ' ';
 
-  $('#payment_info_title').html(`+${amountText}${text}`);
-  $('#payment_info_title_2').html(`+${amountText}${text2}`);
-  $('#details__tax_text').html(`+ ${amountText}${text}`);
+  $('#payment_info_title').html(`+${amountText}${text}`); // Desktop
+  $('#payment_info_title_2').html(`+${amountText}${text2}`); // Mobile
+  $('#details__tax_text').html(`+ ${amountText}${text}`); // Summary
 }
 
 function openSummary() {
