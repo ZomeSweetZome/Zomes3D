@@ -3707,6 +3707,7 @@ textarea[name="ar_order_comment"] {
     flex-direction: column;
     justify-content: space-around;
     text-align: end;
+    width: 130px;
   }
   
   .payment_info_canvas__info_item {
