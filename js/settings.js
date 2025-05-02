@@ -44,7 +44,8 @@ export const CURRENCY_SIGN = {
 
 // External URLs
 export const CALENDLY_LINK = 'https://zomes.com/book';
-export const PAY_DEPOSITE_LINK = 'https://pay.zomes.com/b/fZe9Cl1nzenf7zGaEG';
+// export const PAY_DEPOSITE_LINK = 'https://pay.zomes.com/b/fZe9Cl1nzenf7zGaEG';
+export const PAY_DEPOSITE_LINK = 'https://app.hubspot.com/payments/vMTPtW7WgXzTn67q?referrer=PAYMENT_LINK';
 // export const BOOK_CONSULTATION_LINK = 'https://www.zomes.com/book';
 
 export const ORIGIN_ZIPCODE = '94950';
