@@ -92,9 +92,24 @@
       rdt('init', 'a2_eisslh6zpvu8');
       rdt('track', 'PageVisit');
     </script>
+
+    <!-- Google Tag Manager -->
+    <script>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, 'script', 'dataLayer', 'GTM-5LJCKZV2');
+    </script>
+    <!-- End Google Tag Manager -->
     <!-- DO NOT MODIFY UNLESS TO REPLACE A USER IDENTIFIER -->
     <!-- End Reddit Pixel -->
-     <!-- Google reCAPTCHA v2 -->
+    <!-- Google reCAPTCHA v2 -->
     <!-- <script src="https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit" async defer></script> -->
   </head>
 
@@ -208,8 +223,7 @@
             <div class="ar_menu_footer_container">
               <div class="menu_footer_amount__wrapper">
                 <div class="ar_total_amount__container">
-                  <div id="ar_total_price" class="ar_total_amount-price">
-                  </div>
+                  <div id="ar_total_price" class="ar_total_amount-price"></div>
 
                   <div class="menu__footer_payment_info">
                     <span class="menu__footer__calc_icon"></span>
@@ -219,16 +233,18 @@
                   </div>
 
                   <div class="menu__footer_delivery_info">
-                    <span id="delivery_info_title">Estimated delivery time</span>
+                    <span id="delivery_info_title"
+                      >Estimated delivery time</span
+                    >
                     <div class="wrapper">
                       <span id="delivery_info_date">April 1, 2025</span>
                       <span class="menu__footer__info_icon"></span>
                     </div>
-  
+
                     <div class="popup__info popup__info_date hidden">
                       <div class="popup__info_content popup__info_content_date">
-                        Ships March 1st, 2025. Estimated delivery time is 3 weeks
-                        from the date of purchase.
+                        Ships March 1st, 2025. Estimated delivery time is 3
+                        weeks from the date of purchase.
                       </div>
                       <div class="popup__info_close"></div>
                     </div>
@@ -240,8 +256,13 @@
                 <div id="ar_button_order" class="ar_buy-btn">
                   <div class="ar_button_order__image"></div>
 
-                  <div id="ar_button_order__caption" class="ar_button_order__caption">
-                    <span class="ar_button_order__caption_large">Save design</span>
+                  <div
+                    id="ar_button_order__caption"
+                    class="ar_button_order__caption"
+                  >
+                    <span class="ar_button_order__caption_large"
+                      >Save design</span
+                    >
                     <span class="ar_button_order__caption_small">Save</span>
                   </div>
                 </div>
@@ -325,10 +346,10 @@
               </div>
             </div>
 
-            <div class="tumbler__container ">
+            <div class="tumbler__container">
               <div id="tumbler_label" class="tumbler__label"></div>
 
-              <div class="tumbler-wrapper ">
+              <div class="tumbler-wrapper">
                 <div class="tumbler"></div>
               </div>
             </div>
@@ -447,17 +468,23 @@
                 </div>
               </div>
 
-              <div class="canvas_dimensions "></div>
+              <div class="canvas_dimensions"></div>
 
               <div class="ar_total_amount_canvas__container">
                 <div id="canvas_button_save" class="canvas_button__save">
                   <div class="canvas_button__save_image"></div>
                 </div>
-  
-                <div id="ar_total_price_2" class="ar_total_amount_canvas__price"></div>
-  
+
+                <div
+                  id="ar_total_price_2"
+                  class="ar_total_amount_canvas__price"
+                ></div>
+
                 <div class="payment_info_canvas__container">
-                  <div id="payment_info_title_2" class="payment_info_canvas__info_item">
+                  <div
+                    id="payment_info_title_2"
+                    class="payment_info_canvas__info_item"
+                  >
                     + shipping and sales tax for your region
                   </div>
                   <div class="payment_info_canvas__info_item">
@@ -476,7 +503,10 @@
               It is your Zome!
             </div>
 
-            <div id="canvas_notification_limit" class="canvas_notification hidden">
+            <div
+              id="canvas_notification_limit"
+              class="canvas_notification hidden"
+            >
               It is your Zome!
             </div>
           </div>
@@ -588,7 +618,7 @@
                     <span>Download PDF</span>
                   </div>
                 </div>
-                
+
                 <div
                   id="summary_book_time_btn"
                   class="summary_btn summary_btn_calendar summary_book_time_btn"
@@ -603,16 +633,17 @@
                   </div>
                 </div>
 
-                <div 
+                <div
                   id="timeline_btn_pay_deposit"
                   class="summary_btn timeline__button_pay_deposit timeline_btn_pay_deposit"
                 >
-                  <div class="timeline__button_image timeline__button_image_wallet"></div>
+                  <div
+                    class="timeline__button_image timeline__button_image_wallet"
+                  ></div>
                   <div id="timeline_btn_deposit" class="summary_btn__caption">
                     Pay deposit
                   </div>
                 </div>
-
               </div>
             </div>
             <div class="summary__popup-title">Your Zome looks amazing!</div>
@@ -645,7 +676,10 @@
                   <div class="timeline__item_title" id="today_title"></div>
 
                   <div class="timeline__item_content">
-                    <div class="timeline__item_subtitle" id="today_subtitle"></div>
+                    <div
+                      class="timeline__item_subtitle"
+                      id="today_subtitle"
+                    ></div>
                     <div class="timeline__item_text" id="today_text"></div>
                   </div>
                 </div>
@@ -654,7 +688,10 @@
                   <div class="timeline__item_title" id="prepayment_title"></div>
 
                   <div class="timeline__item_content">
-                    <div class="timeline__item_subtitle" id="prepayment_subtitle"></div>
+                    <div
+                      class="timeline__item_subtitle"
+                      id="prepayment_subtitle"
+                    ></div>
                     <div class="timeline__item_text" id="prepayment_text"></div>
                   </div>
                 </div>
@@ -663,7 +700,10 @@
                   <div class="timeline__item_title" id="ship_day_title"></div>
 
                   <div class="timeline__item_content">
-                    <div class="timeline__item_subtitle" id="ship_day_subtitle"></div>
+                    <div
+                      class="timeline__item_subtitle"
+                      id="ship_day_subtitle"
+                    ></div>
                     <div class="timeline__item_text" id="ship_day_text"></div>
                   </div>
                 </div>
@@ -672,7 +712,10 @@
                   <div class="timeline__item_title" id="delivery_title"></div>
 
                   <div class="timeline__item_content">
-                    <div class="timeline__item_subtitle" id="delivery_subtitle"></div>
+                    <div
+                      class="timeline__item_subtitle"
+                      id="delivery_subtitle"
+                    ></div>
                     <div class="timeline__item_text" id="delivery_text"></div>
                   </div>
                 </div>
@@ -699,7 +742,7 @@
                     <span>PDF</span>
                   </div>
                 </div>
-                
+
                 <div
                   id="summary_book_time_btn"
                   class="summary_btn summary_btn_calendar summary_book_time_btn"
@@ -714,16 +757,17 @@
                   </div>
                 </div>
 
-                <div 
+                <div
                   id="timeline_btn_pay_deposit"
                   class="summary_btn timeline__button_pay_deposit timeline_btn_pay_deposit"
                 >
-                  <div class="timeline__button_image timeline__button_image_wallet"></div>
+                  <div
+                    class="timeline__button_image timeline__button_image_wallet"
+                  ></div>
                   <div id="timeline_btn_deposit2" class="summary_btn__caption">
                     Pay deposit
                   </div>
                 </div>
-
               </div>
             </div>
           </div>
@@ -733,7 +777,11 @@
             <div class="contact_form__popup-content">
               <div class="popup-close"></div>
 
-              <form id="popupForm" action="https://webhook-transfer-zomes.replit.app/api/forward" method="post">
+              <form
+                id="popupForm"
+                action="https://webhook-transfer-zomes.replit.app/api/forward"
+                method="post"
+              >
                 <div class="contact_form__form-title" id="summary_form_title">
                   FILL IN DETAILS BELOW TO DOWNLOAD YOUR CONFIGURATION.
                 </div>
@@ -742,7 +790,7 @@
                   class="contact_form__form-item contact_form__form-item_name"
                 >
                   <label for="form_name" id="summary_form_label_name"></label>
-                  
+
                   <input
                     type="text"
                     name="name"
@@ -756,7 +804,7 @@
                   class="contact_form__form-item contact_form__form-item_phone"
                 >
                   <label for="form_phone" id="summary_form_label_phone"></label>
-                  
+
                   <input
                     type="phone"
                     name="phone"
@@ -782,7 +830,10 @@
                 <div
                   class="contact_form__form-item contact_form__form-item_zipcode"
                 >
-                  <label for="form_zipcode" id="summary_form_label_zipcode"></label>
+                  <label
+                    for="form_zipcode"
+                    id="summary_form_label_zipcode"
+                  ></label>
                   <input
                     type="text"
                     name="zipcode"
@@ -794,7 +845,12 @@
 
                 <div class="contact_form__checkbox_wrapper">
                   <div class="contact_form__form-item_checkbox">
-                    <input type="checkbox" id="newsletter" name="newsletter" checked/>
+                    <input
+                      type="checkbox"
+                      id="newsletter"
+                      name="newsletter"
+                      checked
+                    />
                     <label
                       for="newsletter"
                       class="full-width"
@@ -806,33 +862,45 @@
                   </div>
                 </div>
 
-                <input type="hidden" id="summary_form_totalamount_number" name="totalamount_number" value="">
-                <input type="hidden" id="summary_form_totalamount_string" name="totalamount_string" value="">
-                
+                <input
+                  type="hidden"
+                  id="summary_form_totalamount_number"
+                  name="totalamount_number"
+                  value=""
+                />
+                <input
+                  type="hidden"
+                  id="summary_form_totalamount_string"
+                  name="totalamount_string"
+                  value=""
+                />
+
                 <!-- <div class="contact_form__captcha">
                   <div id="recaptcha-container"></div>
                 </div> -->
 
-                <input type="hidden" name="js_enabled" id="js_enabled">
-                <div class="marevo-field" style="display:none !important">
-                  <input type="text" name="email2" autocomplete="off">
+                <input type="hidden" name="js_enabled" id="js_enabled" />
+                <div class="marevo-field" style="display: none !important">
+                  <input type="text" name="email2" autocomplete="off" />
                 </div>
 
                 <button
-  type="submit"
-  id="submitButton"
-  class="ar_buy-btn contact_form__button"
-  disabled
->
-  <div class="ar_button_order__image"></div>
+                  type="submit"
+                  id="submitButton"
+                  class="ar_buy-btn contact_form__button"
+                  disabled
+                >
+                  <div class="ar_button_order__image"></div>
 
-  <div
-    id="ar_button_order__caption"
-    class="ar_button_order__caption"
-  >
-    <span class="ar_button_order__caption_large">Save my design</span>
-  </div>
-</button>
+                  <div
+                    id="ar_button_order__caption"
+                    class="ar_button_order__caption"
+                  >
+                    <span class="ar_button_order__caption_large"
+                      >Save my design</span
+                    >
+                  </div>
+                </button>
 
                 <div class="contact_form__close_btn">Back</div>
               </form>
@@ -903,7 +971,7 @@
     })();
   </script>
 -->
-<!-- <script>
+    <!-- <script>
   // Form validation with reCAPTCHA
   document.addEventListener('DOMContentLoaded', function() {
     // Function to enable submit button when captcha is completed
@@ -923,7 +991,7 @@
   });
 </script> -->
 
-  <!-- <script>
+    <!-- <script>
     document.addEventListener('DOMContentLoaded', function () {
       document.getElementById('popupForm').addEventListener('submit', function (event) {
         const honeypotValue = document.querySelector('input[name="website"]').value;
@@ -976,8 +1044,8 @@
       }
     });
   </script> -->
-  
-  <!-- <script>
+
+    <!-- <script>
     var recaptchaWidget;
 
     window.onRecaptchaLoad = function () {
@@ -993,10 +1061,15 @@
     };
   </script> -->
 
-  <!-- Start of HubSpot Embed Code -->
-<script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/14561175.js"></script>
-<!-- End of HubSpot Embed Code -->
-
+    <!-- Start of HubSpot Embed Code -->
+    <script
+      type="text/javascript"
+      id="hs-script-loader"
+      async
+      defer
+      src="//js.hs-scripts.com/14561175.js"
+    ></script>
+    <!-- End of HubSpot Embed Code -->
   </body>
 
   <!-- jQuery -->
@@ -1093,4 +1166,15 @@
       }
     })();
   </script>
+
+  <!-- Google Tag Manager (noscript) -->
+  <noscript
+    ><iframe
+      src="https://www.googletagmanager.com/ns.html?id=GTM-5LJCKZV2"
+      height="0"
+      width="0"
+      style="display: none; visibility: hidden"
+    ></iframe
+  ></noscript>
+  <!-- End Google Tag Manager (noscript) -->
 </html>
