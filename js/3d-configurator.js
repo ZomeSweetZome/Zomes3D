@@ -3866,7 +3866,7 @@ function collectSummary() {
     : getData(dataMain, 'ui_summary_details__tax_text', currentLanguage);
   const amountText = (totalAmountShipTax) ? `${currentTaxAmountString}` : '';
 
-  $('#details__tax_text').html(`+ ${amountText}${text}`);
+  $('#details__tax_text').html(`+ ${amountText} ${text}`);
 
   (!isFinalPriceHidden) && pdfContentData.push(
     { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 535, y2: 0, lineWidth: 1 }], margin: [0, 10, 0, 6], },
