@@ -4335,11 +4335,12 @@ canvas.addEventListener('mouseup', onMouseUp);
 function updateCustomWindows([letter, number]) {
   const keyName = letter.toLowerCase();
 
-  if (STUDIO_EXTRADOOR_SECTORS.includes(`${keyName}${number}`)
-    && isExtraDoorOn
-    && currentHouse == '2') {
-    return;
-  }
+  //! the code below is commented for now, because it is not used if Extra Door option is not enabled
+  // if (STUDIO_EXTRADOOR_SECTORS.includes(`${keyName}${number}`)
+  //   && isExtraDoorOn
+  //   && currentHouse == '2') {
+  //   return;
+  // }
 
   if (keyName === 'g' && currentHouse !== '2') {
     return;
