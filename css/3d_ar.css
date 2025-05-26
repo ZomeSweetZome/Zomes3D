@@ -4950,3 +4950,8 @@ model-viewer {
   padding-bottom: 20px;
   padding-top: 20px;
 }
+
+/* extra doors*/
+.option_4-3 {
+  display: none !important;
+}

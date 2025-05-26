@@ -3679,9 +3679,9 @@ function updateShippingTaxInfo() {
 
   const amountText = (totalAmountShipTax) ? ` ${currentTaxAmountString}` : ' ';
 
-  $('#payment_info_title').html(`+${amountText}${text}`); // Desktop
-  $('#payment_info_title_2').html(`+${amountText}${text2}`); // Mobile
-  $('#details__tax_text').html(`+ ${amountText}${text}`); // Summary
+  $('#payment_info_title').html(`+${amountText} ${text}`); // Desktop
+  $('#payment_info_title_2').html(`+${amountText} ${text2}`); // Mobile
+  $('#details__tax_text').html(`+ ${amountText} ${text}`); // Summary
 }
 
 function openSummary() {
