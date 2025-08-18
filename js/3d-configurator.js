@@ -4352,7 +4352,7 @@ function updateCustomWindows([letter, number]) {
 
     if (index === -1) {
       if (customWindows[keyName].length >= WINDOWS_LIMIT_IN_ROW) {
-        
+
         $('#canvas_notification_limit').removeClass('hidden');
 
         setTimeout(function () {
@@ -4360,6 +4360,12 @@ function updateCustomWindows([letter, number]) {
         }, 2500);
 
         return;
+      }
+
+      if (keyName === 'c') {
+        if(customWindows[keyName].some(el => Number(el) ===  +number + 1 || Number(el) === +number - 1)) {
+          return;
+        }
       }
 
       customWindows[keyName].push(number);
