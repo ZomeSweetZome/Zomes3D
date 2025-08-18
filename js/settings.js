@@ -60,7 +60,7 @@ export const DATAFILE_CSV_LINK_ANNOTATIONS = MAIN_LINK_PART + '1110711170';
 // Sales Zipcode Table
 export const DATAFILE_CSV_LINK_SALES_ZIPCODE = 'https://docs.google.com/spreadsheets/d/1r2yclrOnu-h9EjJjuYAYK9NbmKgITAaKCjFZmTea1bY/export?format=csv&gid=1261074691';
 
-export const WINDOWS_LIMIT_IN_ROW = 4;
+export const WINDOWS_LIMIT_IN_ROW = 3;
 
 export const GROUP_ID_ORDER_FOR_NEXT_MENU_BTNS = [
   '0', '1', '3', '2', '4', '5',
