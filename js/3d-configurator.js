@@ -4348,7 +4348,7 @@ function updateCustomWindows([letter, number]) {
 
   if (Object.prototype.hasOwnProperty.call(customWindows, keyName)) {
     const index = customWindows[keyName].indexOf(number);
-    const { panelMeshName, windowMeshName } = findMeshByLetterAndNumber(modelHouse, letter, number);
+    const { panelMeshName, windowMeshName, glassMeshName } = findMeshByLetterAndNumber(modelHouse, letter, number);
 
     if (index === -1) {
       if (customWindows[keyName].length >= WINDOWS_LIMIT_IN_ROW) {
@@ -4360,6 +4360,12 @@ function updateCustomWindows([letter, number]) {
         }, 2500);
 
         return;
+      }
+
+      if (keyName === 'c') {
+        if(customWindows[keyName].some(el => Number(el) ===  +number + 1 || Number(el) === +number - 1)) {
+          return;
+        }
       }
 
       customWindows[keyName].push(number);
@@ -4383,9 +4389,11 @@ function updateCustomWindows([letter, number]) {
 function findMeshByLetterAndNumber(parent, letter, number) {
   const panelSearchPattern = new RegExp(`panel.*-${letter.toLowerCase()}-${number}$`, 'i');
   const windowSearchPattern = new RegExp(`window.*-${letter.toLowerCase()}-${number}$`, 'i');
+  const glassSearchPattern = new RegExp(`glass.*-${letter.toLowerCase()}-${number}$`, 'i');
 
   let panelMeshName = null;
   let windowMeshName = null;
+  let glassMeshName = null;
 
   parent.traverse((o) => {
     if (o.isMesh) {
@@ -4398,10 +4406,14 @@ function findMeshByLetterAndNumber(parent, letter, number) {
       if (windowSearchPattern.test(groupName)) {
         windowMeshName = o.parent.name;
       }
+
+      if (glassSearchPattern.test(groupName)) {
+        glassMeshName = o.parent.name;
+      }
     }
   });
 
-  return { panelMeshName, windowMeshName };
+  return { panelMeshName, windowMeshName, glassMeshName };
 }
 
 function restoreCustomWindows() {
@@ -4413,7 +4425,7 @@ function restoreCustomWindows() {
 
   for (const [key, values] of Object.entries(customWindows)) {
     for (const value of values) {
-      const { panelMeshName, windowMeshName } = findMeshByLetterAndNumber(modelHouse, key, value);
+      const { panelMeshName, windowMeshName, glassMeshName } = findMeshByLetterAndNumber(modelHouse, key, value);
       (panelMeshName) && setVisibility(modelHouse, false, [panelMeshName]);
       (windowMeshName) && setVisibility(modelHouse, true, [windowMeshName]);
     }
@@ -4444,7 +4456,7 @@ function resetCustomWindows() {
   function resetWindowsMeshes(windowObj) {
     for (const [key, values] of Object.entries(windowObj)) {
       for (const value of values) {
-        const { panelMeshName, windowMeshName } = findMeshByLetterAndNumber(modelHouse, key, value);
+        const { panelMeshName, windowMeshName, glassMeshName } = findMeshByLetterAndNumber(modelHouse, key, value);
         (panelMeshName) && setVisibility(modelHouse, true, [panelMeshName]);
         (windowMeshName) && setVisibility(modelHouse, false, [windowMeshName]);
       }
