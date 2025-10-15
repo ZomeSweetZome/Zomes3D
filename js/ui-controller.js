@@ -61,6 +61,23 @@ export async function createMenu(mainData) {
         { '#canvas_notification_limit': 'ui_canvas_notification_limit' },
         { '#tumbler_label': 'ui_tumbler_label' },
         // ----------
+        { '#ui_summary_header_slogan_1': 'ui_summary_header_slogan_1' },
+        { '#ui_summary_header_slogan_2': 'ui_summary_header_slogan_2' },
+        { '#ui_summary_header_slogan_3': 'ui_summary_header_slogan_3' },
+        { '#ui_summary_header_slogan_4': 'ui_summary_header_slogan_4' },
+        { '#ui_summary_btn_title': 'ui_summary_btn_title' },
+        { '#ui_summary_btn_header_descr_1': 'ui_summary_btn_header_descr_1' },
+        { '#ui_summary_btn_header_descr_2': 'ui_summary_btn_header_descr_2' },
+        { '#ui_summary_btn_footer_descr': 'ui_summary_btn_footer_descr' },
+        { '#ui_summary_footer_slogan_1': 'ui_summary_footer_slogan_1' },
+        { '#ui_summary_footer_slogan_2': 'ui_summary_footer_slogan_2' },
+        { '#ui_summary_footer_slogan_3': 'ui_summary_footer_slogan_3' },
+        { '#ui_summary_footer_slogan_4': 'ui_summary_footer_slogan_4' },
+
+        { '#calendlyBlock .calendly-heading': 'ui_summary_calendly_heading' },
+        { '#calendlyBlock .calendly-text-1': 'ui_summary_calendly_text_1' },
+        { '#calendlyBlock .calendly-text-2': 'ui_summary_calendly_text_2' },
+        // ----------
         { '.summary__popup-title': 'ui_summary_title' },
         { '.details__item_not_included': 'ui_summary_not_included' },
         { '#summary_form_title': 'ui_summary_form_title' },

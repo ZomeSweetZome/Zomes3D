@@ -1621,9 +1621,9 @@ async function changeModel(modelId) {
 
   setVisibility(modelHouse, false, ['man']);
   onChangePosition(DATA_HOUSE_NAME[modelId], 'outMain', () => { }, 5);
-  
+
   CheckChanges();
-  
+
   animateScale(modelHouse, 500, () => {
     unBlockBuyBtn();
   });
@@ -2015,7 +2015,7 @@ function GetMaterial(name, model = modelHouse) {
   var material = null;
   model.traverse((o) => {
     if (o.isMaterial) {
-      console.log('🚀 ~ model.traverse ~ o.isMaterial:', o.isMaterial)
+      // console.log('🚀 ~ model.traverse ~ o.isMaterial:', o.isMaterial)
       if (name == o.material.name) {
         material = o.material;
       }
@@ -2974,12 +2974,12 @@ async function PrepareUI() {
       userPhone = $phoneInput.val().trim();
       userEmail = $emailInput.val().trim();
       userZipcode = $zipcodeInput.val().trim();
-      
+
       const honeypotValue = document.querySelector('input[name="email2"]').value;
       if (honeypotValue) {
         return false;
       }
-      
+
       const timeSpent = Date.now() - formOpenTime;
       if (timeSpent < 500) {
         return false;
@@ -3003,7 +3003,7 @@ async function PrepareUI() {
           console.error('Error fetching distance:', error);
         }
       }
-      
+
       document.getElementById('js_enabled').value = 'true';
 
       if (/^\d{5}$/.test(userZipcode)) {
@@ -3524,7 +3524,7 @@ function summaryBtnsHandler() {
     if ($('#button_dimensions').hasClass('active')) {
       $('#button_dimensions').trigger('click');
     }
-    
+
     if (!isCameraInside) {
       proceedSummaryAndPdf(!isFinalized);
     } else {
@@ -3604,8 +3604,19 @@ function getPdfBtnHandler() {
 }
 
 function bookTimeBtnHandler() {
-  $('.summary_book_time_btn').on('click', function () {
-    window.open(CALENDLY_LINK, '_blank');
+  $('.summary_book_time_btn').on('click', function (e) {
+    // window.open(CALENDLY_LINK, '_blank');
+    e.preventDefault();
+
+    const targetBlock = $('#calendlyBlock');
+    const scrollingContainer = $('.summary__popup-overlay.active');
+
+    if (targetBlock.length && scrollingContainer.length) {
+      const targetPosition = scrollingContainer.scrollTop() + targetBlock.position().top;
+      scrollingContainer.animate({
+        scrollTop: targetPosition
+      }, 600);
+    }
   });
 }
 
@@ -3769,11 +3780,6 @@ function collectSummary() {
       id: detailsGroupId
     });
 
-    $('<div>', {
-      class: 'details__group_title',
-      text: groupTitle
-    }).appendTo(detailsGroup);
-
     pdfContentData.push(
       { text: groupTitle, style: 'subtitle', margin: [0, 0, 0, 0], },
       { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 535, y2: 0, lineWidth: 0.5 }], margin: [0, 6, 0, 6], },
@@ -3799,6 +3805,11 @@ function collectSummary() {
         });
 
         $('<div>', {
+          class: 'details__group_title',
+          text: groupTitle
+        }).appendTo(textContainer);
+
+        $('<div>', {
           class: 'details__item_title',
           text: optionTitle
         }).appendTo(textContainer);
@@ -3818,7 +3829,6 @@ function collectSummary() {
         }
 
         detailsItem.appendTo(detailsGroup);
-
 
         if (optionClasses.includes('details__active')) {
           const windowsCode = (optionClasses.includes('details__option_1-2')) ? formatCustomWindows(customWindows) : '';
@@ -4206,7 +4216,7 @@ export function flyCameraTo(namePosition, inOrOut, callback = () => { }, duratio
 }
 
 function changeWindowNamesForRowC(model) {
-  console.log("🚀 ~ changeWindowNamesForRowC ~ model:", model);
+  // console.log("🚀 ~ changeWindowNamesForRowC ~ model:", model);
   if (model.isModelChanged === true) {
     return;
   }
@@ -4363,7 +4373,7 @@ function updateCustomWindows([letter, number]) {
       }
 
       if (keyName === 'c') {
-        if(customWindows[keyName].some(el => Number(el) ===  +number + 1 || Number(el) === +number - 1)) {
+        if (customWindows[keyName].some(el => Number(el) === +number + 1 || Number(el) === +number - 1)) {
           return;
         }
       }
