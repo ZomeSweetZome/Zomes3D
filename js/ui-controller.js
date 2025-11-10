@@ -110,6 +110,9 @@ export async function createMenu(mainData) {
         { '#delivery_text': 'ui_timeline_delivery_text' },
         { '#timeline_btn_deposit': 'ui_ar_pay_deposit' },
         { '#timeline_btn_deposit2': 'ui_ar_pay_deposit' },
+        // ----------
+        { '.details__finance_text': 'ui_summary_details_finance_text' },
+        { '.details__finance_disclaimer': 'ui_summary_details_finance_disclaimer' },
       );
 
       uiPlaceholdersMultiLanguages.push(

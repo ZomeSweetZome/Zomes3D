@@ -2478,6 +2478,37 @@ textarea[name="ar_order_comment"] {
   color: #FFFFFF;
 }
 
+.details__finance_advise {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  width: 100%;
+}
+
+.details__finance_text {
+  text-align: left;
+  align-self: start;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--marevo-color-text-white, #FFFFFF);
+  /* cursor: pointer; */
+}
+
+.details__finance_disclaimer {
+  /* display: none; */
+  font-size: 18px;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--marevo-color-text-white, #FFFFFF);
+  margin-top: 16px;
+  text-align: justify;
+}
+
+.details__finance_text:hover ~ .details__finance_disclaimer {
+  /* display: flex; */
+}
+
 .summary__link {
   display: flex;
   justify-content: center;
@@ -2492,7 +2523,7 @@ textarea[name="ar_order_comment"] {
   font-size: 32px;
   cursor: pointer;
   margin-bottom: 50px;
-}
+} 
 
 .summary__link .external-link__logo {
   width: 48px;
@@ -4561,7 +4592,8 @@ textarea[name="ar_order_comment"] {
   }
 
   .details__tax_amount,
-  .details__tax_text {
+  .details__tax_text,
+  .details__finance_disclaimer {
     display: inline;
     font-size: 12px;
   }
