@@ -111,8 +111,9 @@ export async function createMenu(mainData) {
         { '#timeline_btn_deposit': 'ui_ar_pay_deposit' },
         { '#timeline_btn_deposit2': 'ui_ar_pay_deposit' },
         // ----------
-        { '.details__finance_text': 'ui_summary_details_finance_text' },
+        { '#prepayment_textRate': 'ui_summary_details_finance_text' },
         { '.details__finance_disclaimer': 'ui_summary_details_finance_disclaimer' },
+        { '.summary__footer_disclaimer': 'ui_summary_details_finance_disclaimer' },
       );
 
       uiPlaceholdersMultiLanguages.push(
@@ -633,7 +634,7 @@ export function checkConfigFinalized() {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('s') === 'final') {
       isFinalized = true;
-      
+
       updateElementText('#contact_form_btn_text .ar_button_order__caption_large', 'ui_btn_buy_finalized');
       updateElementText('.summary_container .ar_button_order__caption_large', 'ui_btn_buy_finalized');
       updateElementText('#submitButton .ar_button_order__caption_large', 'ui_btn_buy_finalized');
@@ -645,7 +646,7 @@ export function checkConfigFinalized() {
           'position': 'relative',
           'color': '#aaa'
         }).append('<div class="overlay"></div>');
-        
+
         $('.overlay').css({
           'position': 'absolute',
           'top': 0,
@@ -688,7 +689,7 @@ export function checkPriceHiding() {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('p') === 'n') {
       isPriceHidden = true;
-      
+
       priceSelectorsForHiding.forEach(selector => {
         $(selector).css({
           'display': 'none',

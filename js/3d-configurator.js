@@ -818,9 +818,41 @@ async function StartSettings() {
   });
 
   isFirstStart = false;
-
 }
 //! ************************************************
+
+// Add this to your page
+window.addEventListener('load', function () {
+  const iframe = document.querySelector('.meetings-iframe-container iframe');
+
+  if (iframe) {
+    iframe.addEventListener('load', function () {
+      try {
+        // Try to access the iframe's document
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+        // Inject custom styles
+        const style = iframeDoc.createElement('style');
+        style.textContent = `
+          [class*="CardWrapper__Outer"] {
+            border-radius: 50px !important;
+            overflow: hidden !important;
+          }
+          
+          [class*="CardSection__StyledCardSection"] {
+            border-radius: 50px !important;
+          }
+        `;
+        iframeDoc.head.appendChild(style);
+
+        console.log('✅ Styles injected successfully');
+      } catch (e) {
+        console.error('❌ Cannot access iframe due to CORS:', e.message);
+        console.log('The iframe is cross-origin and blocks style injection.');
+      }
+    });
+  }
+});
 
 function applyAdditionalSharedParameters(id) {
   SharedParameterList[id].groupOptionAction();
@@ -3542,6 +3574,10 @@ function summaryBtnsHandler() {
     closeSummary();
   });
 
+  $('#updateDesignBtn').on('click', function () {
+    closeSummary();
+  });
+
   $('.summary__popup-overlay .popup-close').on('click', function () {
     closeSummary();
   });
@@ -3607,16 +3643,29 @@ function bookTimeBtnHandler() {
   $('.summary_book_time_btn').on('click', function (e) {
     // window.open(CALENDLY_LINK, '_blank');
     e.preventDefault();
+    const calendlyContainer = document.querySelector('.calendly__container');
+    const closeBtn = document.querySelector('.calendly__close-btn');
+    calendlyContainer.classList.add('active');
+    document.body.classList.add('popup-open');
 
-    const targetBlock = $('#calendlyBlock');
-    const scrollingContainer = $('.summary__popup-overlay.active');
-
-    if (targetBlock.length && scrollingContainer.length) {
-      const targetPosition = scrollingContainer.scrollTop() + targetBlock.position().top;
-      scrollingContainer.animate({
-        scrollTop: targetPosition
-      }, 600);
+    function closePopup() {
+      calendlyContainer.classList.remove('active');
+      document.body.classList.remove('popup-open');
     }
+
+    closeBtn.addEventListener('click', closePopup);
+
+    calendlyContainer.addEventListener('click', (e) => {
+      if (e.target === calendlyContainer) {
+        closePopup();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && calendlyContainer.classList.contains('active')) {
+        closePopup();
+      }
+    });
   });
 }
 
@@ -3673,6 +3722,7 @@ function extractDistance(distanceStr) {
 function updateShippingTaxInfo() {
   const shipppingCostBase = convertPriceToNumber(getData(dataPrice, 'shipppingCostBase', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
   const shipppingCostMile = convertPriceToNumber(getData(dataPrice, 'shipppingCostMile', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
+  const prepaymentAmountRate = convertPriceToNumber(getData(dataPrice, 'prepaymentRates', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
 
   totalAmountShipTax = totalAmount * stateSalesTax + shippingDistance * shipppingCostMile;
 
@@ -3693,6 +3743,8 @@ function updateShippingTaxInfo() {
   $('#payment_info_title').html(`+${amountText} ${text}`); // Desktop
   $('#payment_info_title_2').html(`+${amountText} ${text2}`); // Mobile
   $('#details__tax_text').html(`+ ${amountText} ${text}`); // Summary
+
+   $('#prepayment_amount').html(`${currentCurrencySign}${prepaymentAmountRate}/month *`); 
 }
 
 function openSummary() {
