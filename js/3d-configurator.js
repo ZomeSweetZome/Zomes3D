@@ -793,6 +793,8 @@ async function StartSettings() {
 
   preloadTextures();
 
+  isolateGlassInGroups(modelHouse);
+
   if (!isUrlEmpty) {
     applyAdditionalSharedParameters(5); // language
     applyAdditionalSharedParameters(6); // currency
@@ -1645,6 +1647,8 @@ async function changeModel(modelId) {
     disableModelReceivingShadows(modelFurniture);
   });
 
+  isolateGlassInGroups(modelHouse);
+
   $('.summary_container').css('pointer-events', '');
   $('.product-type-3dmodel').css('cursor', '');
 
@@ -1869,9 +1873,12 @@ function calculatePrice() {
     optionPrice = convertPriceToNumber(getData(dataPrice, activeOptions[i], `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
     optionLeadTime = convertPriceToNumber(getData(dataPrice, activeOptions[i], `Lead_Time_${DATA_HOUSE_NAME[currentHouse]}`));
 
+    const windows_C_qty = customWindows.c.length;
+    const windows_C_price = convertPriceToNumber(getData(dataPrice, 'option_1-2_operable', `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`)); // price of window type C
+
     if (activeOptions[i] === 'option_1-2') { // custom windows
       const windowsQty = Object.values(customWindows).reduce((total, array) => total + array.length, 0);
-      const windowsCustomPrice = optionPrice * windowsQty;
+      const windowsCustomPrice = optionPrice * (windowsQty - windows_C_qty) + windows_C_price * windows_C_qty;
       $(`.${activeOptions[i]} .component_price`).html(formatPrice(windowsCustomPrice, currentCurrencySign));
       if (optionLeadTime > maximumLeadTimeWeeks) { maximumLeadTimeWeeks = optionLeadTime; }
       totalAmount += windowsCustomPrice;
@@ -1882,21 +1889,21 @@ function calculatePrice() {
       totalAmount += windowsSmartPrice; // added skylights (smart glass)
 
       if (activeOptions.includes('option_1-2')) { // custom windows
-        const windowsQty = Object.values(customWindows).reduce((total, array) => total + array.length, 0);
+        const windowsQty = Object.values(customWindows).reduce((total, array) => total + array.length, 0) - windows_C_qty;
         windowsSmartPrice = windowsSmartPrice + optionPrice * windowsQty;
         $(`.${activeOptions[i]} .component_price`).html(formatPrice(windowsSmartPrice, currentCurrencySign));
         if (optionLeadTime > maximumLeadTimeWeeks) { maximumLeadTimeWeeks = optionLeadTime; }
         totalAmount += optionPrice * windowsQty;
       } else if (!activeOptions.includes('option_1-2')) { // NOT custom windows
         if (activeOptions.includes('option_1-1')) { // viewport
-          const windowsQty = 4;
+          const windowsQty = 3; //! 4 windows minus 1 window on level C
           windowsSmartPrice = windowsSmartPrice + optionPrice * windowsQty;
           $(`.${activeOptions[i]} .component_price`).html(formatPrice(windowsSmartPrice, currentCurrencySign));
           if (optionLeadTime > maximumLeadTimeWeeks) { maximumLeadTimeWeeks = optionLeadTime; }
           totalAmount += optionPrice * windowsQty;
         }
         if (activeOptions.includes('option_1-0')) { // strip
-          let windowsQty = (currentHouse == '2') ? 5 : 4;
+          let windowsQty = (currentHouse == '2') ? 4 : 3; //! 5 or 4 windows minus 1 window on level C
           windowsSmartPrice = windowsSmartPrice + optionPrice * windowsQty;
           $(`.${activeOptions[i]} .component_price`).html(formatPrice(windowsSmartPrice, currentCurrencySign));
           if (optionLeadTime > maximumLeadTimeWeeks) { maximumLeadTimeWeeks = optionLeadTime; }
@@ -4087,7 +4094,7 @@ function checkUpgradesAndAddonsState() {
       $('.tumbler-wrapper').removeClass('turned-on');
       isWindowsSmart = false;
       smartWindowsController('glass', isWindowsSmart);
-      smartWindowsController('glass.001', isWindowsSmart);
+      // smartWindowsController('glass.001', isWindowsSmart);
     }
   }
 }
@@ -4096,7 +4103,7 @@ $(document).on('click', '.tumbler-wrapper', function () { //Smart windows tumblr
   $('.tumbler-wrapper').toggleClass('turned-on');
   isWindowsSmart = !isWindowsSmart;
   smartWindowsController('glass', isWindowsSmart);
-  smartWindowsController('glass.001', isWindowsSmart);
+  // smartWindowsController('glass.001', isWindowsSmart);
 });
 
 
@@ -4120,6 +4127,24 @@ function smartWindowsController(materialName, isEnabled) {
   });
 }
 
+function isolateGlassInGroups(model) {
+  model.traverse((object) => {
+    
+    if (object.name) {
+      const lowerName = object.name.toLowerCase();
+
+      if (lowerName.includes('window-glass-c') || lowerName.includes('door')) {
+        object.traverse((child) => {
+          if (child.isMesh && child.material && child.material.name === 'glass') {
+            const newMaterial = child.material.clone();
+            newMaterial.name = 'static-glass'; 
+            child.material = newMaterial;
+          }
+        });
+      }
+    }
+  });
+}
 
 // *******************
 
