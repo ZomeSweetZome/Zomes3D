@@ -17,9 +17,9 @@ if (LIGHT_SCHEME === 1) {
 }
 
 export const MODEL_PATHS = [
-  './src/models/zomes-pod.glb',
-  './src/models/zomes-office.glb',
-  './src/models/zomes-studio.glb',
+  './src/models/zomes-pod2.glb',
+  './src/models/zomes-office2.glb',
+  './src/models/zomes-studio2.glb',
   './src/models/furniture-pod.glb',
   './src/models/furniture-office.glb',
   './src/models/furniture-studio.glb',
