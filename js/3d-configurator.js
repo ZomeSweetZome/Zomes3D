@@ -3751,7 +3751,7 @@ function updateShippingTaxInfo() {
   $('#payment_info_title_2').html(`+${amountText} ${text2}`); // Mobile
   $('#details__tax_text').html(`+ ${amountText} ${text}`); // Summary
 
-   $('#prepayment_amount').html(`${currentCurrencySign}${prepaymentAmountRate}/month *`); 
+  $('#prepayment_amount').html(`${currentCurrencySign}${prepaymentAmountRate}/month *`);
 }
 
 function openSummary() {
@@ -4129,16 +4129,29 @@ function smartWindowsController(materialName, isEnabled) {
 
 function isolateGlassInGroups(model) {
   model.traverse((object) => {
-    
+
     if (object.name) {
       const lowerName = object.name.toLowerCase();
 
       if (lowerName.includes('window-glass-c') || lowerName.includes('door')) {
         object.traverse((child) => {
-          if (child.isMesh && child.material && child.material.name === 'glass') {
+          if ((child.isMesh && child.material && child.material.name === 'glass') ||
+          (child.isMesh && child.material && child.material.name === 'glass.001')) {
             const newMaterial = child.material.clone();
-            newMaterial.name = 'static-glass'; 
+            newMaterial.name = 'static-glass';
+            
+            if (newMaterial.envMapIntensity === undefined) newMaterial.envMapIntensity = 1.0;
+            newMaterial.envMapIntensity *= 0.5;
+
+            if (newMaterial.roughness < 0.2) {
+              newMaterial.roughness = Math.max(0.1, newMaterial.roughness + 0.1);
+            }
+
+            if (newMaterial.metalness > 0.1) {
+              newMaterial.metalness *= 0.5;
+  }
             child.material = newMaterial;
+            child.material.needsUpdate = true;
           }
         });
       }
