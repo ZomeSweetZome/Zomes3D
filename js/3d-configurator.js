@@ -253,17 +253,7 @@ let SharedParameterList = [
     applyURLAction: null,
     applyURLActionReturn: false
   },
-  {  // [6] foundation
-    id: 'foundation',
-    groupIds: ['group-6'],
-    splitValue: 'U',
-    type: 'string',
-    value: '0',
-    groupOptionAction: null,
-    applyURLAction: null,
-    applyURLActionReturn: false
-  },
-  { // [7] language
+  { // [6] language
     id: 'lang',
     groupIds: null,
     splitValue: 'u',
@@ -273,7 +263,7 @@ let SharedParameterList = [
     applyURLAction: null,
     applyURLActionReturn: false
   },
-  { // [8] currency
+  { // [7] currency
     id: 'curr',
     groupIds: null,
     splitValue: 'a',
@@ -283,7 +273,7 @@ let SharedParameterList = [
     applyURLAction: null,
     applyURLActionReturn: false
   },
-  { // [9] customWindows
+  { // [8] customWindows
     id: 'customWindows',
     groupIds: null,
     splitValue: 'q',
@@ -293,7 +283,7 @@ let SharedParameterList = [
     applyURLAction: null,
     applyURLActionReturn: false
   },
-  { // [10] qr
+  { // [9] qr
     id: 'qr',
     groupIds: null,
     splitValue: 'r',
@@ -305,17 +295,8 @@ let SharedParameterList = [
   }
 ];
 
-function getSharedParameter(id) {
-  const item = SharedParameterList.find(el => el.id === id);
-  if (!item) {
-    console.warn(`Element id "${id}" not found in SharedParameterList`);
-    return null;
-  }
-  return item;
-}
-
 // zomeModel
-getSharedParameter('zomeModel').groupOptionAction = function () {
+SharedParameterList[0].groupOptionAction = function () {
   if (justClicked) {
     currentHouse = this.value;
     changeModel(this.value);
@@ -323,7 +304,7 @@ getSharedParameter('zomeModel').groupOptionAction = function () {
 }
 
 // windows
-getSharedParameter('windows').groupOptionAction = function () {
+SharedParameterList[1].groupOptionAction = function () {
   if (justClicked) {
     if (this.value[2] == '1') {
       addStripAndViewportWindowsToCustomWindowsObject(this.value[0], this.value[1]);
@@ -332,7 +313,7 @@ getSharedParameter('windows').groupOptionAction = function () {
 }
 
 // interior
-getSharedParameter('interior').groupOptionAction = function () {
+SharedParameterList[2].groupOptionAction = function () {
   if (isFirstStart || justClicked) {
     // do something if needed
   }
@@ -341,7 +322,7 @@ getSharedParameter('interior').groupOptionAction = function () {
 }
 
 // exterior
-getSharedParameter('exterior').groupOptionAction = function () {
+SharedParameterList[3].groupOptionAction = function () {
   if (isFirstStart || justClicked) {
     // do something if needed
   }
@@ -350,7 +331,7 @@ getSharedParameter('exterior').groupOptionAction = function () {
 }
 
 // upgrades
-getSharedParameter('upgrades').groupOptionAction = function () {
+SharedParameterList[4].groupOptionAction = function () {
   if (isFirstStart || justClicked) {
     if (currentHouse == '2') {
       if (this.value[2] == '1') { // extra door
@@ -367,7 +348,7 @@ getSharedParameter('upgrades').groupOptionAction = function () {
 }
 
 // addons
-getSharedParameter('addons').groupOptionAction = function () {
+SharedParameterList[5].groupOptionAction = function () {
   if (isFirstStart || justClicked) {
     if (this.value[0] == '1') { // foundation kit
       floor.position.y = MODEL_CENTER_POSITION - FOUNDATION_HEIGHT;
@@ -392,7 +373,7 @@ getSharedParameter('addons').groupOptionAction = function () {
 }
 
 // language
-getSharedParameter('lang').groupOptionAction = function () {
+SharedParameterList[6].groupOptionAction = function () {
   if (isFirstStart || justClicked) {
     let language = 'EN';
     switch (this.value) {
@@ -415,7 +396,7 @@ getSharedParameter('lang').groupOptionAction = function () {
 }
 
 // currency
-getSharedParameter('curr').groupOptionAction = function () {
+SharedParameterList[7].groupOptionAction = function () {
   if (isFirstStart || justClicked) {
     let currency = 'EN';
     switch (this.value) {
@@ -435,7 +416,7 @@ getSharedParameter('curr').groupOptionAction = function () {
 }
 
 // customWindows
-getSharedParameter('customWindows').groupOptionAction = function () {
+SharedParameterList[8].groupOptionAction = function () {
   if (isFirstStart || justClicked) {
     if (this.value.length > 0) {
       restoreCustomWindows();
@@ -443,31 +424,8 @@ getSharedParameter('customWindows').groupOptionAction = function () {
   }
 }
 
-// foundation
-getSharedParameter('foundation').groupOptionAction = function () {
-  if (isFirstStart || justClicked) {
-    if (this.value[0] == '1') { // foundation kit
-      floor.position.y = MODEL_CENTER_POSITION - FOUNDATION_HEIGHT;
-    } else {
-      floor.position.y = MODEL_CENTER_POSITION;
-    }
-
-    floor.position.y -= 0.01;
-
-    if ($('#button_dimensions').hasClass('active')) {
-      if (this.value[0] == '1') { // foundation kit
-        isFoundationKitOn = true;
-      } else {
-        isFoundationKitOn = false;
-      }
-
-      dimensionsController(true);
-    }
-  }
-}
-
 // qr
-getSharedParameter('qr').groupOptionAction = function () {
+SharedParameterList[9].groupOptionAction = function () {
 }
 
 //#endregion
@@ -816,7 +774,7 @@ async function StartSettings() {
 
   blockBuyBtn();
 
-  currentHouse = getSharedParameter('zomeModel').value || '0';
+  currentHouse = SharedParameterList[0].value || '0';
 
   await loadModel(MODEL_PATHS[currentHouse], false, () => { }, true);
   modelHouse = IMPORTED_MODELS[0];
@@ -1380,10 +1338,10 @@ function additionalConditions() {
 
 function updateStateVars() {
   // Update state vars if needed
-  currentHouse = getSharedParameter('zomeModel').value;
-  isWindowCustomOn = (getSharedParameter('windows').value[2] == '1') ? true : false;
-  isFoundationKitOn = (getSharedParameter('addons').value[0] == '1') ? true : false; //!!! corrected
-  isExtraDoorOn = (getSharedParameter('upgrades').value[2] == '1') ? true : false; //!!! corrected
+  currentHouse = SharedParameterList[0].value;
+  isWindowCustomOn = (SharedParameterList[1].value[2] == '1') ? true : false;
+  isFoundationKitOn = (SharedParameterList[5].value[0] == '1') ? true : false; //!!! corrected
+  isExtraDoorOn = (SharedParameterList[4].value[2] == '1') ? true : false; //!!! corrected
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -1624,12 +1582,12 @@ function CheckChanges() {
 
   if (currentHouse == '2' && isExtraDoorOn) {
     removeExtraDoorPanelsFromCustomWindows();
-    getSharedParameter('customWindows').value = convertObjectToArray(customWindows);
+    SharedParameterList[8].value = convertObjectToArray(customWindows);
     WriteURLParameters();
     restoreCustomWindows();
   }
 
-  if (isWindowCustomOn && getSharedParameter('customWindows').value.length > 0) {
+  if (isWindowCustomOn && SharedParameterList[8].value.length > 0) {
     restoreCustomWindows();
   }
 
@@ -1733,7 +1691,7 @@ function resetCustomWindowsObject() {
     }
   }
 
-  getSharedParameter('customWindows').value = convertObjectToArray(customWindows);
+  SharedParameterList[8].value = convertObjectToArray(customWindows);
   WriteURLParameters();
 }
 
@@ -1859,6 +1817,7 @@ function calculatePrice() {
   let optionId = '';
   let activeOptions = [];
 
+  // get active options array
   for (let i = 0; i < SharedParameterList.length - 4; i++) {
     if (SharedParameterList[i].type === 'string') {
       optionId = `option_${i}-${SharedParameterList[i].value}`;
@@ -1991,9 +1950,9 @@ function convertPriceToNumber(priceString) {
 function formatPrice(price, currency, needToBeRounded = true, needToAddSpace = false) {
   if (
     !price
-    && getSharedParameter('windows').value[2] != 1 // custom windows
-    && getSharedParameter('upgrades').value[2] != 1 // extra door //!!! corrected
-    && getSharedParameter('upgrades').value[0] != 1 // smart glass //!!! corrected
+    && SharedParameterList[1].value[2] != 1 // custom windows
+    && SharedParameterList[4].value[2] != 1 // extra door //!!! corrected
+    && SharedParameterList[4].value[0] != 1 // smart glass //!!! corrected
   ) {
     return getData(dataMain, 'ui_component_price_included', currentLanguage);
   }
@@ -2968,7 +2927,7 @@ async function PrepareUI() {
           break;
       }
 
-      getSharedParameter('lang').value = valueForURL;
+      SharedParameterList[6].value = valueForURL;
       CheckChanges();
       WriteURLParameters();
 
@@ -2993,7 +2952,7 @@ async function PrepareUI() {
           break;
       }
 
-      getSharedParameter('curr').value = valueForURL;
+      SharedParameterList[7].value = valueForURL;
       CheckChanges();
       WriteURLParameters();
     });
@@ -3464,21 +3423,21 @@ function cameraBtnHandlers() {
 function modelSelectorHandler() {
   $('#select_btn_pod').on('click', function () {
     $('.popup_select').addClass('hidden');
-    getSharedParameter('zomeModel').value = '0';
+    SharedParameterList[0].value = '0';
     StartSettings();
     $('#title_list__item_0').click();
   });
 
   $('#select_btn_office').on('click', function () {
     $('.popup_select').addClass('hidden');
-    getSharedParameter('zomeModel').value = '1';
+    SharedParameterList[0].value = '1';
     StartSettings();
     $('#title_list__item_0').click();
   });
 
   $('#select_btn_studio').on('click', function () {
     $('.popup_select').addClass('hidden');
-    getSharedParameter('zomeModel').value = '2';
+    SharedParameterList[0].value = '2';
     StartSettings();
     $('#title_list__item_0').click();
   });
@@ -4177,10 +4136,10 @@ function isolateGlassInGroups(model) {
       if (lowerName.includes('window-glass-c') || lowerName.includes('door')) {
         object.traverse((child) => {
           if ((child.isMesh && child.material && child.material.name === 'glass') ||
-            (child.isMesh && child.material && child.material.name === 'glass.001')) {
+          (child.isMesh && child.material && child.material.name === 'glass.001')) {
             const newMaterial = child.material.clone();
             newMaterial.name = 'static-glass';
-
+            
             if (newMaterial.envMapIntensity === undefined) newMaterial.envMapIntensity = 1.0;
             newMaterial.envMapIntensity *= 0.5;
 
@@ -4190,7 +4149,7 @@ function isolateGlassInGroups(model) {
 
             if (newMaterial.metalness > 0.1) {
               newMaterial.metalness *= 0.5;
-            }
+  }
             child.material = newMaterial;
             child.material.needsUpdate = true;
           }
@@ -4420,7 +4379,7 @@ function onMouseUp(event) {
         if (letter && number) {
           // clickedMeshName = `${letter}-${number}`;
           updateCustomWindows([letter, number]);
-          getSharedParameter('customWindows').value = convertObjectToArray(customWindows);
+          SharedParameterList[8].value = convertObjectToArray(customWindows);
           WriteURLParameters();
         }
       }
@@ -4558,7 +4517,7 @@ function findMeshByLetterAndNumber(parent, letter, number) {
 }
 
 function restoreCustomWindows() {
-  customWindows = convertArrayToObject(getSharedParameter('customWindows').value);
+  customWindows = convertArrayToObject(SharedParameterList[8].value);
 
   if (!isWindowCustomOn) return;
 
@@ -4622,7 +4581,7 @@ function addStripAndViewportWindowsToCustomWindowsObject(strip, viewport) {
       }
     });
 
-    getSharedParameter('customWindows').value = convertObjectToArray(customWindows);
+    SharedParameterList[8].value = convertObjectToArray(customWindows);
     WriteURLParameters();
   }
 }

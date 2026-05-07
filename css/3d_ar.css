@@ -2390,7 +2390,7 @@ textarea[name="ar_order_comment"] {
   font-weight: 700;
   padding: 6px 0;
   border-bottom: 1px solid #000;
-  min-width: 290px;
+  width: 240px;
   opacity: 0;
 }
 
@@ -2408,11 +2408,6 @@ textarea[name="ar_order_comment"] {
   padding: 6px 0;
   font-size: 25px;
   font-weight: 400;
-}
-
-.details__item_title,
-.details__item_not_included {
-  margin: auto;
 }
 
 .details__item:first-child .details__group_title {
@@ -3541,7 +3536,6 @@ body.popup-open {
 
   .details__group_title {
     width: 80px;
-    min-width: inherit;
     font-size: 12px !important;
   }
 
