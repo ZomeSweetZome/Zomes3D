@@ -2660,11 +2660,33 @@ textarea[name="ar_order_comment"] {
 }
 
 .contact_form__popup-overlay .popup-close {
-  right: 30px;
-  top: 30px;
+  right: 20px;
+  top: 20px;
 
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
+
+  background-image: var(--marevo-ui-icon_popup_close);
+  background-size: 20px 20px;
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index: 10;
+
+  /* Unicode-character fallback so the X is visible even if the SVG icon
+     fails to load or the browser cached an old CSS that overrode the
+     background. The character is hidden when the SVG renders by being
+     centered behind the same area; in pathological cases it shows. */
+  font-size: 28px;
+  font-weight: 300;
+  line-height: 32px;
+  text-align: center;
+  color: #333;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.contact_form__popup-overlay .popup-close::before {
+  content: "×";
 }
 
 .contact_form__popup-overlay.active {
@@ -4903,10 +4925,6 @@ body.popup-open {
   .contact_form__button {
     height: 42px;
     margin-bottom: 20px;
-  }
-
-  .contact_form__popup-overlay .popup-close {
-    display: none;
   }
 
   .contact_form__form-title {

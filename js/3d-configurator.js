@@ -3070,7 +3070,19 @@ async function PrepareUI() {
         $('.summary__popup-overlay').css('overflow-y', 'auto');
         $('.contact_form__popup-overlay').removeClass('active');
         return false;
-      } else {
+      }
+
+      // All validations passed. Show "Saving design..." while we hit
+      // the tax sheet, Maps API, and the webhook — typically 1-3 seconds.
+      // try/finally guarantees the original label and enabled state are
+      // restored even if an unexpected error escapes one of the inner blocks.
+      const $submitBtn = $('#submitButton');
+      const $submitCaption = $submitBtn.find('.ar_button_order__caption_large');
+      const originalCaption = $submitCaption.text();
+      $submitCaption.text('Saving design...');
+      $submitBtn.prop('disabled', true);
+
+      try {
         localStorage.setItem('userName', userName);
         localStorage.setItem('userPhone', userPhone);
         localStorage.setItem('userEmail', userEmail);
@@ -3083,11 +3095,9 @@ async function PrepareUI() {
         } catch (error) {
           console.error('Error fetching distance:', error);
         }
-      }
 
-      document.getElementById('js_enabled').value = 'true';
+        document.getElementById('js_enabled').value = 'true';
 
-      if (/^\d{5}$/.test(userZipcode)) {
         const formData = new FormData($form[0]);
         formData.append('designURL', window.location.href);
 
@@ -3110,8 +3120,9 @@ async function PrepareUI() {
           console.error('🚀 Error:', error);
         }
         closeContactForm();
-      } else {
-        closeContactForm();
+      } finally {
+        $submitCaption.text(originalCaption);
+        $submitBtn.prop('disabled', false);
       }
     });
 
@@ -3601,18 +3612,47 @@ function notificationHandler() {
 }
 
 function summaryBtnsHandler() {
+  // Guard against re-entry while the camera fly-out animation is in flight
+  // (~2s when the user is in inside-view). Without it, mashing the button
+  // queues a second flyCameraTo and a second summary open.
+  let isOpeningSummary = false;
+
   $(document).on('click', '#ar_button_order, #ar_button_next_5, #canvas_button_save', function () {
+    if (isOpeningSummary) return;
+    isOpeningSummary = true;
+
     if ($('#button_dimensions').hasClass('active')) {
       $('#button_dimensions').trigger('click');
     }
 
-    if (!isCameraInside) {
-      proceedSummaryAndPdf(!isFinalized);
-    } else {
-      flyCameraTo('outMain', 'outside', () => {
-        proceedSummaryAndPdf(!isFinalized);
-      });
+    // Swap the caption on the clicked button (only #ar_button_order has one
+    // — the floating canvas icon and the next-5 button are caption-less, so
+    // the swap is a harmless no-op there).
+    const $btn = $(this);
+    const $caption = $btn.find('.ar_button_order__caption_large');
+    const originalCaption = $caption.text();
+    if (originalCaption) $caption.text('Saving design...');
+
+    function restore() {
+      if (originalCaption) $caption.text(originalCaption);
+      isOpeningSummary = false;
     }
+
+    // Defer the popup-opening work so the browser actually paints the
+    // "Saving design..." caption first. Without this delay, the camera-
+    // outside path runs synchronously and the popup covers the button
+    // in the same frame — the caption never reaches the screen.
+    setTimeout(() => {
+      if (!isCameraInside) {
+        proceedSummaryAndPdf(!isFinalized);
+        restore();
+      } else {
+        flyCameraTo('outMain', 'outside', () => {
+          proceedSummaryAndPdf(!isFinalized);
+          restore();
+        });
+      }
+    }, 250);
   });
 
   $('.summary__link').on('click', function () {
