@@ -2660,33 +2660,45 @@ textarea[name="ar_order_comment"] {
 }
 
 .contact_form__popup-overlay .popup-close {
-  right: 20px;
-  top: 20px;
+  position: absolute;
+  top: 16px;
+  right: 16px;
 
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  margin: 0;
 
-  background-image: var(--marevo-ui-icon_popup_close);
-  background-size: 20px 20px;
-  background-repeat: no-repeat;
-  background-position: center;
-  z-index: 10;
+  /* Override the base .popup-close rule which sets `content` to the SVG icon
+     URL — in browsers supporting CSS Generated Content Module L3, that
+     would replace this button's "×" text content with the image. Resetting
+     to `normal` lets the HTML "×" render. */
+  content: normal;
 
-  /* Unicode-character fallback so the X is visible even if the SVG icon
-     fails to load or the browser cached an old CSS that overrode the
-     background. The character is hidden when the SVG renders by being
-     centered behind the same area; in pathological cases it shows. */
-  font-size: 28px;
+  /* Reset native <button> defaults so the typographic x renders cleanly */
+  border: none;
+  background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 32px;
   font-weight: 300;
-  line-height: 32px;
-  text-align: center;
-  color: #333;
+  line-height: 1;
+  color: #000;
+  cursor: pointer;
+  z-index: 100;
+
   -webkit-user-select: none;
   user-select: none;
 }
 
-.contact_form__popup-overlay .popup-close::before {
-  content: "×";
+.contact_form__popup-overlay .popup-close:hover {
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 50%;
 }
 
 .contact_form__popup-overlay.active {
