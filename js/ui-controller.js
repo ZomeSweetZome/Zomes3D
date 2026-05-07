@@ -446,6 +446,40 @@ function setEventListenersForNextBtns() {
 
 //#region CSV READING FUNCTIONS
 
+// Loads a pre-baked JSON snapshot from a same-origin URL. Detects gzip by
+// magic bytes (1f 8b) so the path is robust against browsers that auto-
+// decompress responses based on Content-Type: application/gzip (observed
+// in Edge / Defender). On any failure falls back to live CSV.
+// Output array is mutated in place — same shape as parseCSV.
+export async function loadData(localUrl, csvFallbackUrl, output) {
+  try {
+    const response = await fetch(localUrl, { cache: 'default' });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+    const buf = await response.arrayBuffer();
+    const head = new Uint8Array(buf, 0, Math.min(2, buf.byteLength));
+    const isGzipped = head.length === 2 && head[0] === 0x1f && head[1] === 0x8b;
+
+    let json;
+    if (isGzipped) {
+      if (typeof DecompressionStream === 'undefined') {
+        throw new Error('DecompressionStream unsupported in this browser');
+      }
+      const stream = new Blob([buf]).stream().pipeThrough(new DecompressionStream('gzip'));
+      json = await new Response(stream).json();
+    } else {
+      json = JSON.parse(new TextDecoder().decode(buf));
+    }
+
+    if (!Array.isArray(json)) throw new Error('expected array of rows');
+    for (const row of json) output.push(row);
+    return;
+  } catch (err) {
+    console.warn(`[data] local ${localUrl} unavailable; falling back to CSV: ${err.message}`);
+  }
+  await loadAndParseCSV(csvFallbackUrl, 'text', output, 5, 1000);
+}
+
 export async function loadAndParseCSV(link, fileType, output, retryCount = 999, retryDelay = 1000) {
   for (let attempt = 0; attempt < retryCount; attempt++) {
     try {

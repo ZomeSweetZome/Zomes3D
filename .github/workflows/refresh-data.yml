@@ -1,0 +1,37 @@
+name: Refresh data from Google Sheets
+
+on:
+  schedule:
+    # Daily at 06:00 UTC. Sheets change ~monthly so this is comfortably more
+    # frequent than needed; tighten with workflow_dispatch when an editor
+    # needs an immediate publish.
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch sheets and write data/*.json
+        run: node scripts/refresh-data.js
+
+      - name: Commit if changed
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add data/
+          if git diff --staged --quiet; then
+            echo "No changes — skipping commit."
+          else
+            git commit -m "chore(data): refresh snapshots from Google Sheets"
+            git push
+          fi

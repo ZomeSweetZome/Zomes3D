@@ -52,6 +52,141 @@ export function Get3DScene() {
   return scene;
 }
 
+// Probes whether a WebGL context can be created. Returns false on any
+// error path — missing constructor, getContext throwing, hardware
+// acceleration disabled, GPU process sandboxed without access. Used by
+// Start() to bail with a friendly message before THREE.WebGLRenderer
+// throws an uncaught exception that would leave the page on the loader.
+export function isWebGLAvailable() {
+  try {
+    const probe = document.createElement('canvas');
+    return !!(
+      window.WebGLRenderingContext &&
+      (probe.getContext('webgl') || probe.getContext('experimental-webgl'))
+    );
+  } catch (e) {
+    return false;
+  }
+}
+
+// Reads the user agent to pick the right "fix it" instructions. Order
+// matters — Edge and Opera UAs both contain "Chrome/", so they must be
+// checked first. Falls back to "unknown" for anything we don't recognize.
+function detectBrowser() {
+  const ua = navigator.userAgent;
+  const isIOS = /iPhone|iPad|iPod/i.test(ua) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+  if (/Edg(e|A|iOS)?\//i.test(ua)) return { id: 'edge', name: 'Microsoft Edge' };
+  if (/OPR\//i.test(ua) || /Opera\//i.test(ua)) return { id: 'opera', name: 'Opera' };
+  if (/SamsungBrowser\//i.test(ua)) return { id: 'samsung', name: 'Samsung Internet' };
+  if (/Firefox\//i.test(ua) || /FxiOS\//i.test(ua)) return { id: 'firefox', name: 'Firefox' };
+  if (/CriOS\//i.test(ua) || /Chrome\//i.test(ua)) return { id: 'chrome', name: 'Google Chrome' };
+  if (/Safari\//i.test(ua)) return { id: 'safari', name: 'Safari', isIOS };
+  return { id: 'unknown', name: 'your browser' };
+}
+
+const FIX_INSTRUCTIONS = {
+  edge: `
+    <ol style="margin:0;padding-left:1.25rem;line-height:1.7;">
+      <li>Open a new tab and go to <code style="background:#f4f4f4;padding:0.1em 0.4em;border-radius:3px;">edge://settings/system</code></li>
+      <li>Turn on &ldquo;Use graphics acceleration when available&rdquo;</li>
+      <li>Quit Edge completely (close all windows) and reopen it</li>
+    </ol>
+    <p style="margin:1rem 0 0;color:#888;font-size:0.85rem;">If that setting was already on, the GPU process may just need a restart &mdash; quitting and reopening Edge usually fixes it.</p>
+  `,
+  chrome: `
+    <ol style="margin:0;padding-left:1.25rem;line-height:1.7;">
+      <li>Open a new tab and go to <code style="background:#f4f4f4;padding:0.1em 0.4em;border-radius:3px;">chrome://settings/system</code></li>
+      <li>Turn on &ldquo;Use hardware acceleration when available&rdquo;</li>
+      <li>Quit Chrome completely and reopen it</li>
+    </ol>
+  `,
+  opera: `
+    <ol style="margin:0;padding-left:1.25rem;line-height:1.7;">
+      <li>Open a new tab and go to <code style="background:#f4f4f4;padding:0.1em 0.4em;border-radius:3px;">opera://settings/system</code></li>
+      <li>Turn on &ldquo;Use hardware acceleration when available&rdquo;</li>
+      <li>Quit Opera completely and reopen it</li>
+    </ol>
+  `,
+  firefox: `
+    <ol style="margin:0;padding-left:1.25rem;line-height:1.7;">
+      <li>Open Firefox Settings (or go to <code style="background:#f4f4f4;padding:0.1em 0.4em;border-radius:3px;">about:preferences</code>)</li>
+      <li>Scroll to <strong>Performance</strong></li>
+      <li>Uncheck &ldquo;Use recommended performance settings&rdquo;</li>
+      <li>Check &ldquo;Use hardware acceleration when available&rdquo;</li>
+      <li>Quit Firefox and reopen it</li>
+    </ol>
+  `,
+  safari: `
+    <ol style="margin:0;padding-left:1.25rem;line-height:1.7;">
+      <li>In the Safari menu bar, click <strong>Develop</strong> &rarr; <strong>Enable WebGL</strong></li>
+      <li>If you don&rsquo;t see the Develop menu, open Safari Settings &rarr; <strong>Advanced</strong> and check &ldquo;Show Develop menu in menu bar&rdquo;</li>
+      <li>Reload this page</li>
+    </ol>
+  `,
+  safariIOS: `
+    <p style="margin:0;line-height:1.6;">
+      WebGL is normally always on in Safari for iOS &mdash; this is unusual. Try:
+    </p>
+    <ol style="margin:0.75rem 0 0;padding-left:1.25rem;line-height:1.7;">
+      <li>Force-quit Safari (swipe up from the Home bar, swipe Safari away) and reopen it</li>
+      <li>Restart your device if that doesn&rsquo;t help</li>
+      <li>If it still fails, open this page in Chrome from the App Store</li>
+    </ol>
+  `,
+  samsung: `
+    <ol style="margin:0;padding-left:1.25rem;line-height:1.7;">
+      <li>Open Samsung Internet menu &rarr; Settings &rarr; <strong>Useful features</strong></li>
+      <li>Make sure &ldquo;Hardware acceleration&rdquo; is on</li>
+      <li>Force-quit Samsung Internet from your recent apps and reopen it</li>
+    </ol>
+  `,
+  unknown: `
+    <p style="margin:0;line-height:1.6;">
+      Look in your browser&rsquo;s settings for &ldquo;hardware acceleration,&rdquo; &ldquo;GPU acceleration,&rdquo; or &ldquo;graphics acceleration&rdquo; and turn it on, then quit and reopen the browser.
+    </p>
+    <p style="margin:0.75rem 0 0;color:#888;font-size:0.9rem;">
+      Or open this page in a recent version of Chrome, Edge, Safari, or Firefox.
+    </p>
+  `,
+};
+
+// Replaces the boot loader with an actionable, browser-specific
+// "WebGL required" message. Inline-styled so it works even if site CSS
+// hasn't loaded.
+export function showWebGLFallback() {
+  const loader = document.getElementById('js-loader');
+  if (loader) loader.classList.add('invisible');
+
+  if (document.getElementById('webgl-fallback')) return;
+  const browser = detectBrowser();
+  const fixKey = browser.id === 'safari' && browser.isIOS ? 'safariIOS' : browser.id;
+  const fix = FIX_INSTRUCTIONS[fixKey] || FIX_INSTRUCTIONS.unknown;
+
+  const overlay = document.createElement('div');
+  overlay.id = 'webgl-fallback';
+  overlay.style.cssText = [
+    'position:fixed', 'inset:0',
+    'display:flex', 'align-items:center', 'justify-content:center',
+    'background:#fff', 'z-index:99999', 'padding:2rem',
+    'color:#222',
+    'font-family:Inter,-apple-system,BlinkMacSystemFont,system-ui,sans-serif',
+  ].join(';');
+  overlay.innerHTML = `
+    <div style="max-width:560px;">
+      <h1 style="font-size:1.5rem;margin:0 0 1rem;font-weight:600;">3D rendering isn&rsquo;t available</h1>
+      <p style="margin:0 0 1.25rem;line-height:1.55;">
+        The Zomes Designer needs WebGL graphics support, which is currently disabled in <strong>${browser.name}</strong>.
+      </p>
+      <div style="background:#fafafa;border:1px solid #eee;border-radius:8px;padding:1.25rem;font-size:0.95rem;">
+        ${fix}
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+}
+
 export function create3DScene(properties = scenePropertiesDefault, startFunction) {
   if (!properties) {
     properties = scenePropertiesDefault;

@@ -16,6 +16,10 @@ import {
   DATAFILE_CSV_LINK_PRICE,
   DATAFILE_CSV_LINK_ANNOTATIONS,
   DATAFILE_CSV_LINK_SALES_ZIPCODE,
+  DATAFILE_LOCAL_UI,
+  DATAFILE_LOCAL_PRICE,
+  DATAFILE_LOCAL_ANNOTATIONS,
+  DATAFILE_LOCAL_ZIPTAX,
   DEFAULT_LANGUAGE,
   DEFAULT_CURRENCY,
   CURRENCY_SIGN,
@@ -45,6 +49,8 @@ import {
 
 import {
   create3DScene,
+  isWebGLAvailable,
+  showWebGLFallback,
   IMPORTED_MODELS,
   scene,
   getMobileOperatingSystem,
@@ -66,6 +72,7 @@ import {
 import {
   createMenu,
   loadAndParseCSV,
+  loadData,
   getData,
   updateUIlanguages,
   checkConfigFinalized,
@@ -539,19 +546,38 @@ class ComponentOption {
 
 //#region START APP
 
+// Resolves once dataMain, dataPrice, and dataAnnotations are all loaded.
+// Awaited at the start of StartSettings so the configurator never reads
+// half-loaded data — but the menu paints as soon as dataMain is ready.
+let dataReady = null;
+
+let ziptaxPromise = null;
+function ensureZiptaxLoaded() {
+  if (!ziptaxPromise) {
+    ziptaxPromise = loadData(DATAFILE_LOCAL_ZIPTAX, DATAFILE_CSV_LINK_SALES_ZIPCODE, dataZiptax);
+  }
+  return ziptaxPromise;
+}
+
 prepareDataFiles();
 
 async function prepareDataFiles() {
+  // Kick off all three configurator-data fetches in parallel.
+  const mainPromise = loadData(DATAFILE_LOCAL_UI, DATAFILE_CSV_LINK_UI, dataMain);
+  const pricePromise = loadData(DATAFILE_LOCAL_PRICE, DATAFILE_CSV_LINK_PRICE, dataPrice);
+  const annotationsPromise = loadData(DATAFILE_LOCAL_ANNOTATIONS, DATAFILE_CSV_LINK_ANNOTATIONS, dataAnnotations);
+
+  // ziptax (1.85 MB) is loaded lazily — see ensureZiptaxLoaded().
+
+  dataReady = Promise.all([mainPromise, pricePromise, annotationsPromise]);
+
   try {
-    await Promise.all([
-      loadAndParseCSV(DATAFILE_CSV_LINK_UI, 'text', dataMain),
-      loadAndParseCSV(DATAFILE_CSV_LINK_PRICE, 'text', dataPrice),
-      loadAndParseCSV(DATAFILE_CSV_LINK_ANNOTATIONS, 'text', dataAnnotations),
-      loadAndParseCSV(DATAFILE_CSV_LINK_SALES_ZIPCODE, 'text', dataZiptax),
-    ]);
+    // Menu only needs dataMain. Price + annotations finish in the background
+    // while the user picks a model; awaited at the start of StartSettings.
+    await mainPromise;
     Start();
   } catch (error) {
-    console.error("Error loading data files:", error);
+    console.error("Error loading dataMain:", error);
   }
 }
 
@@ -748,7 +774,19 @@ async function payAttentionToIcons() {
 
 //! *****************   START   ********************
 async function Start() {
+  // Without WebGL the configurator can't render, and THREE.WebGLRenderer
+  // would throw an uncaught exception that strands the page on the loader.
+  // Show a friendly message instead and bail before any 3D init runs.
+  if (!isWebGLAvailable()) {
+    showWebGLFallback();
+    return;
+  }
+
   await createMenu(dataMain);
+  // Menu is on screen now. Make sure dataPrice + dataAnnotations have arrived
+  // before wiring language/currency handlers in PrepareUI, since those
+  // re-render translated strings on change.
+  if (dataReady) await dataReady;
   PrepareUI();
   create3DScene(sceneProperties, () => InitializationGroups(startCallback));
   payAttentionToIcons();
@@ -764,6 +802,10 @@ async function Start() {
 }
 
 async function StartSettings() {
+  // dataPrice / dataAnnotations may still be in flight if the user picked
+  // a model very fast — wait for them before any pricing/option logic runs.
+  if (dataReady) await dataReady;
+
   // get all options
   document.querySelectorAll('.option').forEach(option => {
     const groupId = option.getAttribute('data-group_id');
@@ -3035,7 +3077,7 @@ async function PrepareUI() {
         localStorage.setItem('userZipcode', userZipcode);
 
         try {
-          stateSalesTax = +getTaxRate(userZipcode);
+          stateSalesTax = +(await getTaxRate(userZipcode));
           shippingDistance = await getDistance(userZipcode);
           updateShippingTaxInfo();
         } catch (error) {
@@ -3146,7 +3188,7 @@ async function populateFormFromUrl() {
 
   if (zipcode) {
     userZipcode = $('#form_zipcode').val();
-    stateSalesTax = +getTaxRate(zipcode);
+    stateSalesTax = +(await getTaxRate(zipcode));
     shippingDistance = await getDistance(userZipcode);
     updateShippingTaxInfo();
   }
@@ -3158,7 +3200,7 @@ async function populateFormFromUrl() {
     userPhone = $('#form_phone').val();
     userEmail = $('#form_email').val();
     userZipcode = $('#form_zipcode').val();
-    stateSalesTax = +getTaxRate(zipcode);
+    stateSalesTax = +(await getTaxRate(zipcode));
     shippingDistance = await getDistance(userZipcode);
     updateShippingTaxInfo();
   }
@@ -3687,9 +3729,9 @@ function bookConsultationAndDepositBtns() {
   });
 }
 
-function getTaxRate(destinationZipCode) {
-  const taxRate = getData(dataZiptax, destinationZipCode + '', 'StateRate', 'ZipCode');
-  return taxRate;
+async function getTaxRate(destinationZipCode) {
+  await ensureZiptaxLoaded();
+  return getData(dataZiptax, destinationZipCode + '', 'StateRate', 'ZipCode');
 }
 
 async function getDistance(destinationZipCode) {
@@ -3776,6 +3818,9 @@ function closeSummary() {
 }
 
 function openContactForm() {
+  // Warm the ziptax cache while the user is typing — they'll need it on submit.
+  ensureZiptaxLoaded();
+
   $('.summary__popup-overlay').css('overflow-y', 'hidden');
 
   const savedName = localStorage.getItem('userName');

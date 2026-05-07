@@ -57,6 +57,13 @@ export const DATAFILE_CSV_LINK_UI = MAIN_LINK_PART + '911871288';
 export const DATAFILE_CSV_LINK_PRICE = MAIN_LINK_PART + '608401970';
 export const DATAFILE_CSV_LINK_ANNOTATIONS = MAIN_LINK_PART + '1110711170';
 
+// Same-origin pre-baked snapshots refreshed by .github/workflows/refresh-data.yml.
+// loadData() tries these first and falls back to the CSV links above.
+export const DATAFILE_LOCAL_UI = './data/ui.json';
+export const DATAFILE_LOCAL_PRICE = './data/price.json';
+export const DATAFILE_LOCAL_ANNOTATIONS = './data/annotations.json';
+export const DATAFILE_LOCAL_ZIPTAX = './data/ziptax.json.gz';
+
 // Sales Zipcode Table
 export const DATAFILE_CSV_LINK_SALES_ZIPCODE = 'https://docs.google.com/spreadsheets/d/1r2yclrOnu-h9EjJjuYAYK9NbmKgITAaKCjFZmTea1bY/export?format=csv&gid=1261074691';
 
