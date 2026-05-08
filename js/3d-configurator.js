@@ -2841,32 +2841,15 @@ function GetParametersString() {
 }
 
 function GetURLWithParameters() {
-  const queryString = window.location.search;
-  const urlParams = new URLSearchParams(queryString);
-  const entries = urlParams.entries();
-
-  var url = location.protocol + '//' + location.host + location.pathname + '?';
-
-  var configEmpty = true;
-
-  for (const entry of entries) {
-    if (entry[0] == parametersKey) {
-      url += parametersKey + '=' + GetParametersString() + '&';
-      configEmpty = false;
-    } else {
-      url += entry[0] + '=' + entry[1] + '&';
-    }
-  }
-
-  if (configEmpty) {
-    url += parametersKey + '=' + GetParametersString();
-  }
-
-  if (url.endsWith('&')) {
-    url = url.substring(0, url.length - 1);
-  }
-
-  return url;
+  // Use URL/URLSearchParams to ensure values are URL-encoded correctly
+  // (the previous implementation concatenated decoded values verbatim,
+  // which silently broke any value containing "+" — e.g. email addresses
+  // with a "+tag" subaddress, where "+" got written literally into the
+  // URL and then decoded as a space on the next read, breaking the
+  // saved-designs HMAC token check).
+  const url = new URL(location.href);
+  url.searchParams.set(parametersKey, GetParametersString());
+  return url.toString();
 }
 
 // eslint-disable-next-line no-unused-vars
