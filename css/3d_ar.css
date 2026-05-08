@@ -6087,3 +6087,114 @@ only screen and (-webkit-device-pixel-ratio: 3) and (max-width: 1170px) {
     bottom: 50px;
   }
 }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Saved-designs section inside the "Choose a model" model-picker popup.
+   Hidden until js/my-designs.js confirms the user is signed in with ≥ 1
+   design. Visually secondary to the three big "ZomePod / Office / Studio"
+   cards above — smaller, lighter, with a divider for clear separation.
+   ───────────────────────────────────────────────────────────────────────── */
+
+.popup_select__saved {
+  width: 100%;
+  max-width: 720px;
+  margin-top: 36px;
+}
+
+.popup_select__saved_divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.popup_select__saved_divider::before,
+.popup_select__saved_divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background-color: var(--marevo-color-popup-border, #d8d8dc);
+  max-width: 200px;
+}
+
+.popup_select__saved_list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.popup_select__saved_item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--marevo-color-popup-border, #d8d8dc);
+  border-radius: 12px;
+  background: white;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+  text-align: left;
+}
+
+.popup_select__saved_item:hover {
+  border-color: var(--marevo-color-text-black, #000);
+  transform: translateY(-1px);
+}
+
+.popup_select__saved_item_icon {
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.popup_select__saved_item_icon[data-zome-type="pod"]::before    { content: "🟠"; }
+.popup_select__saved_item_icon[data-zome-type="office"]::before { content: "🔵"; }
+.popup_select__saved_item_icon[data-zome-type="studio"]::before { content: "🟢"; }
+.popup_select__saved_item_icon[data-zome-type="unknown"]::before,
+.popup_select__saved_item_icon[data-zome-type=""]::before        { content: "◯"; }
+
+.popup_select__saved_item_button {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+}
+
+.popup_select__saved_item_name {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--marevo-color-text-black, #000);
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.popup_select__saved_item_meta {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+@media (max-width: 768px) {
+  .popup_select__saved_list {
+    grid-template-columns: 1fr;
+  }
+  .popup_select__saved_divider::before,
+  .popup_select__saved_divider::after {
+    max-width: 80px;
+  }
+}

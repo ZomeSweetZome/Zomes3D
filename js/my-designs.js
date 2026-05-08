@@ -52,6 +52,8 @@ function $dom() {
     headerEntry: document.getElementById('my-designs-entry'),
     headerBtn: document.getElementById('my_designs_btn'),
     toast: document.getElementById('my_designs_toast'),
+    pickerSection: document.getElementById('saved_designs_picker'),
+    pickerList: document.getElementById('saved_designs_picker_list'),
   };
   return dom;
 }
@@ -338,34 +340,82 @@ async function refresh() {
 }
 
 // Lightweight version of refresh() used at page load — runs the probe
-// without ever opening the popup. Outcome is purely "should the header
-// button be visible?". Called automatically by init() when signed in.
+// without ever opening the popup. Outcomes:
+//   - Should the header button be visible?
+//   - Should the model-picker show a "continue a saved design" section?
+// Called automatically by init() when signed in.
 async function probeForHeaderButton() {
   const auth = getAuth();
-  if (!auth) { hideHeaderButton(); return; }
+  if (!auth) {
+    hideHeaderButton();
+    renderModelPickerSavedDesigns([], null);
+    return;
+  }
   try {
     const result = await fetchDesigns(auth);
     if (result.unauthorized) {
       stripAuthFromUrl();
       hideHeaderButton();
+      renderModelPickerSavedDesigns([], null);
       return;
     }
     if (result.unavailable) {
       hideHeaderButton();
+      renderModelPickerSavedDesigns([], null);
       return;
     }
-    if ((result.designs ?? []).length > 0) {
+    const designs = result.designs ?? [];
+    if (designs.length > 0) {
       revealHeaderButton();
     } else {
       hideHeaderButton();
     }
+    renderModelPickerSavedDesigns(designs, auth);
   } catch (err) {
     // Network error / CORS during local dev. Keep the button hidden — we
     // can't confirm the user has designs, so showing a button that won't
     // work is worse than not showing it.
     console.warn('[my-designs] probe failed:', err);
     hideHeaderButton();
+    renderModelPickerSavedDesigns([], null);
   }
+}
+
+// Render the user's saved designs into the "Choose a model" interstitial,
+// so a returning user can pick up an existing design without going through
+// the popup. Hidden when the user has no designs (or isn't signed in).
+function renderModelPickerSavedDesigns(designs, auth) {
+  const d = $dom();
+  if (!d.pickerSection || !d.pickerList) return;
+  if (!designs.length || !auth) {
+    d.pickerSection.hidden = true;
+    d.pickerList.innerHTML = '';
+    return;
+  }
+  d.pickerList.innerHTML = designs.map((design) => `
+    <div class="popup_select__saved_item" data-id="${escapeHtml(design.id)}" data-design-url="${escapeHtml(design.design_url)}">
+      <div class="popup_select__saved_item_icon" data-zome-type="${escapeHtml(design.zome_type ?? 'unknown')}"></div>
+      <button type="button" class="popup_select__saved_item_button">
+        <span class="popup_select__saved_item_name">${escapeHtml(design.name)}</span>
+        <span class="popup_select__saved_item_meta">
+          ${design.zome_type ? escapeHtml(design.zome_type.charAt(0).toUpperCase() + design.zome_type.slice(1)) + ' · ' : ''}Updated ${relativeTime(design.updated_at)}
+        </span>
+      </button>
+    </div>`).join('');
+  d.pickerSection.hidden = false;
+
+  // Wire clicks on the cards. The whole card is clickable; we delegate so
+  // we can re-render later without rebinding handlers.
+  d.pickerList.onclick = (ev) => {
+    const item = ev.target.closest('.popup_select__saved_item');
+    if (!item) return;
+    const url = new URL(item.dataset.designUrl, location.origin);
+    url.searchParams.set('design_id', item.dataset.id);
+    url.searchParams.set('email', auth.email);
+    url.searchParams.set('t', auth.t);
+    // Full reload — the configurator initializes from URL params on load.
+    location.assign(url.toString());
+  };
 }
 
 function stripAuthFromUrl() {

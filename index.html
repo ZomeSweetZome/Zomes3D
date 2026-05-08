@@ -833,6 +833,20 @@
               </button>
             </div>
           </div>
+
+          <!-- Saved-designs section. Hidden by default; revealed by
+               js/my-designs.js when the user is signed in (URL has email+t)
+               and has at least one saved design. Cards link to the design's
+               URL with email/t/design_id appended so the configurator boots
+               into edit mode for that design. -->
+          <div id="saved_designs_picker" class="popup_select__saved" hidden>
+            <div class="popup_select__saved_divider">
+              <span>or continue a saved design</span>
+            </div>
+            <div id="saved_designs_picker_list" class="popup_select__saved_list">
+              <!-- Cards rendered by js/my-designs.js -->
+            </div>
+          </div>
         </div>
       </div>
     </div>
