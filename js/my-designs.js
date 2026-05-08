@@ -135,24 +135,36 @@ function clearAuthFromLocalStorage() {
 // email/t/design_id but localStorage has them from a previous visit,
 // hydrate the URL via replaceState. This is what makes returning visits
 // to design.zomes.com auto-sign-in.
+//
+// Identity-mismatch guard: if the URL already has an email AND that email
+// doesn't match localStorage's, don't hydrate. The user is following a
+// link as a different identity (e.g. an old email link with someone
+// else's email) and our cached token wouldn't validate against that
+// email anyway. Without this guard we'd silently rewrite the URL to a
+// different email than the one in the link.
 function hydrateAuthFromLocalStorage() {
   const url = new URL(location.href);
-  const hasEmail = !!url.searchParams.get('email');
+  const urlEmail = url.searchParams.get('email');
   const hasToken = !!url.searchParams.get('t');
-  if (hasEmail && hasToken) return; // URL already has auth — leave it alone.
-  let email, t, designId;
+  if (hasToken) return; // URL already has a token — leave everything alone.
+  let lsEmail, lsT, lsId;
   try {
-    email    = localStorage.getItem(LS_KEYS.email);
-    t        = localStorage.getItem(LS_KEYS.t);
-    designId = localStorage.getItem(LS_KEYS.designId);
+    lsEmail = localStorage.getItem(LS_KEYS.email);
+    lsT     = localStorage.getItem(LS_KEYS.t);
+    lsId    = localStorage.getItem(LS_KEYS.designId);
   } catch { return; }
-  if (!email || !t) return;
-  url.searchParams.set('email', email);
-  url.searchParams.set('t', t);
+  if (!lsEmail || !lsT) return;
+  // Identity mismatch — do nothing. (User is following a link as a
+  // different identity; can't reuse our cached token.)
+  if (urlEmail && urlEmail.trim().toLowerCase() !== lsEmail.trim().toLowerCase()) {
+    return;
+  }
+  url.searchParams.set('email', lsEmail);
+  url.searchParams.set('t', lsT);
   // Only restore design_id if the URL doesn't already have one (e.g. user
   // landed on a deep-link to a specific design).
-  if (designId && !url.searchParams.get('design_id')) {
-    url.searchParams.set('design_id', designId);
+  if (lsId && !url.searchParams.get('design_id')) {
+    url.searchParams.set('design_id', lsId);
   }
   history.replaceState(null, '', url.toString());
 }
