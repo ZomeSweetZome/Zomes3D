@@ -772,9 +772,11 @@ async function mintFromUrlFieldsIfApplicable() {
   if (url.searchParams.get('t')) return;
   const email   = url.searchParams.get('email');
   const name    = url.searchParams.get('name');
-  const phone   = url.searchParams.get('phone');
+  const phone   = url.searchParams.get('phone') ?? '';
   const zipcode = url.searchParams.get('zipcode');
-  if (!email || !name || !phone || !zipcode) return;
+  // Phone is optional — older confirmation-email URLs predate it.
+  // Email + name + zipcode is the minimum the server will accept.
+  if (!email || !name || !zipcode) return;
   try {
     const res = await fetch(`${SDR_BASE}/api/auth/mint-from-fields`, {
       method: 'POST',
