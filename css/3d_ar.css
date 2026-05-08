@@ -2371,11 +2371,25 @@ textarea[name="ar_order_comment"] {
   color: #6b7280;
 }
 
+/* User name + email lines under the design title. Hidden via the
+   [hidden] attribute when empty (e.g. anonymous old links). */
+.summary__popup-meta_line {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--marevo-color-text-black, #000);
+  line-height: 1.4;
+}
+
+.summary__popup-meta_line[hidden] {
+  display: none;
+}
+
 @media (max-width: 768px) {
   .summary__popup-title {
     font-size: 28px;
   }
-  .summary__popup-subtitle {
+  .summary__popup-subtitle,
+  .summary__popup-meta_line {
     font-size: 13px;
   }
 }

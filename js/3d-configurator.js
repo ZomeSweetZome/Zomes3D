@@ -4068,21 +4068,33 @@ function collectSummary() {
   const detailsContainer = $('.summary__popup-content .details');
   detailsContainer.empty();
 
-  // Hero heading: design name + last-saved date. Shown only when a saved
-  // design is loaded (URL has design_id resolving to one of the user's).
-  // Empty/hidden otherwise — the popup just shows the elevation views and
-  // breakdown.
-  const heading = document.getElementById('summary_heading');
-  const headingTitle = document.getElementById('summary_heading_title');
-  const headingSubtitle = document.getElementById('summary_heading_subtitle');
+  // Hero heading: design name, then user name + email + last-saved date,
+  // each on its own line. Shown only when a saved design is loaded
+  // (URL has design_id resolving to one of the user's). Empty/hidden
+  // otherwise — the popup just shows the elevation views and breakdown.
+  const heading           = document.getElementById('summary_heading');
+  const headingTitle      = document.getElementById('summary_heading_title');
+  const headingUserName   = document.getElementById('summary_heading_user_name');
+  const headingUserEmail  = document.getElementById('summary_heading_user_email');
+  const headingSubtitle   = document.getElementById('summary_heading_subtitle');
   const currentDesign = window.MyDesigns?.getCurrentDesign?.() ?? null;
   if (heading && headingTitle && headingSubtitle) {
     if (currentDesign?.name) {
+      // Pull name/email from URL first (authoritative for the active
+      // saved-designs session), then fall back to localStorage / globals
+      // so old anonymous saves still render something useful.
+      const _url = new URL(location.href);
+      const displayName  = _url.searchParams.get('name')  || localStorage.getItem('userName')  || userName  || '';
+      const displayEmail = _url.searchParams.get('email') || localStorage.getItem('userEmail') || userEmail || '';
       headingTitle.textContent = currentDesign.name;
+      if (headingUserName)  { headingUserName.textContent  = displayName;  headingUserName.hidden  = !displayName; }
+      if (headingUserEmail) { headingUserEmail.textContent = displayEmail; headingUserEmail.hidden = !displayEmail; }
       headingSubtitle.textContent = formatLastSavedAt(currentDesign.updated_at);
       heading.hidden = false;
     } else {
       headingTitle.textContent = '';
+      if (headingUserName)  { headingUserName.textContent  = ''; headingUserName.hidden  = true; }
+      if (headingUserEmail) { headingUserEmail.textContent = ''; headingUserEmail.hidden = true; }
       headingSubtitle.textContent = '';
       heading.hidden = true;
     }
