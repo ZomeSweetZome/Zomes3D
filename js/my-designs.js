@@ -302,10 +302,16 @@ const CARD_ACCENT_PALETTE = [
 ];
 
 function accentColorForDesign(design) {
+  // FNV-1a 32-bit. *31 with %8 (a power of 2) made every consecutive
+  // 2-char id collide on palette[0]; FNV's prime-ratio mixing scatters
+  // even short structured ids across the palette.
   const seed = String(design.id ?? design.name ?? '');
-  let h = 0;
-  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) | 0;
-  return CARD_ACCENT_PALETTE[Math.abs(h) % CARD_ACCENT_PALETTE.length];
+  let h = 0x811c9dc5;
+  for (let i = 0; i < seed.length; i++) {
+    h ^= seed.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return CARD_ACCENT_PALETTE[(h >>> 0) % CARD_ACCENT_PALETTE.length];
 }
 
 // Static "New Design" card — same shape as a regular card, distinct accent.
