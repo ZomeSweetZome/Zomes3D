@@ -679,12 +679,48 @@ function init() {
   });
 }
 
-function bootstrap() {
+// Last-resort sign-in for users following an old confirmation-email link:
+// when the URL has email + name + phone + zipcode but no token, hand those
+// fields to the SDR and ask it to mint a token if they match a prior save.
+// On success, we replaceState the URL and persist to localStorage so this
+// only happens once.
+async function mintFromUrlFieldsIfApplicable() {
+  const url = new URL(location.href);
+  if (url.searchParams.get('t')) return;
+  const email   = url.searchParams.get('email');
+  const name    = url.searchParams.get('name');
+  const phone   = url.searchParams.get('phone');
+  const zipcode = url.searchParams.get('zipcode');
+  if (!email || !name || !phone || !zipcode) return;
+  try {
+    const res = await fetch(`${SDR_BASE}/api/auth/mint-from-fields`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, name, phone, zipcode }),
+    });
+    if (!res.ok) return;
+    const data = await res.json().catch(() => null);
+    if (!data || !data.ok || !data.t) return;
+    if (data.email)     url.searchParams.set('email',     data.email);
+    url.searchParams.set('t', data.t);
+    if (data.design_id) url.searchParams.set('design_id', data.design_id);
+    history.replaceState(null, '', url.toString());
+    persistAuthToLocalStorage();
+  } catch (err) {
+    console.warn('[my-designs] mint-from-fields failed:', err);
+  }
+}
+
+async function bootstrap() {
   // Hydrate URL from localStorage BEFORE init/probe so the rest of the
   // module's logic (auth detection, header reveal, current-design label)
   // sees the restored auth params.
   hydrateAuthFromLocalStorage();
   init();
+  // If hydration didn't yield a token (no map entry for the URL email),
+  // try minting one from the form fields embedded in the URL — covers
+  // users following old confirmation-email links that pre-date tokens.
+  await mintFromUrlFieldsIfApplicable();
   // Probe in the background so the header button only ever appears for
   // signed-in users with at least one design. No spinner, no UI lock —
   // the button just materializes a moment after page load if applicable.
