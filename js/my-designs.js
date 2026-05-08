@@ -104,11 +104,52 @@ function getDesignId() {
 
 // ── localStorage hydration for same-origin returns ──────────────────────────
 //
+// Per-email auth map: { [email]: { t, designId } } in a single key, plus a
+// "last used email" marker for the no-URL-email case. Per-email is the
+// right shape because users iterate with multiple test emails on the same
+// browser (e.g. shereef+a@…, shereef+b@…) and each needs its own token —
+// a single token slot would let the most recent save clobber the rest.
+//
 // localStorage is per-origin, so this only carries the user across visits
-// to design.zomes.com (not from zomes.com). Cross-site identification is a
-// separate, bigger problem (HubSpot utk → email resolution).
+// to the SAME origin (e.g. design.zomes.com → design.zomes.com). Cross-
+// origin identification (zomes.com → design.zomes.com first visit) is a
+// separate problem requiring server-side cookie resolution.
 
-const LS_KEYS = { email: 'savedDesignsEmail', t: 'savedDesignsToken', designId: 'savedDesignsDesignId' };
+const LS_MAP_KEY        = 'savedDesignsAuthMap';
+const LS_LAST_EMAIL_KEY = 'savedDesignsLastEmail';
+// Legacy single-key shape from the first version of this code. Read once
+// during migration, then removed.
+const LS_LEGACY_EMAIL     = 'savedDesignsEmail';
+const LS_LEGACY_TOKEN     = 'savedDesignsToken';
+const LS_LEGACY_DESIGN_ID = 'savedDesignsDesignId';
+
+function readAuthMap() {
+  try {
+    const raw = localStorage.getItem(LS_MAP_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) return parsed;
+    }
+  } catch { /* fall through to migration */ }
+  // One-shot migration: turn the legacy {email, t, designId} keys into the
+  // map shape. Idempotent — once migrated, legacy keys are deleted.
+  try {
+    const email = localStorage.getItem(LS_LEGACY_EMAIL);
+    const t = localStorage.getItem(LS_LEGACY_TOKEN);
+    const designId = localStorage.getItem(LS_LEGACY_DESIGN_ID);
+    if (email && t) {
+      const norm = email.trim().toLowerCase();
+      const map = { [norm]: { t, designId: designId || null } };
+      localStorage.setItem(LS_MAP_KEY, JSON.stringify(map));
+      localStorage.setItem(LS_LAST_EMAIL_KEY, norm);
+      localStorage.removeItem(LS_LEGACY_EMAIL);
+      localStorage.removeItem(LS_LEGACY_TOKEN);
+      localStorage.removeItem(LS_LEGACY_DESIGN_ID);
+      return map;
+    }
+  } catch { /* non-fatal */ }
+  return {};
+}
 
 function persistAuthToLocalStorage() {
   try {
@@ -116,55 +157,60 @@ function persistAuthToLocalStorage() {
     const email = url.searchParams.get('email');
     const t = url.searchParams.get('t');
     const designId = url.searchParams.get('design_id');
-    if (email) localStorage.setItem(LS_KEYS.email, email);
-    if (t)     localStorage.setItem(LS_KEYS.t,     t);
-    if (designId) localStorage.setItem(LS_KEYS.designId, designId);
-    else          localStorage.removeItem(LS_KEYS.designId);
-  } catch { /* private mode etc. — non-fatal */ }
-}
-
-function clearAuthFromLocalStorage() {
-  try {
-    localStorage.removeItem(LS_KEYS.email);
-    localStorage.removeItem(LS_KEYS.t);
-    localStorage.removeItem(LS_KEYS.designId);
+    if (!email || !t) return;
+    const norm = email.trim().toLowerCase();
+    const map = readAuthMap();
+    map[norm] = { t, designId: designId || null };
+    localStorage.setItem(LS_MAP_KEY, JSON.stringify(map));
+    localStorage.setItem(LS_LAST_EMAIL_KEY, norm);
   } catch { /* non-fatal */ }
 }
 
-// Called once at bootstrap, before the probe. If the URL is missing
-// email/t/design_id but localStorage has them from a previous visit,
-// hydrate the URL via replaceState. This is what makes returning visits
-// to design.zomes.com auto-sign-in.
+function clearAuthFromLocalStorage() {
+  // Sign-out wipes the whole map — affects every email cached on this
+  // browser. (Per-email sign-out could come later if anyone asks.)
+  try {
+    localStorage.removeItem(LS_MAP_KEY);
+    localStorage.removeItem(LS_LAST_EMAIL_KEY);
+    localStorage.removeItem(LS_LEGACY_EMAIL);
+    localStorage.removeItem(LS_LEGACY_TOKEN);
+    localStorage.removeItem(LS_LEGACY_DESIGN_ID);
+  } catch { /* non-fatal */ }
+}
+
+// Called once at bootstrap, before the probe. Hydrates the URL with auth
+// params from localStorage so returning visits start signed-in.
 //
-// Identity-mismatch guard: if the URL already has an email AND that email
-// doesn't match localStorage's, don't hydrate. The user is following a
-// link as a different identity (e.g. an old email link with someone
-// else's email) and our cached token wouldn't validate against that
-// email anyway. Without this guard we'd silently rewrite the URL to a
-// different email than the one in the link.
+// Email-resolution rules:
+//   - URL has email AND matching map entry → hydrate that entry.
+//   - URL has email AND no matching entry  → leave URL alone (we don't
+//     have a valid token for that email; can't fake one).
+//   - URL has no email → fall back to last-used email if it has an entry.
 function hydrateAuthFromLocalStorage() {
   const url = new URL(location.href);
   const urlEmail = url.searchParams.get('email');
   const hasToken = !!url.searchParams.get('t');
   if (hasToken) return; // URL already has a token — leave everything alone.
-  let lsEmail, lsT, lsId;
-  try {
-    lsEmail = localStorage.getItem(LS_KEYS.email);
-    lsT     = localStorage.getItem(LS_KEYS.t);
-    lsId    = localStorage.getItem(LS_KEYS.designId);
-  } catch { return; }
-  if (!lsEmail || !lsT) return;
-  // Identity mismatch — do nothing. (User is following a link as a
-  // different identity; can't reuse our cached token.)
-  if (urlEmail && urlEmail.trim().toLowerCase() !== lsEmail.trim().toLowerCase()) {
-    return;
+
+  const map = readAuthMap();
+  if (!map || Object.keys(map).length === 0) return;
+
+  let targetEmail;
+  if (urlEmail) {
+    targetEmail = urlEmail.trim().toLowerCase();
+  } else {
+    try { targetEmail = localStorage.getItem(LS_LAST_EMAIL_KEY) || null; }
+    catch { targetEmail = null; }
   }
-  url.searchParams.set('email', lsEmail);
-  url.searchParams.set('t', lsT);
-  // Only restore design_id if the URL doesn't already have one (e.g. user
-  // landed on a deep-link to a specific design).
-  if (lsId && !url.searchParams.get('design_id')) {
-    url.searchParams.set('design_id', lsId);
+  if (!targetEmail) return;
+
+  const entry = map[targetEmail];
+  if (!entry || !entry.t) return;
+
+  url.searchParams.set('email', targetEmail);
+  url.searchParams.set('t', entry.t);
+  if (entry.designId && !url.searchParams.get('design_id')) {
+    url.searchParams.set('design_id', entry.designId);
   }
   history.replaceState(null, '', url.toString());
 }
