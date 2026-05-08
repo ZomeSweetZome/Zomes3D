@@ -258,7 +258,7 @@ Old links carry `email + name + phone + zipcode` in the query string ([3d-config
 
 ### Migration file
 
-`zomes_sdr/supabase/migrations/20260507300000_designs_table.sql` — see "Data model" section above.
+`zomes_sdr/supabase/migrations/20260507220000_designs_table.sql` — see "Data model" section above.
 
 ### Rollout sequence
 
