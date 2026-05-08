@@ -234,6 +234,15 @@
                   <span class="ar_button_order__caption_small">Save</span>
                 </div>
               </div>
+
+              <!-- Compact secondary button to open the summary popup without
+                   triggering a save. Useful for signed-in users whose Save
+                   click does a silent save (no summary) — they need a
+                   separate way to view the summary on demand. -->
+              <div id="view_summary_btn" class="ar_buy-btn ar_buy-btn--secondary" role="button" tabindex="0">
+                <div class="view_summary_btn__image"></div>
+                <span class="view_summary_btn__caption">View Summary</span>
+              </div>
             </div>
           </div>
 
@@ -397,8 +406,21 @@
             <div class="canvas_dimensions"></div>
 
             <div class="ar_total_amount_canvas__container">
-              <div id="canvas_button_save" class="canvas_button__save">
-                <div class="canvas_button__save_image"></div>
+              <!-- Two icon-buttons share grid-column 1 on portrait. The
+                   wrapper is needed because the parent is a 3-col grid;
+                   it lays them out side-by-side without disturbing the
+                   price + payment info cells. -->
+              <div class="canvas_button__group">
+                <div id="canvas_button_save" class="canvas_button__save">
+                  <div class="canvas_button__save_image"></div>
+                </div>
+
+                <!-- Mobile twin of #view_summary_btn. The desktop side panel
+                     is hidden on portrait, so we need a way to view the
+                     summary from the canvas footer too. Same click handler. -->
+                <div id="canvas_button_view_summary" class="canvas_button__view_summary" role="button" tabindex="0" aria-label="View Summary">
+                  <div class="canvas_button__view_summary_image"></div>
+                </div>
               </div>
 
               <div id="ar_total_price_2" class="ar_total_amount_canvas__price"></div>

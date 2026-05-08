@@ -1,0 +1,84 @@
+- generic [active]:
+  - generic [ref=e1]:
+    - generic [ref=e2]:
+      - link [ref=e4] [cursor=pointer]:
+        - /url: https://zomes.com/
+      - button "My Saved Designs" [ref=e6] [cursor=pointer]:
+        - generic [ref=e7]: My Saved Designs
+      - generic [ref=e8]:
+        - generic [ref=e12]:
+          - link [ref=e13] [cursor=pointer]:
+            - /url: mailto:hello@zomes.com
+          - link [ref=e14] [cursor=pointer]:
+            - /url: https://instagram.com/zomesweetzomes/
+          - link [ref=e15] [cursor=pointer]:
+            - /url: https://www.tiktok.com/@zomesweetzome?lang=en
+          - link [ref=e16] [cursor=pointer]:
+            - /url: https://www.pinterest.com/zomesweetzome/
+          - link [ref=e17] [cursor=pointer]:
+            - /url: https://x.com/zomesweetzome
+          - link [ref=e18] [cursor=pointer]:
+            - /url: https://www.facebook.com/zomesweetzome/
+          - link [ref=e19] [cursor=pointer]:
+            - /url: https://www.youtube.com/channel/UCWuJ4fwV2KJ0mfQjUa5VXzQ
+        - generic [ref=e23]:
+          - generic [ref=e24]:
+            - combobox [ref=e25]
+            - combobox "$" [ref=e28] [cursor=pointer]:
+              - textbox "$" [ref=e29]
+          - generic [ref=e30]:
+            - combobox [ref=e31]
+            - combobox "EN" [ref=e34] [cursor=pointer]:
+              - textbox "EN" [ref=e35]
+        - link "HOMEPAGE" [ref=e37] [cursor=pointer]:
+          - /url: https://www.zomes.com/?comet_token_override=4092626840242611546133283215383466790648880760
+          - text: HOMEPAGE
+    - generic [ref=e39]:
+      - generic [ref=e40]:
+        - generic [ref=e41]:
+          - generic [ref=e43]:
+            - generic [ref=e45]:
+              - generic [ref=e47]: + Tax (if applicable) & Shipping
+              - generic [ref=e48]:
+                - generic [ref=e49]: "Estimated Ship Date:"
+                - generic [ref=e51]: April 1, 2025
+            - generic [ref=e55] [cursor=pointer]: Save my design
+          - generic [ref=e56]:
+            - generic [ref=e58]: Info
+            - generic [ref=e60]:
+              - generic: Descriptions
+              - generic [ref=e61] [cursor=pointer]: Specs
+        - generic [ref=e62]:
+          - generic:
+            - generic [ref=e64]:
+              - generic [ref=e68] [cursor=pointer]: Highlights
+              - generic [ref=e72] [cursor=pointer]: Dimensions
+              - generic [ref=e76] [cursor=pointer]: Staging
+            - generic [ref=e77]:
+              - generic [ref=e80] [cursor=pointer]: Inside
+              - generic [ref=e83] [cursor=pointer]: Share Design
+              - generic [ref=e86] [cursor=pointer]: See in real life
+      - generic:
+        - generic:
+          - img "Marevo_AR. Use mouse, touch or arrow keys to move."
+          - generic:
+            - generic:
+              - generic:
+                - img
+        - region "Live announcements":
+          - status
+      - generic [ref=e91]:
+        - generic [ref=e92]: Choose a model to configure
+        - generic [ref=e93]:
+          - button "ZomePod 120 sqft" [ref=e96] [cursor=pointer]
+          - button "ZomeOffice 170 sqft" [ref=e99] [cursor=pointer]
+          - button "ZomeStudio 300 sqft" [ref=e102] [cursor=pointer]
+        - generic [ref=e103]:
+          - generic [ref=e105]: or continue a saved design
+          - generic [ref=e107] [cursor=pointer]:
+            - generic [ref=e108]: 🟢
+            - button "My Studio Studio · Updated 1mo ago" [ref=e109]:
+              - generic [ref=e110]: My Studio
+              - generic [ref=e111]: Studio · Updated 1mo ago
+  - iframe [ref=e112]:
+    

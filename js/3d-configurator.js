@@ -3217,8 +3217,14 @@ async function populateFormFromUrl() {
   }
 
   if (name && phone && email && zipcode) {
-    // console.log("🚀🚀🚀 Start Summary 🚀🚀🚀");
-    proceedSummaryAndPdf(false);
+    // Skip auto-summary when the URL has a saved-designs token. That means
+    // the user opened the design from "My Saved Designs" (or via a token
+    // link) to keep editing — they want the configurator, not the summary.
+    // The legacy email-link flow (no token) keeps its existing behavior.
+    const hasSavedDesignsToken = !!currentUrl.searchParams.get('t');
+    if (!hasSavedDesignsToken) {
+      proceedSummaryAndPdf(false);
+    }
     userName = $('#form_name').val();
     userPhone = $('#form_phone').val();
     userEmail = $('#form_email').val();
@@ -3692,6 +3698,20 @@ function summaryBtnsHandler() {
         });
       }
     }, 250);
+  });
+
+  // "View Summary" buttons (desktop side panel + mobile canvas footer).
+  // Opens the summary popup without the contact form. If the camera is
+  // inside the model, fly out first so the user sees the elevations
+  // populated correctly — same camera step the save flow uses.
+  $(document).on('click keydown', '#view_summary_btn, #canvas_button_view_summary', function (ev) {
+    if (ev.type === 'keydown' && ev.key !== 'Enter' && ev.key !== ' ') return;
+    ev.preventDefault();
+    if (isCameraInside) {
+      flyCameraTo('outMain', 'outside', () => proceedSummaryAndPdf(false));
+    } else {
+      proceedSummaryAndPdf(false);
+    }
   });
 
   $('.summary__link').on('click', function () {

@@ -1119,6 +1119,75 @@ select2-container .select-wrapper.language-picker {
   display: none;
 }
 
+/* ── "View Summary" buttons ────────────────────────────────────────────────
+   Two twins: one in the side panel next to #ar_button_order (desktop /
+   landscape), and one in the canvas footer next to #canvas_button_save
+   (portrait mobile, where the side panel is display:none).
+   The side-panel twin is styled as a smaller secondary outlined button. */
+
+/* Higher specificity (.ar_buy-btn.ar_buy-btn--secondary) so the wider
+   .ar_menu_footer_container .ar_buy-btn { width: 100% } rule doesn't win. */
+.ar_buy-btn.ar_buy-btn--secondary {
+  flex: 0 0 auto;
+  width: auto;
+  height: 48px;
+  padding: 0 18px;
+  background-color: var(--marevo-color-text-white, #ffffff);
+  border: 1px solid var(--marevo-color-text-black, #000);
+  color: var(--marevo-color-text-black, #000);
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.ar_buy-btn.ar_buy-btn--secondary:hover {
+  background-color: var(--marevo-color-text-black, #000);
+  color: var(--marevo-color-text-white, #ffffff);
+}
+
+/* Simple "lines on a page" glyph, drawn in CSS so we don't need an SVG. */
+.view_summary_btn__image,
+.canvas_button__view_summary_image {
+  width: 14px;
+  height: 16px;
+  background: transparent;
+  border: 1.5px solid currentColor;
+  border-radius: 2px;
+  position: relative;
+  display: none; /* desktop default — caption-only label */
+}
+.view_summary_btn__image::before,
+.view_summary_btn__image::after,
+.canvas_button__view_summary_image::before,
+.canvas_button__view_summary_image::after {
+  content: "";
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  height: 1.5px;
+  background: currentColor;
+}
+.view_summary_btn__image::before,
+.canvas_button__view_summary_image::before { top: 3px; }
+.view_summary_btn__image::after,
+.canvas_button__view_summary_image::after  { top: 7px; box-shadow: 0 3px 0 0 currentColor; }
+
+.view_summary_btn__caption {
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Mobile-portrait twin: a 48x35 icon-only square next to canvas_button_save. */
+.canvas_button__view_summary {
+  display: none;
+}
+
 .ar_book-btn {
   background-color: var(--marevo-color-text-black, #000);
   border: 1px solid var(--marevo-color-text-black, #000);
@@ -2269,11 +2338,22 @@ textarea[name="ar_order_comment"] {
 
 .summary__popup-heading {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 8px;
 }
 
 .summary__popup-heading[hidden] {
   display: none;
+}
+
+/* When the hero heading is visible, collapse the legacy gaps that were
+   tuned for the heading-less layout: pull the BACK link closer above and
+   the elevation views closer below. */
+.summary__footer_container:has(+ .summary__popup-heading:not([hidden])) .summary__link {
+  margin-bottom: 24px;
+}
+
+.summary__popup-heading:not([hidden]) + .summary__images_container {
+  margin-top: 24px;
 }
 
 .summary__popup-title {
@@ -3570,6 +3650,20 @@ body.popup-open {
     display: none;
   }
 
+  /* Compact "View Summary": shrink padding and hide caption — icon only. */
+  .ar_buy-btn--secondary {
+    height: 40px;
+    width: 40px;
+    padding: 0;
+  }
+  .ar_buy-btn--secondary .view_summary_btn__caption {
+    display: none;
+  }
+  .ar_buy-btn--secondary .view_summary_btn__image {
+    display: block;
+    margin-right: 0;
+  }
+
   .contact_form__button .ar_button_order__caption {
     display: flex;
   }
@@ -4342,6 +4436,31 @@ body.popup-open {
     background-color: var(--marevo-color-text-black, #000000);
     border: 1px solid var(--marevo-color-text-black, #000000);
     border-radius: 50px;
+  }
+
+  /* Two icon-buttons (Save + View Summary) packed into the first grid cell. */
+  .canvas_button__group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* Show the canvas-footer "View Summary" twin on portrait. */
+  .canvas_button__view_summary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 35px;
+    background-color: var(--marevo-color-text-white, #ffffff);
+    border: 1px solid var(--marevo-color-text-black, #000000);
+    border-radius: 50px;
+    color: var(--marevo-color-text-black, #000);
+    cursor: pointer;
+  }
+
+  .canvas_button__view_summary_image {
+    display: block;
   }
 
   .canvas_button__save_image {
@@ -5897,12 +6016,28 @@ only screen and (-webkit-device-pixel-ratio: 3) and (max-width: 1170px) {
   position: relative;
   border: 1px solid var(--marevo-color-popup-border, #d8d8dc);
   border-radius: 12px;
-  padding: 16px;
+  padding: 16px 16px 16px 22px;
   background: white;
   display: flex;
   flex-direction: column;
   gap: 8px;
   transition: border-color 0.15s ease, transform 0.15s ease;
+  overflow: hidden;
+  /* Per-card accent set inline by JS via --card-accent. Painted as a
+     bold left stripe + a tinted icon tile so a row of same-zome-type
+     designs varies at a glance. Falls back to a neutral gray. */
+  --card-accent: #d1d5db;
+}
+
+/* Left accent stripe — pseudo so it sits inside the rounded corners. */
+.my-designs__card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  background: var(--card-accent);
 }
 
 .my-designs__card:hover {
@@ -5914,7 +6049,9 @@ only screen and (-webkit-device-pixel-ratio: 3) and (max-width: 1170px) {
   width: 48px;
   height: 48px;
   border-radius: 8px;
-  background: #f3f4f6;
+  /* Tinted icon tile uses a 30% mix of the accent toward white — soft
+     enough that the zome-type emoji stays readable. */
+  background: color-mix(in srgb, var(--card-accent) 30%, white);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -5928,6 +6065,35 @@ only screen and (-webkit-device-pixel-ratio: 3) and (max-width: 1170px) {
 .my-designs__card-icon[data-zome-type="studio"]::before { content: "🟢"; }
 .my-designs__card-icon[data-zome-type="unknown"]::before,
 .my-designs__card-icon[data-zome-type=""]::before        { content: "◯"; }
+
+/* "New Design" card — same shape, dashed green border, big plus glyph.
+   Hides the per-card left stripe (it doesn't represent a saved design). */
+.my-designs__card--new {
+  cursor: pointer;
+  border: 2px dashed #22c55e;
+  background: #f0fdf4;
+  padding-left: 16px;
+}
+.my-designs__card--new::before { display: none; }
+.my-designs__card--new:hover {
+  border-color: #16a34a;
+  background: #dcfce7;
+}
+.my-designs__card--new .my-designs__card-name {
+  color: #166534;
+}
+.my-designs__card--new .my-designs__card-meta {
+  color: #15803d;
+}
+.my-designs__card-icon--new {
+  background: #bbf7d0;
+  color: #15803d;
+  font-size: 36px;
+  font-weight: 300;
+  line-height: 1;
+}
+/* Override the zome-type ::before content rules for the new-design icon. */
+.my-designs__card-icon--new::before { content: none !important; }
 
 .my-designs__card-name {
   font-weight: 600;

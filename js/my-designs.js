@@ -287,17 +287,52 @@ function relativeTime(iso) {
   return `${Math.round(mo / 12)}y ago`;
 }
 
+// Per-design accent palette. Decoupled from zome_type so a row of, say, 5
+// studios doesn't render as 5 identical green tiles. Hash design.id to an
+// index — stable across renders so a given design keeps its color.
+const CARD_ACCENT_PALETTE = [
+  '#fdba74', // orange-300
+  '#93c5fd', // blue-300
+  '#86efac', // green-300
+  '#c4b5fd', // violet-300
+  '#f9a8d4', // pink-300
+  '#fcd34d', // amber-300
+  '#5eead4', // teal-300
+  '#fca5a5', // red-300
+];
+
+function accentColorForDesign(design) {
+  const seed = String(design.id ?? design.name ?? '');
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) | 0;
+  return CARD_ACCENT_PALETTE[Math.abs(h) % CARD_ACCENT_PALETTE.length];
+}
+
+// Static "New Design" card — same shape as a regular card, distinct accent.
+// Click clears design_id (and the per-email storage entry) and reloads so
+// the configurator boots into the model picker.
+const NEW_DESIGN_CARD_HTML = `
+  <div class="my-designs__card my-designs__card--new" data-action="new" role="button" tabindex="0">
+    <div class="my-designs__card-icon my-designs__card-icon--new" aria-hidden="true">+</div>
+    <div class="my-designs__card-name">New Design</div>
+    <div class="my-designs__card-meta">Start fresh</div>
+  </div>`;
+
 function renderCards(designs) {
   const d = $dom();
+  // Always include the "New Design" card. Even with zero saved designs the
+  // user gets a quick way to start one — replaces the empty-state nudge.
   if (!designs.length) {
-    d.grid.innerHTML = `
+    d.grid.innerHTML = NEW_DESIGN_CARD_HTML + `
       <div class="my-designs__empty">
-        You haven't saved any designs yet. Configure a Zome and click Save.
+        You haven't saved any designs yet. Click + to start one.
       </div>`;
     return;
   }
-  d.grid.innerHTML = designs.map((design) => `
-    <div class="my-designs__card" data-id="${escapeHtml(design.id)}" data-design-url="${escapeHtml(design.design_url)}" data-zome-type="${escapeHtml(design.zome_type ?? '')}">
+  const cards = designs.map((design) => {
+    const accent = accentColorForDesign(design);
+    return `
+    <div class="my-designs__card" style="--card-accent: ${accent};" data-id="${escapeHtml(design.id)}" data-design-url="${escapeHtml(design.design_url)}" data-zome-type="${escapeHtml(design.zome_type ?? '')}">
       <div class="my-designs__card-icon" data-zome-type="${escapeHtml(design.zome_type ?? 'unknown')}"></div>
       <div class="my-designs__card-name">${escapeHtml(design.name)}</div>
       <div class="my-designs__card-meta">
@@ -312,7 +347,34 @@ function renderCards(designs) {
         <li><button type="button" data-action="duplicate">Duplicate</button></li>
         <li><button type="button" data-action="delete">Delete</button></li>
       </ul>
-    </div>`).join('');
+    </div>`;
+  });
+  d.grid.innerHTML = NEW_DESIGN_CARD_HTML + cards.join('');
+}
+
+// Click "New Design" → drop design_id from URL (and from the persisted
+// per-email entry) and reload. The configurator boots into EmptyURLParams,
+// which shows the model-picker popup — exactly the fresh-start state.
+function startNewDesign() {
+  const auth = getAuth();
+  const url = new URL(location.origin + location.pathname);
+  if (auth) {
+    url.searchParams.set('email', auth.email);
+    url.searchParams.set('t', auth.t);
+  }
+  // Forget the previously-edited design id for this email so hydration
+  // on the next load doesn't paste it back into the URL.
+  try {
+    if (auth) {
+      const map = readAuthMap();
+      const norm = auth.email.trim().toLowerCase();
+      if (map[norm]) {
+        map[norm] = { ...map[norm], designId: null };
+        localStorage.setItem(LS_MAP_KEY, JSON.stringify(map));
+      }
+    }
+  } catch { /* non-fatal */ }
+  location.assign(url.toString());
 }
 
 function showState(which) {
@@ -336,6 +398,14 @@ function findCard(el) {
 }
 
 async function handleGridClick(ev) {
+  // "New Design" tile is a card with data-action="new" — handle without
+  // requiring a button-inside-card click target.
+  const newCard = ev.target.closest('.my-designs__card--new');
+  if (newCard) {
+    startNewDesign();
+    return;
+  }
+
   const btn = ev.target.closest('button');
   if (!btn) return;
   const action = btn.dataset.action;
@@ -672,6 +742,13 @@ function init() {
   d.signoutBtn?.addEventListener('click', handleSignOut);
   d.sendLinkForm?.addEventListener('submit', handleSendLinkSubmit);
   d.grid?.addEventListener('click', handleGridClick);
+  d.grid?.addEventListener('keydown', (ev) => {
+    if (ev.key !== 'Enter' && ev.key !== ' ') return;
+    if (ev.target.closest('.my-designs__card--new')) {
+      ev.preventDefault();
+      startNewDesign();
+    }
+  });
   document.addEventListener('click', handleDocClick);
   // Esc closes the popup.
   document.addEventListener('keydown', (ev) => {
