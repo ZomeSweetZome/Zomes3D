@@ -102,6 +102,61 @@ function getDesignId() {
   return new URL(location.href).searchParams.get('design_id');
 }
 
+// ── localStorage hydration for same-origin returns ──────────────────────────
+//
+// localStorage is per-origin, so this only carries the user across visits
+// to design.zomes.com (not from zomes.com). Cross-site identification is a
+// separate, bigger problem (HubSpot utk → email resolution).
+
+const LS_KEYS = { email: 'savedDesignsEmail', t: 'savedDesignsToken', designId: 'savedDesignsDesignId' };
+
+function persistAuthToLocalStorage() {
+  try {
+    const url = new URL(location.href);
+    const email = url.searchParams.get('email');
+    const t = url.searchParams.get('t');
+    const designId = url.searchParams.get('design_id');
+    if (email) localStorage.setItem(LS_KEYS.email, email);
+    if (t)     localStorage.setItem(LS_KEYS.t,     t);
+    if (designId) localStorage.setItem(LS_KEYS.designId, designId);
+    else          localStorage.removeItem(LS_KEYS.designId);
+  } catch { /* private mode etc. — non-fatal */ }
+}
+
+function clearAuthFromLocalStorage() {
+  try {
+    localStorage.removeItem(LS_KEYS.email);
+    localStorage.removeItem(LS_KEYS.t);
+    localStorage.removeItem(LS_KEYS.designId);
+  } catch { /* non-fatal */ }
+}
+
+// Called once at bootstrap, before the probe. If the URL is missing
+// email/t/design_id but localStorage has them from a previous visit,
+// hydrate the URL via replaceState. This is what makes returning visits
+// to design.zomes.com auto-sign-in.
+function hydrateAuthFromLocalStorage() {
+  const url = new URL(location.href);
+  const hasEmail = !!url.searchParams.get('email');
+  const hasToken = !!url.searchParams.get('t');
+  if (hasEmail && hasToken) return; // URL already has auth — leave it alone.
+  let email, t, designId;
+  try {
+    email    = localStorage.getItem(LS_KEYS.email);
+    t        = localStorage.getItem(LS_KEYS.t);
+    designId = localStorage.getItem(LS_KEYS.designId);
+  } catch { return; }
+  if (!email || !t) return;
+  url.searchParams.set('email', email);
+  url.searchParams.set('t', t);
+  // Only restore design_id if the URL doesn't already have one (e.g. user
+  // landed on a deep-link to a specific design).
+  if (designId && !url.searchParams.get('design_id')) {
+    url.searchParams.set('design_id', designId);
+  }
+  history.replaceState(null, '', url.toString());
+}
+
 // ── API client ──────────────────────────────────────────────────────────────
 
 function authedUrl(path, auth) {
@@ -331,8 +386,9 @@ async function refresh() {
     showState('loading');
     const result = await fetchDesigns(auth);
     if (result.unauthorized) {
-      // Token rejected — strip from URL and fall back to signed-out form.
+      // Token rejected — strip from URL and storage, fall back to signed-out form.
       stripAuthFromUrl();
+      clearAuthFromLocalStorage();
       hideHeaderButton();
       showState('signedOut');
       return;
@@ -378,6 +434,7 @@ async function probeForHeaderButton() {
     const result = await fetchDesigns(auth);
     if (result.unauthorized) {
       stripAuthFromUrl();
+      clearAuthFromLocalStorage();
       hideHeaderButton();
       renderModelPickerSavedDesigns([], null);
       updateCurrentDesignLabel([]);
@@ -389,6 +446,8 @@ async function probeForHeaderButton() {
       updateCurrentDesignLabel([]);
       return;
     }
+    // Probe succeeded with a valid token — persist for next visit.
+    persistAuthToLocalStorage();
     const designs = result.designs ?? [];
     if (designs.length > 0) {
       revealHeaderButton();
@@ -485,7 +544,13 @@ async function handleSendLinkSubmit(ev) {
 
 function handleSignOut() {
   stripAuthFromUrl();
+  clearAuthFromLocalStorage();
   hideHeaderButton();
+  // Hide the current-design label and the model-picker saved-designs
+  // section so the page truly looks "anonymous" after sign out.
+  const d = $dom();
+  if (d.currentDesignLabel) d.currentDesignLabel.hidden = true;
+  if (d.pickerSection) d.pickerSection.hidden = true;
   close();
 }
 
@@ -549,6 +614,10 @@ function init() {
 }
 
 function bootstrap() {
+  // Hydrate URL from localStorage BEFORE init/probe so the rest of the
+  // module's logic (auth detection, header reveal, current-design label)
+  // sees the restored auth params.
+  hydrateAuthFromLocalStorage();
   init();
   // Probe in the background so the header button only ever appears for
   // signed-in users with at least one design. No spinner, no UI lock —
