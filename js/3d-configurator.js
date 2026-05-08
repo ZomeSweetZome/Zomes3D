@@ -4041,6 +4041,18 @@ function collectSummary() {
   const detailsContainer = $('.summary__popup-content .details');
   detailsContainer.empty();
 
+  const currentDesignName = (document.querySelector('#current_design_label .current-design__name')?.textContent || '').trim();
+  if (currentDesignName) {
+    const designGroup = $('<div>', { class: 'details__group details__type_select details__design', id: 'details__design' });
+    const designItem = $('<div>', { class: 'details__item details__active' });
+    const designText = $('<div>', { class: 'details__item_text_container' });
+    $('<div>', { class: 'details__group_title', text: 'Design' }).appendTo(designText);
+    $('<div>', { class: 'details__item_title', text: currentDesignName }).appendTo(designText);
+    designText.appendTo(designItem);
+    designItem.appendTo(designGroup);
+    designGroup.appendTo(detailsContainer);
+  }
+
   $('.ar_filter_group').each(function () {
     const group = $(this);
     const groupId = group.attr('id');
