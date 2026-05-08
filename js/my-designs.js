@@ -480,9 +480,14 @@ async function refresh() {
 //   - Should the header button be visible?
 //   - Should the model-picker show a "continue a saved design" section?
 // Called automatically by init() when signed in.
+// Cache of the most recent designs probe result. Other modules read it
+// via getCurrentDesign() (used by the configurator's summary heading).
+let lastFetchedDesigns = [];
+
 async function probeForHeaderButton() {
   const auth = getAuth();
   if (!auth) {
+    lastFetchedDesigns = [];
     hideHeaderButton();
     renderModelPickerSavedDesigns([], null);
     updateCurrentDesignLabel([]);
@@ -491,6 +496,7 @@ async function probeForHeaderButton() {
   try {
     const result = await fetchDesigns(auth);
     if (result.unauthorized) {
+      lastFetchedDesigns = [];
       stripAuthFromUrl();
       clearAuthFromLocalStorage();
       hideHeaderButton();
@@ -499,6 +505,7 @@ async function probeForHeaderButton() {
       return;
     }
     if (result.unavailable) {
+      lastFetchedDesigns = [];
       hideHeaderButton();
       renderModelPickerSavedDesigns([], null);
       updateCurrentDesignLabel([]);
@@ -507,6 +514,7 @@ async function probeForHeaderButton() {
     // Probe succeeded with a valid token — persist for next visit.
     persistAuthToLocalStorage();
     const designs = result.designs ?? [];
+    lastFetchedDesigns = designs;
     if (designs.length > 0) {
       revealHeaderButton();
     } else {
@@ -703,6 +711,15 @@ window.MyDesigns = {
   // or silent). URL has just been updated with the new design_id; re-probe
   // so the header label reflects the design just saved.
   afterSave: probeForHeaderButton,
+  // Returns the design row currently being edited (URL has design_id
+  // resolving to one of the user's designs), or null. Used by the
+  // configurator's summary popup to render the "Design name + last
+  // saved" heading.
+  getCurrentDesign() {
+    const id = getDesignId();
+    if (!id) return null;
+    return lastFetchedDesigns.find((x) => x.id === id) || null;
+  },
   // Hook the configurator can register if it can rehydrate from URL params
   // without a full reload. Default behavior is location.reload().
   onOpenDesign: null,

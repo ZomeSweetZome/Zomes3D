@@ -4035,13 +4035,58 @@ function closeContactForm() {
   $('.contact_form__popup-overlay').removeClass('active');
 }
 
+// Friendly "last saved" string for the summary hero subtitle.
+//   < 30s   → "Just saved"
+//   < 60s   → "Last saved 12s ago"
+//   < 60m   → "Last saved 5m ago"
+//   < 24h   → "Last saved 3h ago"
+//   < 30d   → "Last saved 2d ago"
+//   else    → "Last saved June 30, 2025"
+function formatLastSavedAt(iso) {
+  if (!iso) return '';
+  const ms = Date.now() - new Date(iso).getTime();
+  if (!Number.isFinite(ms) || ms < 0) return '';
+  const sec = Math.round(ms / 1000);
+  if (sec < 30)  return 'Just saved';
+  if (sec < 60)  return `Last saved ${sec}s ago`;
+  const min = Math.round(sec / 60);
+  if (min < 60)  return `Last saved ${min}m ago`;
+  const hr  = Math.round(min / 60);
+  if (hr  < 24)  return `Last saved ${hr}h ago`;
+  const d   = Math.round(hr / 24);
+  if (d   < 30)  return `Last saved ${d}d ago`;
+  const date = new Date(iso);
+  return `Last saved ${date.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}`;
+}
+
 function collectSummary() {
   pdfContentData.length = 0;
 
   const detailsContainer = $('.summary__popup-content .details');
   detailsContainer.empty();
 
-  const currentDesignName = (document.querySelector('#current_design_label .current-design__name')?.textContent || '').trim();
+  // Hero heading: design name + last-saved date. Shown only when a saved
+  // design is loaded (URL has design_id resolving to one of the user's).
+  // Empty/hidden otherwise — the popup just shows the elevation views and
+  // breakdown.
+  const heading = document.getElementById('summary_heading');
+  const headingTitle = document.getElementById('summary_heading_title');
+  const headingSubtitle = document.getElementById('summary_heading_subtitle');
+  const currentDesign = window.MyDesigns?.getCurrentDesign?.() ?? null;
+  if (heading && headingTitle && headingSubtitle) {
+    if (currentDesign?.name) {
+      headingTitle.textContent = currentDesign.name;
+      headingSubtitle.textContent = formatLastSavedAt(currentDesign.updated_at);
+      heading.hidden = false;
+    } else {
+      headingTitle.textContent = '';
+      headingSubtitle.textContent = '';
+      heading.hidden = true;
+    }
+  }
+
+  // "Design" row at top of the breakdown table.
+  const currentDesignName = currentDesign?.name ?? '';
   if (currentDesignName) {
     const designGroup = $('<div>', { class: 'details__group details__type_select details__design', id: 'details__design' });
     const designItem = $('<div>', { class: 'details__item details__active' });
