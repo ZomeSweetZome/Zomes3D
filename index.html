@@ -4,6 +4,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Prevent saved-designs auth params (?email=&t=&design_id=) from leaking
+       to outbound destinations via the Referer header. -->
+  <meta name="referrer" content="strict-origin" />
   <title>Zomes Designer</title>
   <meta name="description" content="Zomes 3D Configurator." />
   <meta name="author" content="Pavlo Voronin" />
@@ -105,6 +108,15 @@
     <div id="main-header">
       <div id="identity">
         <a href="https://zomes.com/"></a>
+      </div>
+
+      <!-- Saved-designs entry. Hidden by default; revealed by js/my-designs.js
+           only when the user is signed in AND has at least one saved design.
+           See MyDesigns.revealHeaderButton() / hideHeaderButton(). -->
+      <div id="my-designs-entry" hidden>
+        <button type="button" id="my_designs_btn" class="my-designs-entry__btn" aria-label="My Saved Designs">
+          <span class="my-designs-entry__label">My Saved Designs</span>
+        </button>
       </div>
 
       <div class="header_blocks">
@@ -716,6 +728,54 @@
         </div>
       </div>
 
+      <!-- My designs popup. Hydrated by js/my-designs.js. Two states (signed-in
+           grid of cards, signed-out email-entry form) toggled by the [hidden]
+           attribute. -->
+      <div class="my-designs__popup-overlay" id="my_designs_popup">
+        <div class="my-designs__popup-content">
+          <button type="button" class="my-designs__close_btn" id="my_designs_close" aria-label="Close">×</button>
+
+          <h2 class="my-designs__title">My Saved Designs</h2>
+
+          <!-- Loading -->
+          <div class="my-designs__loading" id="my_designs_loading" hidden>Loading…</div>
+
+          <!-- Error / unavailable -->
+          <div class="my-designs__error" id="my_designs_error" hidden></div>
+
+          <!-- Signed-in: grid of cards -->
+          <div class="my-designs__signed-in" id="my_designs_signed_in" hidden>
+            <div class="my-designs__grid" id="my_designs_grid">
+              <!-- Cards rendered by JS. Empty state injected by JS when no designs. -->
+            </div>
+            <div class="my-designs__footer">
+              <span class="my-designs__email" id="my_designs_email"></span>
+              <button type="button" id="my_designs_signout" class="my-designs__signout">Sign out</button>
+            </div>
+          </div>
+
+          <!-- Signed-out: email-entry form -->
+          <div class="my-designs__signed-out" id="my_designs_signed_out" hidden>
+            <p class="my-designs__hint">
+              Enter your email and we'll send you a link to your saved designs.
+            </p>
+            <form id="my_designs_send_link_form" class="my-designs__send-form">
+              <input type="email" name="email" required placeholder="you@example.com" autocomplete="email" />
+              <button type="submit">Send link</button>
+            </form>
+            <p class="my-designs__hint my-designs__hint--small">
+              Don't have any saved yet? Just configure and click Save.
+            </p>
+            <div class="my-designs__sent-confirm" id="my_designs_sent_confirm" hidden>
+              If you have saved designs, we just emailed you a link.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toast container for transient notifications (welcome-back, saved). -->
+      <div id="my_designs_toast" class="my-designs__toast" hidden></div>
+
 
       <!-- calendly popUp  -->
       <div id="calendlyBlock" class="calendly__container">
@@ -922,6 +982,7 @@
 <script type="module" src="./js/3d-configurator.js"></script>
 <script type="module" src="./js/3d-scene.js"></script>
 <script type="module" src="./js/ui-controller.js"></script>
+<script type="module" src="./js/my-designs.js"></script>
 <script type="module" src="./js/pdf-maker.js"></script>
 <!-- MAREVO MODEL VIEWER -->
 <script type="module" src="./js/model-viewer_2_2_0/dist/model-viewer.marevo.min.js"></script>

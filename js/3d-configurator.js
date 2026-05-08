@@ -3101,6 +3101,15 @@ async function PrepareUI() {
         const formData = new FormData($form[0]);
         formData.append('designURL', window.location.href);
 
+        // Saved-designs: pass the existing design_id + token so the webhook
+        // knows whether this is an update (design_id present) or a new save.
+        // Anonymous first-saves omit both.
+        const _url = new URL(window.location.href);
+        const _designId = _url.searchParams.get('design_id');
+        const _token = _url.searchParams.get('t');
+        if (_designId) formData.append('design_id', _designId);
+        if (_token) formData.append('t', _token);
+
         try {
           console.log("Submitting form...");
           const response = await fetch($form.attr('action'), {
@@ -3108,13 +3117,30 @@ async function PrepareUI() {
             body: formData
           });
 
-          const contentType = response.headers.get('content-type');
-          if (contentType && contentType.includes('application/json')) {
-            const data = await response.json();
-            // console.log('🚀 Success:', data);
-          } else {
-            const textData = await response.text();
-            // console.log('🚀 Success:', textData);
+          if (response.ok) {
+            const contentType = response.headers.get('content-type') ?? '';
+            if (contentType.includes('application/json')) {
+              const data = await response.json();
+              // Mint the signed-in URL: ?…&design_id=&email=&t=. From now on
+              // the browser session is authenticated for the saved-designs
+              // library and subsequent saves can run silently.
+              if (data.email || data.t || data.design_id) {
+                const next = new URL(window.location.href);
+                if (data.email)     next.searchParams.set('email',     data.email);
+                if (data.t)         next.searchParams.set('t',         data.t);
+                if (data.design_id) next.searchParams.set('design_id', data.design_id);
+                window.history.replaceState(null, '', next.toString());
+              }
+              // We just saved a design — the user now has ≥ 1. Reveal the
+              // header entry button immediately (no need to wait for the
+              // background probe to confirm).
+              if (data.design_id && window.MyDesigns) {
+                window.MyDesigns.revealHeaderButton();
+              }
+              if (data.welcome_back && window.MyDesigns) {
+                window.MyDesigns.showWelcomeBackToast();
+              }
+            }
           }
         } catch (error) {
           console.error('🚀 Error:', error);
@@ -3638,6 +3664,33 @@ function summaryBtnsHandler() {
       isOpeningSummary = false;
     }
 
+    // Saved-designs: when the URL has email + t, the user is "signed in" and
+    // we have all of name/phone/email/zipcode in localStorage from their
+    // first save. Skip the summary + contact form entirely; just POST and
+    // toast. Falls back to the normal flow if the silent save errors out
+    // (e.g. localStorage was cleared so required fields are missing).
+    if (isSignedInForSavedDesigns()) {
+      silentSaveDesign().then((ok) => {
+        if (ok) {
+          restore();
+        } else {
+          // Graceful fallback — silent save failed; show the form.
+          setTimeout(() => {
+            if (!isCameraInside) {
+              proceedSummaryAndPdf(!isFinalized);
+              restore();
+            } else {
+              flyCameraTo('outMain', 'outside', () => {
+                proceedSummaryAndPdf(!isFinalized);
+                restore();
+              });
+            }
+          }, 0);
+        }
+      });
+      return;
+    }
+
     // Defer the popup-opening work so the browser actually paints the
     // "Saving design..." caption first. Without this delay, the camera-
     // outside path runs synchronously and the popup covers the button
@@ -3688,6 +3741,90 @@ function proceedSummaryAndPdf(shouldOpenForm = true) {
   openSummary();
   shouldOpenForm && openContactForm();
   $('.summary__popup-overlay').scrollTop(0);
+}
+
+// ── Saved-designs: silent-save helpers ──────────────────────────────────────
+//
+// When the URL carries ?email=&t=, the user is "signed in" via the stateless
+// HMAC-signed token (see lib/auth/designToken.ts in zomes_sdr). Subsequent
+// saves skip the summary + contact form entirely; we POST directly to the
+// configurator webhook with name/phone/zipcode pulled from localStorage
+// (cached from their first form submission).
+
+function isSignedInForSavedDesigns() {
+  const url = new URL(window.location.href);
+  return !!(url.searchParams.get('email') && url.searchParams.get('t'));
+}
+
+async function silentSaveDesign() {
+  // Required by the existing webhook validator (validateSubmission). If any
+  // is missing, fall back to the form so the user can refill.
+  const cachedName    = localStorage.getItem('userName')    || userName;
+  const cachedPhone   = localStorage.getItem('userPhone')   || userPhone;
+  const cachedEmail   = localStorage.getItem('userEmail')   || userEmail;
+  const cachedZip     = localStorage.getItem('userZipcode') || userZipcode;
+  if (!cachedName || !cachedPhone || !cachedEmail || !cachedZip) {
+    return false;
+  }
+
+  // Make sure the URL reflects the current configuration before we send it.
+  // WriteURLParameters debounces by 100ms; sleep just past that so designURL
+  // captures the user's latest tweaks instead of a stale config.
+  WriteURLParameters();
+  await new Promise((r) => setTimeout(r, 150));
+
+  const url = new URL(window.location.href);
+  const designId = url.searchParams.get('design_id');
+  const token    = url.searchParams.get('t');
+
+  const fd = new FormData();
+  fd.append('name', cachedName);
+  fd.append('phone', cachedPhone);
+  fd.append('email', cachedEmail);
+  fd.append('zipcode', cachedZip);
+  fd.append('email2', '');                    // honeypot
+  fd.append('designURL', window.location.href);
+  fd.append('totalamount_number', String(totalAmount));
+  fd.append('totalamount_string', `${totalAmount}`);
+  if (token)    fd.append('t',         token);
+  if (designId) fd.append('design_id', designId);
+
+  try {
+    const res = await fetch('https://sdr.zomes.com/api/webhooks/configurator', {
+      method: 'POST',
+      body: fd,
+    });
+    if (!res.ok) {
+      console.warn('[silent-save] HTTP', res.status);
+      return false;
+    }
+    const data = await res.json().catch(() => null);
+    if (!data || !data.ok) {
+      console.warn('[silent-save] non-ok response:', data);
+      return false;
+    }
+    // Update URL with the response (server may issue a fresh design_id on
+    // save-as-new, or echo the existing one on update).
+    const next = new URL(window.location.href);
+    if (data.email)     next.searchParams.set('email',     data.email);
+    if (data.t)         next.searchParams.set('t',         data.t);
+    if (data.design_id) next.searchParams.set('design_id', data.design_id);
+    window.history.replaceState(null, '', next.toString());
+
+    if (window.MyDesigns) {
+      // Save just succeeded → the user definitely has ≥ 1 design now.
+      window.MyDesigns.revealHeaderButton();
+      if (data.welcome_back) {
+        window.MyDesigns.showWelcomeBackToast();
+      } else {
+        window.MyDesigns.showSavedToast();
+      }
+    }
+    return true;
+  } catch (err) {
+    console.error('[silent-save] error:', err);
+    return false;
+  }
 }
 
 function getPdfBtnHandler() {

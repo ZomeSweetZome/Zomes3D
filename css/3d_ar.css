@@ -5682,3 +5682,408 @@ only screen and (-webkit-device-pixel-ratio: 3) and (max-width: 1170px) {
 .summary__popup-overlay .popup-close {
   display: none;
 }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   My Designs library — header button, popup, cards, toast.
+
+   Mirrors the .contact_form__popup-* idiom so the popup feels native
+   alongside the existing contact form: same border, radius, blur.
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* Header button. Lives between #identity (logo) and .header_blocks.
+   Push the right-side blocks to the far edge with margin-left:auto so the
+   header still hugs both sides without restructuring the existing flex. */
+#main-header .header_blocks {
+  margin-left: auto;
+}
+
+#my-designs-entry {
+  height: 100%;
+  margin-left: 30px;
+  display: flex;
+  align-items: center;
+}
+
+/* The HTML `hidden` attribute's default { display: none } is overridden by
+   our `display: flex` above. Restore it explicitly so the button can be
+   gated on (signed-in + has ≥ 1 saved design) via the JS module. */
+#my-designs-entry[hidden] {
+  display: none;
+}
+
+.my-designs-entry__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: transparent;
+  border: 1px solid var(--marevo-color-popup-border, #d8d8dc);
+  border-radius: 999px;
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--marevo-color-text-black, #000);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.my-designs-entry__btn:hover {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: var(--marevo-color-text-black, #000);
+}
+
+/* Popup overlay + content. Shares the contact form's centering + blur. */
+.my-designs__popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.05);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  /* Sit above #main-header (99999) and the .popup_select model-picker
+     overlay (99999) so My Designs is reachable even on the model-pick
+     interstitial. The js-loader sits at 999999 — leaving it on top is
+     intentional so the page-load spinner masks anything mid-transition. */
+  z-index: 100000;
+  justify-content: center;
+  align-items: center;
+  overflow-y: auto;
+  display: none;
+}
+
+.my-designs__popup-overlay.active {
+  display: flex;
+}
+
+.my-designs__popup-content {
+  position: relative;
+  background-color: white;
+  width: min(880px, 90%);
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 30px 30px 24px;
+  border: 1px solid var(--marevo-color-popup-border, #000);
+  border-radius: 16px;
+  box-sizing: border-box;
+}
+
+.my-designs__close_btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  font-size: 32px;
+  font-weight: 300;
+  line-height: 1;
+  color: #000;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.my-designs__close_btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 50%;
+}
+
+.my-designs__title {
+  margin: 0 0 20px;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.my-designs__loading,
+.my-designs__error {
+  padding: 30px 0;
+  text-align: center;
+  color: var(--marevo-color-text-black, #000);
+}
+
+.my-designs__error {
+  color: #b91c1c;
+}
+
+/* Grid of cards. */
+.my-designs__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.my-designs__empty {
+  grid-column: 1 / -1;
+  padding: 40px 20px;
+  text-align: center;
+  color: #6b7280;
+  border: 1px dashed var(--marevo-color-popup-border, #d8d8dc);
+  border-radius: 12px;
+}
+
+.my-designs__card {
+  position: relative;
+  border: 1px solid var(--marevo-color-popup-border, #d8d8dc);
+  border-radius: 12px;
+  padding: 16px;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.my-designs__card:hover {
+  border-color: var(--marevo-color-text-black, #000);
+  transform: translateY(-1px);
+}
+
+.my-designs__card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+/* Tiny visual differentiation per zome type. Could be replaced with the
+   existing zome-icon SVGs when they're stable. */
+.my-designs__card-icon[data-zome-type="pod"]::before    { content: "🟠"; }
+.my-designs__card-icon[data-zome-type="office"]::before { content: "🔵"; }
+.my-designs__card-icon[data-zome-type="studio"]::before { content: "🟢"; }
+.my-designs__card-icon[data-zome-type="unknown"]::before,
+.my-designs__card-icon[data-zome-type=""]::before        { content: "◯"; }
+
+.my-designs__card-name {
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.my-designs__card-meta {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.my-designs__card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.my-designs__open-btn {
+  flex: 1;
+  padding: 6px 12px;
+  background: var(--marevo-color-text-black, #000);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.my-designs__open-btn:hover {
+  opacity: 0.9;
+}
+
+.my-designs__more-btn {
+  width: 32px;
+  padding: 6px 0;
+  background: transparent;
+  border: 1px solid var(--marevo-color-popup-border, #d8d8dc);
+  border-radius: 6px;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.my-designs__more-btn:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.my-designs__menu {
+  position: absolute;
+  right: 16px;
+  bottom: 56px;
+  background: white;
+  border: 1px solid var(--marevo-color-popup-border, #d8d8dc);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  z-index: 10;
+  min-width: 120px;
+}
+
+.my-designs__menu li button {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.my-designs__menu li button:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* Footer (signed-in state) — email + sign out. */
+.my-designs__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 16px;
+  border-top: 1px solid var(--marevo-color-popup-border, #ECECEF);
+  margin-top: 8px;
+}
+
+.my-designs__email {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.my-designs__signout {
+  background: transparent;
+  border: 1px solid var(--marevo-color-popup-border, #d8d8dc);
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.my-designs__signout:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+/* Signed-out state — email-entry form. */
+.my-designs__signed-out {
+  padding: 8px 0 4px;
+}
+
+.my-designs__hint {
+  margin: 0 0 16px;
+  color: #4b5563;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.my-designs__hint--small {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 16px;
+  margin-bottom: 0;
+}
+
+.my-designs__send-form {
+  display: flex;
+  gap: 8px;
+}
+
+.my-designs__send-form input[type="email"] {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid var(--marevo-color-popup-border, #d8d8dc);
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.my-designs__send-form input[type="email"]:focus {
+  outline: none;
+  border-color: var(--marevo-color-text-black, #000);
+}
+
+.my-designs__send-form button {
+  padding: 10px 16px;
+  background: var(--marevo-color-text-black, #000);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.my-designs__sent-confirm {
+  margin-top: 16px;
+  padding: 12px 14px;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: 8px;
+  color: #065f46;
+  font-size: 14px;
+}
+
+/* Toast — fixed-positioned, top-center. */
+.my-designs__toast {
+  position: fixed;
+  top: calc(var(--marevo-header-height, 100px) + 16px);
+  left: 50%;
+  transform: translate(-50%, -8px);
+  background: rgba(17, 24, 39, 0.95);
+  color: white;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  z-index: 10000;
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  max-width: min(560px, 90vw);
+  text-align: center;
+}
+
+.my-designs__toast--show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.my-designs__toast a {
+  color: #93c5fd;
+  text-decoration: underline;
+}
+
+.my-designs__toast--saved {
+  background: rgba(16, 185, 129, 0.95);
+}
+
+/* Mobile tweaks. Header button shrinks; popup goes near full-screen. */
+@media (max-width: 768px) {
+  #my-designs-entry {
+    margin-left: 12px;
+  }
+  .my-designs-entry__btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  .my-designs__popup-content {
+    width: 95%;
+    max-height: 90vh;
+    padding: 20px 18px 18px;
+  }
+  .my-designs__grid {
+    grid-template-columns: 1fr;
+  }
+  .my-designs__menu {
+    right: 12px;
+    bottom: 50px;
+  }
+}
