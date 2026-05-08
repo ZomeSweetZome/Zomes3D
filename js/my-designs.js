@@ -54,6 +54,8 @@ function $dom() {
     toast: document.getElementById('my_designs_toast'),
     pickerSection: document.getElementById('saved_designs_picker'),
     pickerList: document.getElementById('saved_designs_picker_list'),
+    currentDesignLabel: document.getElementById('current_design_label'),
+    currentDesignName: document.querySelector('#current_design_label .current-design__name'),
   };
   return dom;
 }
@@ -66,6 +68,25 @@ function revealHeaderButton() {
 function hideHeaderButton() {
   const d = $dom();
   if (d.headerEntry) d.headerEntry.hidden = true;
+}
+
+// Sync the "currently editing X" label next to the My Saved Designs button.
+// Resolves the URL's design_id against the just-fetched designs list, sets
+// the label text, and reveals/hides the element. Hidden when no design_id
+// in URL, or when the id doesn't resolve to one of the user's designs
+// (e.g. they followed an old or someone else's link).
+function updateCurrentDesignLabel(designs) {
+  const d = $dom();
+  if (!d.currentDesignLabel || !d.currentDesignName) return;
+  const designId = getDesignId();
+  const match = designId ? (designs ?? []).find((x) => x.id === designId) : null;
+  if (match) {
+    d.currentDesignName.textContent = match.name;
+    d.currentDesignLabel.hidden = false;
+  } else {
+    d.currentDesignName.textContent = '';
+    d.currentDesignLabel.hidden = true;
+  }
 }
 
 // ── Auth state from URL ─────────────────────────────────────────────────────
@@ -329,6 +350,7 @@ async function refresh() {
     } else {
       revealHeaderButton();
     }
+    updateCurrentDesignLabel(result.designs ?? []);
     $dom().emailLabel.textContent = auth.email;
     renderCards(result.designs);
     showState('signedIn');
@@ -349,6 +371,7 @@ async function probeForHeaderButton() {
   if (!auth) {
     hideHeaderButton();
     renderModelPickerSavedDesigns([], null);
+    updateCurrentDesignLabel([]);
     return;
   }
   try {
@@ -357,11 +380,13 @@ async function probeForHeaderButton() {
       stripAuthFromUrl();
       hideHeaderButton();
       renderModelPickerSavedDesigns([], null);
+      updateCurrentDesignLabel([]);
       return;
     }
     if (result.unavailable) {
       hideHeaderButton();
       renderModelPickerSavedDesigns([], null);
+      updateCurrentDesignLabel([]);
       return;
     }
     const designs = result.designs ?? [];
@@ -371,6 +396,7 @@ async function probeForHeaderButton() {
       hideHeaderButton();
     }
     renderModelPickerSavedDesigns(designs, auth);
+    updateCurrentDesignLabel(designs);
   } catch (err) {
     // Network error / CORS during local dev. Keep the button hidden — we
     // can't confirm the user has designs, so showing a button that won't
@@ -378,6 +404,7 @@ async function probeForHeaderButton() {
     console.warn('[my-designs] probe failed:', err);
     hideHeaderButton();
     renderModelPickerSavedDesigns([], null);
+    updateCurrentDesignLabel([]);
   }
 }
 
@@ -545,6 +572,10 @@ window.MyDesigns = {
   hideHeaderButton,
   showSavedToast,
   showWelcomeBackToast,
+  // Called by the configurator immediately after a successful save (form
+  // or silent). URL has just been updated with the new design_id; re-probe
+  // so the header label reflects the design just saved.
+  afterSave: probeForHeaderButton,
   // Hook the configurator can register if it can rehydrate from URL params
   // without a full reload. Default behavior is location.reload().
   onOpenDesign: null,

@@ -5702,6 +5702,7 @@ only screen and (-webkit-device-pixel-ratio: 3) and (max-width: 1170px) {
   margin-left: 30px;
   display: flex;
   align-items: center;
+  gap: 12px;
 }
 
 /* The HTML `hidden` attribute's default { display: none } is overridden by
@@ -5709,6 +5710,43 @@ only screen and (-webkit-device-pixel-ratio: 3) and (max-width: 1170px) {
    gated on (signed-in + has ≥ 1 saved design) via the JS module. */
 #my-designs-entry[hidden] {
   display: none;
+}
+
+/* "Currently editing X" label, shown next to the My Saved Designs button
+   when the URL has a design_id resolving to one of the user's designs. */
+.current-design {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 999px;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  color: var(--marevo-color-text-black, #000);
+  max-width: 240px;
+}
+
+.current-design[hidden] {
+  display: none;
+}
+
+/* SVG document/file icon, rendered via CSS so we don't need an asset. */
+.current-design__icon {
+  flex: 0 0 14px;
+  width: 14px;
+  height: 16px;
+  background-color: currentColor;
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 16'><path d='M3 0h6l4 4v11a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V1a1 1 0 0 1 1-1zm6 0v4h4' fill='none' stroke='black' stroke-width='1.2'/></svg>") no-repeat center / contain;
+  mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 16'><path d='M3 0h6l4 4v11a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V1a1 1 0 0 1 1-1zm6 0v4h4' fill='none' stroke='black' stroke-width='1.2'/></svg>") no-repeat center / contain;
+  opacity: 0.7;
+}
+
+.current-design__name {
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .my-designs-entry__btn {
@@ -6069,10 +6107,16 @@ only screen and (-webkit-device-pixel-ratio: 3) and (max-width: 1170px) {
 @media (max-width: 768px) {
   #my-designs-entry {
     margin-left: 12px;
+    gap: 8px;
   }
   .my-designs-entry__btn {
     padding: 6px 10px;
     font-size: 12px;
+  }
+  .current-design {
+    padding: 4px 10px;
+    font-size: 12px;
+    max-width: 140px;
   }
   .my-designs__popup-content {
     width: 95%;

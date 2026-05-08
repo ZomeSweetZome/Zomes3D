@@ -3133,9 +3133,12 @@ async function PrepareUI() {
               }
               // We just saved a design — the user now has ≥ 1. Reveal the
               // header entry button immediately (no need to wait for the
-              // background probe to confirm).
+              // background probe to confirm) and re-probe in the background
+              // so the "currently editing" label picks up the new design's
+              // name.
               if (data.design_id && window.MyDesigns) {
                 window.MyDesigns.revealHeaderButton();
+                window.MyDesigns.afterSave?.();
               }
               if (data.welcome_back && window.MyDesigns) {
                 window.MyDesigns.showWelcomeBackToast();
@@ -3814,6 +3817,7 @@ async function silentSaveDesign() {
     if (window.MyDesigns) {
       // Save just succeeded → the user definitely has ≥ 1 design now.
       window.MyDesigns.revealHeaderButton();
+      window.MyDesigns.afterSave?.();
       if (data.welcome_back) {
         window.MyDesigns.showWelcomeBackToast();
       } else {
