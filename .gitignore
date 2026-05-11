@@ -5,3 +5,4 @@ TEMP/
 package-lock.json
 package.json
 eslint.config.mjs
+.playwright-mcp/
