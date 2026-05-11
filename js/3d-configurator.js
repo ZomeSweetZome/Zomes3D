@@ -57,6 +57,7 @@ import {
   floor,
   smoothCameraTransition,
   envMap,
+  requestRender,
 } from './3d-scene.js';
 
 import {
@@ -253,7 +254,17 @@ let SharedParameterList = [
     applyURLAction: null,
     applyURLActionReturn: false
   },
-  { // [6] language
+  {  // [6] foundation
+    id: 'foundation',
+    groupIds: ['group-6'],
+    splitValue: 'U',
+    type: 'string',
+    value: '0',
+    groupOptionAction: null,
+    applyURLAction: null,
+    applyURLActionReturn: false
+  },
+  { // [7] language
     id: 'lang',
     groupIds: null,
     splitValue: 'u',
@@ -263,7 +274,7 @@ let SharedParameterList = [
     applyURLAction: null,
     applyURLActionReturn: false
   },
-  { // [7] currency
+  { // [8] currency
     id: 'curr',
     groupIds: null,
     splitValue: 'a',
@@ -273,7 +284,7 @@ let SharedParameterList = [
     applyURLAction: null,
     applyURLActionReturn: false
   },
-  { // [8] customWindows
+  { // [9] customWindows
     id: 'customWindows',
     groupIds: null,
     splitValue: 'q',
@@ -283,7 +294,7 @@ let SharedParameterList = [
     applyURLAction: null,
     applyURLActionReturn: false
   },
-  { // [9] qr
+  { // [10] qr
     id: 'qr',
     groupIds: null,
     splitValue: 'r',
@@ -295,8 +306,17 @@ let SharedParameterList = [
   }
 ];
 
+function getSharedParameter(id) {
+  const item = SharedParameterList.find(el => el.id === id);
+  if (!item) {
+    console.warn(`Element id "${id}" not found in SharedParameterList`);
+    return null;
+  }
+  return item;
+}
+
 // zomeModel
-SharedParameterList[0].groupOptionAction = function () {
+getSharedParameter('zomeModel').groupOptionAction = function () {
   if (justClicked) {
     currentHouse = this.value;
     changeModel(this.value);
@@ -304,7 +324,7 @@ SharedParameterList[0].groupOptionAction = function () {
 }
 
 // windows
-SharedParameterList[1].groupOptionAction = function () {
+getSharedParameter('windows').groupOptionAction = function () {
   if (justClicked) {
     if (this.value[2] == '1') {
       addStripAndViewportWindowsToCustomWindowsObject(this.value[0], this.value[1]);
@@ -313,7 +333,7 @@ SharedParameterList[1].groupOptionAction = function () {
 }
 
 // interior
-SharedParameterList[2].groupOptionAction = function () {
+getSharedParameter('interior').groupOptionAction = function () {
   if (isFirstStart || justClicked) {
     // do something if needed
   }
@@ -322,7 +342,7 @@ SharedParameterList[2].groupOptionAction = function () {
 }
 
 // exterior
-SharedParameterList[3].groupOptionAction = function () {
+getSharedParameter('exterior').groupOptionAction = function () {
   if (isFirstStart || justClicked) {
     // do something if needed
   }
@@ -331,7 +351,7 @@ SharedParameterList[3].groupOptionAction = function () {
 }
 
 // upgrades
-SharedParameterList[4].groupOptionAction = function () {
+getSharedParameter('upgrades').groupOptionAction = function () {
   if (isFirstStart || justClicked) {
     if (currentHouse == '2') {
       if (this.value[2] == '1') { // extra door
@@ -348,7 +368,7 @@ SharedParameterList[4].groupOptionAction = function () {
 }
 
 // addons
-SharedParameterList[5].groupOptionAction = function () {
+getSharedParameter('addons').groupOptionAction = function () {
   if (isFirstStart || justClicked) {
     if (this.value[0] == '1') { // foundation kit
       floor.position.y = MODEL_CENTER_POSITION - FOUNDATION_HEIGHT;
@@ -373,7 +393,7 @@ SharedParameterList[5].groupOptionAction = function () {
 }
 
 // language
-SharedParameterList[6].groupOptionAction = function () {
+getSharedParameter('lang').groupOptionAction = function () {
   if (isFirstStart || justClicked) {
     let language = 'EN';
     switch (this.value) {
@@ -396,7 +416,7 @@ SharedParameterList[6].groupOptionAction = function () {
 }
 
 // currency
-SharedParameterList[7].groupOptionAction = function () {
+getSharedParameter('curr').groupOptionAction = function () {
   if (isFirstStart || justClicked) {
     let currency = 'EN';
     switch (this.value) {
@@ -416,7 +436,7 @@ SharedParameterList[7].groupOptionAction = function () {
 }
 
 // customWindows
-SharedParameterList[8].groupOptionAction = function () {
+getSharedParameter('customWindows').groupOptionAction = function () {
   if (isFirstStart || justClicked) {
     if (this.value.length > 0) {
       restoreCustomWindows();
@@ -424,8 +444,31 @@ SharedParameterList[8].groupOptionAction = function () {
   }
 }
 
+// foundation
+getSharedParameter('foundation').groupOptionAction = function () {
+  if (isFirstStart || justClicked) {
+    if (this.value[0] == '1') { // foundation kit
+      floor.position.y = MODEL_CENTER_POSITION - FOUNDATION_HEIGHT;
+    } else {
+      floor.position.y = MODEL_CENTER_POSITION;
+    }
+
+    floor.position.y -= 0.01;
+
+    if ($('#button_dimensions').hasClass('active')) {
+      if (this.value[0] == '1') { // foundation kit
+        isFoundationKitOn = true;
+      } else {
+        isFoundationKitOn = false;
+      }
+
+      dimensionsController(true);
+    }
+  }
+}
+
 // qr
-SharedParameterList[9].groupOptionAction = function () {
+getSharedParameter('qr').groupOptionAction = function () {
 }
 
 //#endregion
@@ -757,6 +800,7 @@ async function Start() {
     if (loaded) return;
     loaded = true;
 
+    migrateOldConfigURL();
     ReadURLParameters(StartSettings);
     checkConfigFinalized();
     checkPriceHiding();
@@ -774,7 +818,7 @@ async function StartSettings() {
 
   blockBuyBtn();
 
-  currentHouse = SharedParameterList[0].value || '0';
+  currentHouse = getSharedParameter('zomeModel').value || '0';
 
   await loadModel(MODEL_PATHS[currentHouse], false, () => { }, true);
   modelHouse = IMPORTED_MODELS[0];
@@ -1081,6 +1125,7 @@ function ParseAllGroups() {
       }
     }
   });
+  requestRender();
 }
 
 function SetGroupActionForSharedParameters(targetID, value, callback, parse = false) {
@@ -1338,10 +1383,10 @@ function additionalConditions() {
 
 function updateStateVars() {
   // Update state vars if needed
-  currentHouse = SharedParameterList[0].value;
-  isWindowCustomOn = (SharedParameterList[1].value[2] == '1') ? true : false;
-  isFoundationKitOn = (SharedParameterList[5].value[0] == '1') ? true : false; //!!! corrected
-  isExtraDoorOn = (SharedParameterList[4].value[2] == '1') ? true : false; //!!! corrected
+  currentHouse = getSharedParameter('zomeModel').value;
+  isWindowCustomOn = (getSharedParameter('windows').value[2] == '1') ? true : false;
+  isFoundationKitOn = (getSharedParameter('addons').value[0] == '1') ? true : false; //!!! corrected
+  isExtraDoorOn = (getSharedParameter('upgrades').value[2] == '1') ? true : false; //!!! corrected
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -1582,12 +1627,12 @@ function CheckChanges() {
 
   if (currentHouse == '2' && isExtraDoorOn) {
     removeExtraDoorPanelsFromCustomWindows();
-    SharedParameterList[8].value = convertObjectToArray(customWindows);
+    getSharedParameter('customWindows').value = convertObjectToArray(customWindows);
     WriteURLParameters();
     restoreCustomWindows();
   }
 
-  if (isWindowCustomOn && SharedParameterList[8].value.length > 0) {
+  if (isWindowCustomOn && getSharedParameter('customWindows').value.length > 0) {
     restoreCustomWindows();
   }
 
@@ -1603,6 +1648,7 @@ function CheckChanges() {
   calculatePrice();
   calculateAndSetEstimateDates();
   collectSummary();
+  requestRender();
 }
 //! ************************************************
 //#endregion
@@ -1691,7 +1737,7 @@ function resetCustomWindowsObject() {
     }
   }
 
-  SharedParameterList[8].value = convertObjectToArray(customWindows);
+  getSharedParameter('customWindows').value = convertObjectToArray(customWindows);
   WriteURLParameters();
 }
 
@@ -1720,6 +1766,7 @@ function furnitureController(value) {
   }
 
   modelFurniture.visible = value;
+  requestRender();
 }
 
 function updateFurnitureSet() {
@@ -1761,6 +1808,7 @@ function annotationController(value) {
   } else {
     hideAnnotations();
   }
+  requestRender();
 }
 
 function dimensionsController(value) {
@@ -1781,6 +1829,7 @@ function dimensionsController(value) {
   }
 
   setVisibility(modelHouse, value, ['man']);
+  requestRender();
 }
 
 function checkLanguageForDimensions() {
@@ -1817,7 +1866,6 @@ function calculatePrice() {
   let optionId = '';
   let activeOptions = [];
 
-  // get active options array
   for (let i = 0; i < SharedParameterList.length - 4; i++) {
     if (SharedParameterList[i].type === 'string') {
       optionId = `option_${i}-${SharedParameterList[i].value}`;
@@ -1950,9 +1998,9 @@ function convertPriceToNumber(priceString) {
 function formatPrice(price, currency, needToBeRounded = true, needToAddSpace = false) {
   if (
     !price
-    && SharedParameterList[1].value[2] != 1 // custom windows
-    && SharedParameterList[4].value[2] != 1 // extra door //!!! corrected
-    && SharedParameterList[4].value[0] != 1 // smart glass //!!! corrected
+    && getSharedParameter('windows').value[2] != 1 // custom windows
+    && getSharedParameter('upgrades').value[2] != 1 // extra door //!!! corrected
+    && getSharedParameter('upgrades').value[0] != 1 // smart glass //!!! corrected
   ) {
     return getData(dataMain, 'ui_component_price_included', currentLanguage);
   }
@@ -2092,6 +2140,7 @@ function setMaterialProperty(materialName, value, property = 'metalness') {
 
   materialObject[property] = value;
   // console.log(`${property} for material ${materialName} was set up to ${value}`);
+  requestRender();
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -2119,6 +2168,7 @@ function ChangeMaterialTilling(materialName, x, y) {
   if (materialObject.aoMap != null) {
     materialObject.aoMap.repeat.set(x, y);
   }
+  requestRender();
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -2146,6 +2196,7 @@ function ChangeMaterialOffset(materialName, x, y) {
   if (materialObject.aoMap != null) {
     materialObject.aoMap.offset.set(x, y);
   }
+  requestRender();
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -2188,6 +2239,7 @@ function setVisibility(model, value, meshArray = []) {
       });
     }
   }
+  requestRender();
 }
 
 function setMaterialColor(materialName, color) {
@@ -2195,6 +2247,7 @@ function setMaterialColor(materialName, color) {
   if (materialObject == null) { return; }
   materialObject.color.set(color);
   materialObject.needsUpdate = true;
+  requestRender();
 }
 
 const textureLoader = new THREE.TextureLoader();
@@ -2253,6 +2306,7 @@ function setObjectTexture(materialNames, textureValue, tilingValue = 1, model = 
       }
     }
   });
+  requestRender();
 
   function applyTexture(material, textureValue, tilingValue) {
     const textureProperties = {
@@ -2322,12 +2376,14 @@ function setObjectTexture(materialNames, textureValue, tilingValue = 1, model = 
 
           textureProperties[node].apply(material, texture);
           material.needsUpdate = true;
+          requestRender();
         }, undefined, () => {
           console.error('An error happened.');
         });
       } else {
         textureProperties[node].apply(material, textureCache[value]);
         material.needsUpdate = true;
+        requestRender();
       }
     }
   }
@@ -2596,6 +2652,29 @@ function GetSharedArrayValues(arrayValue, type) {
 
   return output;
 }
+
+function migrateOldConfigURL() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const config = urlParams.get('config');
+
+  if (!config) return;
+  if (config.includes('U')) return;
+
+  // Old format                         New format
+  // O{foundation}-{desk}-{other}u  ->  O{desk}-{other}U{foundation}u
+  const migrated = config.replace(/O(\d+)-(\d+)-(\d+)u/, 'O$2-$3U$1u');
+
+  if (migrated === config) return;
+
+  urlParams.set('config', migrated);
+  const newURL = location.protocol + '//' + location.host + location.pathname + '?' + urlParams.toString();
+  history.replaceState(null, '', newURL);
+
+  console.log('Old URL migrated to new format:');
+  console.log('  before: ' + config);
+  console.log('  after:  ' + migrated);
+}
+
 
 function ReadURLParameters(callback) {
   const queryString = window.location.search;
@@ -2927,7 +3006,7 @@ async function PrepareUI() {
           break;
       }
 
-      SharedParameterList[6].value = valueForURL;
+      getSharedParameter('lang').value = valueForURL;
       CheckChanges();
       WriteURLParameters();
 
@@ -2952,7 +3031,7 @@ async function PrepareUI() {
           break;
       }
 
-      SharedParameterList[7].value = valueForURL;
+      getSharedParameter('curr').value = valueForURL;
       CheckChanges();
       WriteURLParameters();
     });
@@ -3423,21 +3502,21 @@ function cameraBtnHandlers() {
 function modelSelectorHandler() {
   $('#select_btn_pod').on('click', function () {
     $('.popup_select').addClass('hidden');
-    SharedParameterList[0].value = '0';
+    getSharedParameter('zomeModel').value = '0';
     StartSettings();
     $('#title_list__item_0').click();
   });
 
   $('#select_btn_office').on('click', function () {
     $('.popup_select').addClass('hidden');
-    SharedParameterList[0].value = '1';
+    getSharedParameter('zomeModel').value = '1';
     StartSettings();
     $('#title_list__item_0').click();
   });
 
   $('#select_btn_studio').on('click', function () {
     $('.popup_select').addClass('hidden');
-    SharedParameterList[0].value = '2';
+    getSharedParameter('zomeModel').value = '2';
     StartSettings();
     $('#title_list__item_0').click();
   });
@@ -4125,6 +4204,7 @@ function smartWindowsController(materialName, isEnabled) {
       }
     }
   });
+  requestRender();
 }
 
 function isolateGlassInGroups(model) {
@@ -4136,10 +4216,10 @@ function isolateGlassInGroups(model) {
       if (lowerName.includes('window-glass-c') || lowerName.includes('door')) {
         object.traverse((child) => {
           if ((child.isMesh && child.material && child.material.name === 'glass') ||
-          (child.isMesh && child.material && child.material.name === 'glass.001')) {
+            (child.isMesh && child.material && child.material.name === 'glass.001')) {
             const newMaterial = child.material.clone();
             newMaterial.name = 'static-glass';
-            
+
             if (newMaterial.envMapIntensity === undefined) newMaterial.envMapIntensity = 1.0;
             newMaterial.envMapIntensity *= 0.5;
 
@@ -4149,7 +4229,7 @@ function isolateGlassInGroups(model) {
 
             if (newMaterial.metalness > 0.1) {
               newMaterial.metalness *= 0.5;
-  }
+            }
             child.material = newMaterial;
             child.material.needsUpdate = true;
           }
@@ -4379,7 +4459,7 @@ function onMouseUp(event) {
         if (letter && number) {
           // clickedMeshName = `${letter}-${number}`;
           updateCustomWindows([letter, number]);
-          SharedParameterList[8].value = convertObjectToArray(customWindows);
+          getSharedParameter('customWindows').value = convertObjectToArray(customWindows);
           WriteURLParameters();
         }
       }
@@ -4517,7 +4597,7 @@ function findMeshByLetterAndNumber(parent, letter, number) {
 }
 
 function restoreCustomWindows() {
-  customWindows = convertArrayToObject(SharedParameterList[8].value);
+  customWindows = convertArrayToObject(getSharedParameter('customWindows').value);
 
   if (!isWindowCustomOn) return;
 
@@ -4581,7 +4661,7 @@ function addStripAndViewportWindowsToCustomWindowsObject(strip, viewport) {
       }
     });
 
-    SharedParameterList[8].value = convertObjectToArray(customWindows);
+    getSharedParameter('customWindows').value = convertObjectToArray(customWindows);
     WriteURLParameters();
   }
 }
