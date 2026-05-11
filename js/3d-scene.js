@@ -492,8 +492,6 @@ export function create3DScene(properties = scenePropertiesDefault, startFunction
     }
 
     renderer.render(scene, camera);
-    console.log('render frame');
-    
   }
 
   requestRender = function () {

@@ -19,8 +19,8 @@ const MAIN_SHEET = 'https://docs.google.com/spreadsheets/d/1hU0H-7k5TqUaMsO5IgSG
 const ZIPTAX_SHEET = 'https://docs.google.com/spreadsheets/d/1r2yclrOnu-h9EjJjuYAYK9NbmKgITAaKCjFZmTea1bY/export?format=csv&gid=1261074691';
 
 const SOURCES = [
-  { name: 'ui',          url: MAIN_SHEET + '911871288' },
-  { name: 'price',       url: MAIN_SHEET + '608401970' },
+  { name: 'ui',          url: MAIN_SHEET + '1046103455' },
+  { name: 'price',       url: MAIN_SHEET + '171455439' },
   { name: 'annotations', url: MAIN_SHEET + '1110711170' },
   // The runtime only reads ZipCode + StateRate (see getTaxRate). Dropping
   // the other 7 columns shrinks this snapshot ~4×. Then gzip on top brings
