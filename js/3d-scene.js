@@ -16,6 +16,7 @@ export let canvas;
 export let camera;
 export let controls;
 export let envMap;
+export let requestRender = () => { };
 
 export const IMPORTED_MODELS = [];
 const IMPORTED_MODELS_GLTF = [];
@@ -464,36 +465,55 @@ export function create3DScene(properties = scenePropertiesDefault, startFunction
   });
 
   // ********************************************
-  //      ANIMATE
+  //      RENDER ON DEMAND
   // ********************************************
-  function animate() {
-    requestAnimationFrame(animate);
+  let renderRequested = false;
+
+  function render() {
+    renderRequested = false;
 
     isLocalClippingOn && updateClippingPlane();
     isLocalClippingOn && applyClippingPlanesToModel(current3Dmodel, notClippingMaterials);
-    // !isLocalClippingOn && removeClippingPlanesFromModel(current3Dmodel, notClippingMaterials);
 
-    if (controls.enabled) { controls.update(); }
+    if (controls.enabled) {
+      if (controls.update()) {
+        requestRender();
+      }
+    }
     
     updateAnnotations(camera, scene, controls);
 
     updateMeshRotationToCameraY(camera, scene, 'man');
-    
-    renderer.render(scene, camera);
 
     if (resizeRendererToDisplaySize(renderer)) {
       const canvas = renderer.domElement;
       camera.aspect = canvas.clientWidth / canvas.clientHeight;
       camera.updateProjectionMatrix();
     }
+
+    renderer.render(scene, camera);
+    console.log('render frame');
+    
   }
 
-  window.addEventListener('resize', () => {
-    updateAnnotations(camera, scene, controls);
-  });
+  requestRender = function () {
+    if (!renderRequested) {
+      renderRequested = true;
+      requestAnimationFrame(render);
+    }
+  };
+
+  // Add listeners for on-demand rendering
+  controls.addEventListener('change', requestRender);
+  window.addEventListener('resize', requestRender);
+  window.addEventListener('click', requestRender);
+  window.addEventListener('touchstart', requestRender);
+  window.addEventListener('input', requestRender);
+  window.addEventListener('change', requestRender);
 
   function resizeRendererToDisplaySize(renderer) {
     const canvasContainer = document.getElementById('ar_model_viewer');
+    if (!canvasContainer) return false;
     const rect = canvasContainer.getBoundingClientRect();
     const width = rect.width;
     const height = rect.height;
@@ -510,7 +530,7 @@ export function create3DScene(properties = scenePropertiesDefault, startFunction
     return needResize;
   }
 
-  animate();
+  requestRender();
 }
 
 export async function disposeModel(model) {
@@ -566,6 +586,7 @@ export async function disposeModel(model) {
     });
 
     scene.remove(model);
+    requestRender();
   }
 }
 
@@ -635,6 +656,7 @@ export async function loadModel(
 
   callback();
   LOADER?.classList.add('invisible');
+  requestRender();
 }
 
 // ********************************************
@@ -734,6 +756,7 @@ export function animateScale(
     const easedProgress = timingFunction(progress);
     const interpolatedScale = startScale + (endScale - startScale) * easedProgress;
     model?.scale.set(interpolatedScale, interpolatedScale, interpolatedScale);
+    requestRender();
 
     if (progress < 1) {
       requestAnimationFrame(animate);
@@ -741,6 +764,7 @@ export function animateScale(
       model.scale.set(endScale, endScale, endScale);
       userCallback();
       callback();
+      requestRender();
     }
   }
 
@@ -765,12 +789,14 @@ export function springScale(model, duration = 500, oscillations = 1, callback = 
     const currentScale = startScale + amplitude * Math.sin(phase);
 
     model.scale.set(currentScale, currentScale, currentScale);
+    requestRender();
 
     if (progress < 1) {
       requestAnimationFrame(animate);
     } else {
       model.scale.set(startScale, startScale, startScale);
       callback();
+      requestRender();
     }
   }
 
@@ -832,12 +858,14 @@ export function smoothCameraTransition(
     camera.updateProjectionMatrix();
 
     controls.maxPolarAngle = maxPolarAngle;
+    requestRender();
 
     if (progress < 1) {
       requestAnimationFrame(animate);
     } else {
       callback();
       if (callback_env) callback_env();
+      requestRender();
     }
   }
 
