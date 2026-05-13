@@ -77,7 +77,10 @@
 
   <label>Discounted URL — copy and send:</label>
   <div class="output empty" id="full_url_output">Fill both fields above.</div>
-  <div class="row"><button type="button" id="copy_full">Copy URL</button></div>
+  <div class="row">
+    <button type="button" id="copy_full">Copy URL</button>
+    <button type="button" id="visit_full">Visit URL</button>
+  </div>
 
   <details class="advanced">
     <summary>Just need the bare parameter to append yourself?</summary>
@@ -99,6 +102,7 @@
     const $fullUrl  = document.getElementById('full_url_output');
     const $copyP    = document.getElementById('copy_param');
     const $copyU    = document.getElementById('copy_full');
+    const $visitU   = document.getElementById('visit_full');
 
     let currentParam = '';
 
@@ -152,6 +156,10 @@
     $copyU.addEventListener('click', () => {
       if ($fullUrl.classList.contains('empty')) return;
       navigator.clipboard.writeText($fullUrl.textContent);
+    });
+    $visitU.addEventListener('click', () => {
+      if ($fullUrl.classList.contains('empty')) return;
+      window.open($fullUrl.textContent, '_blank', 'noopener,noreferrer');
     });
   </script>
 </body>

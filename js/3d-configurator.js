@@ -2824,12 +2824,21 @@ function ReadURLParameters(callback) {
       case 'string':
         element.value = raw.toString();
         break;
-      case 'int':
-        element.value = parseInt(raw);
+      case 'int': {
+        // Don't overwrite the default with NaN if the URL had a garbage value
+        // (e.g. an earlier write that serialized NaN as the literal "NaN").
+        // Letting NaN propagate corrupts future URL writes: NaN.toString() is
+        // "NaN", whose lowercase 'a' collides with the currency splitValue
+        // and breaks every parameter that follows on the next parse.
+        const intVal = parseInt(raw);
+        if (Number.isFinite(intVal)) element.value = intVal;
         break;
-      case 'float':
-        element.value = parseFloat(raw);
+      }
+      case 'float': {
+        const floatVal = parseFloat(raw);
+        if (Number.isFinite(floatVal)) element.value = floatVal;
         break;
+      }
       case 'array-string':
         arrayValue = raw.toString();
         element.value = GetSharedArrayValues(arrayValue, 'string');
@@ -2969,15 +2978,22 @@ function GetParametersString() {
         parametersValue += element.splitValue;
 
         for (var i = 0; i < element.value.length; i++) {
+          const v = (typeof element.value[i] === 'number' && !Number.isFinite(element.value[i])) ? 0 : element.value[i];
           if (i == element.value.length - 1) {
-            parametersValue += element.value[i];
+            parametersValue += v;
           } else {
-            parametersValue += element.value[i] + '-';
+            parametersValue += v + '-';
           }
         }
         break;
       default:
-        parametersValue += element.splitValue + element.value;
+        // Never serialize NaN/Infinity — JavaScript stringifies NaN as the
+        // literal "NaN", whose lowercase 'a' collides with the currency
+        // splitValue and corrupts every parameter after it on next parse.
+        // Fall back to 0 (matches the default for the int/float types
+        // currently using this code path: qr, etc).
+        const value = (typeof element.value === 'number' && !Number.isFinite(element.value)) ? 0 : element.value;
+        parametersValue += element.splitValue + value;
         break;
     }
   }
