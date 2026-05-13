@@ -198,7 +198,17 @@
           <div class="ar_menu_footer_container">
             <div class="menu_footer_amount__wrapper">
               <div class="ar_total_amount__container">
-                <div id="ar_total_price" class="ar_total_amount-price"></div>
+                <!-- Wraps the discount block + total so they share a single
+                     flex row at the same font size on desktop. The other
+                     children of .ar_total_amount__container (payment info,
+                     delivery info) still stack below as usual. -->
+                <div class="ar_total_amount__price_row">
+                  <div id="ar_discount_block" class="ar_discount_block hidden">
+                    <span class="ar_discount__original_price"></span>
+                    <span class="ar_discount__amount_value"></span>
+                  </div>
+                  <div id="ar_total_price" class="ar_total_amount-price"></div>
+                </div>
 
                 <div class="menu__footer_payment_info">
                   <span class="menu__footer__calc_icon"></span>
@@ -423,7 +433,17 @@
                 </div>
               </div>
 
-              <div id="ar_total_price_2" class="ar_total_amount_canvas__price"></div>
+              <!-- Wrap discount + total so they share the middle column of
+                   the parent's 3-col grid (buttons | price | payment info).
+                   Without the wrapper the discount block takes column 2 and
+                   pushes the total into column 3, where it gets clipped. -->
+              <div class="ar_total_amount_canvas__price_col">
+                <div id="ar_discount_block_2" class="ar_discount_block ar_discount_block--canvas hidden">
+                  <span class="ar_discount__original_price"></span>
+                  <span class="ar_discount__amount_value"></span>
+                </div>
+                <div id="ar_total_price_2" class="ar_total_amount_canvas__price"></div>
+              </div>
 
               <div class="payment_info_canvas__container">
                 <div id="payment_info_title_2" class="payment_info_canvas__info_item">

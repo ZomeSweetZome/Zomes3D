@@ -83,6 +83,8 @@ import {
   isFinalPriceHidden,
 } from './ui-controller.js';
 
+import { verifyDiscount } from './discount.js';
+
 // Clipping model mode
 export let current3Dmodel = null;
 export let isLocalClippingOn = false;
@@ -173,6 +175,10 @@ let pdfContentData = [];
 let currentAmountString = '';
 let currentTaxAmountString = '';
 let totalAmount = 0;
+// Calculated total *before* any URL discount override is applied. Stays
+// equal to totalAmount when no discount is active. Used by the summary
+// popup breakdown to render the original total + a "Discount" line item.
+let originalAmountBeforeDiscount = 0;
 let maximumLeadTimeWeeks = 0;
 
 let stateSalesTax = 0;
@@ -307,6 +313,21 @@ let SharedParameterList = [
     splitValue: 'r',
     type: 'int',
     value: 0,
+    groupOptionAction: null,
+    applyURLAction: null,
+    applyURLActionReturn: false
+  },
+  { // [11] discount
+    // URL value format: D{amount}-{hash}, e.g. D54300-3b7c9f. Verified
+    // against DISCOUNT_SECRET via verifyDiscount(); validatedAmount holds
+    // the override total once verification completes (null when no
+    // discount or invalid). See js/discount.js.
+    id: 'discount',
+    groupIds: null,
+    splitValue: 'D',
+    type: 'string',
+    value: '0',
+    validatedAmount: null,
     groupOptionAction: null,
     applyURLAction: null,
     applyURLActionReturn: false
@@ -849,6 +870,14 @@ async function StartSettings() {
   // dataPrice / dataAnnotations may still be in flight if the user picked
   // a model very fast — wait for them before any pricing/option logic runs.
   if (dataReady) await dataReady;
+
+  // Verify the URL discount (if any) before the first calculatePrice runs.
+  // verifyDiscount is async (WebCrypto HMAC); we cache the result on the
+  // parameter so calculatePrice can read it synchronously.
+  const discountParam = getSharedParameter('discount');
+  if (discountParam) {
+    discountParam.validatedAmount = await verifyDiscount(discountParam.value);
+  }
 
   // get all options
   document.querySelectorAll('.option').forEach(option => {
@@ -2016,15 +2045,46 @@ function calculatePrice() {
     $(`.option_4-5 .component_price`).html(`${formatPrice(price, currentCurrencySign)} ${getData(dataMain, 'ui_per_window', currentLanguage)}`);
   }
 
+  // Apply URL discount before stringification so every downstream consumer
+  // of `totalAmount` (display, payment schedule, tax/shipping calc, webhook
+  // payload) sees the discounted number. The URL value is the *amount off*
+  // (i.e. the savings) — not the override total. Only applied when the
+  // discount is positive and strictly less than the calculated total —
+  // guards against ever zeroing-out or negating the total when a stale URL
+  // discount exceeds the customer's current configuration.
+  const discountParam = getSharedParameter('discount');
+  const urlDiscount = discountParam?.validatedAmount;
+  originalAmountBeforeDiscount = totalAmount;
+  let discountAmount = 0;
+  if (urlDiscount != null && urlDiscount > 0 && urlDiscount < totalAmount) {
+    discountAmount = urlDiscount;
+    totalAmount -= urlDiscount;
+  }
+
   totalAmount = totalAmount.toFixed(0);
   currentAmountString = formatPrice(totalAmount, currentCurrencySign);
   totalAmountElement.innerText = currentAmountString;
   totalAmountElement2.innerText = currentAmountString;
 
+  updateDiscountDisplay(originalAmountBeforeDiscount, discountAmount);
+
   document.getElementById('summary_form_totalamount_number').value = totalAmount;
   document.getElementById('summary_form_totalamount_string').value = currentAmountString;
 
   updateShippingTaxInfo();
+}
+
+function updateDiscountDisplay(originalAmount, discountAmount) {
+  const blocks = ['ar_discount_block', 'ar_discount_block_2'];
+  if (discountAmount <= 0) {
+    blocks.forEach(id => document.getElementById(id)?.classList.add('hidden'));
+    return;
+  }
+  const originalStr = formatPrice(originalAmount.toFixed(0), currentCurrencySign);
+  const discountStr = formatPrice(discountAmount.toFixed(0), currentCurrencySign);
+  blocks.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
+  document.querySelectorAll('.ar_discount__original_price').forEach(el => { el.innerText = originalStr; });
+  document.querySelectorAll('.ar_discount__amount_value').forEach(el => { el.innerText = `−${discountStr}`; });
 }
 
 function convertPriceToNumber(priceString) {
@@ -2752,27 +2812,34 @@ function ReadURLParameters(callback) {
 
   for (let index = 0; index < SharedParameterList.length; index++) {
     const element = SharedParameterList[index];
+    const raw = paramArray[index + 1];
+
+    // Pre-existing URLs may be shorter than SharedParameterList (e.g. URLs
+    // shared before a new trailing parameter was added). Preserve the
+    // parameter's default `value` in that case rather than overwriting with
+    // undefined / NaN.
+    if (raw === undefined) continue;
 
     switch (element.type) {
       case 'string':
-        element.value = paramArray[index + 1]?.toString();
+        element.value = raw.toString();
         break;
       case 'int':
-        element.value = parseInt(paramArray[index + 1]);
+        element.value = parseInt(raw);
         break;
       case 'float':
-        element.value = parseFloat(paramArray[index + 1]);
+        element.value = parseFloat(raw);
         break;
       case 'array-string':
-        arrayValue = paramArray[index + 1]?.toString();
+        arrayValue = raw.toString();
         element.value = GetSharedArrayValues(arrayValue, 'string');
         break;
       case 'array-int':
-        arrayValue = paramArray[index + 1]?.toString();
+        arrayValue = raw.toString();
         element.value = GetSharedArrayValues(arrayValue, 'int');
         break;
       case 'array-float':
-        arrayValue = paramArray[index + 1]?.toString();
+        arrayValue = raw.toString();
         element.value = GetSharedArrayValues(arrayValue, 'float');
         break;
     }
@@ -4300,6 +4367,39 @@ function collectSummary() {
       { text: '', width: '*', margin: [0, 0, 0, 10] },
     );
   });
+
+  // When a discount is active, append two rows before the bottom-line TOTAL:
+  // "Total before discount" (pre-discount subtotal) and "Discount" (the
+  // savings). Both are skipped when there's no discount, so the breakdown
+  // matches its pre-discount shape. The URL value (validatedAmount) IS the
+  // savings — display it directly.
+  const discountParam = getSharedParameter('discount');
+  const urlDiscount = discountParam?.validatedAmount;
+  if (urlDiscount != null && urlDiscount > 0 && urlDiscount < originalAmountBeforeDiscount) {
+    const subtotalGroup = $('<div>', { class: 'details__group details__type_select details__subtotal', id: 'details__subtotal' });
+    const subtotalItem = $('<div>', { class: 'details__item details__active' });
+    const subtotalText = $('<div>', { class: 'details__item_text_container' });
+    $('<div>', { class: 'details__group_title', text: 'Total before discount' }).appendTo(subtotalText);
+    subtotalText.appendTo(subtotalItem);
+    $('<div>', {
+      class: 'details__item_price',
+      text: formatPrice(originalAmountBeforeDiscount.toFixed(0), currentCurrencySign),
+    }).appendTo(subtotalItem);
+    subtotalItem.appendTo(subtotalGroup);
+    subtotalGroup.appendTo(detailsContainer);
+
+    const discountGroup = $('<div>', { class: 'details__group details__type_select details__discount', id: 'details__discount' });
+    const discountItem = $('<div>', { class: 'details__item details__active' });
+    const discountText = $('<div>', { class: 'details__item_text_container' });
+    $('<div>', { class: 'details__group_title', text: 'Discount' }).appendTo(discountText);
+    discountText.appendTo(discountItem);
+    $('<div>', {
+      class: 'details__item_price details__discount_price',
+      text: `−${formatPrice(urlDiscount.toFixed(0), currentCurrencySign)}`,
+    }).appendTo(discountItem);
+    discountItem.appendTo(discountGroup);
+    discountGroup.appendTo(detailsContainer);
+  }
 
   $('#details__total_price').html(currentAmountString);
 

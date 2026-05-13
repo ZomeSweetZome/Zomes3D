@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- This page generates discount URL parameters for sales reps. The secret
+       used to sign discounts lives in js/discount.js — anyone who can view
+       this page's source can also forge a discount. That's the accepted
+       threat model; fulfillment-time validation must happen server-side. -->
+  <title>Generate Discount — Zomes</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      max-width: 640px;
+      margin: 64px auto;
+      padding: 0 24px;
+      color: #111;
+    }
+    h1 { font-size: 22px; margin-bottom: 8px; }
+    p { color: #555; line-height: 1.5; }
+    label { display: block; margin-top: 24px; font-weight: 600; }
+    input[type="number"], input[type="url"], input[type="text"] {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-sizing: border-box;
+      margin-top: 6px;
+    }
+    .output {
+      margin-top: 24px;
+      padding: 16px;
+      background: #f5f5f5;
+      border-radius: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 13px;
+      word-break: break-all;
+      min-height: 20px;
+    }
+    .output.empty { color: #999; }
+    .label { font-weight: 600; font-size: 12px; color: #555; margin-bottom: 4px; }
+    button {
+      margin-top: 6px;
+      padding: 8px 14px;
+      font-size: 13px;
+      background: #111;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover { background: #333; }
+    .row { display: flex; gap: 16px; align-items: center; margin-top: 8px; }
+    .hint { font-size: 12px; color: #777; margin-top: 8px; }
+    .advanced { margin-top: 40px; padding-top: 24px; border-top: 1px solid #eee; }
+    .advanced summary { font-weight: 600; cursor: pointer; color: #555; }
+    .advanced summary:hover { color: #111; }
+    .advanced[open] summary { margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+  <h1>Generate Discount</h1>
+  <p>
+    Paste a customer's configurator URL and the dollar amount you want to
+    take <b>off</b> the price. The output is the same URL with the discount
+    spliced into <code>?config=…</code> — all other parameters (tracking,
+    design_id, auth token, contact info) are preserved in place.
+  </p>
+
+  <label for="base_url_input">Customer URL</label>
+  <input type="url" id="base_url_input" placeholder="https://design.zomes.com/?…&amp;config=…&amp;…" />
+
+  <label for="amount_input">Discount amount ($ off the total)</label>
+  <input type="number" id="amount_input" min="1" step="1" placeholder="e.g. 2000" />
+
+  <label>Discounted URL — copy and send:</label>
+  <div class="output empty" id="full_url_output">Fill both fields above.</div>
+  <div class="row"><button type="button" id="copy_full">Copy URL</button></div>
+
+  <details class="advanced">
+    <summary>Just need the bare parameter to append yourself?</summary>
+    <div class="output empty" id="param_output">Enter an amount above.</div>
+    <div class="row"><button type="button" id="copy_param">Copy parameter</button></div>
+    <p class="hint">
+      The <code>D</code> prefix is required — it tells the configurator parser
+      this is the discount value. Append directly to the existing
+      <code>?config=…</code> string, no <code>&amp;</code> or separator.
+    </p>
+  </details>
+
+  <script type="module">
+    import { generateDiscount } from './js/discount.js';
+
+    const $amount   = document.getElementById('amount_input');
+    const $param    = document.getElementById('param_output');
+    const $baseUrl  = document.getElementById('base_url_input');
+    const $fullUrl  = document.getElementById('full_url_output');
+    const $copyP    = document.getElementById('copy_param');
+    const $copyU    = document.getElementById('copy_full');
+
+    let currentParam = '';
+
+    async function refresh() {
+      const amount = parseInt($amount.value, 10);
+      if (!Number.isFinite(amount) || amount <= 0) {
+        currentParam = '';
+        $param.textContent = 'Enter an amount above.';
+        $param.classList.add('empty');
+        recomputeFullUrl();
+        return;
+      }
+      currentParam = await generateDiscount(amount);
+      // Show the value *with* its 'D' prefix so reps can copy-paste verbatim
+      // and not wonder whether they need to add a separator.
+      $param.textContent = 'D' + currentParam;
+      $param.classList.remove('empty');
+      recomputeFullUrl();
+    }
+
+    function setFullUrlEmpty(message) {
+      $fullUrl.textContent = message;
+      $fullUrl.classList.add('empty');
+    }
+
+    // Splices the discount into the URL's `config` param. The discount value
+    // uses digits, hex (with 'a' remapped to 'g'), and a dash, so a trailing
+    // `D[0-9b-g-]+` is safe to strip and replace if one already exists.
+    function recomputeFullUrl() {
+      const raw = $baseUrl.value.trim();
+      if (!raw && !currentParam) return setFullUrlEmpty('Fill both fields above.');
+      if (!raw) return setFullUrlEmpty('Paste a customer URL above.');
+      if (!currentParam) return setFullUrlEmpty('Enter a discount total above.');
+
+      let u;
+      try { u = new URL(raw); }
+      catch { return setFullUrlEmpty('That doesn\'t look like a valid URL.'); }
+
+      const config = u.searchParams.get('config');
+      if (!config) return setFullUrlEmpty('This URL has no ?config=… parameter — is it a configurator URL?');
+
+      const stripped = config.replace(/D[0-9b-g-]+$/, '');
+      u.searchParams.set('config', stripped + 'D' + currentParam);
+      $fullUrl.textContent = u.toString();
+      $fullUrl.classList.remove('empty');
+    }
+
+    $amount.addEventListener('input', refresh);
+    $baseUrl.addEventListener('input', recomputeFullUrl);
+    $copyP.addEventListener('click', () => currentParam && navigator.clipboard.writeText('D' + currentParam));
+    $copyU.addEventListener('click', () => {
+      if ($fullUrl.classList.contains('empty')) return;
+      navigator.clipboard.writeText($fullUrl.textContent);
+    });
+  </script>
+</body>
+</html>

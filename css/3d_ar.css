@@ -1016,6 +1016,64 @@ select2-container .select-wrapper.language-picker {
   gap: 16px;
 }
 
+/* Desktop menu price area: original strikethrough + discount + total all
+   inline on a single baseline-aligned row, same font size as the existing
+   total (20px). On smaller viewports this wrap-and-stacks naturally. */
+.ar_total_amount__price_row {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  flex-wrap: wrap;
+  column-gap: 10px;
+  row-gap: 2px;
+}
+
+.ar_discount_block {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 20px;
+  line-height: 22px;
+  font-weight: 700;
+}
+
+.ar_discount__original_price {
+  color: #888;
+  text-decoration: line-through;
+  font-weight: 400;
+}
+
+.ar_discount__amount_value {
+  color: #b91c1c;
+}
+
+.ar_discount_block--canvas {
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  margin-bottom: 2px;
+  font-size: 11px;
+  line-height: 14px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+/* Wraps #ar_discount_block_2 + #ar_total_price_2 so they share the middle
+   column of .ar_total_amount_canvas__container (3-col grid). Without the
+   wrapper, the discount block would steal the price column and push the
+   total into the payment-info column, clipping it. */
+.ar_total_amount_canvas__price_col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.details__discount_price {
+  color: #b91c1c;
+  font-weight: 600;
+}
+
 .ar_menu_footer_container .ar_total_amount-price {
   display: flex;
   align-items: center;
