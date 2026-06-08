@@ -3302,6 +3302,15 @@ async function PrepareUI() {
 
     validateForm();
   });
+
+  //! Hide and disable Airconditioner option
+  jQuery(document).ready(function () {
+    const airConditionerOption = $('.option_5-4');
+    if (airConditionerOption.length) {
+      airConditionerOption.hide(); // Hide the option from the UI
+      airConditionerOption.addClass('disabled'); // Disable the option
+    }
+  });
 }
 
 
