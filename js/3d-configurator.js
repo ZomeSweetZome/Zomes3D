@@ -435,7 +435,7 @@ getSharedParameter('lang').groupOptionAction = function () {
         language = 'ES';
         break;
       default:
-        language = 'ES';
+        language = 'EN';
         break;
     }
 
