@@ -206,6 +206,9 @@ let globalMorphs = [];
 const groupType = ['select', 'select_no_photo', 'range', 'checkbox', 'number', 'text', 'dropdown'];
 const ar_filter = document.querySelector('.ar_filter');
 
+// NOTE: js/plans/config-parse.js (architectural set page) mirrors this wire
+// format read-only. If you add/reorder parameters or change splitValues,
+// update that parser and docs/plans/archset-qa-fixtures.md.
 let SharedParameterList = [
   {  // [0] zomeModel
     id: 'zomeModel',
