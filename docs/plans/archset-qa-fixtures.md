@@ -33,3 +33,27 @@ Error-path fixtures (viewer must show the friendly error, never a blank page):
 | garbage | `?config=hello%20world` | `malformed` error |
 | unknown-model | `?config=M9A0-0-0R0E0` | `unknown-model` error |
 | legacy-single-O | `?config=M0A0-0-0R0E0V0-0-0-0-0-0-0O0u0a0q0rNaN` | parses ok (defaults), matches configurator's forgiving behavior |
+
+## QA Results — 2026-08-04 (branch `archset`, ZOM-70)
+
+Machine matrix, all PASS:
+
+- 12/12 design fixtures: window-mark counts exact on A-101 + A-601, door
+  marks (D2 iff extra door), foundation variant tracks `U` on A-103/A-301.
+- Error paths: missing / malformed / unknown-model → typed errors with the
+  friendly page (verified in viewer); legacy pre-U redirect string parses to
+  safe defaults, matching the configurator's forgiving behavior.
+- Print scale: pod footprint (181.4") drawn at exactly 755.8 sheet units
+  = 1/2" = 1'-0" (numeric assertion, not eyeball).
+- PDFs (studio everything-fixture): full set 8 pages / 0.09 MB / 240 ms;
+  drawings-only 8 pages / 0.08 MB / 89 ms; ARCH D MediaBox; fonts embedded.
+- Button: click → /plans/?config=<live config>, no auth params; PLANS_READY.
+- GA4: arch_set_viewed / arch_set_pdf_downloaded(variant) / arch_set_opened
+  / arch_set_error in dataLayer.
+- Regression: configurator boots clean with zero console errors; sheet set
+  builds in ~10 ms.
+
+Open (human) launch gates:
+1. Dimension verification → flip `verified: true` in data/plans-geometry/*.json
+   (see docs/plans/archset-dimension-summary.md).
+2. Disclaimer wording approval (spec, "Disclaimer wording" section).
