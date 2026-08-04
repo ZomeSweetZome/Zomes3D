@@ -3161,6 +3161,7 @@ async function PrepareUI() {
     getPdfBtnHandler();
     bookTimeBtnHandler();
     bookConsultationAndDepositBtns();
+    archSetBtnHandler();
   });
 
   // Date and Tax popups
@@ -4043,6 +4044,28 @@ function getPdfBtnHandler() {
       userEmail,
       userZipcode,
     );
+  });
+}
+
+// Architectural set: opens /plans/ in a new tab carrying only the config
+// string + display-only design name — never email/t/design_id (the /plans/
+// URL is meant to be shareable).
+function archSetBtnHandler() {
+  $('.summary_archset_btn').on('click', async function () {
+    // Make sure the URL reflects the user's latest tweaks; WriteURLParameters
+    // debounces by 100ms (same wait pattern as silentSaveDesign).
+    WriteURLParameters();
+    await new Promise((r) => setTimeout(r, 150));
+
+    const base = window.location.origin + window.location.pathname.replace(/[^/]*$/, '');
+    const url = new URL('plans/', base);
+    const config = new URL(window.location.href).searchParams.get(parametersKey);
+    if (config) url.searchParams.set('config', config);
+    const dn = document.querySelector('#current_design_label .current-design__name')?.textContent?.trim();
+    if (dn) url.searchParams.set('dn', dn);
+
+    try { gtag('event', 'arch_set_opened', { model: DATA_HOUSE_NAME[currentHouse] }); } catch (e) { /* analytics only */ }
+    window.open(url.toString(), '_blank', 'noopener');
   });
 }
 
