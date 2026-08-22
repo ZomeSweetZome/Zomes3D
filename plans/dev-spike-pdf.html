@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ARCH D PDF Spike — Zomes Design Set (ZOM-60)</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <style>
+    body { font-family: -apple-system, system-ui, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 20px; }
+    #result { white-space: pre-wrap; background: #f5f5f5; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 13px; }
+    button { padding: 10px 18px; font-size: 15px; cursor: pointer; }
+    iframe { width: 100%; height: 480px; border: 1px solid #ccc; margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <h1>ZOM-60: ARCH D PDF pipeline spike</h1>
+  <p>Proves pdfmake 0.2.7 renders 6 full-page SVG sheets at 24"×36" (2592×1728pt)
+     with embedded SourceSansPro text and distinct line weights. Throwaway dev page.</p>
+  <button id="run">Generate 6-page test PDF</button>
+  <div id="result">not run yet</div>
+  <iframe id="preview" hidden></iframe>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+  <script src="../src/pdf/fonts/vfs_fonts.js"></script>
+  <script>
+    // Same registration as js/pdf-maker.js:51 (custom vfs replaces the CDN one,
+    // so SourceSansPro is the only reliably available family).
+    pdfMake.fonts = {
+      SourceSansPro: {
+        normal: 'SourceSansPro-Regular.ttf',
+        bold: 'SourceSansPro-Bold.ttf',
+        italics: 'SourceSansPro-Italic.ttf',
+        bolditalics: 'SourceSansPro-BoldItalic.ttf',
+      },
+    };
+
+    // One test sheet. viewBox 3600×2400 => 1 unit = 0.01in at 36"×24".
+    // Exercises everything the real sheets need: line-weight ladder, dashed
+    // lines, polygon fills, rotated title-block text, text size ladder,
+    // dimension-style arrows and extension lines.
+    function testSheetSVG(n) {
+      const W = 3600, H = 2400, M = 50; // 1/2" margin
+      const zome = [[1200,1900],[1080,1500],[1150,1100],[1400,800],[1800,700],[2200,800],[2450,1100],[2520,1500],[2400,1900]]
+        .map(p => p.join(',')).join(' ');
+      return `<svg xmlns="http://www.w3.org/2000/svg" width="2592" height="1728" viewBox="0 0 ${W} ${H}">
+        <rect x="${M}" y="${M}" width="${W - 2 * M}" height="${H - 2 * M}" fill="none" stroke="#000" stroke-width="3"/>
+        <rect x="${W - 450}" y="${M}" width="400" height="${H - 2 * M}" fill="none" stroke="#000" stroke-width="2"/>
+        <text x="${W - 250}" y="1200" font-family="SourceSansPro" font-size="40" text-anchor="middle"
+              transform="rotate(-90 ${W - 250} 1200)">ZOMES DESIGN SET — SHEET ${n} OF 6 — NOT FOR CONSTRUCTION</text>
+        <polygon points="${zome}" fill="none" stroke="#000" stroke-width="2.5"/>
+        <line x1="1080" y1="1900" x2="2520" y2="1900" stroke="#000" stroke-width="1"/>
+        ${[0.35, 0.7, 1.4, 2.8].map((w, i) =>
+          `<line x1="300" y1="${300 + i * 60}" x2="900" y2="${300 + i * 60}" stroke="#000" stroke-width="${w}"/>
+           <text x="950" y="${310 + i * 60}" font-family="SourceSansPro" font-size="28">stroke ${w} (${(w * 0.72).toFixed(2)}pt)</text>`).join('')}
+        <line x1="300" y1="600" x2="900" y2="600" stroke="#000" stroke-width="1" stroke-dasharray="20,10"/>
+        ${[18, 24, 32, 48, 96].map((s, i) =>
+          `<text x="300" y="${800 + i * 110}" font-family="SourceSansPro" font-size="${s}">SourceSansPro ${s}u (${(s * 0.72).toFixed(1)}pt) — A-101 FLOOR PLAN 7'-6½"</text>`).join('')}
+        <g stroke="#000" stroke-width="0.7">
+          <line x1="1080" y1="2050" x2="2520" y2="2050"/>
+          <line x1="1080" y1="1950" x2="1080" y2="2080"/>
+          <line x1="2520" y1="1950" x2="2520" y2="2080"/>
+        </g>
+        <text x="1800" y="2030" font-family="SourceSansPro" font-size="32" text-anchor="middle">14'-4" DIMENSION STRING TEST</text>
+        <text x="300" y="2250" font-family="SourceSansPro" font-size="24" font-weight="bold">BOLD WEIGHT TEST — sheet ${n}</text>
+      </svg>`;
+    }
+
+    async function run() {
+      const result = document.getElementById('result');
+      result.textContent = 'generating…';
+      const t0 = performance.now();
+      const doc = {
+        pageSize: { width: 2592, height: 1728 },
+        pageMargins: [0, 0, 0, 0],
+        defaultStyle: { font: 'SourceSansPro' },
+        content: Array.from({ length: 6 }, (_, i) => ({
+          svg: testSheetSVG(i + 1), width: 2592, height: 1728,
+          pageBreak: i < 5 ? 'after' : undefined,
+        })),
+      };
+      try {
+        const pdf = pdfMake.createPdf(doc);
+        pdf.getBuffer((buffer) => {
+          const t1 = performance.now();
+          const raw = new TextDecoder('latin1').decode(buffer);
+          const pages = (raw.match(/\/Type\s*\/Page[^s]/g) || []).length;
+          const hasFont = /\/Font/.test(raw);
+          const hasFontFile = /FontFile2?/.test(raw);
+          const mediaBox = (raw.match(/MediaBox\s*\[[^\]]*\]/) || ['?'])[0];
+          const out = {
+            ok: true,
+            pages,
+            bytes: buffer.length,
+            mb: +(buffer.length / 1048576).toFixed(2),
+            ms: Math.round(t1 - t0),
+            fontEmbedded: hasFont && hasFontFile,
+            mediaBox,
+          };
+          out.pass = out.pages === 6 && out.mb < 5 && out.ms < 10000 && out.fontEmbedded
+            && /2592/.test(mediaBox) && /1728/.test(mediaBox);
+          result.textContent = JSON.stringify(out, null, 2);
+          console.log('SPIKE_RESULT ' + JSON.stringify(out));
+          const blob = new Blob([buffer], { type: 'application/pdf' });
+          const frame = document.getElementById('preview');
+          frame.src = URL.createObjectURL(blob);
+          frame.hidden = false;
+        });
+      } catch (err) {
+        const out = { ok: false, error: String(err) };
+        result.textContent = JSON.stringify(out, null, 2);
+        console.log('SPIKE_RESULT ' + JSON.stringify(out));
+      }
+    }
+
+    document.getElementById('run').addEventListener('click', run);
+    if (new URLSearchParams(location.search).get('auto') === '1') run();
+  </script>
+</body>
+</html>
