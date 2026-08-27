@@ -398,25 +398,7 @@ getSharedParameter('upgrades').groupOptionAction = function () {
 // addons
 getSharedParameter('addons').groupOptionAction = function () {
   if (isFirstStart || justClicked) {
-    if (this.value[0] == '1') { // foundation kit
-      floor.position.y = MODEL_CENTER_POSITION - FOUNDATION_HEIGHT;
-    } else {
-      floor.position.y = MODEL_CENTER_POSITION;
-    }
-
-    floor.position.y -= 0.01;
-
     checkUpgradesAndAddonsState();
-
-    if ($('#button_dimensions').hasClass('active')) {
-      if (this.value[0] == '1') { // foundation kit
-        isFoundationKitOn = true;
-      } else {
-        isFoundationKitOn = false;
-      }
-
-      dimensionsController(true);
-    }
   }
 }
 
@@ -893,6 +875,7 @@ async function StartSettings() {
 
   await loadModel(MODEL_PATHS[currentHouse], false, () => { }, true);
   modelHouse = IMPORTED_MODELS[0];
+  setVisibility(modelHouse, false, ['bed']);
   modelHouse?.scale.set(0, 0, 0);
   modelHouse && scene.add(modelHouse);
 
@@ -1748,6 +1731,7 @@ async function changeModel(modelId) {
 
   await loadModel(MODEL_PATHS[modelId], false, () => { }, true);
   modelHouse = IMPORTED_MODELS[0];
+  setVisibility(modelHouse, false, ['bed']);
   modelHouse?.scale.set(0, 0, 0);
   modelHouse && scene.add(modelHouse);
 
@@ -3636,7 +3620,7 @@ function cameraBtnHandlers() {
 
     flyCameraTo(aim, 'inside', () => {
       renderer.clippingPlanes = [];
-      notClippingMaterials = ['floor', 'AC_white', 'AC_gray', 'AC_gray.001', 'AC_screen', 'bamboo'];
+      notClippingMaterials = ['floor', 'AC_white', 'AC_gray', 'AC_gray.001', 'AC_screen', 'bamboo', 'furniture', 'gray', 'fabric'];
       current3Dmodel = modelHouse;
       isLocalClippingOn = true;
       $('.canvas_btn_camera').removeClass('disabled');
@@ -4552,6 +4536,25 @@ $(document).on('click', '.option.option_5-1', function () { // in-build desk
   if ($('.option.option_5-1').hasClass('active')) {
     if (!isCameraInside) {
       $('#button_camera_inside').click();
+    }else {
+      flyCameraTo('outBuildInDesk', 'inside');
+    }
+  }
+});
+
+$(document).on('click', '.option.option_5-5', function () { // in-build bed
+  checkUpgradesAndAddonsState();
+
+  if ($('.option.option_5-5').hasClass('active')) {
+    // if (!isCameraInside) {
+    //   $('#button_camera_inside').click();
+    // }
+
+    if (!isCameraInside) {
+      $('#button_camera_inside').trigger('click', ['outBuildInBed']);
+      flyCameraTo('outBuildInBed', 'inside');
+    } else {
+      flyCameraTo('outBuildInBed', 'inside');
     }
   }
 });
@@ -4578,12 +4581,12 @@ $(document).on('click', '.option.option_5-4', function () { // air conditioner
 
 function checkUpgradesAndAddonsState() {
   // Built-in desk ON or Air conditioner ON
-  if ($('.option.option_5-1').hasClass('active') || $('.option.option_5-4').hasClass('active')) {
+  if ($('.option.option_5-1').hasClass('active') || $('.option.option_5-4').hasClass('active') || $('.option.option_5-5').hasClass('active')) {
     disableFurnitureBtn();
   }
 
   // Built-in desk OFF and Air conditioner OFF
-  if (!$('.option.option_5-1').hasClass('active') && !$('.option.option_5-4').hasClass('active')) {
+  if (!$('.option.option_5-1').hasClass('active') && !$('.option.option_5-4').hasClass('active') && !$('.option.option_5-5').hasClass('active')) {
     enableFurnitureBtn();
   }
 

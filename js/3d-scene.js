@@ -49,6 +49,26 @@ let dirLightIntencity;
 let clippingPlaneCam;
 let clippingPlaneTop;
 
+let dracoLoader = null;
+
+function getDracoLoader() {
+  if (!dracoLoader && typeof THREE !== 'undefined' && typeof THREE.DRACOLoader !== 'undefined') {
+    dracoLoader = new THREE.DRACOLoader();
+    dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+    dracoLoader.preload();
+  }
+  return dracoLoader;
+}
+
+export function createGLTFLoader() {
+  const loader = new THREE.GLTFLoader();
+  const draco = getDracoLoader();
+  if (draco) {
+    loader.setDRACOLoader(draco);
+  }
+  return loader;
+}
+
 export function Get3DScene() {
   return scene;
 }
@@ -262,7 +282,7 @@ export function create3DScene(properties = scenePropertiesDefault, startFunction
   //              IMPORT MODELS
   // ********************************************
   async function importAllModels(array, callback) {
-    const loader = new THREE.GLTFLoader();
+    const loader = createGLTFLoader();
 
     for (const element of array) {
       const model = await loader.loadAsync(element);
@@ -604,7 +624,7 @@ export async function loadModel(
   } = externalProperties;
 
   (isLoaderNeeded) && LOADER.classList.remove('invisible');
-  const loader = new THREE.GLTFLoader();
+  const loader = createGLTFLoader();
 
   let model;
 
