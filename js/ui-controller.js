@@ -5,6 +5,7 @@ import {
   DEFAULT_LANGUAGE,
   IS_PRICE_SIMPLE,
   GROUP_ID_ORDER_FOR_NEXT_MENU_BTNS,
+  DEV_MODE,
 } from './settings.js';
 
 import { isCameraInside } from './3d-configurator.js';
@@ -95,6 +96,8 @@ export async function createMenu(mainData) {
         { '#select_btn_pod .popup_select__item_button': 'ui_popup_select_model_btn_1' },
         { '#select_btn_office .popup_select__item_button': 'ui_popup_select_model_btn_2' },
         { '#select_btn_studio .popup_select__item_button': 'ui_popup_select_model_btn_3' },
+        { '#select_btn_500 .popup_select__item_button': 'ui_popup_select_model_btn_4' },
+        { '#select_btn_700 .popup_select__item_button': 'ui_popup_select_model_btn_5' },
         // ----------
         { '#details__total_title': 'ui_pdf_total' },
         { '#summary_btn_calendar__caption': 'ui_summary_btn_book_text' },
@@ -452,6 +455,12 @@ function setEventListenersForNextBtns() {
 // in Edge / Defender). On any failure falls back to live CSV.
 // Output array is mutated in place — same shape as parseCSV.
 export async function loadData(localUrl, csvFallbackUrl, output) {
+  if (DEV_MODE) {
+    console.log(`[data] DEV_MODE is active: loading directly from Google Sheets (${csvFallbackUrl})`);
+    await loadAndParseCSV(csvFallbackUrl, 'text', output, 5, 1000);
+    return;
+  }
+
   try {
     const response = await fetch(localUrl, { cache: 'default' });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);

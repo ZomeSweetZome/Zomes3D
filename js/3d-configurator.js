@@ -120,11 +120,14 @@ let uiAnnotationsLongLanguages = [];
 let allOptions = [];
 
 let customWindows = {
+  b: [],
   c: [],
   d: [],
   e: [],
   f: [],
   g: [],
+  h: [],
+  i: [],
 };
 
 export let dataAnnotations = [];
@@ -302,7 +305,7 @@ let SharedParameterList = [
     groupIds: null,
     splitValue: 'q',
     type: 'array-string',
-    value: ['c', 'd', 'e', 'f', 'g'],
+    value: ['b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'],
     groupOptionAction: null,
     applyURLAction: null,
     applyURLActionReturn: false
@@ -354,7 +357,7 @@ getSharedParameter('zomeModel').groupOptionAction = function () {
 // windows
 getSharedParameter('windows').groupOptionAction = function () {
   if (justClicked) {
-    if (this.value[2] == '1') {
+    if (this.value[2] == '1') { // Custom Windows on - add strip and viewport windows to custom windows object
       addStripAndViewportWindowsToCustomWindowsObject(this.value[0], this.value[1]);
     }
   }
@@ -381,15 +384,14 @@ getSharedParameter('exterior').groupOptionAction = function () {
 // upgrades
 getSharedParameter('upgrades').groupOptionAction = function () {
   if (isFirstStart || justClicked) {
-    if (currentHouse == '2') {
-      if (this.value[2] == '1') { // extra door
-        isExtraDoorOn = true;
-      } else if (this.value[2] == '0') {
-        isExtraDoorOn = false;
-      }
-
-      updateFurnitureSet();
+    if (this.value[2] == '1') { // extra door
+      isExtraDoorOn = true;
+      //! TODO logic for adding extra door
+    } else {
+      isExtraDoorOn = false;
     }
+
+    // updateFurnitureSet();
 
     checkUpgradesAndAddonsState();
   }
@@ -459,8 +461,10 @@ getSharedParameter('foundation').groupOptionAction = function () {
   if (isFirstStart || justClicked) {
     if (this.value[0] == '1') { // foundation kit
       floor.position.y = MODEL_CENTER_POSITION - FOUNDATION_HEIGHT;
+      isFoundationKitOn = true;
     } else {
       floor.position.y = MODEL_CENTER_POSITION;
+      isFoundationKitOn = false;
     }
 
     floor.position.y -= 0.01;
@@ -817,7 +821,6 @@ async function payAttentionToIcons() {
   }, 20000); // 20 seconds
 }
 
-
 //! *****************   START   ********************
 async function Start() {
   // Without WebGL the configurator can't render, and THREE.WebGLRenderer
@@ -881,7 +884,7 @@ async function StartSettings() {
 
   changeWindowNamesForRowC(modelHouse);
 
-  loadModel(MODEL_PATHS[parseInt(parseInt(currentHouse) + 3)], true, () => {
+  loadModel(MODEL_PATHS[parseInt(parseInt(currentHouse) + 5)], true, () => {
     modelFurniture = IMPORTED_MODELS[1];
     modelFurniture.visible = false;
     modelFurniture && scene.add(modelFurniture);
@@ -1439,8 +1442,8 @@ function updateStateVars() {
   // Update state vars if needed
   currentHouse = getSharedParameter('zomeModel').value;
   isWindowCustomOn = (getSharedParameter('windows').value[2] == '1') ? true : false;
-  isFoundationKitOn = (getSharedParameter('addons').value[0] == '1') ? true : false; //!!! corrected
-  isExtraDoorOn = (getSharedParameter('upgrades').value[2] == '1') ? true : false; //!!! corrected
+  isFoundationKitOn = (getSharedParameter('foundation').value[0] == '1') ? true : false;
+  isExtraDoorOn = (getSharedParameter('upgrades').value[2] == '1') ? true : false;
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -1679,7 +1682,7 @@ function CheckChanges() {
   applyAllConditionsUncheckedCHeckboxes();
   additionalConditions();
 
-  if (currentHouse == '2' && isExtraDoorOn) {
+  if (currentHouse == '2' && isExtraDoorOn) { //! TODO
     removeExtraDoorPanelsFromCustomWindows();
     getSharedParameter('customWindows').value = convertObjectToArray(customWindows);
     WriteURLParameters();
@@ -1691,7 +1694,6 @@ function CheckChanges() {
   }
 
   applyActiveGroupOptionAction();
-
   updateStateVars();
 
   checkUpgradesAndAddonsState();
@@ -1702,6 +1704,7 @@ function CheckChanges() {
   calculatePrice();
   calculateAndSetEstimateDates();
   collectSummary();
+
   requestRender();
 }
 //! ************************************************
@@ -1740,7 +1743,7 @@ async function changeModel(modelId) {
   setObjectTexture(TEXTURES.interiorBase.materialNames, TEXTURES.interiorBase.white);
   setMaterialColor(TEXTURES.interiorBase.materialNames[0], baseColorForRowA);
 
-  await loadModel(MODEL_PATHS[parseInt(parseInt(modelId) + 3)], true, () => {
+  await loadModel(MODEL_PATHS[parseInt(parseInt(modelId) + 5)], true, () => {
     modelFurniture = IMPORTED_MODELS[1];
     modelFurniture.visible = false;
     modelFurniture && scene.add(modelFurniture);
@@ -1900,6 +1903,12 @@ function checkLanguageForDimensions() {
     case '2':
       ui_id = 'ui_dimensions_part_300';
       break;
+    case '3':
+      ui_id = 'ui_dimensions_part_500';
+      break;
+    case '4':
+      ui_id = 'ui_dimensions_part_700';
+      break;
     default:
       break;
   }
@@ -1910,7 +1919,6 @@ function checkLanguageForDimensions() {
 //#endregion
 
 //#region PRICE CALCULATION
-
 
 function calculatePrice() {
   const totalAmountElement = document.getElementById('ar_total_price');
@@ -1953,6 +1961,10 @@ function calculatePrice() {
       price = convertPriceToNumber(getData(dataPrice, option, `${DATA_HOUSE_NAME[1]}_${currentCurrency}`));
     } else if (option === 'option_0-2') { // studio
       price = convertPriceToNumber(getData(dataPrice, option, `${DATA_HOUSE_NAME[2]}_${currentCurrency}`));
+    } else if (option === 'option_0-3') { // Zome 500
+      price = convertPriceToNumber(getData(dataPrice, option, `${DATA_HOUSE_NAME[3]}_${currentCurrency}`));
+    } else if (option === 'option_0-4') { // Zome 700
+      price = convertPriceToNumber(getData(dataPrice, option, `${DATA_HOUSE_NAME[4]}_${currentCurrency}`));
     } else if (option === 'option_1-2') { // custom windows
       price = convertPriceToNumber(getData(dataPrice, option, `${DATA_HOUSE_NAME[currentHouse]}_${currentCurrency}`));
       $(`.${option} .component_price`).html(
@@ -2018,10 +2030,6 @@ function calculatePrice() {
       if (optionLeadTime > maximumLeadTimeWeeks) { maximumLeadTimeWeeks = optionLeadTime; }
       totalAmount += optionPrice;
     }
-  }
-
-  if (!activeOptions.includes('option_0-2')) { // the house is not a studio
-    $(`.option_4-3 .component_price`).html(`${getData(dataMain, 'ui_component_not_allowed', currentLanguage)}`);
   }
 
   if (!activeOptions.includes('option_4-5')) { // smart windows is not active
@@ -2538,9 +2546,12 @@ function getMeshNamesList(parent) {
 
 // eslint-disable-next-line no-unused-vars
 function getGroupNamesList(parent, searchString = '') {
+  if (!parent) return [];
+
   const groupNames = [];
   const normalizedSearchString = searchString.toLowerCase();
 
+  //! TODO (optimization)
   parent.traverse((object) => {
     if (object.isGroup && object.name) {
       const normalizedGroupName = object.name.toLowerCase();
@@ -2590,7 +2601,6 @@ function disableEnvMapForMaterials(materialNames) {
     }
   });
 }
-
 
 //#endregion
 
@@ -2688,7 +2698,6 @@ function OpenARorQR() {
   popupItemLoupe.removeClass('active');
 }
 
-//IMPORT
 async function ImportScene(newScene) {
   await modelViewer[0].importScene(newScene);
   modelViewer[0].activateAR();
@@ -2760,7 +2769,6 @@ function migrateOldConfigURL() {
   console.log('  before: ' + config);
   console.log('  after:  ' + migrated);
 }
-
 
 function ReadURLParameters(callback) {
   const queryString = window.location.search;
@@ -3297,7 +3305,6 @@ async function PrepareUI() {
   });
 }
 
-
 function validatePhone(phone) {
   const digits = phone.replace(/\D/g, '');
   return digits.length >= 10 && digits.length <= 15;
@@ -3487,12 +3494,10 @@ function getDatesStrings(dateStr, leadTimeInWeeks = 3, lang = 'EN', prepaymentDa
   return { shipDateString, prepaymentDateString, deliveryDateString, differenceInWeeks };
 }
 
-
 // *****   MENU-INFO   *****
 let lastOpenElementId = '';
 
 function menuInfoBtnHandler(opt) {
-
   $(opt.element).find('.image-info').on('click', function (event) {
     event.stopPropagation();
 
@@ -3648,25 +3653,31 @@ function cameraBtnHandlers() {
 // *****   Model Selector Btns   *****
 function modelSelectorHandler() {
   $('#select_btn_pod').on('click', function () {
-    $('.popup_select').addClass('hidden');
-    getSharedParameter('zomeModel').value = '0';
-    StartSettings();
-    $('#title_list__item_0').click();
+    selectModel('0');
   });
 
   $('#select_btn_office').on('click', function () {
-    $('.popup_select').addClass('hidden');
-    getSharedParameter('zomeModel').value = '1';
-    StartSettings();
-    $('#title_list__item_0').click();
+    selectModel('1');
   });
 
   $('#select_btn_studio').on('click', function () {
+    selectModel('2');
+  });
+
+  $('#select_btn_500').on('click', function () {
+    selectModel('3');
+  });
+
+  $('#select_btn_700').on('click', function () {
+    selectModel('4');
+  });
+
+  function selectModel(value) {
     $('.popup_select').addClass('hidden');
-    getSharedParameter('zomeModel').value = '2';
+    getSharedParameter('zomeModel').value = value;
     StartSettings();
     $('#title_list__item_0').click();
-  });
+  }
 }
 
 // *****   Annotation Btn   *****
@@ -3765,7 +3776,6 @@ function disableFurnitureBtn() {
   }
 
   $('#button_furniture').addClass('disabled');
-
 }
 
 function enableFurnitureBtn() {
@@ -4559,14 +4569,6 @@ $(document).on('click', '.option.option_5-5', function () { // in-build bed
   }
 });
 
-$(document).on('click', '.option.option_4-3', function () { // extra door
-  if (currentHouse == '2' && $('.option.option_4-3').hasClass('active')) {
-    if (!isCameraInside) {
-      flyCameraTo('outExtraDoor', 'outside');
-    }
-  }
-});
-
 $(document).on('click', '.option.option_5-4', function () { // air conditioner
   checkUpgradesAndAddonsState();
 
@@ -4613,6 +4615,7 @@ $(document).on('click', '.tumbler-wrapper', function () { //Smart windows tumblr
 
 
 function smartWindowsController(materialName, isEnabled) {
+  //! TODO (optimization) - avoid traverse
   scene.traverse((object) => {
     if (object.isMesh && object.material && object.material.name === materialName) {
       const material = object.material;
@@ -5489,7 +5492,6 @@ function createVerticalDimensionLine(start, end, label, scene) {
   dimensionObjects.push(sprite);
 }
 
-
 function createTextTexture(text) {
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');
@@ -5598,6 +5600,14 @@ function CreateImageList() {
       cameraFar = 10.7;
       topViewCorrection = 0.5;
       break;
+    case '3': // 500
+      cameraFar = 10.7;
+      topViewCorrection = 0.5;
+      break;
+    case '4': // 700
+      cameraFar = 10.7;
+      topViewCorrection = 0.5;
+      break;
     default:
       break;
   }
@@ -5614,9 +5624,13 @@ function CreateImageList() {
     '<div class="summary__scheme_dimensions summary__scheme_dimensions_pod"></div>' +
     '<div class="summary__scheme_dimensions summary__scheme_dimensions_office"></div>' +
     '<div class="summary__scheme_dimensions summary__scheme_dimensions_studio"></div>' +
+    '<div class="summary__scheme_dimensions summary__scheme_dimensions_500"></div>' +
+    '<div class="summary__scheme_dimensions summary__scheme_dimensions_700"></div>' +
     '<div class="summary__scheme summary__scheme_pod"></div>' +
     '<div class="summary__scheme summary__scheme_office"></div>' +
-    '<div class="summary__scheme summary__scheme_studio"></div>'
+    '<div class="summary__scheme summary__scheme_studio"></div>' +
+    '<div class="summary__scheme summary__scheme_500"></div>' +
+    '<div class="summary__scheme summary__scheme_700"></div>'
   );
 
   imageSources.length = 0;

@@ -75,6 +75,8 @@
   --marevo-ui-btn_pod: url(../src/ar-ui-icons/btn_pod.png);
   --marevo-ui-btn_office: url(../src/ar-ui-icons/btn_office.png);
   --marevo-ui-btn_studio: url(../src/ar-ui-icons/btn_studio.png);
+  --marevo-ui-btn_500: url(../src/ar-ui-icons/btn_500.png);
+  --marevo-ui-btn_700: url(../src/ar-ui-icons/btn_700.png);
   --marevo-ui-btn_men: url(../src/ar-ui-icons/men.png);
 
   --marevo-ui-icon_tumblr_on: url(../src/ar-ui-icons/tumblrOn.png);
@@ -83,13 +85,17 @@
   --marevo-summary_header_img: url(../src/images/summary_header.jpg);
   --marevo-summary_footer_img: url(../src/images/summary_footer.jpg);
 
-  --marevo-scheme_pod: url(../src/pdf/images/sch_pod.png);
-  --marevo-scheme_office: url(../src/pdf/images/sch_office.png);
-  --marevo-scheme_studio: url(../src/pdf/images/sch_studio.png);
+  --marevo-scheme_pod: url(../src/pdf/images/sch_zome-120.png);
+  --marevo-scheme_office: url(../src/pdf/images/sch_zome-170.png);
+  --marevo-scheme_studio: url(../src/pdf/images/sch_zome-300.png);
+  --marevo-scheme_500: url(../src/pdf/images/sch_zome-500.png);
+  --marevo-scheme_700: url(../src/pdf/images/sch_zome-700.png);
 
-  --marevo-scheme_dimensions_pod: url(../src/pdf/images/dimensions_pod.png);
-  --marevo-scheme_dimensions_office: url(../src/pdf/images/dimensions_office.png);
-  --marevo-scheme_dimensions_studio: url(../src/pdf/images/dimensions_studio.png);
+  --marevo-scheme_dimensions_pod: url(../src/pdf/images/dimensions_zome-120.png);
+  --marevo-scheme_dimensions_office: url(../src/pdf/images/dimensions_zome-170.png);
+  --marevo-scheme_dimensions_studio: url(../src/pdf/images/dimensions_zome-300.png);
+  --marevo-scheme_dimensions_500: url(../src/pdf/images/dimensions_zome-500.png);
+  --marevo-scheme_dimensions_700: url(../src/pdf/images/dimensions_zome-700.png);
 
   --marevo-header-height: 100px;
   --marevo-header-height-mobile: 60px;
@@ -2306,6 +2312,16 @@ textarea[name="ar_order_comment"] {
   background-size: contain;
 }
 
+#select_btn_500 .popup_select__item_picture {
+  background: var(--marevo-ui-btn_500) no-repeat center;
+  background-size: contain;
+}
+
+#select_btn_700 .popup_select__item_picture {
+  background: var(--marevo-ui-btn_700) no-repeat center;
+  background-size: contain;
+}
+
 #select_btn_pod .popup_select__item_picture::before {
   content: '';
   background: var(--marevo-ui-btn_men) no-repeat center;
@@ -2475,6 +2491,14 @@ textarea[name="ar_order_comment"] {
   content: var(--marevo-scheme_studio);
 }
 
+.summary__scheme_500 {
+  content: var(--marevo-scheme_500);
+}
+
+.summary__scheme_700 {
+  content: var(--marevo-scheme_700);
+}
+
 .summary__scheme_dimensions {
   display: none;
   position: absolute;
@@ -2496,6 +2520,14 @@ textarea[name="ar_order_comment"] {
 
 .summary__scheme_dimensions_studio {
   content: var(--marevo-scheme_dimensions_studio);
+}
+
+.summary__scheme_dimensions_500 {
+  content: var(--marevo-scheme_dimensions_500);
+}
+
+.summary__scheme_dimensions_700 {
+  content: var(--marevo-scheme_dimensions_700);
 }
 
 .summary__scheme {
@@ -5894,7 +5926,7 @@ only screen and (-webkit-device-pixel-ratio: 3) and (max-width: 1170px) {
 
 /* extra doors*/
 .option_4-3 {
-  display: none !important;
+  /* display: none !important; */
 }
 
 #backToConfiguration {
