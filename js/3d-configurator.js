@@ -4148,15 +4148,21 @@ function updateShippingTaxInfo() {
 function openSummary() {
   $('.summary__popup-overlay').addClass('active');
 
-  $(`.summary__scheme_pod`).removeClass('active');
-  $(`.summary__scheme_office`).removeClass('active');
-  $(`.summary__scheme_studio`).removeClass('active');
-  $(`.summary__scheme_dimensions_pod`).removeClass('active');
-  $(`.summary__scheme_dimensions_office`).removeClass('active');
-  $(`.summary__scheme_dimensions_studio`).removeClass('active');
+  $(`.summary__scheme_zome-120`).removeClass('active');
+  $(`.summary__scheme_zome-170`).removeClass('active');
+  $(`.summary__scheme_zome-300`).removeClass('active');
+  $(`.summary__scheme_zome-500`).removeClass('active');
+  $(`.summary__scheme_zome-700`).removeClass('active');
+  $(`.summary__scheme_dimensions_zome-120`).removeClass('active');
+  $(`.summary__scheme_dimensions_zome-170`).removeClass('active');
+  $(`.summary__scheme_dimensions_zome-300`).removeClass('active');
+  $(`.summary__scheme_dimensions_zome-500`).removeClass('active');
+  $(`.summary__scheme_dimensions_zome-700`).removeClass('active');
 
-  $(`.summary__scheme_${DATA_HOUSE_NAME[currentHouse]}`).addClass('active');
-  $(`.summary__scheme_dimensions_${DATA_HOUSE_NAME[currentHouse]}`).addClass('active');
+  const houseName = DATA_HOUSE_NAME[currentHouse].toLowerCase();
+  
+  $(`.summary__scheme_${houseName}`).addClass('active');
+  $(`.summary__scheme_dimensions_${houseName}`).addClass('active');
 
   // openContactForm();
 }
@@ -5621,16 +5627,16 @@ function CreateImageList() {
   $('.summary__images_container').empty();
 
   $('.summary__images_container').append(
-    '<div class="summary__scheme_dimensions summary__scheme_dimensions_pod"></div>' +
-    '<div class="summary__scheme_dimensions summary__scheme_dimensions_office"></div>' +
-    '<div class="summary__scheme_dimensions summary__scheme_dimensions_studio"></div>' +
-    '<div class="summary__scheme_dimensions summary__scheme_dimensions_500"></div>' +
-    '<div class="summary__scheme_dimensions summary__scheme_dimensions_700"></div>' +
-    '<div class="summary__scheme summary__scheme_pod"></div>' +
-    '<div class="summary__scheme summary__scheme_office"></div>' +
-    '<div class="summary__scheme summary__scheme_studio"></div>' +
-    '<div class="summary__scheme summary__scheme_500"></div>' +
-    '<div class="summary__scheme summary__scheme_700"></div>'
+    '<div class="summary__scheme_dimensions summary__scheme_dimensions_zome-120"></div>' +
+    '<div class="summary__scheme_dimensions summary__scheme_dimensions_zome-170"></div>' +
+    '<div class="summary__scheme_dimensions summary__scheme_dimensions_zome-300"></div>' +
+    '<div class="summary__scheme_dimensions summary__scheme_dimensions_zome-500"></div>' +
+    '<div class="summary__scheme_dimensions summary__scheme_dimensions_zome-700"></div>' +
+    '<div class="summary__scheme summary__scheme_zome-120"></div>' +
+    '<div class="summary__scheme summary__scheme_zome-170"></div>' +
+    '<div class="summary__scheme summary__scheme_zome-300"></div>' +
+    '<div class="summary__scheme summary__scheme_zome-500"></div>' +
+    '<div class="summary__scheme summary__scheme_zome-700"></div>'
   );
 
   imageSources.length = 0;
@@ -5652,13 +5658,6 @@ function CreateImageList() {
     element.cameraObject.rotation.set(element.rotation.x, element.rotation.y, element.rotation.z);
     TakeImage(element, "summary__images_image");
   }
-
-  // $('.summary__images_container').append(
-  //   '<div class="summary__scheme_dimensions summary__scheme_dimensions_pod"></div>'
-  //   //  +
-  //   // '<div class="summary__scheme_dimensions summary__scheme_dimensions_office"></div>' +
-  //   // '<div class="summary__scheme_dimensions summary__scheme_dimensions_studio"></div>'
-  // );
 }
 
 function TakeImage(view, img_class) {
