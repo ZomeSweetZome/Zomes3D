@@ -876,6 +876,7 @@ async function StartSettings() {
   await loadModel(MODEL_PATHS[currentHouse], false, () => { }, true);
   modelHouse = IMPORTED_MODELS[0];
   setVisibility(modelHouse, false, ['bed']);
+  GetMesh('foundation').position.y = -0.001;
   modelHouse?.scale.set(0, 0, 0);
   modelHouse && scene.add(modelHouse);
 
@@ -1732,6 +1733,7 @@ async function changeModel(modelId) {
   await loadModel(MODEL_PATHS[modelId], false, () => { }, true);
   modelHouse = IMPORTED_MODELS[0];
   setVisibility(modelHouse, false, ['bed']);
+  GetMesh('foundation').position.y = -0.001;
   modelHouse?.scale.set(0, 0, 0);
   modelHouse && scene.add(modelHouse);
 
