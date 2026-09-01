@@ -33,16 +33,24 @@ export function generatePDF(
 
   switch (currentHouse) {
     case '0':
-      imageUrls.push('./src/pdf/images/sch_pod.png');
-      imageUrls.push('./src/pdf/images/dimensions_pod.png');
+      imageUrls.push('./src/pdf/images/sch_zome-120.png');
+      imageUrls.push('./src/pdf/images/dimensions_zome-120.png');
       break;
     case '1':
-      imageUrls.push('./src/pdf/images/sch_office.png');
-      imageUrls.push('./src/pdf/images/dimensions_office.png');
+      imageUrls.push('./src/pdf/images/sch_zome-170.png');
+      imageUrls.push('./src/pdf/images/dimensions_zome-170.png');
       break;
     case '2':
-      imageUrls.push('./src/pdf/images/sch_studio.png');
-      imageUrls.push('./src/pdf/images/dimensions_studio.png');
+      imageUrls.push('./src/pdf/images/sch_zome-300.png');
+      imageUrls.push('./src/pdf/images/dimensions_zome-300.png');
+      break;
+    case '3':
+      imageUrls.push('./src/pdf/images/sch_zome-500.png');
+      imageUrls.push('./src/pdf/images/dimensions_zome-500.png');
+      break;
+    case '4':
+      imageUrls.push('./src/pdf/images/sch_zome-700.png');
+      imageUrls.push('./src/pdf/images/dimensions_zome-700.png');
       break;
     default:
       break;

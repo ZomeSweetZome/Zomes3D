@@ -1447,7 +1447,6 @@ function updateStateVars() {
   isExtraDoorOn = (getSharedParameter('upgrades').value[2] == '1') ? true : false;
 }
 
-// eslint-disable-next-line no-unused-vars
 function setOptionsResult() {
   mainGroups.forEach(target => {
     if (!target.group.element.classList.contains('disabled')) {
@@ -1774,6 +1773,7 @@ async function changeModel(modelId) {
 function blockBuyBtn() {
   $('.ar_menu_footer_container .ar_buy-btn').addClass('disabled');
 }
+
 function unBlockBuyBtn() {
   $('.ar_menu_footer_container .ar_buy-btn').removeClass('disabled');
 }
@@ -2140,31 +2140,6 @@ function formatPrice(price, currency, needToBeRounded = true, needToAddSpace = f
 
 //#endregion
 
-//#region SETTING COLORS
-
-// eslint-disable-next-line no-unused-vars
-function setColorOfActiveOption(groupIDs, materialNames) {
-  for (let i = 0; i < groupIDs.length; i++) {
-    const group = mainGroups.find(element => element.id == groupIDs[i])?.group;
-
-    for (let j = 0; j < group?.options.length; j++) {
-      if (group.options[j].active) {
-        const color = group.options[j].componentOptions[0].color;
-
-        for (let k = 0; k < materialNames.length; k++) {
-          setMaterialColor(materialNames[k], color);
-        }
-
-        break;
-      }
-    }
-
-    break;
-  }
-}
-
-//#endregion
-
 //#region MESH / MATERIAL utils
 
 function GetMesh(name, model = modelHouse) {
@@ -2193,21 +2168,6 @@ function GetGroup(name, model = modelHouse) {
   return group;
 }
 
-// eslint-disable-next-line no-unused-vars
-function GetMaterial(name, model = modelHouse) {
-  var material = null;
-  model.traverse((o) => {
-    if (o.isMaterial) {
-      // console.log('🚀 ~ model.traverse ~ o.isMaterial:', o.isMaterial)
-      if (name == o.material.name) {
-        material = o.material;
-      }
-    }
-  });
-
-  return material;
-}
-
 function GetMaterialFromScene(name) {
   var material = null;
   scene.traverse((o) => {
@@ -2221,99 +2181,19 @@ function GetMaterialFromScene(name) {
   return material;
 }
 
-// eslint-disable-next-line no-unused-vars
 function setMaterialProperty(materialName, value, property = 'metalness') {
   const materialObject = GetMaterialFromScene(materialName);
   if (materialObject == null) {
     console.error(`ERROR: Material ${materialName} is not found !`);
     return;
   }
-  // eslint-disable-next-line no-prototype-builtins
   if (!materialObject.hasOwnProperty(property)) {
     console.error(`ERROR: Material ${materialName} has no property ${property} !`);
     return;
   }
 
   materialObject[property] = value;
-  // console.log(`${property} for material ${materialName} was set up to ${value}`);
   requestRender();
-}
-
-// eslint-disable-next-line no-unused-vars
-function ChangeMaterialTilling(materialName, x, y) {
-  var materialObject = GetMaterialFromScene(materialName);
-
-  if (materialObject == null) { return; }
-
-  if (materialObject.map != null) {
-    materialObject.map.repeat.set(x, y);
-  }
-
-  if (materialObject.normalMap != null) {
-    materialObject.normalMap.repeat.set(x, y);
-  }
-
-  if (materialObject.roughnessMap != null) {
-    materialObject.roughnessMap.repeat.set(x, y);
-  }
-
-  if (materialObject.metalnessMap != null) {
-    materialObject.metalnessMap.repeat.set(x, y);
-  }
-
-  if (materialObject.aoMap != null) {
-    materialObject.aoMap.repeat.set(x, y);
-  }
-  requestRender();
-}
-
-// eslint-disable-next-line no-unused-vars
-function ChangeMaterialOffset(materialName, x, y) {
-  var materialObject = GetMaterialFromScene(materialName);
-
-  if (materialObject == null) { return; }
-
-  if (materialObject.map != null) {
-    materialObject.map.offset.set(x, y);
-  }
-
-  if (materialObject.normalMap != null) {
-    materialObject.normalMap.offset.set(x, y);
-  }
-
-  if (materialObject.roughnessMap != null) {
-    materialObject.roughnessMap.offset.set(x, y);
-  }
-
-  if (materialObject.metalnessMap != null) {
-    materialObject.metalnessMap.offset.set(x, y);
-  }
-
-  if (materialObject.aoMap != null) {
-    materialObject.aoMap.offset.set(x, y);
-  }
-  requestRender();
-}
-
-// eslint-disable-next-line no-unused-vars
-function getMeshesWithMaterial(model, materialName) {
-  const meshesWithMaterial = [];
-
-  model.traverse((object) => {
-    if (object.isMesh && object.material) {
-      if (Array.isArray(object.material)) {
-        object.material.forEach((material) => {
-          if (material.name === materialName) {
-            meshesWithMaterial.push(object.name);
-          }
-        });
-      } else if (object.material.name === materialName) {
-        meshesWithMaterial.push(object.name);
-      }
-    }
-  });
-
-  return meshesWithMaterial;
 }
 
 function setVisibility(model, value, meshArray = []) {
@@ -2370,7 +2250,6 @@ function loadTexture(textureValue, tilingValue = 1) {
 
       if (value && !textureCache[value]) {
         textureLoader.load(value, (texture) => {
-          // console.log("texture is loading");
           texture.magFilter = THREE.NearestFilter;
           texture.minFilter = THREE.NearestMipmapNearestFilter;
           texture.anisotropy = 16;
@@ -2492,7 +2371,6 @@ function setObjectTexture(materialNames, textureValue, tilingValue = 1, model = 
   }
 }
 
-// eslint-disable-next-line no-unused-vars
 function getMeshDimensions(object) {
   const boundingBox = new THREE.Box3();
   boundingBox.setFromObject(object);
@@ -2522,31 +2400,6 @@ function setMeshPosition(model, meshName, x = 0, y = 0, z = 0) {
   });
 }
 
-// eslint-disable-next-line no-unused-vars
-function getMaterialsList(parent) {
-  const materialsSet = new Set();
-
-  parent.traverse((o) => {
-    if (o.material) {
-      materialsSet.add(o.material.name);
-    }
-  });
-
-  return Array.from(materialsSet);
-}
-
-// eslint-disable-next-line no-unused-vars
-function getMeshNamesList(parent) {
-  const names = [];
-  parent.traverse((o) => {
-    if (o.name) {
-      names.push(o.name);
-    }
-  });
-  return names;
-}
-
-// eslint-disable-next-line no-unused-vars
 function getGroupNamesList(parent, searchString = '') {
   if (!parent) return [];
 
@@ -2582,24 +2435,6 @@ function disableModelReceivingShadows(model) {
   model.traverse((object) => {
     if (object.isMesh) {
       object.receiveShadow = false;
-    }
-  });
-}
-
-// eslint-disable-next-line no-unused-vars
-function disableEnvMapForMaterials(materialNames) {
-  scene.traverse((object) => {
-    if (object.isMesh && object.material) {
-      const materials = Array.isArray(object.material)
-        ? object.material
-        : [object.material];
-
-      materials.forEach((material) => {
-        if (materialNames.includes(material.name)) {
-          material.envMap = null;
-          material.needsUpdate = true;
-        }
-      });
     }
   });
 }
@@ -2678,8 +2513,6 @@ function PrepareAR() {
 }
 
 async function OpenAR() {
-  ComputeMorphedAttributes();
-
   ImportScene(scene);
 }
 
@@ -3006,11 +2839,6 @@ function GetURLWithParameters() {
   const url = new URL(location.href);
   url.searchParams.set(parametersKey, GetParametersString());
   return url.toString();
-}
-
-// eslint-disable-next-line no-unused-vars
-function delay(time) {
-  return new Promise(resolve => setTimeout(resolve, time));
 }
 
 //#endregion
@@ -4541,7 +4369,6 @@ $(document).on('click', '.option.option_1-1', function () { // windows viewport
   }
 });
 
-
 $(document).on('click', '.option.option_1-2', function () { // custom windows
   if (isCameraInside) {
     $('#button_camera_outside').click();
@@ -4823,7 +4650,6 @@ export function flyCameraTo(namePosition, inOrOut, callback = () => { }, duratio
 }
 
 function changeWindowNamesForRowC(model) {
-  // console.log("🚀 ~ changeWindowNamesForRowC ~ model:", model);
   if (model.isModelChanged === true) {
     return;
   }
@@ -5103,170 +4929,6 @@ function addStripAndViewportWindowsToCustomWindowsObject(strip, viewport) {
   }
 }
 
-
-//#endregion
-
-//#region SHADER and MORPHS
-
-function Shader_ChangeVertexToWorldpos(object) {
-  promiseDelayShaderSettings(500, object, () => {
-    if (object.isMesh) {
-      if (isWorldposVertexShaderEnabled) {
-        if (object.material) {
-          if (object.material.name.includes("_Z")) {
-            object.material.onBeforeCompile = (shader) => {
-              shader.vertexShader = shader.vertexShader.replace('#include <uv_vertex>\n', '').replace('#include <worldpos_vertex>', 'vec4 worldPosition = vec4( transformed, 1.0 );\n#ifdef USE_INSTANCING\nworldPosition = instanceMatrix * worldPosition;\n#endif\nworldPosition = modelMatrix * worldPosition;\nvUv = (uvTransform * vec3(worldPosition.xz, 1)).xy;');
-            };
-          }
-          else if (object.material.name.includes("_Y")) {
-            object.material.onBeforeCompile = (shader) => {
-              shader.vertexShader = shader.vertexShader.replace('#include <uv_vertex>\n', '').replace('#include <worldpos_vertex>', 'vec4 worldPosition = vec4( transformed, 1.0 );\n#ifdef USE_INSTANCING\nworldPosition = instanceMatrix * worldPosition;\n#endif\nworldPosition = modelMatrix * worldPosition;\nvUv = (uvTransform * vec3(worldPosition.xy, 1)).xy;');
-            };
-          }
-          else if (object.material.name.includes("_X")) {
-            object.material.onBeforeCompile = (shader) => {
-              shader.vertexShader = shader.vertexShader.replace('#include <uv_vertex>\n', '').replace('#include <worldpos_vertex>', 'vec4 worldPosition = vec4( transformed, 1.0 );\n#ifdef USE_INSTANCING\nworldPosition = instanceMatrix * worldPosition;\n#endif\nworldPosition = modelMatrix * worldPosition;\nvUv = (uvTransform * vec3(worldPosition.yz, 1)).xy;');
-            };
-          }
-          object.material.needsUpdate = true;
-        }
-      }
-    }
-  });
-
-}
-
-function promiseDelayShaderSettings(time, object, callback) {
-  if (time == null) {
-    time = 2000;
-  }
-
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve('resolved');
-      if (object.material.map == null) {
-        promiseDelayShaderSettings(time, object, callback);
-      } else {
-        if (callback != null) {
-          callback();
-        }
-      }
-    }, time);
-  });
-}
-
-// eslint-disable-next-line no-unused-vars
-function InitMorphModel(model) {
-  var BufferGeometryUtils_script = document.createElement('script');
-  BufferGeometryUtils_script.setAttribute('src', 'https://cdn.jsdelivr.net/npm/three@0.147/examples/js/utils/BufferGeometryUtils.js');
-  document.body.appendChild(BufferGeometryUtils_script);
-
-  model?.traverse((object) => {
-    if (object.isMesh) {
-
-      Shader_ChangeVertexToWorldpos(object);
-
-      if (object.morphTargetDictionary != null) {
-
-        for (const [key, value] of Object.entries(object.morphTargetDictionary)) {
-
-          var morph = {
-            name: key,
-            object: object,
-            key: value,
-            value: value
-          };
-
-          if (!morphs.includes(morph)) {
-            morphs.push(morph);
-          }
-        }
-      }
-    }
-  });
-
-  PrepareGlobalMorphs();
-}
-
-function PrepareGlobalMorphs() {
-  globalMorphs = [];
-
-  for (let index = 0; index < morphs.length; index++) {
-    const morph = morphs[index];
-
-    var hasMorph = false;
-
-    for (let m = 0; m < globalMorphs.length; m++) {
-      const globalMorph = globalMorphs[m];
-      if (globalMorph.name != morph.name) { continue; }
-      hasMorph = true;
-      break;
-    }
-
-    if (!hasMorph) {
-      globalMorphs.push(morph);
-    }
-  }
-}
-
-function ComputeMorphedAttributes() {
-  for (let index = 0; index < morphs.length; index++) {
-    const morph = morphs[index];
-    var computeMorphedAttributes = THREE.BufferGeometryUtils.computeMorphedAttributes(morph.object);
-    morph.object.geometry.computeMorphedAttributes = computeMorphedAttributes;
-  }
-}
-
-// eslint-disable-next-line no-unused-vars
-function ChangeObjectMorph(morph, inputvalue) {
-  if (morph.object == null) { return; }
-
-  if (morph.object.isMesh) {
-    if (morph.object.morphTargetInfluences != null) {
-      morph.object.morphTargetInfluences[morph.key] = inputvalue;
-    }
-  }
-}
-
-function ChangeGlobalMorph(morphName, inputvalue) {
-  for (let index = 0; index < morphs.length; index++) {
-    const morph = morphs[index];
-
-    if (morph.name != morphName) { continue; }
-    if (morph.object == null) { continue; }
-    if (!morph.object.isMesh) { continue; }
-    if (morph.object.morphTargetInfluences == null) { continue; }
-
-    morph.object.morphTargetInfluences[morph.key] = inputvalue;
-  }
-}
-
-// eslint-disable-next-line no-unused-vars
-function ConvertMorphValue(inputval, srcStart, srcEnd, destStart = 0, destEnd = 1) {
-  const result = destStart + (inputval - srcStart) * (destEnd - destStart) / (srcEnd - srcStart);
-
-  return result;
-}
-
-// eslint-disable-next-line no-unused-vars
-function animateMorph(morphName, valueStart, valueEnd, callback = () => { }, timeInterval = 200, steps = 5) {
-  const stepDuration = timeInterval / steps;
-  const stepValue = (valueEnd - valueStart) / steps;
-  let currentValue = valueStart;
-  let completedSteps = 0;
-
-  for (let i = 1; i <= steps; i++) {
-    setTimeout(() => {
-      ChangeGlobalMorph(morphName, currentValue);
-      currentValue += stepValue;
-      completedSteps++;
-      if (completedSteps === steps) {
-        ChangeGlobalMorph(morphName, valueEnd);
-        callback();
-      }
-    }, i * stepDuration);
-  }
-}
 
 //#endregion
 
