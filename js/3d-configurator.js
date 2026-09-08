@@ -305,7 +305,7 @@ let SharedParameterList = [
     groupIds: null,
     splitValue: 'q',
     type: 'array-string',
-    value: ['b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'],
+    value: ['c', 'd', 'e', 'f', 'g', 'h', 'i'],
     groupOptionAction: null,
     applyURLAction: null,
     applyURLActionReturn: false
@@ -386,7 +386,7 @@ getSharedParameter('upgrades').groupOptionAction = function () {
   if (isFirstStart || justClicked) {
     if (this.value[2] == '1') { // extra door
       isExtraDoorOn = true;
-      //! TODO logic for adding extra door
+      // ! TODO logic for adding extra door
     } else {
       isExtraDoorOn = false;
     }
@@ -821,7 +821,7 @@ async function payAttentionToIcons() {
   }, 20000); // 20 seconds
 }
 
-//! *****************   START   ********************
+// ! *****************   START   ********************
 async function Start() {
   // Without WebGL the configurator can't render, and THREE.WebGLRenderer
   // would throw an uncaught exception that strands the page on the loader.
@@ -879,7 +879,14 @@ async function StartSettings() {
   await loadModel(MODEL_PATHS[currentHouse], false, () => { }, true);
   modelHouse = IMPORTED_MODELS[0];
   setVisibility(modelHouse, false, ['bed']);
-  GetMesh('foundation').position.y = -0.001;
+
+  const foundationMesh = GetMesh('foundation');
+  if (foundationMesh) {
+    foundationMesh.position.y = -0.001;
+  } else {
+    console.error('foundation mesh is not defined for currentHouse:', currentHouse);
+  }
+
   modelHouse?.scale.set(0, 0, 0);
   modelHouse && scene.add(modelHouse);
 
@@ -914,6 +921,12 @@ async function StartSettings() {
 
   $('#js-loader').addClass('invisible');
   $('.summary.entry-summary').removeClass('hidden');
+
+  window.myCamera = camera;
+  window.myControls = controls;
+
+  onChangePosition(DATA_HOUSE_NAME[currentHouse], 'outMain', () => { }, 5);
+
   animateScale(modelHouse, 500, () => {
     unBlockBuyBtn();
     CheckChanges();
@@ -923,7 +936,7 @@ async function StartSettings() {
 
   isFirstStart = false;
 }
-//! ************************************************
+// ! ************************************************
 
 // Add this to your page
 window.addEventListener('load', function () {
@@ -1436,7 +1449,15 @@ function applyAllConditionsUncheckedCHeckboxes() {
 }
 
 function additionalConditions() {
-  // Additional custom conditions if needed
+  if (getSharedParameter('windows').value[0] == '1') { // Strip
+    setWindowPreset('strip');
+  }
+
+  if (getSharedParameter('windows').value[1] == '1') { // ViewPort
+    setWindowPreset('viewport');
+  }
+
+  setWindowPreset('skylight');
 }
 
 function updateStateVars() {
@@ -1673,7 +1694,7 @@ function clickOption(groupId, optionId) {
   }
 }
 
-//! ************************************************
+// ! ************************************************
 function CheckChanges() {
   updateStateVars();
   setAllPanelsOn();
@@ -1682,7 +1703,7 @@ function CheckChanges() {
   applyAllConditionsUncheckedCHeckboxes();
   additionalConditions();
 
-  if (currentHouse == '2' && isExtraDoorOn) { //! TODO
+  if (currentHouse == '2' && isExtraDoorOn) { // ! TODO
     removeExtraDoorPanelsFromCustomWindows();
     getSharedParameter('customWindows').value = convertObjectToArray(customWindows);
     WriteURLParameters();
@@ -1707,7 +1728,7 @@ function CheckChanges() {
 
   requestRender();
 }
-//! ************************************************
+// ! ************************************************
 //#endregion
 
 //#region CUSTOM FUNCTIONS
@@ -1735,7 +1756,14 @@ async function changeModel(modelId) {
   await loadModel(MODEL_PATHS[modelId], false, () => { }, true);
   modelHouse = IMPORTED_MODELS[0];
   setVisibility(modelHouse, false, ['bed']);
-  GetMesh('foundation').position.y = -0.001;
+
+  const foundationMesh = GetMesh('foundation');
+  if (foundationMesh) {
+    foundationMesh.position.y = -0.001;
+  } else {
+    console.error('foundation mesh is not defined for currentHouse:', currentHouse);
+  }
+
   modelHouse?.scale.set(0, 0, 0);
   modelHouse && scene.add(modelHouse);
 
@@ -2013,14 +2041,14 @@ function calculatePrice() {
         totalAmount += optionPrice * windowsQty;
       } else if (!activeOptions.includes('option_1-2')) { // NOT custom windows
         if (activeOptions.includes('option_1-1')) { // viewport
-          const windowsQty = 3; //! 4 windows minus 1 window on level C
+          const windowsQty = 3; // ! 4 windows minus 1 window on level C
           windowsSmartPrice = windowsSmartPrice + optionPrice * windowsQty;
           $(`.${activeOptions[i]} .component_price`).html(formatPrice(windowsSmartPrice, currentCurrencySign));
           if (optionLeadTime > maximumLeadTimeWeeks) { maximumLeadTimeWeeks = optionLeadTime; }
           totalAmount += optionPrice * windowsQty;
         }
         if (activeOptions.includes('option_1-0')) { // strip
-          let windowsQty = (currentHouse == '2') ? 4 : 3; //! 5 or 4 windows minus 1 window on level C
+          let windowsQty = (currentHouse == '2') ? 4 : 3; // ! 5 or 4 windows minus 1 window on level C
           windowsSmartPrice = windowsSmartPrice + optionPrice * windowsQty;
           $(`.${activeOptions[i]} .component_price`).html(formatPrice(windowsSmartPrice, currentCurrencySign));
           if (optionLeadTime > maximumLeadTimeWeeks) { maximumLeadTimeWeeks = optionLeadTime; }
@@ -2095,8 +2123,8 @@ function formatPrice(price, currency, needToBeRounded = true, needToAddSpace = f
   if (
     !price
     && getSharedParameter('windows').value[2] != 1 // custom windows
-    && getSharedParameter('upgrades').value[2] != 1 // extra door //!!! corrected
-    && getSharedParameter('upgrades').value[0] != 1 // smart glass //!!! corrected
+    && getSharedParameter('upgrades').value[2] != 1 // extra door // !!! corrected
+    && getSharedParameter('upgrades').value[0] != 1 // smart glass // !!! corrected
   ) {
     return getData(dataMain, 'ui_component_price_included', currentLanguage);
   }
@@ -2395,7 +2423,7 @@ function setMeshPosition(model, meshName, x = 0, y = 0, z = 0) {
   model.traverse((object) => {
     if (object.isMesh && object.name === meshName) {
       object.position.set(newPosition.x, newPosition.y, newPosition.z);
-      console.log(`Position of mesh '${meshName}' set to:`, newPosition);
+      // console.log(`Position of mesh '${meshName}' set to:`, newPosition);
     }
   });
 }
@@ -2406,7 +2434,7 @@ function getGroupNamesList(parent, searchString = '') {
   const groupNames = [];
   const normalizedSearchString = searchString.toLowerCase();
 
-  //! TODO (optimization)
+  // ! TODO (optimization)
   parent.traverse((object) => {
     if (object.isGroup && object.name) {
       const normalizedGroupName = object.name.toLowerCase();
@@ -3093,8 +3121,8 @@ async function PrepareUI() {
               // library and subsequent saves can run silently.
               if (data.email || data.t || data.design_id) {
                 const next = new URL(window.location.href);
-                if (data.email)     next.searchParams.set('email',     data.email);
-                if (data.t)         next.searchParams.set('t',         data.t);
+                if (data.email) next.searchParams.set('email', data.email);
+                if (data.t) next.searchParams.set('t', data.t);
                 if (data.design_id) next.searchParams.set('design_id', data.design_id);
                 window.history.replaceState(null, '', next.toString());
               }
@@ -3125,7 +3153,7 @@ async function PrepareUI() {
     validateForm();
   });
 
-  //! Hide and disable Airconditioner option
+  // ! Hide and disable Airconditioner option
   jQuery(document).ready(function () {
     const airConditionerOption = $('.option_5-4');
     if (airConditionerOption.length) {
@@ -3760,10 +3788,10 @@ function isSignedInForSavedDesigns() {
 async function silentSaveDesign() {
   // Required by the existing webhook validator (validateSubmission). If any
   // is missing, fall back to the form so the user can refill.
-  const cachedName    = localStorage.getItem('userName')    || userName;
-  const cachedPhone   = localStorage.getItem('userPhone')   || userPhone;
-  const cachedEmail   = localStorage.getItem('userEmail')   || userEmail;
-  const cachedZip     = localStorage.getItem('userZipcode') || userZipcode;
+  const cachedName = localStorage.getItem('userName') || userName;
+  const cachedPhone = localStorage.getItem('userPhone') || userPhone;
+  const cachedEmail = localStorage.getItem('userEmail') || userEmail;
+  const cachedZip = localStorage.getItem('userZipcode') || userZipcode;
   if (!cachedName || !cachedPhone || !cachedEmail || !cachedZip) {
     return false;
   }
@@ -3776,7 +3804,7 @@ async function silentSaveDesign() {
 
   const url = new URL(window.location.href);
   const designId = url.searchParams.get('design_id');
-  const token    = url.searchParams.get('t');
+  const token = url.searchParams.get('t');
 
   const fd = new FormData();
   fd.append('name', cachedName);
@@ -3787,7 +3815,7 @@ async function silentSaveDesign() {
   fd.append('designURL', window.location.href);
   fd.append('totalamount_number', String(totalAmount));
   fd.append('totalamount_string', `${totalAmount}`);
-  if (token)    fd.append('t',         token);
+  if (token) fd.append('t', token);
   if (designId) fd.append('design_id', designId);
 
   try {
@@ -3807,8 +3835,8 @@ async function silentSaveDesign() {
     // Update URL with the response (server may issue a fresh design_id on
     // save-as-new, or echo the existing one on update).
     const next = new URL(window.location.href);
-    if (data.email)     next.searchParams.set('email',     data.email);
-    if (data.t)         next.searchParams.set('t',         data.t);
+    if (data.email) next.searchParams.set('email', data.email);
+    if (data.t) next.searchParams.set('t', data.t);
     if (data.design_id) next.searchParams.set('design_id', data.design_id);
     window.history.replaceState(null, '', next.toString());
 
@@ -3990,7 +4018,7 @@ function openSummary() {
   $(`.summary__scheme_dimensions_zome-700`).removeClass('active');
 
   const houseName = DATA_HOUSE_NAME[currentHouse].toLowerCase();
-  
+
   $(`.summary__scheme_${houseName}`).addClass('active');
   $(`.summary__scheme_dimensions_${houseName}`).addClass('active');
 
@@ -4051,14 +4079,14 @@ function formatLastSavedAt(iso) {
   const ms = Date.now() - new Date(iso).getTime();
   if (!Number.isFinite(ms) || ms < 0) return '';
   const sec = Math.round(ms / 1000);
-  if (sec < 30)  return 'Just saved';
-  if (sec < 60)  return `Last saved ${sec}s ago`;
+  if (sec < 30) return 'Just saved';
+  if (sec < 60) return `Last saved ${sec}s ago`;
   const min = Math.round(sec / 60);
-  if (min < 60)  return `Last saved ${min}m ago`;
-  const hr  = Math.round(min / 60);
-  if (hr  < 24)  return `Last saved ${hr}h ago`;
-  const d   = Math.round(hr / 24);
-  if (d   < 30)  return `Last saved ${d}d ago`;
+  if (min < 60) return `Last saved ${min}m ago`;
+  const hr = Math.round(min / 60);
+  if (hr < 24) return `Last saved ${hr}h ago`;
+  const d = Math.round(hr / 24);
+  if (d < 30) return `Last saved ${d}d ago`;
   const date = new Date(iso);
   return `Last saved ${date.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}`;
 }
@@ -4073,11 +4101,11 @@ function collectSummary() {
   // each on its own line. Shown only when a saved design is loaded
   // (URL has design_id resolving to one of the user's). Empty/hidden
   // otherwise — the popup just shows the elevation views and breakdown.
-  const heading           = document.getElementById('summary_heading');
-  const headingTitle      = document.getElementById('summary_heading_title');
-  const headingUserName   = document.getElementById('summary_heading_user_name');
-  const headingUserEmail  = document.getElementById('summary_heading_user_email');
-  const headingSubtitle   = document.getElementById('summary_heading_subtitle');
+  const heading = document.getElementById('summary_heading');
+  const headingTitle = document.getElementById('summary_heading_title');
+  const headingUserName = document.getElementById('summary_heading_user_name');
+  const headingUserEmail = document.getElementById('summary_heading_user_email');
+  const headingSubtitle = document.getElementById('summary_heading_subtitle');
   const currentDesign = window.MyDesigns?.getCurrentDesign?.() ?? null;
   if (heading && headingTitle && headingSubtitle) {
     if (currentDesign?.name) {
@@ -4085,16 +4113,16 @@ function collectSummary() {
       // saved-designs session), then fall back to localStorage / globals
       // so old anonymous saves still render something useful.
       const _url = new URL(location.href);
-      const displayName  = _url.searchParams.get('name')  || localStorage.getItem('userName')  || userName  || '';
+      const displayName = _url.searchParams.get('name') || localStorage.getItem('userName') || userName || '';
       const displayEmail = _url.searchParams.get('email') || localStorage.getItem('userEmail') || userEmail || '';
       headingTitle.textContent = currentDesign.name;
-      if (headingUserName)  { headingUserName.textContent  = displayName;  headingUserName.hidden  = !displayName; }
+      if (headingUserName) { headingUserName.textContent = displayName; headingUserName.hidden = !displayName; }
       if (headingUserEmail) { headingUserEmail.textContent = displayEmail; headingUserEmail.hidden = !displayEmail; }
       headingSubtitle.textContent = formatLastSavedAt(currentDesign.updated_at);
       heading.hidden = false;
     } else {
       headingTitle.textContent = '';
-      if (headingUserName)  { headingUserName.textContent  = ''; headingUserName.hidden  = true; }
+      if (headingUserName) { headingUserName.textContent = ''; headingUserName.hidden = true; }
       if (headingUserEmail) { headingUserEmail.textContent = ''; headingUserEmail.hidden = true; }
       headingSubtitle.textContent = '';
       heading.hidden = true;
@@ -4118,18 +4146,28 @@ function collectSummary() {
     const group = $(this);
     const groupId = group.attr('id');
 
-    if (groupId === 'group-3') { return; } //! TEMPORARY CODE for removing EXTERIOR group
+    if (groupId === 'group-3') { return; } // ! TEMPORARY CODE for removing EXTERIOR group
 
     const groupTitle = group.find('.ar_filter_caption').text();
     const filterOptions = group.find('.ar_filter_options');
 
     let classes = `details__group details__${filterOptions.attr('class').split(' ')[1]}`
 
-    if (groupId === 'group-1') { // Windows group
-      classes = classes + ' details__type_select';
+    switch (groupId) {
+      case 'group-0': // Model
+      case 'group-2': // Interior
+      case 'group-3': // Exterior
+      case 'group-6': // Subfloor / Foundation
+      case 'group-1': // Windows
+        classes = classes + ' details__type_select';
+        break;
+      case 'group-4': // Upgrades
+      case 'group-5': // Add-ons
+        classes = classes + ' details__type_checkbox';
+        break;
+      default:
+        break;
     }
-
-    classes = classes + ' details__type_select';
 
     const detailsGroupId = `details__${groupId}`;
 
@@ -4381,7 +4419,7 @@ $(document).on('click', '.option.option_5-1', function () { // in-build desk
   if ($('.option.option_5-1').hasClass('active')) {
     if (!isCameraInside) {
       $('#button_camera_inside').click();
-    }else {
+    } else {
       flyCameraTo('outBuildInDesk', 'inside');
     }
   }
@@ -4450,7 +4488,7 @@ $(document).on('click', '.tumbler-wrapper', function () { //Smart windows tumblr
 
 
 function smartWindowsController(materialName, isEnabled) {
-  //! TODO (optimization) - avoid traverse
+  // ! TODO (optimization) - avoid traverse
   scene.traverse((object) => {
     if (object.isMesh && object.material && object.material.name === materialName) {
       const material = object.material;
@@ -4546,6 +4584,23 @@ export function promiseDelay(time, callback) {
 
 //#region 3D FUNCTIONS
 
+function getControlsMinDistance(houseName) {
+  switch (houseName) {
+    case 'Zome-120':
+      return 3.5;
+    case 'Zome-170':
+      return 4;
+    case 'Zome-300':
+      return 4.5;
+    case 'Zome-500':
+      return 6;
+    case 'Zome-700':
+      return 7;
+    default:
+      return 6;
+  }
+}
+
 function onChangePosition(houseId, pos, callback = () => { }, duration = 750, isLeftSideHouse = true) {
   let targetCameraPosition;
   let targetControlX;
@@ -4617,7 +4672,7 @@ function onChangePosition(houseId, pos, callback = () => { }, duration = 750, is
 
   function outsideCameraSettings() {
     controls.enableZoom = true;
-    targetControlMinDist = 4;
+    targetControlMinDist = getControlsMinDistance(houseId);
     targetCameraFOV = 50;
     maxPolarAngle = Math.PI / 1.88;
   }
@@ -4653,19 +4708,31 @@ function changeWindowNamesForRowC(model) {
   if (model.isModelChanged === true) {
     return;
   }
-
+  const objectsToRemove = [];
   model.traverse((child) => {
     if (child.isGroup && child.name) {
       const groupName = child.name.toLowerCase();
       if (groupName.includes("window") && groupName.includes("-c-")) {
         if (groupName.includes("001")) {
           child.name = child.name.replace("001", "");
+        } else if (groupName.includes("_open")) {
+          child.name = child.name.replace("_open", "");
         } else {
-          child.name = child.name.replace(/window/i, "glass");
-          child.visible = false;
+          // child.name = child.name.replace(/window/i, "glass");
+          // child.visible = false;
+          objectsToRemove.push(child);
         }
       }
     }
+  });
+
+  objectsToRemove.forEach((obj) => {
+    obj.traverse((node) => {
+      if (node.isMesh && node.geometry) {
+        node.geometry.dispose();
+      }
+    });
+    obj.removeFromParent();
   });
 
   model.isModelChanged = true;
@@ -4778,14 +4845,14 @@ canvas.addEventListener('mouseup', onMouseUp);
 function updateCustomWindows([letter, number]) {
   const keyName = letter.toLowerCase();
 
-  //! the code below is commented for now, because it is not used if Extra Door option is not enabled
+  // ! the code below is commented for now, because it is not used if Extra Door option is not enabled
   // if (STUDIO_EXTRADOOR_SECTORS.includes(`${keyName}${number}`)
   //   && isExtraDoorOn
   //   && currentHouse == '2') {
   //   return;
   // }
 
-  if (keyName === 'g' && currentHouse !== '2') {
+  if (keyName in VIEWPORT_AND_STRIP_SECTORS[DATA_HOUSE_NAME[currentHouse]].skylight) {
     return;
   }
 
@@ -4794,7 +4861,7 @@ function updateCustomWindows([letter, number]) {
     const { panelMeshName, windowMeshName, glassMeshName } = findMeshByLetterAndNumber(modelHouse, letter, number);
 
     if (index === -1) {
-      if (customWindows[keyName].length >= WINDOWS_LIMIT_IN_ROW) {
+      if (customWindows[keyName].length >= WINDOWS_LIMIT_IN_ROW[DATA_HOUSE_NAME[currentHouse]]) {
 
         $('#canvas_notification_limit').removeClass('hidden');
 
@@ -4830,9 +4897,9 @@ function updateCustomWindows([letter, number]) {
 }
 
 function findMeshByLetterAndNumber(parent, letter, number) {
-  const panelSearchPattern = new RegExp(`panel.*-${letter.toLowerCase()}-${number}$`, 'i');
-  const windowSearchPattern = new RegExp(`window.*-${letter.toLowerCase()}-${number}$`, 'i');
-  const glassSearchPattern = new RegExp(`glass.*-${letter.toLowerCase()}-${number}$`, 'i');
+  const panelSearchPattern = new RegExp(`panel.*-${letter}-${number}(?:\\D|$)`, 'i');
+  const windowSearchPattern = new RegExp(`window.*-${letter}-${number}(?:\\D|$)`, 'i');
+  const glassSearchPattern = new RegExp(`glass.*-${letter}-${number}(?:\\D|$)`, 'i');
 
   let panelMeshName = null;
   let windowMeshName = null;
@@ -4903,6 +4970,18 @@ function resetCustomWindows() {
         (panelMeshName) && setVisibility(modelHouse, true, [panelMeshName]);
         (windowMeshName) && setVisibility(modelHouse, false, [windowMeshName]);
       }
+    }
+  }
+}
+
+function setWindowPreset(type) {
+  const windowPresetData = VIEWPORT_AND_STRIP_SECTORS[DATA_HOUSE_NAME[currentHouse]][type];
+
+  for (const [key, values] of Object.entries(windowPresetData)) {
+    for (const value of values) {
+      const { panelMeshName, windowMeshName, glassMeshName } = findMeshByLetterAndNumber(modelHouse, key, value);
+      (panelMeshName) && setVisibility(modelHouse, false, [panelMeshName]);
+      (windowMeshName) && setVisibility(modelHouse, true, [windowMeshName]);
     }
   }
 }
@@ -5165,7 +5244,28 @@ function createVerticalDimensionLine(start, end, label, scene) {
 function createTextTexture(text) {
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');
-  context.font = '32px Arial';
+
+  let fontSize = 32;
+
+  switch (currentHouse) {
+    case '0':
+      fontSize = 32;
+      break;
+    case '1':
+      fontSize = 32;
+      break;
+    case '2':
+      fontSize = 32;
+      break;
+    case '3':
+      fontSize = 38;
+      break;
+    default:
+      fontSize = 38;
+      break;
+  }
+
+  context.font = `${fontSize}px Arial`;
   context.fillStyle = 'black';
   context.fillText(text, 50, 50);
   return canvas;
@@ -5191,10 +5291,29 @@ function getHouseDimensions() {
   let diameter = 0;
   let height = 0;
 
+  let deltaDiameter = 1.5;
+
+  switch (currentHouse) {
+    case '0':
+      deltaDiameter = 1.5;
+      break;
+    case '1':
+      deltaDiameter = 1.5;
+      break;
+    case '2':
+      deltaDiameter = 1.5;
+      break;
+    case '3':
+      deltaDiameter = 2.5;
+      break;
+    default:
+      deltaDiameter = 1.0;
+      break;
+  }
+
   if (modelHouse) {
     height = getMeshDimensions(modelHouse).height;
-    const meshName = (currentHouse == '1') ? 'entry-center' : 'entry-L1-center';
-    diameter = getMeshDimensions(modelHouse.getObjectByName(meshName)).width;
+    diameter = getMeshDimensions(modelHouse).depth - deltaDiameter;
   }
 
   return [diameter, height];
@@ -5271,11 +5390,11 @@ function CreateImageList() {
       topViewCorrection = 0.5;
       break;
     case '3': // 500
-      cameraFar = 10.7;
-      topViewCorrection = 0.5;
+      cameraFar = 13.7;
+      topViewCorrection = 0.75;
       break;
     case '4': // 700
-      cameraFar = 10.7;
+      cameraFar = 15.2;
       topViewCorrection = 0.5;
       break;
     default:

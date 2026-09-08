@@ -2624,11 +2624,11 @@ textarea[name="ar_order_comment"] {
   margin: auto;
 }
 
-.details__item:first-child .details__group_title {
+.details__type_checkbox .details__item:first-child .details__group_title {
   opacity: 1;
 }
 
-.details__active .details__group_title {
+.details__type_select .details__active .details__group_title {
   opacity: 1;
 }
 
