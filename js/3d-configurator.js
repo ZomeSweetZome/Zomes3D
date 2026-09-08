@@ -5304,7 +5304,10 @@ function getHouseDimensions() {
       deltaDiameter = 1.5;
       break;
     case '3':
-      deltaDiameter = 2.5;
+      deltaDiameter = 1.0;
+      break;
+    case '4':
+      deltaDiameter = 1.0;
       break;
     default:
       deltaDiameter = 1.0;
