@@ -35,6 +35,10 @@ import {
   DATA_HOUSE_NAME,
   NAV_CAM_POSITION,
   STUDIO_EXTRADOOR_SECTORS,
+  EXTRA_DOOR_AVAILABLE_SECTORS,
+  getExtraDoorAffectedPanels,
+  IS_EXTRA_DOOR_GLOW_MODE,
+  EXTRA_DOOR_GLOW_COLOR,
   FOUNDATION_HEIGHT,
   WINDOWS_LIMIT_IN_ROW,
   VIEWPORT_AND_STRIP_SECTORS,
@@ -98,6 +102,10 @@ let currentHouse = '0';
 let isWindowCustomOn = false;
 let isFoundationKitOn = false;
 let isExtraDoorOn = false;
+let selectedExtraDoorPosition = null;
+let extraDoorHotspots = [];
+let glowingPanels = [];
+let hoveredGlowingSector = null;
 let isWindowsSmart = false;
 
 let [houseDiameter, houseHeight] = [0, 0];
@@ -334,6 +342,16 @@ let SharedParameterList = [
     groupOptionAction: null,
     applyURLAction: null,
     applyURLActionReturn: false
+  },
+  { // [12] extraDoor
+    id: 'extraDoor',
+    groupIds: null,
+    splitValue: 'X',
+    type: 'int',
+    value: 0,
+    groupOptionAction: null,
+    applyURLAction: null,
+    applyURLActionReturn: false
   }
 ];
 
@@ -386,12 +404,20 @@ getSharedParameter('upgrades').groupOptionAction = function () {
   if (isFirstStart || justClicked) {
     if (this.value[2] == '1') { // extra door
       isExtraDoorOn = true;
-      // ! TODO logic for adding extra door
+      if (isCameraInside) {
+        $('#button_camera_outside').click();
+      }
+      if (selectedExtraDoorPosition) {
+        // Restore previously saved position
+        installExtraDoor(selectedExtraDoorPosition, false);
+      } else {
+        flyCameraTo('outExtraDoor', 'outside');
+        showExtraDoorHotspots();
+      }
     } else {
       isExtraDoorOn = false;
+      uninstallExtraDoor(false);
     }
-
-    // updateFurnitureSet();
 
     checkUpgradesAndAddonsState();
   }
@@ -1081,6 +1107,9 @@ function SetActionForGroups() {
         for (let i = 0; i < target.group.options.length; i++) {
           const opt = target.group.options[i];
           opt.element.addEventListener('click', function () {
+            if (opt.element.classList.contains('disabled') || opt.element.classList.contains('disabled_always')) {
+              return;
+            }
             target.group.activeOption = i;
             opt.active = !opt.active;
             opt.element.classList.toggle('active');
@@ -1472,6 +1501,12 @@ function updateStateVars() {
   isWindowCustomOn = (getSharedParameter('windows').value[2] == '1') ? true : false;
   isFoundationKitOn = (getSharedParameter('foundation').value[0] == '1') ? true : false;
   isExtraDoorOn = (getSharedParameter('upgrades').value[2] == '1') ? true : false;
+  const extraDoorVal = getSharedParameter('extraDoor')?.value;
+  if (isExtraDoorOn && extraDoorVal && Number.isFinite(parseInt(extraDoorVal)) && parseInt(extraDoorVal) > 0) {
+    selectedExtraDoorPosition = parseInt(extraDoorVal);
+  } else if (!isExtraDoorOn) {
+    selectedExtraDoorPosition = null;
+  }
 }
 
 function setOptionsResult() {
@@ -1709,21 +1744,38 @@ function CheckChanges() {
   applyAllConditionsUncheckedCHeckboxes();
   additionalConditions();
 
-  if (currentHouse == '2' && isExtraDoorOn) { // ! TODO
-    removeExtraDoorPanelsFromCustomWindows();
-    getSharedParameter('customWindows').value = convertObjectToArray(customWindows);
-    WriteURLParameters();
-    restoreCustomWindows();
+  if (isExtraDoorOn && selectedExtraDoorPosition) {
+    const allowed = EXTRA_DOOR_AVAILABLE_SECTORS[currentHouse] || [];
+    if (!allowed.includes(selectedExtraDoorPosition) || !canInstallExtraDoorAt(selectedExtraDoorPosition)) {
+      selectedExtraDoorPosition = null;
+      getSharedParameter('extraDoor').value = 0;
+      WriteURLParameters();
+      showExtraDoorHotspots();
+    } else {
+      removeExtraDoorPanelsFromCustomWindows(selectedExtraDoorPosition);
+      getSharedParameter('customWindows').value = convertObjectToArray(customWindows);
+      restoreCustomWindows();
+      updateExtraDoorMeshesVisibility(selectedExtraDoorPosition, true);
+    }
+  } else if (isExtraDoorOn && !selectedExtraDoorPosition) {
+    showExtraDoorHotspots();
+  } else if (!isExtraDoorOn) {
+    removeExtraDoorHotspots();
+    updateExtraDoorMeshesVisibility(null, false);
   }
 
   if (isWindowCustomOn && getSharedParameter('customWindows').value.length > 0) {
     restoreCustomWindows();
+    if (isExtraDoorOn && selectedExtraDoorPosition) {
+      updateExtraDoorMeshesVisibility(selectedExtraDoorPosition, true);
+    }
   }
 
   applyActiveGroupOptionAction();
   updateStateVars();
 
   checkUpgradesAndAddonsState();
+  updateDoorAndWindowsMutualBlocking();
 
   smartWindowsController('glass', isWindowsSmart);
   smartWindowsController('glass.001', isWindowsSmart);
@@ -1753,6 +1805,7 @@ async function changeModel(modelId) {
   }
 
   resetCanvasButtons();
+  removeExtraDoorHotspots();
 
   IMPORTED_MODELS[0] && await disposeModel(IMPORTED_MODELS[0]);
   IMPORTED_MODELS[1] && await disposeModel(IMPORTED_MODELS[1]);
@@ -2069,8 +2122,13 @@ function calculatePrice() {
       }
     } else {
       $(`.${activeOptions[i]} .component_price`).html(formatPrice(optionPrice, currentCurrencySign));
-      if (optionLeadTime > maximumLeadTimeWeeks) { maximumLeadTimeWeeks = optionLeadTime; }
-      totalAmount += optionPrice;
+      if (activeOptions[i] === 'option_4-3' && !selectedExtraDoorPosition) {
+        // Door is toggled in menu, but not yet placed in 3D:
+        // Keep option price displayed in menu, but do NOT add to totalAmount until placed!
+      } else {
+        if (optionLeadTime > maximumLeadTimeWeeks) { maximumLeadTimeWeeks = optionLeadTime; }
+        totalAmount += optionPrice;
+      }
     }
   }
 
@@ -2938,6 +2996,16 @@ async function PrepareUI() {
 
     BtnsAR.on('click', function () {
       OpenARorQR();
+    });
+
+    $(document).on('mouseenter', '.option.disabled', function () {
+      $(this).find('.option_tooltip').css('display', 'block');
+    }).on('mouseleave', '.option.disabled', function () {
+      $(this).find('.option_tooltip').css('display', '');
+    });
+
+    $(document).on('click', '.ar_button_back, .ar_button_next, .title_list__item, #view_summary_btn, #canvas_button_view_summary, #ar_button_order, #canvas_button_save', function () {
+      cancelUnplacedExtraDoor();
     });
 
     const sharingHandler = () => {
@@ -4408,20 +4476,33 @@ $(document).on('click', '#group-2 .ar_button_back', function () { // exterior gr
 });
 
 $(document).on('click', '.option.option_1-0', function () { // windows strip
+  if ($(this).hasClass('disabled')) return;
   if (!isCameraInside) {
     flyCameraTo('outWindowsStrip', 'outside');
   }
 });
 
 $(document).on('click', '.option.option_1-1', function () { // windows viewport
+  if ($(this).hasClass('disabled')) return;
   if (!isCameraInside) {
     flyCameraTo('outWindowsViewport', 'outside');
   }
 });
 
 $(document).on('click', '.option.option_1-2', function () { // custom windows
+  if ($(this).hasClass('disabled')) return;
   if (isCameraInside) {
     $('#button_camera_outside').click();
+  }
+});
+
+$(document).on('click', '.option.option_4-3', function () { // extra door
+  if ($(this).hasClass('disabled')) return;
+  if (isCameraInside) {
+    $('#button_camera_outside').click();
+  }
+  if ($(this).hasClass('active') && !selectedExtraDoorPosition) {
+    flyCameraTo('outExtraDoor', 'outside');
   }
 });
 
@@ -4704,10 +4785,14 @@ export function flyCameraTo(namePosition, inOrOut, callback = () => { }, duratio
     $('#button_camera_inside').addClass('hidden');
     $('#button_camera_outside').removeClass('hidden');
     isCameraInside = true;
+    removeExtraDoorHotspots();
   } else if (inOrOut === 'outside') {
     $('#button_camera_outside').addClass('hidden');
     $('#button_camera_inside').removeClass('hidden');
     isCameraInside = false;
+    if (isExtraDoorOn && !selectedExtraDoorPosition) {
+      showExtraDoorHotspots();
+    }
   }
 
   onChangePosition(DATA_HOUSE_NAME[currentHouse], namePosition, callback, duration);
@@ -4769,37 +4854,144 @@ function onMouseDown(event) {
   startY = event.clientY;
 }
 
+
+function getRaycastExtraDoorSector(event) {
+  const rect = canvas.getBoundingClientRect();
+  mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+  mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+
+  // Raycast against all objects in the scene so front surfaces occlude back ones
+  const intersects = raycaster.intersectObjects(scene.children, true);
+  if (!intersects || intersects.length === 0) return null;
+
+  // Find first visible mesh (ignore floor and ground shadow helpers)
+  let firstHit = null;
+  for (let i = 0; i < intersects.length; i++) {
+    const obj = intersects[i].object;
+    if (obj && obj.visible) {
+      if (obj === floor || obj.name === 'shadow_plane' || obj.name === 'shadowPlane') continue;
+      firstHit = intersects[i];
+      break;
+    }
+  }
+
+  if (!firstHit) return null;
+
+  let matchedSector = null;
+
+  // 1. Check if firstHit belongs to one of the glowing panels by walking parent chain
+  if (glowingPanels.length > 0) {
+    // Walk up from the hit object through the parent hierarchy
+    let checkObj = firstHit.object;
+    outer: while (checkObj && checkObj !== scene) {
+      for (const entry of glowingPanels) {
+        // Match by exact mesh or by being a child of the same group
+        if (entry.mesh === checkObj ||
+            (entry.mesh && entry.mesh.parent && entry.mesh.parent === checkObj) ||
+            (entry.mesh && entry.mesh.parent && entry.mesh.parent === checkObj.parent)) {
+          matchedSector = entry.x;
+          break outer;
+        }
+      }
+      checkObj = checkObj.parent;
+    }
+  }
+
+  // 2. Or check panel name from object or any ancestor group
+  if (matchedSector === null) {
+    let checkObj = firstHit.object;
+    while (checkObj && checkObj !== scene) {
+      const name = checkObj.name || '';
+      const match = name.match(/panel.*-c-(\d+)/i);
+      if (match) {
+        matchedSector = parseInt(match[1]);
+        break;
+      }
+      checkObj = checkObj.parent;
+    }
+  }
+
+  if (matchedSector === null) return null;
+
+  const allowed = EXTRA_DOOR_AVAILABLE_SECTORS[currentHouse] || [];
+  if (!allowed.includes(matchedSector) || !canInstallExtraDoorAt(matchedSector)) {
+    return null;
+  }
+
+  // Check outward normal to guarantee panel faces towards camera
+  const hitPoint = firstHit.point;
+  const normal = new THREE.Vector3(hitPoint.x, 0, hitPoint.z).normalize();
+  const dirToCamera = camera.position.clone().sub(hitPoint).normalize();
+  if (normal.dot(dirToCamera) < -0.05) {
+    return null; // Occluded by back of dome
+  }
+
+  return matchedSector;
+}
+
 function onMouseMove(event) {
   if (Math.abs(event.clientX - startX) > clickThreshold || Math.abs(event.clientY - startY) > clickThreshold) {
     isMouseMoved = true;
   }
+
+  // Hover detection for extra door placement (only before door is placed)
+  if (isExtraDoorOn && !selectedExtraDoorPosition && !isCameraInside && canvas) {
+    const sector = getRaycastExtraDoorSector(event);
+    if (sector !== null) {
+      if (hoveredGlowingSector !== sector) {
+        hoveredGlowingSector = sector;
+        requestRender();
+      }
+      canvas.style.cursor = 'pointer';
+    } else if (hoveredGlowingSector !== null) {
+      hoveredGlowingSector = null;
+      canvas.style.cursor = 'default';
+      requestRender();
+    }
+  }
 }
 
 function onMouseUp(event) {
-  if (!isMouseMoved && isWindowCustomOn) {
+  if (!isMouseMoved) {
     const rect = canvas.getBoundingClientRect();
-
     mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
     mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-
     raycaster.setFromCamera(mouse, camera);
 
-    const intersects = raycaster.intersectObjects(scene.children, true);
+    // Extra Door placement: only when enabled and NOT YET INSTALLED
+    if (isExtraDoorOn && !selectedExtraDoorPosition && !isCameraInside) {
+      const sector = getRaycastExtraDoorSector(event);
+      if (sector !== null) {
+        installExtraDoor(sector, true);
+        canvas.style.cursor = 'default';
+        return;
+      }
+    }
 
-    if (intersects.length > 0) {
-      const intersectedObject = intersects[0].object;
+    // Custom Windows: only when user is inside the Windows menu (group-1)
+    const isWindowsMenuOpen = !$('#group-1').hasClass('invisible') && $('.ar_filter').hasClass('active');
+    if (isWindowCustomOn && isWindowsMenuOpen) {
+      const intersects = raycaster.intersectObjects(scene.children, true);
+
+      // Find first VISIBLE mesh that is a panel or window (skip hotspots, helpers, shadow planes)
       let clickedMeshName = '';
-      if (intersectedObject.parent && intersectedObject.parent !== scene) {
-        clickedMeshName = intersectedObject.parent.name;
-      } else {
-        clickedMeshName = intersectedObject.name;
+      for (let i = 0; i < intersects.length; i++) {
+        const obj = intersects[i].object;
+        if (!obj || !obj.visible) continue;
+        if (obj === floor || obj.name === 'shadow_plane' || obj.name === 'shadowPlane') continue;
+
+        const candidateName = (obj.parent && obj.parent !== scene) ? obj.parent.name : obj.name;
+        if (candidateName && containsPanelOrWindow(candidateName)) {
+          clickedMeshName = candidateName;
+          break;
+        }
       }
 
-      if (clickedMeshName && containsPanelOrWindow(clickedMeshName)) {
+      if (clickedMeshName) {
         const [letter, number] = extractLastLetterAndNumber(clickedMeshName);
 
         if (letter && number) {
-          // clickedMeshName = `${letter}-${number}`;
           updateCustomWindows([letter, number]);
           getSharedParameter('customWindows').value = convertObjectToArray(customWindows);
           WriteURLParameters();
@@ -4807,7 +4999,6 @@ function onMouseUp(event) {
       }
     }
   }
-
 
   function extractLastLetterAndNumber(name) {
     const match = name.match(/-([A-Za-z])-(\d+)$/);
@@ -4823,6 +5014,7 @@ function onMouseUp(event) {
     return name.includes("panel") || name.includes("window");
   }
 }
+
 
 function convertObjectToArray(customWindowsObj) {
   const customWindowsArray = [];
@@ -4857,12 +5049,12 @@ canvas.addEventListener('mouseup', onMouseUp);
 function updateCustomWindows([letter, number]) {
   const keyName = letter.toLowerCase();
 
-  // ! the code below is commented for now, because it is not used if Extra Door option is not enabled
-  // if (STUDIO_EXTRADOOR_SECTORS.includes(`${keyName}${number}`)
-  //   && isExtraDoorOn
-  //   && currentHouse == '2') {
-  //   return;
-  // }
+  if (isExtraDoorOn && selectedExtraDoorPosition) {
+    const doorSectors = getExtraDoorAffectedPanels(selectedExtraDoorPosition);
+    if (doorSectors.some(s => s.row.toLowerCase() === keyName && s.number === String(number))) {
+      return;
+    }
+  }
 
   if (keyName in VIEWPORT_AND_STRIP_SECTORS[DATA_HOUSE_NAME[currentHouse]].skylight) {
     return;
@@ -4903,6 +5095,12 @@ function updateCustomWindows([letter, number]) {
       (windowMeshName) && setVisibility(modelHouse, false, [windowMeshName]);
       calculatePrice();
     }
+
+    if (isExtraDoorOn && !selectedExtraDoorPosition) {
+      showExtraDoorHotspots();
+    }
+
+    updateDoorAndWindowsMutualBlocking();
   } else {
     console.warn(`Letter "${letter}" not found in customWindows object.`);
   }
@@ -4954,11 +5152,11 @@ function restoreCustomWindows() {
   }
 }
 
-function removeExtraDoorPanelsFromCustomWindows() {
-  STUDIO_EXTRADOOR_SECTORS.forEach(section => {
-    const letter = section[0].toLowerCase();
-    const number = section[1];
-
+function removeExtraDoorPanelsFromCustomWindows(pos = selectedExtraDoorPosition) {
+  if (!pos) return;
+  const sectors = getExtraDoorAffectedPanels(pos);
+  sectors.forEach(({ row, number }) => {
+    const letter = row.toLowerCase();
     if (Object.prototype.hasOwnProperty.call(customWindows, letter)) {
       const index = customWindows[letter].indexOf(number);
       if (index !== -1) {
@@ -5168,6 +5366,582 @@ function closeAllAnnotations() {
   annotations.forEach((annotation) => {
     $(annotation.element).find('.annotation-text').removeClass('disabled');
     $(annotation.element).find('.annotation-text.long').removeClass('active');
+  });
+}
+
+//#endregion
+
+//#region EXTRA DOOR
+
+function isPanelHasWindow(letter, number) {
+  const row = letter.toLowerCase();
+  const numStr = String(number);
+
+  // 1. Custom windows
+  if (isWindowCustomOn && customWindows[row]?.includes(numStr)) {
+    return true;
+  }
+
+  // 2. Strip preset
+  const windowsParam = getSharedParameter('windows');
+  const houseName = DATA_HOUSE_NAME[currentHouse];
+  if (windowsParam?.value?.[0] == '1') {
+    if (VIEWPORT_AND_STRIP_SECTORS[houseName]?.strip?.[row]?.includes(numStr)) {
+      return true;
+    }
+  }
+
+  // 3. Viewport preset
+  if (windowsParam?.value?.[1] == '1') {
+    if (VIEWPORT_AND_STRIP_SECTORS[houseName]?.viewport?.[row]?.includes(numStr)) {
+      return true;
+    }
+  }
+
+  // 4. Mesh visibility check
+  if (modelHouse) {
+    const { windowMeshName } = findMeshByLetterAndNumber(modelHouse, row, number);
+    if (windowMeshName) {
+      const meshObj = GetGroup(windowMeshName) || GetMesh(windowMeshName);
+      if (meshObj && meshObj.visible) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+function canInstallExtraDoorAt(x) {
+  const affected = getExtraDoorAffectedPanels(x);
+  for (let i = 0; i < affected.length; i++) {
+    if (isPanelHasWindow(affected[i].row, affected[i].number)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+export function updateDoorAndWindowsMutualBlocking() {
+  if (!modelHouse) return;
+
+  const houseName = DATA_HOUSE_NAME[currentHouse];
+  const presets = VIEWPORT_AND_STRIP_SECTORS[houseName] || {};
+
+  const doorTooltipText = getData(dataMain, 'ui_tooltip_unavailable_door', currentLanguage) ||
+    (currentLanguage === 'ru' ? 'Недоступно: все позиции заняты окнами' : 'Unavailable: all positions occupied by windows');
+  const windowTooltipText = getData(dataMain, 'ui_tooltip_unavailable_window', currentLanguage) ||
+    (currentLanguage === 'ru' ? 'Недоступно: конфликтует с установленной дополнительной дверью' : 'Unavailable: conflicts with the installed extra door');
+
+  // Update texts in tooltip DOM elements
+  const $doorTooltip = $('#tooltip_unavailable_door');
+  if ($doorTooltip.length) {
+    $doorTooltip.text(doorTooltipText);
+  }
+  const $stripTooltip = $('#tooltip_unavailable_strip');
+  if ($stripTooltip.length) {
+    $stripTooltip.text(windowTooltipText);
+  }
+  const $viewportTooltip = $('#tooltip_unavailable_viewport');
+  if ($viewportTooltip.length) {
+    $viewportTooltip.text(windowTooltipText);
+  }
+
+  // 1. Check if Windows block Extra Door
+  const allowedSectors = EXTRA_DOOR_AVAILABLE_SECTORS[currentHouse] || [];
+  const anyAvailable = allowedSectors.some((x) => canInstallExtraDoorAt(x));
+
+  if (!anyAvailable && (!isExtraDoorOn || !selectedExtraDoorPosition)) {
+    $('.option.option_4-3').addClass('disabled');
+    $('.option.option_4-3').removeAttr('title');
+    if (isExtraDoorOn && !selectedExtraDoorPosition) {
+      uninstallExtraDoor(true);
+    }
+  } else {
+    $('.option.option_4-3').removeClass('disabled');
+    $('.option.option_4-3').removeAttr('title');
+  }
+
+  // 2. Check if installed Extra Door blocks Window Presets (Strip / ViewPort)
+  if (isExtraDoorOn && selectedExtraDoorPosition) {
+    const affectedDoorPanels = getExtraDoorAffectedPanels(selectedExtraDoorPosition);
+
+    // Check Strip (option_1-0)
+    let stripConflicts = false;
+    if (presets.strip) {
+      for (const [row, numbers] of Object.entries(presets.strip)) {
+        if (numbers.some((num) => affectedDoorPanels.some((p) => p.row.toLowerCase() === row.toLowerCase() && p.number === String(num)))) {
+          stripConflicts = true;
+          break;
+        }
+      }
+    }
+
+    if (stripConflicts) {
+      $('.option.option_1-0').addClass('disabled');
+      $('.option.option_1-0').removeAttr('title');
+    } else {
+      $('.option.option_1-0').removeClass('disabled');
+      $('.option.option_1-0').removeAttr('title');
+    }
+
+    // Check ViewPort (option_1-1)
+    let viewportConflicts = false;
+    if (presets.viewport) {
+      for (const [row, numbers] of Object.entries(presets.viewport)) {
+        if (numbers.some((num) => affectedDoorPanels.some((p) => p.row.toLowerCase() === row.toLowerCase() && p.number === String(num)))) {
+          viewportConflicts = true;
+          break;
+        }
+      }
+    }
+
+    if (viewportConflicts) {
+      $('.option.option_1-1').addClass('disabled');
+      $('.option.option_1-1').removeAttr('title');
+    } else {
+      $('.option.option_1-1').removeClass('disabled');
+      $('.option.option_1-1').removeAttr('title');
+    }
+  } else {
+    // Extra door is NOT installed -> Strip and ViewPort are not blocked by extra door
+    $('.option.option_1-0').removeClass('disabled');
+    $('.option.option_1-0').removeAttr('title');
+
+    $('.option.option_1-1').removeClass('disabled');
+    $('.option.option_1-1').removeAttr('title');
+  }
+}
+
+export function isExtraDoorGlowMode() {
+  if (typeof window !== 'undefined' && typeof window.IS_EXTRA_DOOR_GLOW_MODE === 'boolean') {
+    return window.IS_EXTRA_DOOR_GLOW_MODE;
+  }
+  return IS_EXTRA_DOOR_GLOW_MODE;
+}
+
+export function enableExtraDoorPanelGlow() {
+  disableExtraDoorPanelGlow();
+
+  if (!isExtraDoorOn || selectedExtraDoorPosition || isCameraInside || !modelHouse) {
+    return;
+  }
+
+  const allowedPositions = EXTRA_DOOR_AVAILABLE_SECTORS[currentHouse] || [];
+
+  allowedPositions.forEach((x) => {
+    if (!canInstallExtraDoorAt(x)) {
+      return;
+    }
+
+    const { panelMeshName } = findMeshByLetterAndNumber(modelHouse, 'c', x);
+    if (!panelMeshName) return;
+
+    const group = GetGroup(panelMeshName) || GetMesh(panelMeshName);
+    if (!group) return;
+
+    // Collect outer wall meshes for this panel
+    const meshesToGlow = [];
+    group.traverse((child) => {
+      if (child.isMesh && child.material) {
+        const mats = Array.isArray(child.material) ? child.material : [child.material];
+        const isWallOuter = mats.some((m) => (m.name || '').toLowerCase().includes('wall-outer'));
+        if (isWallOuter) {
+          meshesToGlow.push(child);
+        }
+      }
+    });
+
+    // Fallback: if no mesh named wall-outer found, include any non-interior mesh
+    if (meshesToGlow.length === 0) {
+      group.traverse((child) => {
+        if (child.isMesh && child.material) {
+          const mats = Array.isArray(child.material) ? child.material : [child.material];
+          const isInterior = mats.some((m) => {
+            const name = (m.name || '').toLowerCase();
+            return name.includes('wall-in') || name.includes('floor') || name.includes('glass');
+          });
+          if (!isInterior) {
+            meshesToGlow.push(child);
+          }
+        }
+      });
+    }
+
+    meshesToGlow.forEach((mesh) => {
+      if (Array.isArray(mesh.material)) {
+        const origMats = mesh.material;
+        const glowMats = origMats.map((m) => {
+          const gm = m.clone();
+          if (gm.emissive) {
+            gm.emissive.setHex(EXTRA_DOOR_GLOW_COLOR);
+            gm.emissiveIntensity = 0.45;
+          }
+          return gm;
+        });
+        mesh.material = glowMats;
+        glowingPanels.push({
+          x,
+          mesh,
+          originalMaterial: origMats,
+          glowMaterial: glowMats,
+        });
+      } else {
+        const origMat = mesh.material;
+        const glowMat = origMat.clone();
+        if (glowMat.emissive) {
+          glowMat.emissive.setHex(EXTRA_DOOR_GLOW_COLOR);
+          glowMat.emissiveIntensity = 0.45;
+        }
+        mesh.material = glowMat;
+        glowingPanels.push({
+          x,
+          mesh,
+          originalMaterial: origMat,
+          glowMaterial: glowMat,
+        });
+      }
+    });
+  });
+
+  requestRender();
+}
+
+export function disableExtraDoorPanelGlow() {
+  if (!glowingPanels || glowingPanels.length === 0) return;
+
+  glowingPanels.forEach(({ mesh, originalMaterial, glowMaterial }) => {
+    mesh.material = originalMaterial;
+    const mats = Array.isArray(glowMaterial) ? glowMaterial : [glowMaterial];
+    mats.forEach((gm) => {
+      if (gm && typeof gm.dispose === 'function') {
+        gm.dispose();
+      }
+    });
+  });
+
+  glowingPanels = [];
+  hoveredGlowingSector = null;
+  if (canvas) {
+    canvas.style.cursor = 'default';
+  }
+  requestRender();
+}
+
+export function updateExtraDoorPanelGlow() {
+  if (!glowingPanels || glowingPanels.length === 0) return;
+
+  const time = performance.now() * 0.003;
+  // Smooth breathing / pulsing sine wave between 0.25 and 0.75
+  const baseIntensity = 0.5 + 0.25 * Math.sin(time);
+
+  glowingPanels.forEach(({ x, glowMaterial }) => {
+    const mats = Array.isArray(glowMaterial) ? glowMaterial : [glowMaterial];
+    const intensity = (hoveredGlowingSector === x) ? 1.1 : baseIntensity;
+    mats.forEach((gm) => {
+      if (gm && gm.emissive) {
+        gm.emissiveIntensity = intensity;
+      }
+    });
+  });
+
+  // Keep continuous render active while panels are glowing
+  requestRender();
+}
+
+function showExtraDoorHotspots() {
+  removeExtraDoorHotspots();
+
+  if (!isExtraDoorOn || selectedExtraDoorPosition || isCameraInside || !modelHouse) {
+    return;
+  }
+
+  // Panel Glow mode:
+  if (isExtraDoorGlowMode()) {
+    enableExtraDoorPanelGlow();
+    return;
+  }
+
+  // Hotspot icons mode:
+  const allowedPositions = EXTRA_DOOR_AVAILABLE_SECTORS[currentHouse] || [];
+
+  allowedPositions.forEach((x) => {
+    if (!canInstallExtraDoorAt(x)) {
+      return;
+    }
+
+    const { panelMeshName } = findMeshByLetterAndNumber(modelHouse, 'c', x);
+    let position = null;
+
+    if (panelMeshName) {
+      const obj = GetGroup(panelMeshName) || GetMesh(panelMeshName);
+      if (obj) {
+        const box = new THREE.Box3().setFromObject(obj);
+        const center = new THREE.Vector3();
+        box.getCenter(center);
+        const radial = new THREE.Vector3(center.x, 0, center.z).normalize();
+        position = center.clone().add(radial.multiplyScalar(0.2));
+      }
+    }
+
+    if (!position) {
+      return;
+    }
+
+    const $hotspot = $('<div>', {
+      class: 'extra-door-hotspot',
+      'data-position': x,
+      title: `Extra door C-${x}`,
+    });
+
+    $hotspot.on('click', function (e) {
+      e.stopPropagation();
+      installExtraDoor(x, true);
+    });
+
+    $canvasContainer.append($hotspot);
+
+    extraDoorHotspots.push({
+      position,
+      element: $hotspot,
+      x,
+    });
+  });
+
+  requestRender();
+}
+
+function removeExtraDoorHotspots() {
+  $('.extra-door-hotspot').remove();
+  extraDoorHotspots = [];
+  disableExtraDoorPanelGlow();
+}
+
+export function updateExtraDoorHotspots(camera, scene, controls) {
+  if (!extraDoorHotspots || extraDoorHotspots.length === 0) return;
+
+  if (isCameraInside) {
+    $('.extra-door-hotspot').css({ display: 'none' });
+    return;
+  }
+
+  const containerWidth = $canvasContainer.width();
+  const containerHeight = $canvasContainer.height();
+
+  extraDoorHotspots.forEach((hotspot) => {
+    const screenPosition = hotspot.position.clone();
+    screenPosition.project(camera);
+
+    const x = (screenPosition.x * 0.5 + 0.5) * containerWidth;
+    const y = (screenPosition.y * -0.5 + 0.5) * containerHeight;
+
+    hotspot.element.css({
+      left: `${x}px`,
+      top: `${y}px`,
+    });
+
+    // Precise dome-surface occlusion calculation:
+    // Panel C faces radially outward from dome center (0, y, 0).
+    // Vector from dome center to panel hotspot in horizontal plane:
+    const normal = new THREE.Vector3(hotspot.position.x, 0, hotspot.position.z).normalize();
+    // Direction from hotspot to camera:
+    const dirToCamera = camera.position.clone().sub(hotspot.position).normalize();
+    // When camera is on the same side of the dome as the panel, dot >= -0.05.
+    // When panel is around the back of the dome, dot < -0.05.
+    const dot = normal.dot(dirToCamera);
+
+    const isFacingCamera = dot >= -0.05;
+    const isInFrontOfCamera = screenPosition.z <= 1 && screenPosition.z >= -1;
+
+    if (isFacingCamera && isInFrontOfCamera) {
+      hotspot.element.css({ opacity: 1, pointerEvents: 'auto', display: 'block' });
+    } else {
+      hotspot.element.css({ opacity: 0, pointerEvents: 'none', display: 'none' });
+    }
+  });
+}
+
+if (typeof window !== 'undefined') {
+  window.isExtraDoorGlowMode = isExtraDoorGlowMode;
+  window.showExtraDoorHotspots = showExtraDoorHotspots;
+  window.enableExtraDoorPanelGlow = enableExtraDoorPanelGlow;
+  window.disableExtraDoorPanelGlow = disableExtraDoorPanelGlow;
+}
+
+
+function installExtraDoor(x, writeUrl = true) {
+  removeExtraDoorHotspots();
+  selectedExtraDoorPosition = parseInt(x);
+
+  const extraDoorParam = getSharedParameter('extraDoor');
+  if (extraDoorParam) {
+    extraDoorParam.value = selectedExtraDoorPosition;
+  }
+
+  const upgradesParam = getSharedParameter('upgrades');
+  if (upgradesParam?.value) {
+    upgradesParam.value[2] = 1;
+  }
+  isExtraDoorOn = true;
+
+  $('.option_4-3').addClass('active');
+
+  updateExtraDoorMeshesVisibility(selectedExtraDoorPosition, true);
+
+  // Update furniture for Studio if work layout is active
+  if (currentHouse == '2' && $('#button_work').hasClass('active')) {
+    setVisibility(modelFurniture, true, ['work-back-door']);
+    setVisibility(modelFurniture, false, ['work']);
+  }
+
+  if (writeUrl) {
+    WriteURLParameters();
+  }
+
+  calculatePrice();
+  collectSummary();
+  updateDoorAndWindowsMutualBlocking();
+  requestRender();
+}
+
+function uninstallExtraDoor(writeUrl = true) {
+  removeExtraDoorHotspots();
+
+  const prevPos = selectedExtraDoorPosition;
+  selectedExtraDoorPosition = null;
+
+  const extraDoorParam = getSharedParameter('extraDoor');
+  if (extraDoorParam) {
+    extraDoorParam.value = 0;
+  }
+
+  const upgradesParam = getSharedParameter('upgrades');
+  if (upgradesParam?.value) {
+    upgradesParam.value[2] = 0;
+  }
+
+  isExtraDoorOn = false;
+  $('.option_4-3').removeClass('active');
+
+  updateExtraDoorMeshesVisibility(prevPos, false);
+
+  // Revert furniture for Studio if work layout is active
+  if (currentHouse == '2' && $('#button_work').hasClass('active')) {
+    setVisibility(modelFurniture, false, ['work-back-door']);
+    setVisibility(modelFurniture, true, ['work']);
+  }
+
+  if (writeUrl) {
+    WriteURLParameters();
+  }
+
+  calculatePrice();
+  collectSummary();
+  updateDoorAndWindowsMutualBlocking();
+  requestRender();
+}
+
+export function cancelUnplacedExtraDoor() {
+  if (isExtraDoorOn && !selectedExtraDoorPosition) {
+    uninstallExtraDoor(true);
+  }
+}
+
+function updateExtraDoorMeshesVisibility(x = selectedExtraDoorPosition, isVisible = isExtraDoorOn && !!selectedExtraDoorPosition) {
+  if (!modelHouse) return;
+
+  if (isVisible && x) {
+    // 1. Hide base with main entry
+    setEntryMeshVisibility(false);
+
+    // 2. Hide panels C-x, D-(x-1), D-(x+1), E-x
+    const affected = getExtraDoorAffectedPanels(x);
+    affected.forEach(({ row, number }) => {
+      const { panelMeshName } = findMeshByLetterAndNumber(modelHouse, row, number);
+      if (panelMeshName) {
+        setVisibility(modelHouse, false, [panelMeshName]);
+      }
+    });
+
+    // 3. Show extra door mesh
+    setExtraDoorMeshVisibility(x, true);
+  } else {
+    // 1. Show base with main entry
+    setEntryMeshVisibility(true);
+
+    // 2. If position existed, restore panels C-x, D-(x-1), D-(x+1), E-x (unless they have windows)
+    if (x) {
+      const affected = getExtraDoorAffectedPanels(x);
+      affected.forEach(({ row, number }) => {
+        if (!isPanelHasWindow(row, number)) {
+          const { panelMeshName } = findMeshByLetterAndNumber(modelHouse, row, number);
+          if (panelMeshName) {
+            setVisibility(modelHouse, true, [panelMeshName]);
+          }
+        }
+      });
+    }
+
+    // 3. Hide any extra door meshes
+    hideAllExtraDoorMeshes();
+  }
+
+  requestRender();
+}
+
+function setEntryMeshVisibility(visible) {
+  if (!modelHouse) return;
+  modelHouse.traverse((o) => {
+    if (o.name) {
+      const name = o.name.toLowerCase();
+      if (
+        name.includes('entry') &&
+        !name.includes('c-') &&
+        !name.includes('c_') &&
+        !name.includes('door-c') &&
+        !name.includes('back-door')
+      ) {
+        o.visible = visible;
+      }
+    }
+  });
+}
+
+function setExtraDoorMeshVisibility(x, visible) {
+  if (!modelHouse) return;
+  const numStr = String(x);
+  let found = false;
+
+  modelHouse.traverse((o) => {
+    if (o.name) {
+      const name = o.name.toLowerCase();
+      const hasDoor = name.includes('door');
+      const hasC = name.includes('c-') || name.includes('c_') || name.includes('c' + numStr);
+      const hasNum = new RegExp(`(^|\\D)${numStr}(\\D|$)`).test(name);
+
+      if (hasDoor && hasC && hasNum) {
+        o.visible = visible;
+        found = true;
+      }
+    }
+  });
+
+  if (!found && visible) {
+    console.warn(`Mesh for extra door at C-${x} not found in model ${DATA_HOUSE_NAME[currentHouse]}. It will be shown once the 3D model is updated.`);
+  }
+}
+
+function hideAllExtraDoorMeshes() {
+  if (!modelHouse) return;
+  modelHouse.traverse((o) => {
+    if (o.name) {
+      const name = o.name.toLowerCase();
+      const hasDoor = name.includes('door');
+      const hasC = name.includes('c-') || name.includes('c_') || /c\d+/i.test(name);
+      if (hasDoor && hasC && !name.includes('center')) {
+        o.visible = false;
+      }
+    }
   });
 }
 

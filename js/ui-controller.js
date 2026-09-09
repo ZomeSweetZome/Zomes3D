@@ -61,6 +61,9 @@ export async function createMenu(mainData) {
         { '#canvas_notification': 'ui_canvas_notification' },
         { '#canvas_notification_limit': 'ui_canvas_notification_limit' },
         { '#tumbler_label': 'ui_tumbler_label' },
+        { '#tooltip_unavailable_door': 'ui_tooltip_unavailable_door' },
+        { '#tooltip_unavailable_strip': 'ui_tooltip_unavailable_window' },
+        { '#tooltip_unavailable_viewport': 'ui_tooltip_unavailable_window' },
         // ----------
         { '#ui_summary_header_slogan_1': 'ui_summary_header_slogan_1' },
         { '#ui_summary_header_slogan_2': 'ui_summary_header_slogan_2' },
@@ -269,6 +272,21 @@ export async function createMenu(mainData) {
 
           const priceValue = (IS_PRICE_SIMPLE) ? parseNumber(getData(mainData, mainData[i][0], 'PRICE')) : 0;
 
+          let tooltipHTML = '';
+          if (groupId == '4' && optionId == '3') {
+            const doorText = getData(mainData, 'ui_tooltip_unavailable_door', currentLanguage) ||
+              (currentLanguage === 'ru' ? 'Недоступно: все позиции заняты окнами' : 'Unavailable: all positions occupied by windows');
+            tooltipHTML = `<div class="option_tooltip" id="tooltip_unavailable_door">${doorText}</div>`;
+          } else if (groupId == '1' && optionId == '0') {
+            const winText = getData(mainData, 'ui_tooltip_unavailable_window', currentLanguage) ||
+              (currentLanguage === 'ru' ? 'Недоступно: конфликтует с установленной дополнительной дверью' : 'Unavailable: conflicts with the installed extra door');
+            tooltipHTML = `<div class="option_tooltip" id="tooltip_unavailable_strip">${winText}</div>`;
+          } else if (groupId == '1' && optionId == '1') {
+            const winText = getData(mainData, 'ui_tooltip_unavailable_window', currentLanguage) ||
+              (currentLanguage === 'ru' ? 'Недоступно: конфликтует с установленной дополнительной дверью' : 'Unavailable: conflicts with the installed extra door');
+            tooltipHTML = `<div class="option_tooltip" id="tooltip_unavailable_viewport">${winText}</div>`;
+          }
+
           const optionHTML = `
             <div class="option option_${groupId}-${optionId} ${isExist}" data-group_id="${groupId}" data-component_id="${optionId}" data-price="${priceValue}">
               <div class="option__content">
@@ -282,6 +300,7 @@ export async function createMenu(mainData) {
 
                 <div class="component_title">${getData(mainData, mainData[i][0], currentLanguage)}</div>
                 <div class="component_price"></div>
+                ${tooltipHTML}
               </div>
 
               ${optInfoHTML}

@@ -2040,6 +2040,78 @@ textarea[name="ar_order_comment"] {
   cursor: pointer;
 }
 
+.extra-door-hotspot {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  background-image: url(../src/ar-ui-icons/hotspot.svg);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  z-index: 10;
+  transform: translate(-50%, -50%);
+  transition: transform 0.15s ease, opacity 0.2s ease;
+}
+
+.extra-door-hotspot:hover {
+  background-image: url(../src/ar-ui-icons/hotspot-hover.svg);
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
+.ar_filter .ar_filter_group .ar_filter_options .option.disabled,
+.ar_filter .ar_filter_group .ar_filter_options.type_checkbox .option.disabled,
+.ar_filter .option.disabled {
+  opacity: 0.42;
+  cursor: not-allowed !important;
+  pointer-events: auto !important;
+  filter: grayscale(0.5);
+  position: relative;
+  transition: opacity 0.2s ease, filter 0.2s ease;
+}
+
+.ar_filter .ar_filter_group .ar_filter_options .option.disabled *:not(.option_tooltip),
+.ar_filter .ar_filter_group .ar_filter_options.type_checkbox .option.disabled *:not(.option_tooltip) {
+  cursor: not-allowed !important;
+  pointer-events: none;
+}
+
+.ar_filter .ar_filter_group .ar_filter_options .option .option_tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #111827;
+  color: #f9fafb;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  line-height: 1.35;
+  white-space: normal;
+  width: max-content;
+  max-width: 220px;
+  text-align: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.ar_filter .ar_filter_group .ar_filter_options .option .option_tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: #111827 transparent transparent transparent;
+}
+
+.ar_filter .ar_filter_group .ar_filter_options .option.disabled:hover .option_tooltip {
+  display: block !important;
+}
+
 .annotation-text {
   display: flex;
   justify-content: center;

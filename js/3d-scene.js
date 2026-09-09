@@ -25,6 +25,8 @@ export let isModelsLoaded = false;
 import { TONE_MAPPING_EXPOSURE, LIGHT_SCHEME, HUMAN_HEIGHT } from './settings.js';
 import { 
   updateAnnotations,
+  updateExtraDoorHotspots,
+  updateExtraDoorPanelGlow,
   current3Dmodel,
   isLocalClippingOn,
   notClippingMaterials,
@@ -502,6 +504,8 @@ export function create3DScene(properties = scenePropertiesDefault, startFunction
     }
     
     updateAnnotations(camera, scene, controls);
+    updateExtraDoorHotspots(camera, scene, controls);
+    updateExtraDoorPanelGlow();
 
     updateMeshRotationToCameraY(camera, scene, 'man');
 

@@ -529,6 +529,36 @@ export const TEXTURES = {
 
 export const STUDIO_EXTRADOOR_SECTORS = ['c6', 'd5', 'd6', 'e6']; // ! TODO
 
+export const EXTRA_DOOR_AVAILABLE_SECTORS = {
+  0: [4, 5, 6],
+  1: [4, 5, 6],
+  2: [4, 5, 6, 7, 8],
+  3: [4, 5, 6, 7, 8, 9, 10],
+  4: [4, 5, 6, 7, 8, 9, 10, 11, 12],
+  'Zome-120': [4, 5, 6],
+  'Zome-170': [4, 5, 6],
+  'Zome-300': [4, 5, 6, 7, 8],
+  'Zome-500': [4, 5, 6, 7, 8, 9, 10],
+  'Zome-700': [4, 5, 6, 7, 8, 9, 10, 11, 12],
+};
+
+export function getExtraDoorAffectedPanels(x) {
+  const num = parseInt(x);
+  return [
+    { row: 'c', number: String(num) },
+    { row: 'd', number: String(num - 1) },
+    { row: 'd', number: String(num) },
+    { row: 'e', number: String(num) },
+  ];
+}
+
+// Extra Door selection mode:
+// true: Pulsing glowing highlight on available C panels (clickable 3D mesh)
+// false: Hotspot icons (DOM elements)
+export const IS_EXTRA_DOOR_GLOW_MODE = true;
+export const EXTRA_DOOR_GLOW_COLOR = 0x22d3ee;
+
+
 export const VIEWPORT_AND_STRIP_SECTORS = {
   'Zome-120': {
     viewport: {
