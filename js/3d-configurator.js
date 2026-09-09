@@ -1110,9 +1110,8 @@ function SetActionForGroups() {
             if (opt.element.classList.contains('disabled') || opt.element.classList.contains('disabled_always')) {
               return;
             }
-            target.group.activeOption = i;
-            opt.active = !opt.active;
             opt.element.classList.toggle('active');
+            opt.active = opt.element.classList.contains('active');
             justClicked = true;
             SetGroupActionForSharedParametersCheckboxArray(target.id, target.group.options, () => {
               justClicked = false;
@@ -1268,6 +1267,7 @@ function SetGroupActionForSharedParametersCheckboxArray(targetID, array, callbac
     var newValue = [];
 
     for (var o = 0; o < array.length; o++) {
+      array[o].active = array[o].element ? array[o].element.classList.contains('active') : array[o].active;
       if (array[o].active) {
         newValue.push('1');
       } else {
@@ -2781,6 +2781,17 @@ function ReadURLParameters(callback) {
     if (element.id == 'qr') {
       qrScaned = element.value;
     }
+  }
+
+  // Sanitize extra door on URL read: an unplaced extra door cannot persist across reload
+  const extraDoorVal = getSharedParameter('extraDoor')?.value;
+  if (!extraDoorVal || parseInt(extraDoorVal) <= 0) {
+    const upgradesParam = getSharedParameter('upgrades');
+    if (upgradesParam?.value) {
+      upgradesParam.value[2] = '0';
+    }
+    isExtraDoorOn = false;
+    selectedExtraDoorPosition = null;
   }
 
   if (callback != null) callback();
@@ -4875,69 +4886,73 @@ function getRaycastExtraDoorSector(event) {
   const intersects = raycaster.intersectObjects(scene.children, true);
   if (!intersects || intersects.length === 0) return null;
 
-  // Find first visible mesh (ignore floor and ground shadow helpers)
-  let firstHit = null;
+  // Find distance to the first visible object of the house (skip floor/shadows)
+  let firstVisibleDist = null;
   for (let i = 0; i < intersects.length; i++) {
     const obj = intersects[i].object;
     if (obj && obj.visible) {
       if (obj === floor || obj.name === 'shadow_plane' || obj.name === 'shadowPlane') continue;
-      firstHit = intersects[i];
+      firstVisibleDist = intersects[i].distance;
       break;
     }
   }
 
-  if (!firstHit) return null;
+  if (firstVisibleDist === null) return null;
 
-  let matchedSector = null;
-
-  // 1. Check if firstHit belongs to one of the glowing panels by walking parent chain
-  if (glowingPanels.length > 0) {
-    // Walk up from the hit object through the parent hierarchy
-    let checkObj = firstHit.object;
-    outer: while (checkObj && checkObj !== scene) {
-      for (const entry of glowingPanels) {
-        // Match by exact mesh or by being a child of the same group
-        if (entry.mesh === checkObj ||
-            (entry.mesh && entry.mesh.parent && entry.mesh.parent === checkObj) ||
-            (entry.mesh && entry.mesh.parent && entry.mesh.parent === checkObj.parent)) {
-          matchedSector = entry.x;
-          break outer;
-        }
-      }
-      checkObj = checkObj.parent;
-    }
-  }
-
-  // 2. Or check panel name from object or any ancestor group
-  if (matchedSector === null) {
-    let checkObj = firstHit.object;
-    while (checkObj && checkObj !== scene) {
-      const name = checkObj.name || '';
-      const match = name.match(/panel.*-c-(\d+)/i);
-      if (match) {
-        matchedSector = parseInt(match[1]);
-        break;
-      }
-      checkObj = checkObj.parent;
-    }
-  }
-
-  if (matchedSector === null) return null;
-
+  // We look through hits on the front surface of the dome (within ~0.35m of the front-most hit).
+  // This ensures that edge frames, bevels, trims, or multiple overlapping meshes on panel C
+  // all resolve correctly without losing hover/click sensitivity, while strictly preventing
+  // raycast from punching through the house to back panels.
+  const maxFrontDist = firstVisibleDist + 0.35;
   const allowed = EXTRA_DOOR_AVAILABLE_SECTORS[currentHouse] || [];
-  if (!allowed.includes(matchedSector) || !canInstallExtraDoorAt(matchedSector)) {
-    return null;
+
+  for (let i = 0; i < intersects.length; i++) {
+    const hit = intersects[i];
+    if (hit.distance > maxFrontDist) break;
+
+    const obj = hit.object;
+    if (!obj || !obj.visible) continue;
+    if (obj === floor || obj.name === 'shadow_plane' || obj.name === 'shadowPlane') continue;
+
+    let matchedSector = null;
+
+    // 1. Check glowing panels list
+    if (glowingPanels.length > 0) {
+      let checkObj = obj;
+      outer: while (checkObj && checkObj !== scene) {
+        for (const entry of glowingPanels) {
+          if (entry.mesh === checkObj ||
+              (entry.mesh && entry.mesh.parent && entry.mesh.parent === checkObj) ||
+              (entry.mesh && entry.mesh.parent && entry.mesh.parent === checkObj.parent) ||
+              (checkObj.name && entry.mesh.name && checkObj.name.toLowerCase() === entry.mesh.name.toLowerCase())) {
+            matchedSector = entry.x;
+            break outer;
+          }
+        }
+        checkObj = checkObj.parent;
+      }
+    }
+
+    // 2. Check panel name from object or any ancestor group
+    if (matchedSector === null) {
+      let checkObj = obj;
+      while (checkObj && checkObj !== scene) {
+        const name = checkObj.name || '';
+        const match = name.match(/panel.*-c-(\d+)(?:\D|$)/i) || name.match(/-c-(\d+)(?:\D|$)/i);
+        if (match) {
+          matchedSector = parseInt(match[1]);
+          break;
+        }
+        checkObj = checkObj.parent;
+      }
+    }
+
+    if (matchedSector !== null && allowed.includes(matchedSector) && canInstallExtraDoorAt(matchedSector)) {
+      return matchedSector;
+    }
   }
 
-  // Check outward normal to guarantee panel faces towards camera
-  const hitPoint = firstHit.point;
-  const normal = new THREE.Vector3(hitPoint.x, 0, hitPoint.z).normalize();
-  const dirToCamera = camera.position.clone().sub(hitPoint).normalize();
-  if (normal.dot(dirToCamera) < -0.05) {
-    return null; // Occluded by back of dome
-  }
-
-  return matchedSector;
+  return null;
 }
 
 function onMouseMove(event) {
@@ -5662,7 +5677,8 @@ export function updateExtraDoorPanelGlow() {
 function showExtraDoorHotspots() {
   removeExtraDoorHotspots();
 
-  if (!isExtraDoorOn || selectedExtraDoorPosition || isCameraInside || !modelHouse) {
+  const isUpgradesMenuOpen = !$('#group-4').hasClass('invisible') && $('.ar_filter').hasClass('active');
+  if (!isExtraDoorOn || selectedExtraDoorPosition || isCameraInside || !modelHouse || !isUpgradesMenuOpen) {
     return;
   }
 
@@ -5827,11 +5843,22 @@ function uninstallExtraDoor(writeUrl = true) {
 
   const upgradesParam = getSharedParameter('upgrades');
   if (upgradesParam?.value) {
-    upgradesParam.value[2] = 0;
+    upgradesParam.value[2] = '0';
   }
 
   isExtraDoorOn = false;
   $('.option_4-3').removeClass('active');
+  if (typeof mainGroups !== 'undefined') {
+    mainGroups.forEach(g => {
+      if (g.id === 'group-4' && g.group?.options) {
+        const opt = g.group.options.find(o => o.component_id === '3');
+        if (opt) {
+          opt.active = false;
+          opt.element?.classList.remove('active');
+        }
+      }
+    });
+  }
 
   updateExtraDoorMeshesVisibility(prevPos, false);
 
