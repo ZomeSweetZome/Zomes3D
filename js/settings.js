@@ -527,8 +527,6 @@ export const TEXTURES = {
   },
 };
 
-export const STUDIO_EXTRADOOR_SECTORS = ['c6', 'd5', 'd6', 'e6']; // ! TODO
-
 export const EXTRA_DOOR_AVAILABLE_SECTORS = {
   0: [4, 5, 6],
   1: [4, 5, 6],

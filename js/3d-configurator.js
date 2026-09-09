@@ -34,7 +34,6 @@ import {
   TEXTURES,
   DATA_HOUSE_NAME,
   NAV_CAM_POSITION,
-  STUDIO_EXTRADOOR_SECTORS,
   EXTRA_DOOR_AVAILABLE_SECTORS,
   getExtraDoorAffectedPanels,
   IS_EXTRA_DOOR_GLOW_MODE,
@@ -4899,10 +4898,6 @@ function getRaycastExtraDoorSector(event) {
 
   if (firstVisibleDist === null) return null;
 
-  // We look through hits on the front surface of the dome (within ~0.35m of the front-most hit).
-  // This ensures that edge frames, bevels, trims, or multiple overlapping meshes on panel C
-  // all resolve correctly without losing hover/click sensitivity, while strictly preventing
-  // raycast from punching through the house to back panels.
   const maxFrontDist = firstVisibleDist + 0.35;
   const allowed = EXTRA_DOOR_AVAILABLE_SECTORS[currentHouse] || [];
 
@@ -5478,13 +5473,11 @@ export function updateDoorAndWindowsMutualBlocking() {
 
   if (!anyAvailable && (!isExtraDoorOn || !selectedExtraDoorPosition)) {
     $('.option.option_4-3').addClass('disabled');
-    $('.option.option_4-3').removeAttr('title');
     if (isExtraDoorOn && !selectedExtraDoorPosition) {
       uninstallExtraDoor(true);
     }
   } else {
     $('.option.option_4-3').removeClass('disabled');
-    $('.option.option_4-3').removeAttr('title');
   }
 
   // 2. Check if installed Extra Door blocks Window Presets (Strip / ViewPort)
@@ -5504,10 +5497,8 @@ export function updateDoorAndWindowsMutualBlocking() {
 
     if (stripConflicts) {
       $('.option.option_1-0').addClass('disabled');
-      $('.option.option_1-0').removeAttr('title');
     } else {
       $('.option.option_1-0').removeClass('disabled');
-      $('.option.option_1-0').removeAttr('title');
     }
 
     // Check ViewPort (option_1-1)
@@ -5523,18 +5514,13 @@ export function updateDoorAndWindowsMutualBlocking() {
 
     if (viewportConflicts) {
       $('.option.option_1-1').addClass('disabled');
-      $('.option.option_1-1').removeAttr('title');
     } else {
       $('.option.option_1-1').removeClass('disabled');
-      $('.option.option_1-1').removeAttr('title');
     }
   } else {
     // Extra door is NOT installed -> Strip and ViewPort are not blocked by extra door
     $('.option.option_1-0').removeClass('disabled');
-    $('.option.option_1-0').removeAttr('title');
-
     $('.option.option_1-1').removeClass('disabled');
-    $('.option.option_1-1').removeAttr('title');
   }
 }
 
@@ -5766,14 +5752,8 @@ export function updateExtraDoorHotspots(camera, scene, controls) {
       top: `${y}px`,
     });
 
-    // Precise dome-surface occlusion calculation:
-    // Panel C faces radially outward from dome center (0, y, 0).
-    // Vector from dome center to panel hotspot in horizontal plane:
     const normal = new THREE.Vector3(hotspot.position.x, 0, hotspot.position.z).normalize();
-    // Direction from hotspot to camera:
     const dirToCamera = camera.position.clone().sub(hotspot.position).normalize();
-    // When camera is on the same side of the dome as the panel, dot >= -0.05.
-    // When panel is around the back of the dome, dot < -0.05.
     const dot = normal.dot(dirToCamera);
 
     const isFacingCamera = dot >= -0.05;

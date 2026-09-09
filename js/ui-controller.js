@@ -275,16 +275,13 @@ export async function createMenu(mainData) {
 
           let tooltipHTML = '';
           if (groupId == '4' && optionId == '3') {
-            const doorText = getData(mainData, 'ui_tooltip_unavailable_door', currentLanguage) ||
-              (currentLanguage === 'ru' ? 'Недоступно: все позиции заняты окнами' : 'Unavailable: all positions occupied by windows');
+            const doorText = getData(mainData, 'ui_tooltip_unavailable_door', currentLanguage) || 'Unavailable: all positions occupied by windows';
             tooltipHTML = `<div class="option_tooltip" id="tooltip_unavailable_door">${doorText}</div>`;
           } else if (groupId == '1' && optionId == '0') {
-            const winText = getData(mainData, 'ui_tooltip_unavailable_window', currentLanguage) ||
-              (currentLanguage === 'ru' ? 'Недоступно: конфликтует с установленной дополнительной дверью' : 'Unavailable: conflicts with the installed extra door');
+            const winText = getData(mainData, 'ui_tooltip_unavailable_window', currentLanguage) || 'Unavailable: conflicts with the installed extra door';
             tooltipHTML = `<div class="option_tooltip" id="tooltip_unavailable_strip">${winText}</div>`;
           } else if (groupId == '1' && optionId == '1') {
-            const winText = getData(mainData, 'ui_tooltip_unavailable_window', currentLanguage) ||
-              (currentLanguage === 'ru' ? 'Недоступно: конфликтует с установленной дополнительной дверью' : 'Unavailable: conflicts with the installed extra door');
+            const winText = getData(mainData, 'ui_tooltip_unavailable_window', currentLanguage) || 'Unavailable: conflicts with the installed extra door';
             tooltipHTML = `<div class="option_tooltip" id="tooltip_unavailable_viewport">${winText}</div>`;
           }
 
