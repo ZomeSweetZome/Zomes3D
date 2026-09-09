@@ -880,6 +880,12 @@ async function StartSettings() {
   modelHouse = IMPORTED_MODELS[0];
   setVisibility(modelHouse, false, ['bed']);
 
+  if (currentHouse === '3' || currentHouse === '4') {
+    jQuery('#button_furniture').css('display', 'none');
+  } else {
+    jQuery('#button_furniture').css('display', 'flex');
+  }
+
   const foundationMesh = GetMesh('foundation');
   if (foundationMesh) {
     foundationMesh.position.y = -0.001;
@@ -1757,6 +1763,12 @@ async function changeModel(modelId) {
   modelHouse = IMPORTED_MODELS[0];
   setVisibility(modelHouse, false, ['bed']);
 
+  if (currentHouse === '3' || currentHouse === '4') {
+    jQuery('#button_furniture').css('display', 'none');
+  } else {
+    jQuery('#button_furniture').css('display', 'flex');
+  }
+  
   const foundationMesh = GetMesh('foundation');
   if (foundationMesh) {
     foundationMesh.position.y = -0.001;
