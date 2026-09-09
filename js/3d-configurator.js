@@ -2123,8 +2123,8 @@ function calculatePrice() {
     } else {
       $(`.${activeOptions[i]} .component_price`).html(formatPrice(optionPrice, currentCurrencySign));
       if (activeOptions[i] === 'option_4-3' && !selectedExtraDoorPosition) {
-        // Door is toggled in menu, but not yet placed in 3D:
-        // Keep option price displayed in menu, but do NOT add to totalAmount until placed!
+        // ! Door is toggled in menu, but not yet placed in 3D:
+        // ! Keep option price displayed in menu, but do NOT add to totalAmount until placed!
       } else {
         if (optionLeadTime > maximumLeadTimeWeeks) { maximumLeadTimeWeeks = optionLeadTime; }
         totalAmount += optionPrice;
@@ -3723,10 +3723,20 @@ function enableFurnitureBtn() {
 function notificationHandler() {
   $('.option_1-2').on('click', function () {
     if (!$(this).hasClass('active')) {
-      $('#canvas_notification').removeClass('hidden');
+      $('#canvas_notification_window').removeClass('hidden');
 
       setTimeout(function () {
-        $('#canvas_notification').addClass('hidden');
+        $('#canvas_notification_window').addClass('hidden');
+      }, 2500);
+    }
+  });
+
+  $('.option_4-3').on('click', function () {
+    if (!$(this).hasClass('active')) {
+      $('#canvas_notification_door').removeClass('hidden');
+
+      setTimeout(function () {
+        $('#canvas_notification_door').addClass('hidden');
       }, 2500);
     }
   });
@@ -5691,7 +5701,7 @@ function showExtraDoorHotspots() {
     const $hotspot = $('<div>', {
       class: 'extra-door-hotspot',
       'data-position': x,
-      title: `Extra door C-${x}`,
+      // title: `Extra door C-${x}`,
     });
 
     $hotspot.on('click', function (e) {

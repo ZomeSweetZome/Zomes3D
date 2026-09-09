@@ -555,7 +555,7 @@ export function getExtraDoorAffectedPanels(x) {
 // Extra Door selection mode:
 // true: Pulsing glowing highlight on available C panels (clickable 3D mesh)
 // false: Hotspot icons (DOM elements)
-export const IS_EXTRA_DOOR_GLOW_MODE = true;
+export const IS_EXTRA_DOOR_GLOW_MODE = false;
 export const EXTRA_DOOR_GLOW_COLOR = 0x22d3ee;
 
 

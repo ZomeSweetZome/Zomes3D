@@ -1768,7 +1768,7 @@ select2-container .select-wrapper.language-picker {
   top: 50%;
   transform: translate(-50%, -50%);
   pointer-events: none;
-  z-index: 1;
+  z-index: 2;
 }
 
 .ar_model_viewer .canvas_notification.hidden {
@@ -2049,7 +2049,7 @@ textarea[name="ar_order_comment"] {
   background-repeat: no-repeat;
   background-position: center;
   cursor: pointer;
-  z-index: 10;
+  z-index: 1;
   transform: translate(-50%, -50%);
   transition: transform 0.15s ease, opacity 0.2s ease;
 }
@@ -2062,7 +2062,7 @@ textarea[name="ar_order_comment"] {
 .ar_filter .ar_filter_group .ar_filter_options .option.disabled,
 .ar_filter .ar_filter_group .ar_filter_options.type_checkbox .option.disabled,
 .ar_filter .option.disabled {
-  opacity: 0.42;
+  /* opacity: 0.42; */
   cursor: not-allowed !important;
   pointer-events: auto !important;
   filter: grayscale(0.5);
@@ -2079,10 +2079,11 @@ textarea[name="ar_order_comment"] {
 .ar_filter .ar_filter_group .ar_filter_options .option .option_tooltip {
   display: none;
   position: absolute;
-  bottom: calc(100% + 8px);
+  bottom: 50%;
   left: 50%;
   transform: translateX(-50%);
   background-color: #111827;
+  opacity: 1;
   color: #f9fafb;
   padding: 6px 12px;
   border-radius: 6px;
