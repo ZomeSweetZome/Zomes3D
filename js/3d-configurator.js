@@ -1809,6 +1809,7 @@ async function changeModel(modelId) {
   }
 
   resetCanvasButtons();
+  cancelUnplacedExtraDoor();
   removeExtraDoorHotspots();
 
   IMPORTED_MODELS[0] && await disposeModel(IMPORTED_MODELS[0]);
@@ -2127,11 +2128,12 @@ function calculatePrice() {
         }
       }
     } else {
-      $(`.${activeOptions[i]} .component_price`).html(formatPrice(optionPrice, currentCurrencySign));
       if (activeOptions[i] === 'option_4-3' && !selectedExtraDoorPosition) {
         // ! Door is toggled in menu, but not yet placed in 3D:
-        // ! Keep option price displayed in menu, but do NOT add to totalAmount until placed!
+        // ! Show $0 in menu and do NOT add to totalAmount until placed!
+        $(`.${activeOptions[i]} .component_price`).html(formatPrice(0, currentCurrencySign));
       } else {
+        $(`.${activeOptions[i]} .component_price`).html(formatPrice(optionPrice, currentCurrencySign));
         if (optionLeadTime > maximumLeadTimeWeeks) { maximumLeadTimeWeeks = optionLeadTime; }
         totalAmount += optionPrice;
       }
@@ -2205,7 +2207,7 @@ function formatPrice(price, currency, needToBeRounded = true, needToAddSpace = f
     return getData(dataMain, 'ui_component_price_included', currentLanguage);
   }
 
-  if (!price) { price = '' }
+  if (price !== 0 && !price) { price = '' }
   if (!currency) { currency = '' }
 
   let result, firstSeparator;
