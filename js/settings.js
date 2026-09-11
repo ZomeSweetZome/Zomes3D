@@ -17,9 +17,9 @@ if (LIGHT_SCHEME === 1) {
 }
 
 export const MODEL_PATHS = [
-  './src/models/zomes-pod3-draco.glb',
-  './src/models/zomes-office3-draco.glb',
-  './src/models/zomes-studio3-draco.glb',
+  './src/models/zomes-120-draco.glb',
+  './src/models/zomes-170-draco.glb',
+  './src/models/zomes-300-draco.glb',
   './src/models/zomes-500-draco.glb',
   './src/models/zomes-700-draco.glb',
   './src/models/furniture-pod-draco.glb',
@@ -554,8 +554,8 @@ export function getExtraDoorAffectedPanels(x) {
 // true: Pulsing glowing highlight on available C panels (clickable 3D mesh)
 // false: Hotspot icons (DOM elements)
 export const IS_EXTRA_DOOR_GLOW_MODE = true;
-// export const EXTRA_DOOR_GLOW_COLOR = 0x22d3ee;
-export const EXTRA_DOOR_GLOW_COLOR = 0x22ccee;
+export const EXTRA_DOOR_GLOW_COLOR = 0x22d3ee;
+// export const EXTRA_DOOR_GLOW_COLOR = 0x22ccee;
 
 
 export const VIEWPORT_AND_STRIP_SECTORS = {
@@ -628,20 +628,21 @@ export const VIEWPORT_AND_STRIP_SECTORS = {
   },
   'Zome-700': {
     viewport: {
-      c: ['11'],
-      d: ['10', '11'],
-      e: ['11'],
+      c: ['13'],
+      d: ['12', '13'],
+      e: ['13'],
     },
     strip: {
-      c: ['8'],
-      d: ['8'],
-      e: ['9'],
-      f: ['10'],
-      g: ['11'],
-      h: ['11'],
+      c: ['10'],
+      d: ['10'],
+      e: ['11'],
+      f: ['12'],
+      g: ['13'],
+      h: ['13'],
+      i: ['14'],
     },
     skylight: {
-      i: ['2', '4', '6', '8', '10', '12', '14'],
+      j: ['2', '4', '6', '8', '10', '12', '14', '16'],
     },
   },
 };

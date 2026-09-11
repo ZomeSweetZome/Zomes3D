@@ -412,6 +412,7 @@ getSharedParameter('upgrades').groupOptionAction = function () {
       } else {
         flyCameraTo('outExtraDoor', 'outside');
         showExtraDoorHotspots();
+        updateExtraDoorMeshesVisibility(null, false);
       }
     } else {
       isExtraDoorOn = false;
@@ -904,6 +905,8 @@ async function StartSettings() {
   await loadModel(MODEL_PATHS[currentHouse], false, () => { }, true);
   modelHouse = IMPORTED_MODELS[0];
   setVisibility(modelHouse, false, ['bed']);
+  hideAllExtraDoorMeshes();
+  setMainDoorMeshVisibility(true);
 
   if (currentHouse === '3' || currentHouse === '4') {
     jQuery('#button_furniture').css('display', 'none');
@@ -1750,6 +1753,7 @@ function CheckChanges() {
       getSharedParameter('extraDoor').value = 0;
       WriteURLParameters();
       showExtraDoorHotspots();
+      updateExtraDoorMeshesVisibility(null, false);
     } else {
       removeExtraDoorPanelsFromCustomWindows(selectedExtraDoorPosition);
       getSharedParameter('customWindows').value = convertObjectToArray(customWindows);
@@ -1758,6 +1762,7 @@ function CheckChanges() {
     }
   } else if (isExtraDoorOn && !selectedExtraDoorPosition) {
     showExtraDoorHotspots();
+    updateExtraDoorMeshesVisibility(null, false);
   } else if (!isExtraDoorOn) {
     removeExtraDoorHotspots();
     updateExtraDoorMeshesVisibility(null, false);
@@ -1814,6 +1819,8 @@ async function changeModel(modelId) {
   await loadModel(MODEL_PATHS[modelId], false, () => { }, true);
   modelHouse = IMPORTED_MODELS[0];
   setVisibility(modelHouse, false, ['bed']);
+  hideAllExtraDoorMeshes();
+  setMainDoorMeshVisibility(true);
 
   if (currentHouse === '3' || currentHouse === '4') {
     jQuery('#button_furniture').css('display', 'none');
@@ -3573,7 +3580,17 @@ function cameraBtnHandlers() {
 
     flyCameraTo(aim, 'inside', () => {
       renderer.clippingPlanes = [];
-      notClippingMaterials = ['floor', 'AC_white', 'AC_gray', 'AC_gray.001', 'AC_screen', 'bamboo', 'furniture', 'gray', 'fabric'];
+      notClippingMaterials = [
+        'floor',
+        'AC_white',
+        'AC_gray',
+        'AC_gray.001',
+        'AC_screen',
+        'bamboo',
+        'furniture',
+        'gray',
+        'fabric',
+      ];
       current3Dmodel = modelHouse;
       isLocalClippingOn = true;
       $('.canvas_btn_camera').removeClass('disabled');
@@ -3830,6 +3847,10 @@ function summaryBtnsHandler() {
   $(document).on('click keydown', '#view_summary_btn, #canvas_button_view_summary', function (ev) {
     if (ev.type === 'keydown' && ev.key !== 'Enter' && ev.key !== ' ') return;
     ev.preventDefault();
+
+    resetCanvasButtons();
+    
+
     if (isCameraInside) {
       flyCameraTo('outMain', 'outside', () => proceedSummaryAndPdf(false));
     } else {
@@ -4587,7 +4608,7 @@ function checkUpgradesAndAddonsState() {
       $('.tumbler-wrapper').removeClass('turned-on');
       isWindowsSmart = false;
       smartWindowsController('glass', isWindowsSmart);
-      // smartWindowsController('glass.001', isWindowsSmart);
+      smartWindowsController('glass.001', isWindowsSmart);
     }
   }
 }
@@ -4596,7 +4617,7 @@ $(document).on('click', '.tumbler-wrapper', function () { //Smart windows tumblr
   $('.tumbler-wrapper').toggleClass('turned-on');
   isWindowsSmart = !isWindowsSmart;
   smartWindowsController('glass', isWindowsSmart);
-  // smartWindowsController('glass.001', isWindowsSmart);
+  smartWindowsController('glass.001', isWindowsSmart);
 });
 
 
@@ -4628,7 +4649,7 @@ function isolateGlassInGroups(model) {
     if (object.name) {
       const lowerName = object.name.toLowerCase();
 
-      if (lowerName.includes('window-glass-c') || lowerName.includes('door')) {
+      if (lowerName.includes('window-glass-c') || lowerName.includes('door') || lowerName.includes('entry')) {
         object.traverse((child) => {
           if ((child.isMesh && child.material && child.material.name === 'glass') ||
             (child.isMesh && child.material && child.material.name === 'glass.001')) {
@@ -5767,12 +5788,17 @@ export function updateExtraDoorHotspots(camera, scene, controls) {
   });
 }
 
-if (typeof window !== 'undefined') {
-  window.isExtraDoorGlowMode = isExtraDoorGlowMode;
-  window.showExtraDoorHotspots = showExtraDoorHotspots;
-  window.enableExtraDoorPanelGlow = enableExtraDoorPanelGlow;
-  window.disableExtraDoorPanelGlow = disableExtraDoorPanelGlow;
-}
+// ? Just for testing
+// if (typeof window !== 'undefined') {
+//   window.isExtraDoorGlowMode = isExtraDoorGlowMode;
+//   window.showExtraDoorHotspots = showExtraDoorHotspots;
+//   window.enableExtraDoorPanelGlow = enableExtraDoorPanelGlow;
+//   window.disableExtraDoorPanelGlow = disableExtraDoorPanelGlow;
+//   window.updateExtraDoorMeshesVisibility = updateExtraDoorMeshesVisibility;
+//   window.setMainDoorMeshVisibility = setMainDoorMeshVisibility;
+//   window.setExtraDoorMeshVisibility = setExtraDoorMeshVisibility;
+//   window.hideAllExtraDoorMeshes = hideAllExtraDoorMeshes;
+// }
 
 
 function installExtraDoor(x, writeUrl = true) {
@@ -5864,29 +5890,50 @@ export function cancelUnplacedExtraDoor() {
   }
 }
 
-function updateExtraDoorMeshesVisibility(x = selectedExtraDoorPosition, isVisible = isExtraDoorOn && !!selectedExtraDoorPosition) {
+let lastInstalledExtraDoorPosition = null;
+
+export function updateExtraDoorMeshesVisibility(x = selectedExtraDoorPosition, isVisible = isExtraDoorOn && !!selectedExtraDoorPosition) {
   if (!modelHouse) return;
 
   if (isVisible && x) {
-    // 1. Hide base with main entry
-    setEntryMeshVisibility(false);
+    // 1. Hide base house mesh with main door
+    setMainDoorMeshVisibility(false);
 
-    // 2. Hide panels C-x, D-(x-1), D-(x+1), E-x
+    // If changing from another position, restore previously affected panels first
+    if (lastInstalledExtraDoorPosition && lastInstalledExtraDoorPosition !== x) {
+      const prevAffected = getExtraDoorAffectedPanels(lastInstalledExtraDoorPosition);
+      prevAffected.forEach(({ row, number }) => {
+        if (!isPanelHasWindow(row, number)) {
+          const { panelMeshName } = findMeshByLetterAndNumber(modelHouse, row, number);
+          if (panelMeshName) {
+            setVisibility(modelHouse, true, [panelMeshName]);
+          }
+        }
+      });
+    }
+    lastInstalledExtraDoorPosition = x;
+
+    // 2. Hide panels C-x, D-(x-1), D-(x+1), E-x and any windows on them
     const affected = getExtraDoorAffectedPanels(x);
     affected.forEach(({ row, number }) => {
-      const { panelMeshName } = findMeshByLetterAndNumber(modelHouse, row, number);
+      const { panelMeshName, windowMeshName } = findMeshByLetterAndNumber(modelHouse, row, number);
       if (panelMeshName) {
         setVisibility(modelHouse, false, [panelMeshName]);
       }
+      if (windowMeshName) {
+        setVisibility(modelHouse, false, [windowMeshName]);
+      }
     });
 
-    // 3. Show extra door mesh
+    // 3. Show extra door mesh (with 'entry' in name for position x) and hide other entry meshes
     setExtraDoorMeshVisibility(x, true);
   } else {
-    // 1. Show base with main entry
-    setEntryMeshVisibility(true);
+    lastInstalledExtraDoorPosition = null;
 
-    // 2. If position existed, restore panels C-x, D-(x-1), D-(x+1), E-x (unless they have windows)
+    // 1. Show base house mesh with main door
+    setMainDoorMeshVisibility(true);
+
+    // 2. If position existed, restore panels C-x, D-(x-1), D-(x+1), E-x (unless they have custom windows)
     if (x) {
       const affected = getExtraDoorAffectedPanels(x);
       affected.forEach(({ row, number }) => {
@@ -5899,63 +5946,78 @@ function updateExtraDoorMeshesVisibility(x = selectedExtraDoorPosition, isVisibl
       });
     }
 
-    // 3. Hide any extra door meshes
+    // 3. Hide all meshes with 'entry' in their name
     hideAllExtraDoorMeshes();
   }
 
   requestRender();
 }
 
-function setEntryMeshVisibility(visible) {
+export function setMainDoorMeshVisibility(visible) {
   if (!modelHouse) return;
   modelHouse.traverse((o) => {
-    if (o.name) {
-      const name = o.name.toLowerCase();
-      if (
-        name.includes('entry') &&
-        !name.includes('c-') &&
-        !name.includes('c_') &&
-        !name.includes('door-c') &&
-        !name.includes('back-door')
-      ) {
-        o.visible = visible;
-      }
+    const name = (o.name || '').toLowerCase();
+    const parentName = (o.parent && o.parent.name ? o.parent.name : '').toLowerCase();
+    const isMainDoor = name.includes('maindoor') || name.includes('main_door') || name.includes('main-door') ||
+                       parentName.includes('maindoor') || parentName.includes('main_door') || parentName.includes('main-door');
+    if (isMainDoor) {
+      o.visible = visible;
     }
   });
 }
 
-function setExtraDoorMeshVisibility(x, visible) {
+// Backwards-compatible alias for setMainDoorMeshVisibility
+export function setEntryMeshVisibility(visible) {
+  setMainDoorMeshVisibility(visible);
+}
+
+export function setExtraDoorMeshVisibility(x, visible) {
   if (!modelHouse) return;
   const numStr = String(x);
+  const numStrPadded = numStr.padStart(2, '0');
+  const numRegex = new RegExp(`(^|\\D)(${numStr}|${numStrPadded})(\\D|$)`);
   let found = false;
 
   modelHouse.traverse((o) => {
-    if (o.name) {
-      const name = o.name.toLowerCase();
-      const hasDoor = name.includes('door');
-      const hasC = name.includes('c-') || name.includes('c_') || name.includes('c' + numStr);
-      const hasNum = new RegExp(`(^|\\D)${numStr}(\\D|$)`).test(name);
+    const name = (o.name || '').toLowerCase();
+    const parentName = (o.parent && o.parent.name ? o.parent.name : '').toLowerCase();
+    const isEntry = name.includes('entry') || parentName.includes('entry');
 
-      if (hasDoor && hasC && hasNum) {
-        o.visible = visible;
+    if (isEntry) {
+      const matchesPos = numRegex.test(name) || numRegex.test(parentName);
+      if (matchesPos && visible) {
+        o.visible = true;
         found = true;
+      } else {
+        o.visible = false;
       }
     }
   });
 
   if (!found && visible) {
-    console.warn(`Mesh for extra door at C-${x} not found in model ${DATA_HOUSE_NAME[currentHouse]}. It will be shown once the 3D model is updated.`);
+    console.warn(`Mesh for extra door at C-${x} (containing 'entry' and '${x}') not found in model ${DATA_HOUSE_NAME[currentHouse]}. It will be shown once the 3D model is updated.`);
   }
 }
 
-function hideAllExtraDoorMeshes() {
+export function hideAllExtraDoorMeshes() {
   if (!modelHouse) return;
   modelHouse.traverse((o) => {
-    if (o.name) {
-      const name = o.name.toLowerCase();
-      const hasDoor = name.includes('door');
-      const hasC = name.includes('c-') || name.includes('c_') || /c\d+/i.test(name);
-      if (hasDoor && hasC && !name.includes('center')) {
+    const name = (o.name || '').toLowerCase();
+    const parentName = (o.parent && o.parent.name ? o.parent.name : '').toLowerCase();
+
+    // 1. All meshes with 'entry' in name must be invisible
+    if (name.includes('entry') || parentName.includes('entry')) {
+      o.visible = false;
+    }
+
+    // 2. Also ensure legacy test door meshes (like door-c5) are hidden, but NEVER hide maindoor
+    const isMainDoor = name.includes('maindoor') || name.includes('main_door') || name.includes('main-door') ||
+                       parentName.includes('maindoor') || parentName.includes('main_door') || parentName.includes('main-door');
+    if (!isMainDoor) {
+      const hasDoor = name.includes('door') || parentName.includes('door');
+      const hasC = name.includes('c-') || name.includes('c_') || /c\d+/i.test(name) ||
+                   parentName.includes('c-') || parentName.includes('c_') || /c\d+/i.test(parentName);
+      if (hasDoor && hasC && !name.includes('center') && !parentName.includes('center')) {
         o.visible = false;
       }
     }
