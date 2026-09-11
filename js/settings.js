@@ -117,31 +117,31 @@ export const DATA_HOUSE_NAME = {
   'Zome-700': 4,
 };
 
+export const DATA_HOUSE_DIMENSIONS = {
+  'Zome-120': {
+    height: 13,
+    diameter: 16.5,
+  },
+  'Zome-170': {
+    height: 12.5,
+    diameter: 18.5,
+  },
+  'Zome-300': {
+    height: 13.5,
+    diameter: 22,
+  },
+  'Zome-500': {
+    height: 16,
+    diameter: 25,
+  },
+  'Zome-700': {
+    height: 17.5,
+    diameter: 32,
+  },
+};
+
 export const NAV_CAM_POSITION = {
   // OUTSIDE
-  outPrepare: {
-    outside: true,
-    'Zome-120': {
-      camera: [0.072, -0.064 + HUMAN_HEIGHT, 6.515],
-      target: [0, HUMAN_HEIGHT, 0],
-    },
-    'Zome-170': {
-      camera: [0.072, -0.064 + HUMAN_HEIGHT, 6.515],
-      target: [0, HUMAN_HEIGHT, 0],
-    },
-    'Zome-300': {
-      camera: [0.072, -0.064 + HUMAN_HEIGHT, 6.515],
-      target: [0, HUMAN_HEIGHT, 0],
-    },
-    'Zome-500': {
-      camera: [0.072, -0.064 + HUMAN_HEIGHT, 6.515],
-      target: [0, HUMAN_HEIGHT, 0],
-    },
-    'Zome-700': {
-      camera: [0.072, -0.064 + HUMAN_HEIGHT, 6.515],
-      target: [0, HUMAN_HEIGHT, 0],
-    },
-  },
   outMain: {
     outside: true,
     'Zome-120': {
@@ -157,37 +157,34 @@ export const NAV_CAM_POSITION = {
       target: [0, HUMAN_HEIGHT, 0],
     },
     'Zome-500': {
-      camera: [3.757, 0.201 + HUMAN_HEIGHT, 10.629],
+      camera: [3.955, 0.212 + HUMAN_HEIGHT, 11.188],
       target: [0, HUMAN_HEIGHT, 0],
     },
     'Zome-700': {
-      camera: [3.757, 0.201 + HUMAN_HEIGHT, 10.629],
+      camera: [4.163, 0.223 + HUMAN_HEIGHT, 11.777],
       target: [0, HUMAN_HEIGHT, 0],
     },
   },
   outXrays: {
     outside: true,
     'Zome-120': {
-      // camera: [2.709, 3.279 + HUMAN_HEIGHT, 4.497],
       camera: [-3.211, 3.201 + HUMAN_HEIGHT, 4.214],
       target: [0, HUMAN_HEIGHT, 0],
     },
     'Zome-170': {
-      // camera: [2.233, 3.613 + HUMAN_HEIGHT, 4.941],
       camera: [-4.737, 2.821 + HUMAN_HEIGHT, 3.472],
       target: [0, HUMAN_HEIGHT, 0],
     },
     'Zome-300': {
-      // camera: [1.337, 2.884 + HUMAN_HEIGHT, 6.482],
-      camera: [-6.888, 1.571 + HUMAN_HEIGHT, 1.487],
+      camera: [-6.131, 1.625 + HUMAN_HEIGHT, 3.449],
       target: [0, HUMAN_HEIGHT, 0],
     },
     'Zome-500': {
-      camera: [-6.888, 1.571 + HUMAN_HEIGHT, 1.487],
+      camera: [-4.672, 1.678 + HUMAN_HEIGHT, 6.273],
       target: [0, HUMAN_HEIGHT, 0],
     },
     'Zome-700': {
-      camera: [-6.888, 1.571 + HUMAN_HEIGHT, 1.487],
+      camera: [-4.569, 1.256 + HUMAN_HEIGHT, 7.491],
       target: [0, HUMAN_HEIGHT, 0],
     },
   },
@@ -206,34 +203,34 @@ export const NAV_CAM_POSITION = {
       target: [0, HUMAN_HEIGHT, 0],
     },
     'Zome-500': {
-      camera: [0, -0.412 + HUMAN_HEIGHT, 11.426],
+      camera: [0, -0.531 + HUMAN_HEIGHT, 13.327],
       target: [0, HUMAN_HEIGHT, 0],
     },
     'Zome-700': {
-      camera: [0, -0.412 + HUMAN_HEIGHT, 11.426],
+      camera: [0, -0.440 + HUMAN_HEIGHT, 15.544],
       target: [0, HUMAN_HEIGHT, 0],
     },
   },
   outExtraDoor: {
     outside: true,
     'Zome-120': {
-      camera: [0, -0.367 + HUMAN_HEIGHT, -9.327],
+      camera: [3.647, 1.363 + HUMAN_HEIGHT, -9.582],
       target: [0, HUMAN_HEIGHT, 0],
     },
     'Zome-170': {
-      camera: [0, -0.367 + HUMAN_HEIGHT, -9.327],
+      camera: [2.481, 0.948 + HUMAN_HEIGHT, -8.46],
       target: [0, HUMAN_HEIGHT, 0],
     },
     'Zome-300': {
-      camera: [0, -0.367 + HUMAN_HEIGHT, -9.327],
+      camera: [0.429, 2.012 + HUMAN_HEIGHT, -11.2742],
       target: [0, HUMAN_HEIGHT, 0],
     },
     'Zome-500': {
-      camera: [0, -0.367 + HUMAN_HEIGHT, -9.327],
+      camera: [-3.153, 3.21 + HUMAN_HEIGHT, -14.927],
       target: [0, HUMAN_HEIGHT, 0],
     },
     'Zome-700': {
-      camera: [0, -0.367 + HUMAN_HEIGHT, -9.327],
+      camera: [0.675, 1.811 + HUMAN_HEIGHT, -14.684],
       target: [0, HUMAN_HEIGHT, 0],
     },
   },
@@ -252,11 +249,11 @@ export const NAV_CAM_POSITION = {
       target: [0, HUMAN_HEIGHT, 0],
     },
     'Zome-500': {
-      camera: [8.5, 1.956 + HUMAN_HEIGHT, -3.324],
+      camera: [8.957, 3.964 + HUMAN_HEIGHT, -4.751],
       target: [0, HUMAN_HEIGHT, 0],
     },
     'Zome-700': {
-      camera: [8.5, 1.956 + HUMAN_HEIGHT, -3.324],
+      camera: [11.239, 4.222 + HUMAN_HEIGHT, -1.17],
       target: [0, HUMAN_HEIGHT, 0],
     },
   },
@@ -346,11 +343,11 @@ export const NAV_CAM_POSITION = {
       target: [0, HUMAN_HEIGHT, 0],
     },
     'Zome-500': {
-      camera: [7.596, 1.119 + HUMAN_HEIGHT, 5.308],
+      camera: [9.004, 0.952 + HUMAN_HEIGHT, 3.817],
       target: [0, HUMAN_HEIGHT, 0],
     },
     'Zome-700': {
-      camera: [7.596, 1.119 + HUMAN_HEIGHT, 5.308],
+      camera: [9.326, 1.374 + HUMAN_HEIGHT, 6.517],
       target: [0, HUMAN_HEIGHT, 0],
     },
   },

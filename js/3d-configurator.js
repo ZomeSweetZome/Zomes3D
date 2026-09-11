@@ -33,6 +33,7 @@ import {
   ENVIRONMENT_MAP_INTENSITY,
   TEXTURES,
   DATA_HOUSE_NAME,
+  DATA_HOUSE_DIMENSIONS,
   NAV_CAM_POSITION,
   EXTRA_DOOR_AVAILABLE_SECTORS,
   getExtraDoorAffectedPanels,
@@ -916,7 +917,7 @@ async function StartSettings() {
 
   const foundationMesh = GetMesh('foundation');
   if (foundationMesh) {
-    foundationMesh.position.y = -0.001;
+    foundationMesh.position.y = -0.0015;
   } else {
     console.error('foundation mesh is not defined for currentHouse:', currentHouse);
   }
@@ -1831,7 +1832,7 @@ async function changeModel(modelId) {
   
   const foundationMesh = GetMesh('foundation');
   if (foundationMesh) {
-    foundationMesh.position.y = -0.001;
+    foundationMesh.position.y = -0.0015;
   } else {
     console.error('foundation mesh is not defined for currentHouse:', currentHouse);
   }
@@ -2512,7 +2513,6 @@ function getGroupNamesList(parent, searchString = '') {
   const groupNames = [];
   const normalizedSearchString = searchString.toLowerCase();
 
-  // ! TODO (optimization)
   parent.traverse((object) => {
     if (object.isGroup && object.name) {
       const normalizedGroupName = object.name.toLowerCase();
@@ -4624,7 +4624,6 @@ $(document).on('click', '.tumbler-wrapper', function () { //Smart windows tumblr
 
 
 function smartWindowsController(materialName, isEnabled) {
-  // ! TODO (optimization) - avoid traverse
   scene.traverse((object) => {
     if (object.isMesh && object.material && object.material.name === materialName) {
       const material = object.material;
@@ -6140,14 +6139,15 @@ function createTextTexture(text) {
 
 function createDimensions(diameter, height) {
   const heightFoundation = (isFoundationKitOn) ? FOUNDATION_HEIGHT : 0;
+  const heightFoundationForText = (isFoundationKitOn) ? 0.5 : 0;
 
   const startDiameter = new THREE.Vector3(-diameter / 2, height + MODEL_CENTER_POSITION - heightFoundation + lineOffset, 0);
   const endDiameter = new THREE.Vector3(diameter / 2, height + MODEL_CENTER_POSITION - heightFoundation + lineOffset, 0);
-  createHorizontalDimensionLine(startDiameter, endDiameter, `D = ${Math.round((diameter * 3.28084) / 0.5) * 0.5} ft`, scene);
+  createHorizontalDimensionLine(startDiameter, endDiameter, `D = ${DATA_HOUSE_DIMENSIONS[DATA_HOUSE_NAME[currentHouse]].diameter.toFixed(1)} ft`, scene);
 
   const startHeight = new THREE.Vector3(-diameter / 2 - lineOffset, 0 + MODEL_CENTER_POSITION - heightFoundation, 0);
   const endHeight = new THREE.Vector3(-diameter / 2 - lineOffset, height + MODEL_CENTER_POSITION - heightFoundation, 0);
-  createVerticalDimensionLine(startHeight, endHeight, `H = ${Math.round((height + heightFoundation) * 3.28084 / 0.5) * 0.5} ft`, scene);
+  createVerticalDimensionLine(startHeight, endHeight, `H = ${(DATA_HOUSE_DIMENSIONS[DATA_HOUSE_NAME[currentHouse]].height + heightFoundationForText).toFixed(1)} ft`, scene);
 
   setMaterialColor('man', manColor);
   setMaterialColor('man.001', manColor);

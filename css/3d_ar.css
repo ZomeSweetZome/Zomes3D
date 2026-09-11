@@ -72,9 +72,9 @@
   --marevo-ui-icon_wallet_w: url(../src/ar-ui-icons/wallet_w.svg);
   --marevo-ui-icon_timeline_point: url(../src/ar-ui-icons/timeline_point.svg);
 
-  --marevo-ui-btn_pod: url(../src/ar-ui-icons/btn_pod.png);
-  --marevo-ui-btn_office: url(../src/ar-ui-icons/btn_office.png);
-  --marevo-ui-btn_studio: url(../src/ar-ui-icons/btn_studio.png);
+  --marevo-ui-btn_pod: url(../src/ar-ui-icons/btn_120.png);
+  --marevo-ui-btn_office: url(../src/ar-ui-icons/btn_170.png);
+  --marevo-ui-btn_studio: url(../src/ar-ui-icons/btn_300.png);
   --marevo-ui-btn_500: url(../src/ar-ui-icons/btn_500.png);
   --marevo-ui-btn_700: url(../src/ar-ui-icons/btn_700.png);
   --marevo-ui-btn_men: url(../src/ar-ui-icons/men.png);
@@ -2401,10 +2401,10 @@ textarea[name="ar_order_comment"] {
   background: var(--marevo-ui-btn_men) no-repeat center;
   background-size: contain;
   position: absolute;
-  top: 85px;
-  left: -35px;
+  top: 95px;
+  left: 20px;
   width: 64.84px;
-  height: 94.54px;
+  height: 85px;
 }
 
 .popup_select__item_picture {
