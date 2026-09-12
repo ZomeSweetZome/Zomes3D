@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Shareable by design: never carries email/t/design_id — only the config
+       string and an optional display-only design name (dn). -->
+  <meta name="referrer" content="strict-origin" />
+  <title>Zomes Design Set</title>
+  <meta name="description" content="Architectural design set generated from your Zomes configuration." />
+  <link rel="icon" href="../src/index/favicon.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="../css/plans.css" />
+
+  <!-- Google tag (same property as the configurator) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LPVPB8GH9P"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-LPVPB8GH9P');
+  </script>
+</head>
+<body>
+  <header class="plans-header">
+    <a class="plans-header__brand" href="../">ZOMES</a>
+    <div class="plans-header__meta">
+      <span class="plans-header__model" id="hdr_model"></span>
+      <span class="plans-header__design" id="hdr_design"></span>
+    </div>
+    <span class="unverified-badge" id="unverified_badge" hidden
+      title="Dimensions pending manufacturer verification">PREVIEW — DIMS PENDING VERIFICATION</span>
+    <span class="plans-header__sheet" id="hdr_sheet"></span>
+    <button id="prev_sheet" title="Previous sheet">‹</button>
+    <button id="next_sheet" title="Next sheet">›</button>
+    <button id="dl_bare" title="Sheets without title block, for insertion into your own document set">Drawings only</button>
+    <button id="dl_full" class="primary">Download PDF (full set)</button>
+  </header>
+
+  <div class="plans-loading" id="loading">
+    <div class="spinner"></div>
+    <div>Drawing your Zome…</div>
+  </div>
+
+  <div class="plans-error" id="error" hidden>
+    <div class="plans-error__box">
+      <h1 id="error_title"></h1>
+      <p id="error_detail"></p>
+      <a href="../">Open the Zomes configurator</a>
+    </div>
+  </div>
+
+  <div class="plans-layout" id="viewer" hidden>
+    <nav class="sheet-list" id="sheet_list" aria-label="Sheets"></nav>
+    <main class="sheet-pane" id="sheet_pane">
+      <div class="sheet-inner" id="sheet_inner"></div>
+    </main>
+  </div>
+
+  <div class="zoom-controls">
+    <button id="zoom_in" title="Zoom in">+</button>
+    <button id="zoom_out" title="Zoom out">−</button>
+    <button id="zoom_fit" title="Fit width">⤢</button>
+  </div>
+
+  <!-- pdfmake stack, same versions as the configurator (ZOM-60 spike) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+  <script src="../src/pdf/fonts/vfs_fonts.js"></script>
+  <script type="module" src="../js/plans/main.js"></script>
+</body>
+</html>
