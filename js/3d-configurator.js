@@ -908,6 +908,7 @@ async function StartSettings() {
   setVisibility(modelHouse, false, ['bed']);
   hideAllExtraDoorMeshes();
   setMainDoorMeshVisibility(true);
+  updateInsidePartitionVisibility();
 
   if (currentHouse === '3' || currentHouse === '4') {
     jQuery('#button_furniture').css('display', 'none');
@@ -1823,6 +1824,7 @@ async function changeModel(modelId) {
   setVisibility(modelHouse, false, ['bed']);
   hideAllExtraDoorMeshes();
   setMainDoorMeshVisibility(true);
+  updateInsidePartitionVisibility();
 
   if (currentHouse === '3' || currentHouse === '4') {
     jQuery('#button_furniture').css('display', 'none');
@@ -5928,6 +5930,9 @@ export function updateExtraDoorMeshesVisibility(x = selectedExtraDoorPosition, i
 
     // 3. Show extra door mesh (with 'entry' in name for position x) and hide other entry meshes
     setExtraDoorMeshVisibility(x, true);
+
+    // 4. Update inside partitions for House 3 / House 4
+    updateInsidePartitionVisibility(x);
   } else {
     lastInstalledExtraDoorPosition = null;
 
@@ -5949,6 +5954,9 @@ export function updateExtraDoorMeshesVisibility(x = selectedExtraDoorPosition, i
 
     // 3. Hide all meshes with 'entry' in their name
     hideAllExtraDoorMeshes();
+
+    // 4. Update inside partitions for House 3 / House 4
+    updateInsidePartitionVisibility(null);
   }
 
   requestRender();
@@ -6023,6 +6031,52 @@ export function hideAllExtraDoorMeshes() {
       }
     }
   });
+
+  updateInsidePartitionVisibility(null);
+}
+
+export function updateInsidePartitionVisibility(activeDoorPos = (isExtraDoorOn ? selectedExtraDoorPosition : null)) {
+  if (!modelHouse) return;
+
+  const isHouse3 = (currentHouse === '3');
+  const isHouse4 = (currentHouse === '4');
+
+  if (!isHouse3 && !isHouse4) return;
+
+  const posNum = (activeDoorPos !== null && activeDoorPos !== undefined) ? parseInt(activeDoorPos, 10) : null;
+  const isDoorAtC8 = (posNum === 8);
+  const isDoorAtC5 = (posNum === 5);
+
+  modelHouse.traverse((o) => {
+    const name = o.name || '';
+    if (!name) return;
+
+    const lower = name.toLowerCase();
+    const isInsideBase = (lower === 'inside');
+    // Support both Cyrillic 'С' (\u0421/\u0441) and Latin 'C'/'c'
+    const isInsideC8 = /^inside_[cс]-?8$/i.test(name) || name === 'inside_С-8' || name === 'inside_C-8';
+    const isInsideC5 = /^inside_[cс]-?5$/i.test(name) || name === 'inside_С-5' || name === 'inside_C-5';
+
+    if (isHouse3) {
+      if (isInsideBase) {
+        o.visible = !isDoorAtC8;
+      } else if (isInsideC8) {
+        o.visible = isDoorAtC8;
+      } else if (isInsideC5) {
+        o.visible = false;
+      }
+    } else if (isHouse4) {
+      if (isInsideBase) {
+        o.visible = !isDoorAtC5;
+      } else if (isInsideC5) {
+        o.visible = isDoorAtC5;
+      } else if (isInsideC8) {
+        o.visible = false;
+      }
+    }
+  });
+
+  requestRender();
 }
 
 //#endregion
