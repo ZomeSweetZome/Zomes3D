@@ -57,12 +57,11 @@ export const ORIGIN_ZIPCODE = '94950';
 export const DEV_MODE = true; //!!! When true, fetches live data directly from Google Sheets CSVs instead of local json snapshots
 
 // Zomes_3D_data_LIVE
-// const MAIN_LINK_PART = 'https://docs.google.com/spreadsheets/d/1hU0H-7k5TqUaMsO5IgSG8SCk64Vf73_uzAKGlmT5HyI/export?format=csv&gid='; // LIVE
-const MAIN_LINK_PART = 'https://docs.google.com/spreadsheets/d/1ASySSyU_y-Fm1ME8oXIGGhjdWWehsGIQ4r_HTHpip5M/export?format=csv&gid='; // DEV
+const MAIN_LINK_PART = 'https://docs.google.com/spreadsheets/d/1hU0H-7k5TqUaMsO5IgSG8SCk64Vf73_uzAKGlmT5HyI/export?format=csv&gid='; // LIVE
 
-export const DATAFILE_CSV_LINK_UI = MAIN_LINK_PART + '911871288';
-export const DATAFILE_CSV_LINK_PRICE = MAIN_LINK_PART + '608401970';
-export const DATAFILE_CSV_LINK_ANNOTATIONS = MAIN_LINK_PART + '1110711170';
+export const DATAFILE_CSV_LINK_UI = MAIN_LINK_PART + '1240341478';
+export const DATAFILE_CSV_LINK_PRICE = MAIN_LINK_PART + '557344163';
+export const DATAFILE_CSV_LINK_ANNOTATIONS = MAIN_LINK_PART + '605616724';
 
 // Same-origin pre-baked snapshots refreshed by .github/workflows/refresh-data.yml.
 // loadData() tries these first and falls back to the CSV links above.
