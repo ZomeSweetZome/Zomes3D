@@ -98,7 +98,7 @@ export let notClippingMaterials = [];
 let currentLanguage = DEFAULT_LANGUAGE;
 let currentCurrency = DEFAULT_CURRENCY;
 let currentCurrencySign = CURRENCY_SIGN[currentCurrency] || CURRENCY_SIGN['USD'];
-let currentHouse = '0';
+export let currentHouse = '0';
 let isWindowCustomOn = false;
 let isFoundationKitOn = false;
 let isExtraDoorOn = false;
@@ -505,6 +505,56 @@ getSharedParameter('foundation').groupOptionAction = function () {
 
       dimensionsController(true);
     }
+  }
+}
+
+function updateFoundationStateForModel(houseId) {
+  const isModelWithoutFoundation = (houseId === '3' || houseId === '4');
+
+  if (isModelWithoutFoundation) {
+    // Force disable foundation if it was on
+    const foundationParam = getSharedParameter('foundation');
+    if (foundationParam) {
+      foundationParam.value = '0';
+    }
+    isFoundationKitOn = false;
+
+    if (typeof floor !== 'undefined' && floor) {
+      floor.position.y = MODEL_CENTER_POSITION - 0.01;
+    }
+
+    if ($('#button_dimensions').hasClass('active')) {
+      dimensionsController(true);
+    }
+
+    // Reset option selection in group-6 (option 0 "Base subfloor" active, option 1 inactive)
+    if (typeof mainGroups !== 'undefined') {
+      const parentGroup = mainGroups.find(element => element.id === 'group-6');
+      if (parentGroup?.group) {
+        parentGroup.group.activeOption = 0;
+        parentGroup.group.options.forEach((opt, index) => {
+          if (index === 0) {
+            opt.active = true;
+            opt.element.classList.add('active');
+          } else {
+            opt.active = false;
+            opt.element.classList.remove('active');
+          }
+        });
+      }
+    }
+
+    // Hide Subfloor / Foundation from menu
+    $('#title_list__item_6').css('display', 'none');
+
+    // Hide from sidebar summary
+    summaryItemVisibility('group-6', false);
+  } else {
+    // Restore Subfloor / Foundation in menu
+    $('#title_list__item_6').css('display', 'flex');
+
+    // Restore in sidebar summary
+    summaryItemVisibility('group-6', true);
   }
 }
 
@@ -916,10 +966,12 @@ async function StartSettings() {
     jQuery('#button_furniture').css('display', 'flex');
   }
 
+  updateFoundationStateForModel(currentHouse);
+
   const foundationMesh = GetMesh('foundation');
   if (foundationMesh) {
     foundationMesh.position.y = -0.0015;
-  } else {
+  } else if (currentHouse !== '3' && currentHouse !== '4') {
     console.error('foundation mesh is not defined for currentHouse:', currentHouse);
   }
 
@@ -1515,6 +1567,17 @@ function updateStateVars() {
 
 function setOptionsResult() {
   mainGroups.forEach(target => {
+    if (target.group.options[0]?.group_id === '6') {
+      if (currentHouse === '3' || currentHouse === '4') {
+        $('#summary-item-6').css('display', 'none');
+        $('#summary-item2-6').empty();
+        $('#summary_item_list_6').empty();
+        return;
+      } else {
+        $('#summary-item-6').css('display', 'flex');
+      }
+    }
+
     if (!target.group.element.classList.contains('disabled')) {
       const groupResultCaption = `#result_caption_${target.group.options[0]?.group_id}`;
       const summaryResultCaption = `#summary_item_title_${target.group.options[0]?.group_id}`;
@@ -1742,6 +1805,13 @@ function clickOption(groupId, optionId) {
 // ! ************************************************
 function CheckChanges() {
   updateStateVars();
+  if (currentHouse === '3' || currentHouse === '4') {
+    const foundationParam = getSharedParameter('foundation');
+    if (foundationParam) {
+      foundationParam.value = '0';
+    }
+    isFoundationKitOn = false;
+  }
   setAllPanelsOn();
 
   applyAllConditionsActiveRadios();
@@ -1802,6 +1872,8 @@ async function changeModel(modelId) {
   $('.summary_container').css('pointer-events', 'none');
   $('.product-type-3dmodel').css('cursor', 'progress');
 
+  currentHouse = modelId;
+
   if ($('.ar_menu_info_container').hasClass('active')) {
     $('.ar_menu_info__header_close').trigger('click');
   }
@@ -1831,11 +1903,13 @@ async function changeModel(modelId) {
   } else {
     jQuery('#button_furniture').css('display', 'flex');
   }
+
+  updateFoundationStateForModel(currentHouse);
   
   const foundationMesh = GetMesh('foundation');
   if (foundationMesh) {
     foundationMesh.position.y = -0.0015;
-  } else {
+  } else if (currentHouse !== '3' && currentHouse !== '4') {
     console.error('foundation mesh is not defined for currentHouse:', currentHouse);
   }
 
@@ -2036,6 +2110,9 @@ function calculatePrice() {
 
   for (let i = 0; i < SharedParameterList.length - 4; i++) {
     if (SharedParameterList[i].type === 'string') {
+      if ((currentHouse === '3' || currentHouse === '4') && SharedParameterList[i].id === 'foundation') {
+        continue;
+      }
       optionId = `option_${i}-${SharedParameterList[i].value}`;
       activeOptions.push(optionId);
     } else if (SharedParameterList[i].type === 'array-string') {
@@ -4272,6 +4349,7 @@ function collectSummary() {
     const groupId = group.attr('id');
 
     if (groupId === 'group-3') { return; } // ! TEMPORARY CODE for removing EXTERIOR group
+    if ((currentHouse === '3' || currentHouse === '4') && groupId === 'group-6') { return; }
 
     const groupTitle = group.find('.ar_filter_caption').text();
     const filterOptions = group.find('.ar_filter_options');
@@ -4472,8 +4550,6 @@ function summaryItemVisibility(groupId, value) {
 
   if (element) {
     element.style.display = (value) ? 'flex' : 'none';
-  } else {
-    console.error(`Element is not found: summary-item-${id}`);
   }
 }
 

@@ -8,7 +8,7 @@ import {
   DEV_MODE,
 } from './settings.js';
 
-import { isCameraInside } from './3d-configurator.js';
+import { isCameraInside, currentHouse } from './3d-configurator.js';
 
 export let isFinalized = false;
 export let isPriceHidden = false;
@@ -450,6 +450,8 @@ function setEventListenersForNextBtns() {
 
       if (nextIndex === 2) { nextIndex += 1; } //! TEMPORARY CODE for removing EXTERIOR group
 
+      if ((currentHouse === '3' || currentHouse === '4') && nextIndex === 4) { nextIndex += 1; } // Skip Foundation group for models 3 and 4
+
       $('.ar_menu_info_container').removeClass('active');
       $('.ar_filter .ar_filter_group').addClass('invisible');
       $(`#group-${GROUP_ID_ORDER_FOR_NEXT_MENU_BTNS[nextIndex]}`).removeClass('invisible');
@@ -457,7 +459,7 @@ function setEventListenersForNextBtns() {
       if (nextIndex === 3) {
         $('#button_camera_inside').click();
       }
-      if (nextIndex === 4 && isCameraInside) {
+      if ((nextIndex === 4 || nextIndex === 5) && isCameraInside) {
         $('#button_camera_outside').click();
       }
     }
