@@ -45,6 +45,7 @@ import {
   ORIGIN_ZIPCODE,
   OPTIONS_ID_ORDER_FOR_UPGRADES,
   OPTIONS_ID_ORDER_FOR_ADDONS,
+  DISABLED_OPTIONS,
 } from './settings.js';
 
 import {
@@ -1059,6 +1060,7 @@ function SetActionForGroups() {
         for (let i = 0; i < target.group.options.length; i++) {
           const opt = target.group.options[i];
           opt.element.addEventListener('click', function () {
+            if (opt.element.classList.contains('disabled') || opt.element.classList.contains('disabled_always')) return;
             target.group.activeOption = i;
             opt.active = !opt.active;
             opt.element.classList.toggle('active');
@@ -1680,6 +1682,8 @@ function CheckChanges() {
   applyAllConditionsUncheckedCHeckboxes();
   additionalConditions();
 
+  enforceDisabledOptionsUI();
+
   if (currentHouse == '2' && isExtraDoorOn) {
     removeExtraDoorPanelsFromCustomWindows();
     getSharedParameter('customWindows').value = convertObjectToArray(customWindows);
@@ -1926,6 +1930,7 @@ function calculatePrice() {
   for (let i = 0; i < SharedParameterList.length - 4; i++) {
     if (SharedParameterList[i].type === 'string') {
       optionId = `option_${i}-${SharedParameterList[i].value}`;
+      if (DISABLED_OPTIONS.includes(optionId) || $(`.${optionId}`).hasClass('disabled') || $(`.${optionId}`).hasClass('disabled_always')) { continue; }
       activeOptions.push(optionId);
     } else if (SharedParameterList[i].type === 'array-string') {
       for (let j = 0; j < SharedParameterList[i].value.length; j++) {
@@ -1938,7 +1943,7 @@ function calculatePrice() {
             optionId = `option_${i}-${j}`;
           }
 
-          if ($(`.${optionId}`).hasClass('disabled')) { continue; }
+          if (DISABLED_OPTIONS.includes(optionId) || $(`.${optionId}`).hasClass('disabled') || $(`.${optionId}`).hasClass('disabled_always')) { continue; }
 
           activeOptions.push(optionId);
         }
@@ -2700,10 +2705,71 @@ async function ImportScene(newScene) {
 
 //#region URL PARAMETERS
 
+function sanitizeDisabledOptions() {
+  if (!DISABLED_OPTIONS || DISABLED_OPTIONS.length === 0) return;
+
+  DISABLED_OPTIONS.forEach(optName => {
+    const parts = optName.replace('option_', '').split('-');
+    const groupId = parts[0];
+    const compId = parts[1];
+
+    if (groupId === '2') { // Interior (single-choice)
+      const interiorParam = getSharedParameter('interior');
+      if (interiorParam && interiorParam.value === compId) {
+        interiorParam.value = '0'; // Fallback to MgO Panels
+      }
+    } else if (groupId === '4') { // Upgrades (checkbox array)
+      const upgradesParam = getSharedParameter('upgrades');
+      const idx = OPTIONS_ID_ORDER_FOR_UPGRADES.indexOf(compId);
+      if (upgradesParam && Array.isArray(upgradesParam.value) && idx !== -1) {
+        upgradesParam.value[idx] = '0';
+      }
+    } else if (groupId === '5') { // Addons (checkbox array)
+      const addonsParam = getSharedParameter('addons');
+      const idx = OPTIONS_ID_ORDER_FOR_ADDONS.indexOf(compId);
+      if (addonsParam && Array.isArray(addonsParam.value) && idx !== -1) {
+        addonsParam.value[idx] = '0';
+      }
+    } else if (groupId === '6') { // Foundation (single-choice)
+      const foundationParam = getSharedParameter('foundation');
+      if (foundationParam && foundationParam.value === compId) {
+        foundationParam.value = '0';
+      }
+    } else if (groupId === '1') { // Windows
+      const windowsParam = getSharedParameter('windows');
+      const num = parseInt(compId);
+      if (windowsParam && Array.isArray(windowsParam.value) && Number.isInteger(num)) {
+        windowsParam.value[num] = '0';
+      }
+    }
+  });
+}
+
+function enforceDisabledOptionsUI() {
+  if (!DISABLED_OPTIONS || DISABLED_OPTIONS.length === 0) return;
+
+  DISABLED_OPTIONS.forEach(optName => {
+    const el = $(`.${optName}`);
+    if (el.length) {
+      el.addClass('disabled disabled_always hidden').css('display', 'none');
+      el.removeClass('active');
+    }
+  });
+
+  if (DISABLED_OPTIONS.includes('option_4-5')) {
+    $('.tumbler__container').removeClass('active');
+    if ($('.tumbler-wrapper').hasClass('turned-on')) {
+      $('.tumbler-wrapper').removeClass('turned-on');
+    }
+    isWindowsSmart = false;
+  }
+}
+
 function EmptyURLParams() {
   $('.popup_select').removeClass('hidden');
   $('#js-loader').addClass('invisible');
   setDefaultValuesForGroups();
+  sanitizeDisabledOptions();
   ParseAllGroups();
 }
 
@@ -2843,6 +2909,8 @@ function ReadURLParameters(callback) {
       qrScaned = element.value;
     }
   }
+
+  sanitizeDisabledOptions();
 
   if (callback != null) callback();
 
@@ -3287,15 +3355,6 @@ async function PrepareUI() {
     });
 
     validateForm();
-  });
-
-  //! Hide and disable Airconditioner option
-  jQuery(document).ready(function () {
-    const airConditionerOption = $('.option_5-4');
-    if (airConditionerOption.length) {
-      airConditionerOption.hide(); // Hide the option from the UI
-      airConditionerOption.addClass('disabled'); // Disable the option
-    }
   });
 }
 
@@ -4301,8 +4360,11 @@ function collectSummary() {
 
     filterOptions.find('.option').each(function () {
       const option = $(this);
-      if (!option.hasClass('disabled')) {
-        const optionClasses = option.attr('class').split(' ').map(cls => `details__${cls}`);
+      const optName = `option_${option.attr('data-group_id')}-${option.attr('data-component_id')}`;
+      if (DISABLED_OPTIONS.includes(optName) || option.hasClass('disabled') || option.hasClass('disabled_always')) {
+        return;
+      }
+      const optionClasses = option.attr('class').split(' ').map(cls => `details__${cls}`);
         const optionTitle = option.find('.component_title').text();
         let optionPrice = option.find('.component_price').text();
 
@@ -4369,8 +4431,7 @@ function collectSummary() {
             },
           );
         }
-      }
-    });
+      });
 
     detailsGroup.appendTo(detailsContainer);
 
