@@ -6,6 +6,7 @@ import {
   IS_PRICE_SIMPLE,
   GROUP_ID_ORDER_FOR_NEXT_MENU_BTNS,
   DEV_MODE,
+  DISABLED_OPTIONS,
 } from './settings.js';
 
 import { isCameraInside, currentHouse } from './3d-configurator.js';
@@ -268,8 +269,14 @@ export async function createMenu(mainData) {
 
           optInfoHTML = `<div id="menu_item_info-${groupId}_${optionId}" class="image-info" data-group="group-${groupId}" data-option="option_${groupId}-${optionId}"></div>`;
 
-          const isExist = (getData(mainData, mainData[i][0], `EXIST`)?.toUpperCase() == 'NO')
-            ? 'disabled_always' : '';
+          const optName = `option_${groupId}-${optionId}`;
+          const isDisabledByConfig = DISABLED_OPTIONS.includes(optName);
+
+          const isExist = (getData(mainData, mainData[i][0], `EXIST`)?.toUpperCase() == 'NO' || isDisabledByConfig)
+            ? 'disabled disabled_always' : '';
+
+          const hiddenAttr = isDisabledByConfig ? 'hidden' : '';
+          const hiddenStyle = isDisabledByConfig ? 'style="display: none !important;"' : '';
 
           const priceValue = (IS_PRICE_SIMPLE) ? parseNumber(getData(mainData, mainData[i][0], 'PRICE')) : 0;
 
@@ -286,7 +293,7 @@ export async function createMenu(mainData) {
           }
 
           const optionHTML = `
-            <div class="option option_${groupId}-${optionId} ${isExist}" data-group_id="${groupId}" data-component_id="${optionId}" data-price="${priceValue}">
+            <div class="option ${optName} ${isExist} ${hiddenAttr}" ${hiddenStyle} data-group_id="${groupId}" data-component_id="${optionId}" data-price="${priceValue}">
               <div class="option__content">
                 <div class="option__status_icon"></div>
                 ${descrHTML}

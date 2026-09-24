@@ -37,6 +37,14 @@ export const IS_PRICE_SIMPLE = false;
 export const DEFAULT_LANGUAGE = 'EN';
 export const DEFAULT_CURRENCY = '$';
 
+// Temporarily disabled options (hidden from menu, omitted from summary/PDF, stripped from URL params and prices)
+// To re-enable any option, simply comment it out or remove it from this list.
+export const DISABLED_OPTIONS = [
+  'option_2-2', // Sound Panels (Interior)
+  'option_4-5', // Insulated Smart Glass (Upgrades)
+  'option_5-4', // Aircondition (Add-ons)
+];
+
 export const CURRENCY_SIGN = {
   'USD': '$',
   'EUR': '€',
