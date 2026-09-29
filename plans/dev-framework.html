@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sheet Framework Demo (ZOM-63)</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <style>
+    body { margin: 0; background: #666; }
+    .sheet { display: block; width: 96vw; margin: 2vh auto; box-shadow: 0 4px 24px rgba(0,0,0,.5); }
+    .sheet svg { display: block; width: 100%; height: auto; background: #fff; }
+  </style>
+</head>
+<body>
+  <div class="sheet" id="titleblocked"></div>
+  <div class="sheet" id="bare"></div>
+  <script type="module">
+    import { sheetSVG, drawingArea, line, poly, text, s, LW, SCALE_LABEL } from '../js/plans/sheets/sheet.js';
+    import { hDim, vDim, scaleBar, fmtFtIn } from '../js/plans/sheets/dims.js';
+    import { titleBlockSVG, bareStripSVG } from '../js/plans/sheets/titleblock.js';
+
+    const meta = {
+      number: 'A-000', name: 'FRAMEWORK DEMO SHEET', model: 'ZomeStudio — 300 SQ FT',
+      designName: 'My Backyard Studio', configId: 'M2A1-1-1R2E1V1-1-1O1-1U1u0a0qc-1-4',
+      date: new Date().toLocaleDateString('en-US'), scaleLabel: SCALE_LABEL,
+    };
+
+    function demoContent() {
+      const a = drawingArea();
+      let c = '';
+      // Line-weight ladder (visual check inherited from ZOM-60)
+      const labels = ['cut 2.8', 'object 1.4', 'thin 0.7', 'hair 0.35'];
+      [LW.cut, LW.object, LW.thin, LW.hair].forEach((w, i) => {
+        c += line(a.x + 60, a.y + 80 + i * 50, a.x + 660, a.y + 80 + i * 50, w);
+        c += text(a.x + 690, a.y + 88 + i * 50, labels[i], 26);
+      });
+      c += line(a.x + 60, a.y + 300, a.x + 660, a.y + 300, LW.thin, '20,10');
+      c += text(a.x + 690, a.y + 308, 'dashed (above cut plane)', 26);
+
+      // A 14'-4" x 10'-0" "room" at 1/2"=1'-0" with dims on two sides
+      const rw = s(172), rh = s(120);
+      const rx = a.x + 400, ry = a.y + 600;
+      c += poly([[rx, ry], [rx + rw, ry], [rx + rw, ry + rh], [rx, ry + rh]], LW.cut);
+      c += hDim(rx, rx + rw, ry - 60, fmtFtIn(172), ry);
+      c += vDim(ry, ry + rh, rx - 60, fmtFtIn(120), rx);
+
+      // fmtFtIn spot checks rendered on-sheet
+      const cases = [[172, `14'-4"`], [120, `10'-0"`], [90.5, `7'-6½"`], [6.25, `6¼"`], [143.9, `11'-11⅞→12'-0"?`]];
+      c += text(rx, ry + rh + 100, 'fmtFtIn checks: ' + [172, 120, 90.5, 6.25, 143.9].map(v => `${v}in → ${fmtFtIn(v)}`).join('   '), 26);
+
+      c += scaleBar(a.x + 60, a.y + a.h - 120);
+      return c;
+    }
+
+    const content = demoContent();
+    document.getElementById('titleblocked').innerHTML =
+      sheetSVG(meta, content, { titleBlockSVG: titleBlockSVG(meta) });
+    document.getElementById('bare').innerHTML =
+      sheetSVG(meta, content + bareStripSVG(meta), { bare: true });
+    console.log('FRAMEWORK_DEMO_OK');
+  </script>
+</body>
+</html>

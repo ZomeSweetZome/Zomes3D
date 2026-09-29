@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Geometry Extraction (ZOM-61)</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <style>
+    body { font-family: ui-monospace, Menlo, monospace; font-size: 12px; margin: 20px; }
+    pre { background: #f5f5f5; padding: 12px; white-space: pre-wrap; }
+    button { padding: 8px 14px; margin-right: 8px; }
+  </style>
+</head>
+<body>
+  <h1>ZOM-61: geometry extraction → data/plans-geometry/*.json</h1>
+  <p>Runs automatically. Per-model JSON is kept in <code>window.EXTRACTED</code>
+     (pull via console/JS) and downloadable below. Console: EXTRACT_CAL_* lines.</p>
+  <div id="buttons"></div>
+  <pre id="out">loading…</pre>
+
+  <script src="https://cdn.jsdelivr.net/npm/three@0.146/build/three.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.147/examples/js/loaders/GLTFLoader.js"></script>
+  <script>
+    const M_TO_IN = 39.3701;
+    const MODELS = [
+      { key: 'pod',    path: '../src/models/zomes-pod2.glb',    nominalSqFt: 120 },
+      { key: 'office', path: '../src/models/zomes-office2.glb', nominalSqFt: 170 },
+      { key: 'studio', path: '../src/models/zomes-studio2.glb', nominalSqFt: 300 },
+    ];
+    // Naming differs per model: office `panel-wall-c-1` (lowercase, 10 sectors),
+    // studio `panel-L1-C-1` (uppercase, rows C–H, 12 sectors), pod `panel-L3-G-4`.
+    const PANEL_RE = [/^panel-(?:wall|L\d)-([a-h])-(\d+)$/i];
+    const GLASS_RE = [/^(?:window-)?glass(?:-L\d)?-([a-h])-(\d+)$/i];
+
+    const out = document.getElementById('out');
+    const log = (s) => { out.textContent += s + '\n'; };
+    out.textContent = '';
+    window.EXTRACTED = {};
+
+    function worldVertices(object) {
+      const pts = [];
+      object.updateWorldMatrix(true, true);
+      object.traverse((o) => {
+        if (!o.isMesh || !o.geometry?.attributes?.position) return;
+        const pos = o.geometry.attributes.position;
+        const v = new THREE.Vector3();
+        for (let i = 0; i < pos.count; i++) {
+          v.fromBufferAttribute(pos, i).applyMatrix4(o.matrixWorld);
+          pts.push([v.x, v.y, v.z]);
+        }
+      });
+      return pts;
+    }
+
+    // 2D convex hull (Andrew monotone chain). pts: [[x,y],...] -> hull indices.
+    function hullIndices(pts) {
+      const idx = pts.map((_, i) => i).sort((a, b) => pts[a][0] - pts[b][0] || pts[a][1] - pts[b][1]);
+      const cross = (o, a, b) =>
+        (pts[a][0] - pts[o][0]) * (pts[b][1] - pts[o][1]) - (pts[a][1] - pts[o][1]) * (pts[b][0] - pts[o][0]);
+      const lower = [], upper = [];
+      for (const i of idx) {
+        while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], i) <= 0) lower.pop();
+        lower.push(i);
+      }
+      for (const i of idx.reverse()) {
+        while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], i) <= 0) upper.pop();
+        upper.push(i);
+      }
+      return lower.slice(0, -1).concat(upper.slice(0, -1));
+    }
+
+    function polygonAreaM2(poly) {
+      let a = 0;
+      for (let i = 0; i < poly.length; i++) {
+        const [x1, y1] = poly[i], [x2, y2] = poly[(i + 1) % poly.length];
+        a += x1 * y2 - x2 * y1;
+      }
+      return Math.abs(a) / 2;
+    }
+
+    // Simplify a panel/glass point cloud to an outline: hull in "unrolled"
+    // space (tangential arc-length vs height, relative to the centroid
+    // azimuth so there is no angle wrap), then keep the ORIGINAL 3D points
+    // of the hull vertices. Elevations later project these 3D points.
+    function outline3d(pts) {
+      const cx = pts.reduce((s, p) => s + p[0], 0) / pts.length;
+      const cz = pts.reduce((s, p) => s + p[2], 0) / pts.length;
+      const az0 = Math.atan2(cz, cx);
+      const rMean = pts.reduce((s, p) => s + Math.hypot(p[0], p[2]), 0) / pts.length;
+      const unrolled = pts.map((p) => {
+        let dth = Math.atan2(p[2], p[0]) - az0;
+        while (dth > Math.PI) dth -= 2 * Math.PI;
+        while (dth < -Math.PI) dth += 2 * Math.PI;
+        return [dth * rMean, p[1]];
+      });
+      // Dedup on a coarse grid first to keep hull cheap on dense meshes.
+      const seen = new Map();
+      for (let i = 0; i < unrolled.length; i++) {
+        const k = `${Math.round(unrolled[i][0] * 200)},${Math.round(unrolled[i][1] * 200)}`;
+        if (!seen.has(k)) seen.set(k, i);
+      }
+      const keep = [...seen.values()];
+      let hull = hullIndices(keep.map((i) => unrolled[i]));
+      // Decimate: drop hull points contributing < 0.005 m² of area until
+      // ≤ 16 points remain — zome panels are diamonds, ~6 corners suffice.
+      const area3 = (a, b, c) => Math.abs(
+        (unrolled[keep[b]][0] - unrolled[keep[a]][0]) * (unrolled[keep[c]][1] - unrolled[keep[a]][1]) -
+        (unrolled[keep[c]][0] - unrolled[keep[a]][0]) * (unrolled[keep[b]][1] - unrolled[keep[a]][1])) / 2;
+      let changed = true;
+      while (changed || hull.length > 16) {
+        changed = false;
+        if (hull.length <= 4) break;
+        let minA = Infinity, minI = -1;
+        for (let i = 0; i < hull.length; i++) {
+          const a = area3(hull[(i + hull.length - 1) % hull.length], hull[i], hull[(i + 1) % hull.length]);
+          if (a < minA) { minA = a; minI = i; }
+        }
+        if (minA < 0.005 || hull.length > 16) { hull.splice(minI, 1); changed = minA < 0.005; }
+      }
+      return {
+        azimuthDeg: +(az0 * 180 / Math.PI).toFixed(2),
+        outline: hull.map((h) => pts[keep[h]].map((v) => +(v * M_TO_IN).toFixed(2))),
+        yMinIn: +(Math.min(...pts.map((p) => p[1])) * M_TO_IN).toFixed(2),
+        yMaxIn: +(Math.max(...pts.map((p) => p[1])) * M_TO_IN).toFixed(2),
+      };
+    }
+
+    function groupBBoxIn(obj) {
+      const box = new THREE.Box3().setFromObject(obj);
+      const size = box.getSize(new THREE.Vector3());
+      return {
+        min: box.min.toArray().map((v) => +(v * M_TO_IN).toFixed(2)),
+        max: box.max.toArray().map((v) => +(v * M_TO_IN).toFixed(2)),
+        size: size.toArray().map((v) => +(v * M_TO_IN).toFixed(2)),
+      };
+    }
+
+    async function extract(m, loader) {
+      const gltf = await new Promise((res, rej) => loader.load(m.path, res, undefined, rej));
+      const scene = gltf.scene;
+      scene.updateWorldMatrix(true, true);
+
+      const panels = [], glass = [];
+      let doorObj = null, doorBackObj = null, floorObj = null, foundationObj = null, manObj = null;
+      scene.traverse((o) => {
+        if (!o.name) return;
+        for (const re of PANEL_RE) {
+          const mm = o.name.match(re);
+          if (mm) { panels.push({ row: mm[1].toLowerCase(), sector: +mm[2], obj: o }); return; }
+        }
+        for (const re of GLASS_RE) {
+          const mm = o.name.match(re);
+          if (mm) { glass.push({ row: mm[1].toLowerCase(), sector: +mm[2], obj: o }); return; }
+        }
+        if (o.name === 'door') doorObj = o;
+        if (o.name === 'door-back') doorBackObj = o;
+        if (o.name === 'floor') floorObj = o;
+        if (o.name === 'foundation') foundationObj = o;
+        if (o.name === 'man') manObj = o;
+      });
+
+      // Footprint: prefer the floor mesh outline; fall back to the hull of
+      // low panel vertices (y < 0.15m above panel minimum).
+      let floorPts;
+      if (floorObj) {
+        floorPts = worldVertices(floorObj);
+      } else {
+        const all = panels.flatMap((p) => worldVertices(p.obj));
+        const yMin = Math.min(...all.map((p) => p[1]));
+        floorPts = all.filter((p) => p[1] < yMin + 0.15);
+      }
+      const xz = floorPts.map((p) => [p[0], p[2]]);
+      const fHull = hullIndices(xz).map((i) => xz[i]);
+      const areaM2 = polygonAreaM2(fHull);
+      const areaSqFt = areaM2 * 10.7639;
+
+      const rows = {};
+      const panelsOut = panels.map((p) => {
+        const o = outline3d(worldVertices(p.obj));
+        const r = rows[p.row] ??= { sillIn: Infinity, headIn: -Infinity, sectors: 0 };
+        r.sillIn = Math.min(r.sillIn, o.yMinIn);
+        r.headIn = Math.max(r.headIn, o.yMaxIn);
+        r.sectors++;
+        return { row: p.row, sector: p.sector, ...o };
+      });
+      const glassOut = glass.map((g) => {
+        const bb = groupBBoxIn(g.obj);
+        return { row: g.row, sector: g.sector, widthIn: +Math.hypot(bb.size[0], bb.size[2]).toFixed(2), heightIn: bb.size[1] };
+      });
+
+      const manH = manObj ? groupBBoxIn(manObj).size[1] : null;
+      const result = {
+        model: m.key,
+        units: 'inches',
+        verified: false,
+        extractedFrom: m.path.split('/').pop(),
+        scaleCalibration: {
+          nominalAreaSqFt: m.nominalSqFt,
+          measuredFloorAreaSqFt: +areaSqFt.toFixed(1),
+          ratio: +(areaSqFt / m.nominalSqFt).toFixed(3),
+          floorSource: floorObj ? 'floor-mesh' : 'panel-base-hull',
+          manHeightIn: manH,
+        },
+        footprint: {
+          vertices: fHull.map((p) => p.map((v) => +(v * M_TO_IN).toFixed(2))),
+          areaSqFt: +areaSqFt.toFixed(1),
+        },
+        overall: (() => {
+          const bb = groupBBoxIn(scene);
+          return { widthIn: bb.size[0], heightIn: bb.size[1], depthIn: bb.size[2] };
+        })(),
+        rows: Object.fromEntries(Object.entries(rows).map(([k, v]) => [k,
+          { sillIn: +v.sillIn.toFixed(2), headIn: +v.headIn.toFixed(2), sectors: v.sectors }])),
+        panels: panelsOut,
+        windowGlass: glassOut,
+        doors: [
+          doorObj ? { type: 'main', bbox: groupBBoxIn(doorObj) } : null,
+          doorBackObj ? { type: 'extra', bbox: groupBBoxIn(doorBackObj) } : null,
+        ].filter(Boolean),
+        foundation: foundationObj ? { bbox: groupBBoxIn(foundationObj) } : null,
+      };
+      return result;
+    }
+
+    async function run() {
+      const loader = new THREE.GLTFLoader();
+      for (const m of MODELS) {
+        try {
+          const r = await extract(m, loader);
+          window.EXTRACTED[m.key] = r;
+          const cal = r.scaleCalibration;
+          log(`${m.key}: panels=${r.panels.length} glass=${r.windowGlass.length} rows=${Object.keys(r.rows).sort()} ` +
+              `floor=${cal.measuredFloorAreaSqFt}sqft (${cal.floorSource}) nominal=${cal.nominalAreaSqFt} ratio=${cal.ratio} ` +
+              `man=${cal.manHeightIn}in doors=${r.doors.length} foundation=${!!r.foundation}`);
+          console.log(`EXTRACT_CAL_${m.key} ` + JSON.stringify({ ...cal, rows: r.rows, overall: r.overall, doors: r.doors, panels: r.panels.length }));
+          const btn = document.createElement('button');
+          btn.textContent = `download ${m.key}.json`;
+          btn.onclick = () => {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([JSON.stringify(r, null, 1)], { type: 'application/json' }));
+            a.download = `${m.key}.json`;
+            a.click();
+          };
+          document.getElementById('buttons').appendChild(btn);
+        } catch (e) {
+          log(`${m.key}: ERROR ${e.message}`);
+          console.log(`EXTRACT_CAL_${m.key} ` + JSON.stringify({ error: e.message }));
+        }
+      }
+      console.log('EXTRACT_DONE2');
+      log('DONE');
+    }
+    run();
+  </script>
+</body>
+</html>

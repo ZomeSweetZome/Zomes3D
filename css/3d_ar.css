@@ -6511,3 +6511,26 @@ only screen and (-webkit-device-pixel-ratio: 3) and (max-width: 1170px) {
     max-width: 80px;
   }
 }
+
+/* Architectural set link (summary popup, details block) — matches the
+   .update-design-link family but quieter: smaller, no underline until hover. */
+.summary_archset_btn {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-end;
+  gap: 8px;
+  margin-top: 14px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #ffffff;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.8;
+}
+.summary_archset_btn:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
