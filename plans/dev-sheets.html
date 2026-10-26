@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sheet Set Harness (ZOM-64..67,71)</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <style>
+    body { margin: 0; background: #666; font-family: ui-monospace, Menlo, monospace; }
+    .bar { position: sticky; top: 0; background: #222; color: #eee; padding: 8px 16px; font-size: 12px; z-index: 5; }
+    .sheet { display: block; width: 96vw; margin: 2vh auto; box-shadow: 0 4px 24px rgba(0,0,0,.5); }
+    .sheet svg { display: block; width: 100%; height: auto; background: #fff; }
+    .err { color: #ff9; background: #611; padding: 16px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <div class="bar" id="bar">loading…</div>
+  <div id="sheets"></div>
+  <script type="module">
+    import { parseConfigFromURL } from '../js/plans/config-parse.js';
+    import { buildSheets } from '../js/plans/sheets/index.js';
+
+    const bar = document.getElementById('bar');
+    const holder = document.getElementById('sheets');
+    try {
+      const parsed = parseConfigFromURL(location.href);
+      if (!parsed.ok) throw new Error(`config: ${parsed.error} — ${parsed.message}`);
+      const design = parsed.design;
+      const geo = await (await fetch(`../data/plans-geometry/${design.model.key}.json`)).json();
+      const bare = new URLSearchParams(location.search).get('bare') === '1';
+      const t0 = performance.now();
+      const sheets = buildSheets(design, geo, {
+        designName: new URLSearchParams(location.search).get('dn') ?? '',
+        configString: new URLSearchParams(location.search).get('config') ?? '',
+      });
+      const ms = Math.round(performance.now() - t0);
+      bar.textContent = `${design.model.name} — ${sheets.length} sheets in ${ms}ms — ${bare ? 'BARE' : 'titleblocked'}`;
+      for (const sh of sheets) {
+        const div = document.createElement('div');
+        div.className = 'sheet';
+        div.id = sh.number;
+        div.innerHTML = bare ? sh.bareSvg : sh.svg;
+        holder.appendChild(div);
+      }
+      console.log('SHEETS_OK ' + JSON.stringify({ count: sheets.length, ms, numbers: sheets.map((s) => s.number) }));
+    } catch (e) {
+      bar.textContent = 'ERROR';
+      const div = document.createElement('div');
+      div.className = 'err';
+      div.textContent = e.stack || String(e);
+      holder.appendChild(div);
+      console.log('SHEETS_ERR ' + e.message);
+    }
+  </script>
+</body>
+</html>
